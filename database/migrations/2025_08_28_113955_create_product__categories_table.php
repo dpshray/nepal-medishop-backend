@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('variants', function (Blueprint $table) {
+        Schema::create('product__categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->enum('size', ['S', 'M', 'L', 'XL','XXL']);
-            $table->enum('color', ['black', 'white']);
-            $table->decimal('price', 10, 2);
-            $table->decimal('discount_price',10,2)->nullable(); // optional if price differs
-            $table->integer('stock')->default(0);
+            $table->foreignId('categories_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('variants');
+        Schema::dropIfExists('product__categories');
     }
 };
