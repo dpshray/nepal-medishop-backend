@@ -26,4 +26,11 @@ class Variant extends Model implements HasMedia
                 $this->addMediaConversion('image')->nonQueued();
             });
     }
+    public function getDiscountPercentAttribute()
+    {
+        if ($this->discount_price && $this->price > 0) {
+            return round((($this->price - $this->discount_price) / $this->price) * 100, 2);
+        }
+        return null;
+    }
 }

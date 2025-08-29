@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\V1\Auth\AuthController;
+use App\Http\Controllers\V1\Client\MainController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,12 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/forget-password', 'forget_password');
     //reset password
     Route::post('/reset-password', 'reset_password');
+});
+
+//client
+Route::controller(MainController::class)->group(function () {
+    Route::get('/product', 'product');
+    Route::get('/categories', 'categories');
+    Route::get('/new-arrivals', 'new_arrivals');
+    Route::get('/product-detail/{slug}', 'product_detail');
 });

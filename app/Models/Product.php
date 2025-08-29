@@ -13,7 +13,7 @@ class Product extends Model implements HasMedia
     //
     use InteractsWithMedia, HasEvents;
     const MEDIA_NAME = 'product';
-     protected $fillable = [
+    protected $fillable = [
         'name',
         'slug',
         'description',
@@ -25,7 +25,7 @@ class Product extends Model implements HasMedia
     ];
     public function categories()
     {
-        return $this->belongsToMany(Categories::class ,'product_category');
+        return $this->belongsToMany(Categories::class, 'product_categories');
     }
 
     public function variants()
@@ -39,5 +39,12 @@ class Product extends Model implements HasMedia
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('image')->nonQueued();
             });
+    }
+    public function getDiscountPercentAttribute()
+    {
+        if ($this->discount_price && $this->price > 0) {
+            return round((($this->price - $this->discount_price) / $this->price) * 100, 2);
+        }
+        return null;
     }
 }
