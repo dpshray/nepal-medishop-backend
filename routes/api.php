@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\V1\Admin\ProductController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Client\MainController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,17 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(MainController::class)->group(function () {
     Route::get('/product', 'product');
     Route::get('/categories', 'categories');
-    Route::get('/new-arrivals', 'new_arrivals');
     Route::get('/product-detail/{slug}', 'product_detail');
+    Route::get('/banner','banner');
+});
+
+//Admin section
+Route::prefix('admin')->group(function () {
+    Route::middleware(['auth:sanctum', 'verified', AdminMiddleware::class])->group(function () {
+        Route::controller(ProductController::class)->group(function () {
+            Route::post('/add-product', 'add_product');
+            Route::post('/update-product/{product}', 'update_product');
+            Route::delete('/delete-product/{product}', 'delete_product');
+        });
+    });
 });

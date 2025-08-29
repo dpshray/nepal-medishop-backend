@@ -8,36 +8,17 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Variant extends Model implements HasMedia
+class Banner extends Model implements HasMedia
 {
     //
     use InteractsWithMedia, HasEvents;
-    const MEDIA_NAME = 'variant';
-    protected $fillable = [
-    'product_id',
-    'size',
-    'color',
-    'price',
-    'discount_price',
-    'stock',
-];
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
+    const MEDIA_NAME = 'banner';
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::MEDIA_NAME)
-            // ->singleFile()
+            ->singleFile()
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('image')->nonQueued();
             });
-    }
-    public function getDiscountPercentAttribute()
-    {
-        if ($this->discount_price && $this->price > 0) {
-            return round((($this->price - $this->discount_price) / $this->price) * 100, 2);
-        }
-        return null;
     }
 }

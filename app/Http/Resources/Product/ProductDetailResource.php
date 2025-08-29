@@ -6,7 +6,7 @@ use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class ProductDetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -31,7 +31,7 @@ class ProductResource extends JsonResource
             'categories' => $this->categories->map(function ($category) {
                 return [
                     'categories_id' => $category->id,
-                    'categories_title' => $category->title,
+                    'categories_title' => $category->name,
                     'categories_slug' => $category->slug,
                 ];
             }),

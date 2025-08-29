@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\V1\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Banner\BannerCollection;
 use App\Http\Resources\Categories\CategoriesCollection;
 use App\Http\Resources\Product\ProductCollection;
+use App\Http\Resources\Product\ProductDetailResource;
+use App\Models\Banner;
 use App\Models\Categories;
 use App\Models\Product;
 use App\ResponseTrait;
@@ -70,5 +73,24 @@ class MainController extends Controller
         }
         $data = new CategoriesCollection($categories);
         return $this->apiSuccess('categories was found', $data);
+    }
+
+    function product_detail($slug)
+    {
+        $product = Product::with('variants', 'categories')->where('slug', $slug)->first();
+        if (!$product) {
+            return $this->apiError('product not found');
+        }
+        $data = new ProductDetailResource($product);
+        return $this->apiSuccess('product was found', $data);
+    }
+    function Banner()
+    {
+        $banner=Banner::all();
+        if (!$banner) {
+            return $this->apiError('Main banner not found');
+        }
+        $banner = new BannerCollection($banner);
+        return $this->apiSuccess('Banner data', $banner);
     }
 }
