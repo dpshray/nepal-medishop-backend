@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\V1\Admin\BannerController;
 use App\Http\Controllers\V1\Admin\ProductController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Client\MainController;
@@ -39,6 +40,11 @@ Route::prefix('admin')->group(function () {
             Route::post('/add-product', 'add_product');
             Route::post('/update-product/{product}', 'update_product');
             Route::delete('/delete-product/{product}', 'delete_product');
+        });
+        Route::controller(BannerController::class)->group(function () {
+            Route::post('/add-banner', 'add_banner');
+            Route::post('/update-banner/{banner}', 'update_banner');
+            Route::delete('/delete-banner/{banner}', 'delete_banner');
         });
     });
 });

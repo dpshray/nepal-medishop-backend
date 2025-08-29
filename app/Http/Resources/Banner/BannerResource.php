@@ -18,9 +18,9 @@ class BannerResource extends JsonResource
         return [
             'id'          => $this->id,
             'title'       => $this->title,
-            'subtitle'    => $this->subtitle,
+            'subtitle'    => $this->sub_title,
             'url' => $this->url,
-            'image'       => $this->getFirstMediaUrl('images'),
+            'image'       => $this->getFirstMediaUrl('banner', 'image') ?: null,
         ];
     }
 }
