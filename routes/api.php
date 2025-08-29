@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\V1\Admin\BannerController;
+use App\Http\Controllers\V1\Admin\CategoriesController;
 use App\Http\Controllers\V1\Admin\ProductController;
+use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Client\MainController;
 use App\Http\Middleware\AdminMiddleware;
@@ -45,6 +47,15 @@ Route::prefix('admin')->group(function () {
             Route::post('/add-banner', 'add_banner');
             Route::post('/update-banner/{banner}', 'update_banner');
             Route::delete('/delete-banner/{banner}', 'delete_banner');
+        });
+        Route::controller(CategoriesController::class)->group(function () {
+            Route::post('/add-categories', 'add_categories');
+            Route::post('/update-categories/{categories}', 'update_categories');
+            Route::delete('/delete-categories/{category}', 'delete_categories');
+        });
+        Route::controller(UserController::class)->group(function () {
+            Route::get('/view-user', 'View_User');
+            Route::delete('/delete-user/{user}', 'delete');
         });
     });
 });
