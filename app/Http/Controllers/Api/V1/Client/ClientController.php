@@ -14,11 +14,11 @@ use Illuminate\Http\Request;
  *
  *  @OA\Server(
  *     url="http://192.168.100.23:8008/api/v1",
- *     description="Localhost API Server"
+ *     description="Localhost API Server 1"
  * )
  * @OA\Server(
- *     url="http://nikeshthapa.myartsonline.com/",
- *     description="Live API Server"
+ *     url="http://127.0.0.1:8000/api/v1",
+ *     description="Localhost API Server 2"
  * )
  */
 class ClientController extends Controller
