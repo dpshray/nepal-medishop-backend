@@ -21,27 +21,4 @@ trait ResponseTrait
             'success' => false,
         ], $statusCode);
     }
-    function colorNameToHex(string $colorName): ?string
-    {
-        $colors = [
-            'black' => '#000000',
-            'white' => '#FFFFFF',
-            'red' => '#FF0000',
-            'green' => '#008000',
-            'blue' => '#0000FF',
-            'yellow' => '#FFFF00',
-            'cyan' => '#00FFFF',
-            'magenta' => '#FF00FF',
-            'gray' => '#808080',
-            'orange' => '#FFA500',
-            'pink' => '#FFC0CB',
-            'purple' => '#800080',
-            'brown' => '#A52A2A',
-            'skyblue' => '#87CEEB',
-            // Add more as needed
-        ];
-
-        $key = strtolower(trim($colorName));
-        return $colors[$key] ?? null; // returns null if color not found
-    }
 }
