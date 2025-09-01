@@ -30,17 +30,29 @@ class SanctumTokenService
         return $this;
     }
 
-    public function check(array $credentials)
+    public function check(array $credentials, $callback = null)
     {
         ['email' => $email, 'password' => $password] = $credentials;
         $this->user = $user = User::select('id','uuid','user_type','name','email','password', 'email_verified_at')->firstWhere('email', $email);
 
-        if (!$user->isAdmin()) {
-            throw new LoginException("Only admin is allowed to login",403);
-        } else if (!$user->hasVerifiedEmail()) {
+        if (!$user->hasVerifiedEmail()) {
             throw new LoginException('email not verified', 403);
         } else if (!$user || !Hash::check($password, $user->password)) {
             throw new LoginException('Invalid Credentials', 401);
+        }
+        return $this;
+    }
+
+    function forAdmin(){
+        if (!$this->user->isAdmin()) {
+            throw new LoginException("Only admin is allowed to login", 403);
+        }
+        return $this;
+    }
+
+    function forVendor(){
+        if (!$this->user->isVendor()) {
+            throw new LoginException("Only vendor is allowed to login", 403);
         }
         return $this;
     }
