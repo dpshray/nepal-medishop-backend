@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
             $table->string('title');
-            $table->string('sub_title');
+            $table->string('description');
             $table->string('url');
             $table->timestamps();
         });

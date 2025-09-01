@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('variants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->enum('size', ['S', 'M', 'L', 'XL','XXL']);
-            $table->enum('color', ['black', 'white']);
+            $table->foreignId('product_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->string('volume');
             $table->decimal('price', 10, 2);
-            $table->decimal('discount_price',10,2)->nullable(); // optional if price differs
-            $table->integer('stock')->default(0);
+            $table->decimal('discounted_price',10,2)->nullable(); // optional if price differs
+            $table->boolean('in_stock')->default(1);
             $table->timestamps();
         });
     }
