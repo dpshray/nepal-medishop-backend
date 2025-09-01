@@ -34,31 +34,11 @@ class ClientAuthController extends ClientController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Login successful response.",
+     *         description="Successful registration",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="user",
-     *                     type="object",
-     *                     @OA\Property(property="name", type="string", example="Prof. Alison Homenick Sr."),
-     *                     @OA\Property(property="uuid", type="string", format="uuid", example="1b286ac2-0bc2-408b-992c-b5dd375a4b23"),
-     *                     @OA\Property(property="email", type="string", example="schimmel.dillan@yahoo.com"),
-     *                     @OA\Property(
-     *                         property="saved_products",
-     *                         type="array",
-     *                         @OA\Items(
-     *                             type="object",
-     *                             @OA\Property(property="name", type="string", example="Vision-oriented background benchmark"),
-     *                             @OA\Property(property="id", type="string", example="727d6f91-103f-37ea-8576-7ad2ef79df3d")
-     *                         )
-     *                     )
-     *                 ),
-     *             ),
-     *             @OA\Property(property="token", type="string", example="Bearer 28|uE5tqVeCKIMRD01uPP8QxIAHau53fox2YVRfC9uUda73524c"),
-     *             @OA\Property(property="message", type="string", example="Welcome, Prof. Alison Homenick Sr.")
+     *             @OA\Property(property="message", type="string", example="Please check your email to verify registration"),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
