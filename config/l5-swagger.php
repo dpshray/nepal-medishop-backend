@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'default' => 'default',
+    'default' => 'client',
     'documentations' => [
-        'default' => [
+        'client' => [
             'api' => [
                 'title' => 'User API Doc',
             ],
@@ -17,6 +17,24 @@ return [
                 'docs_json' => 'user-api-docs.json',
                 'annotations' => [
                     base_path('app/Http/Controllers/Api/V1/Client'),
+                ],
+            ],
+        ],      
+
+        'vendor' => [
+            'api' => [
+                'title' => 'Vendor API Doc',
+            ],
+            'routes' => [
+                'api'              => 'vendor/doc', // Swagger UI
+                'docs'             => 'vendor/docs',          // JSON endpoint
+                'oauth2_callback'  => 'vendor/oauth2-callback', // OAuth2 redirect URL
+            ],
+            'paths' => [
+                'use_absolute_path' => true,
+                'docs_json' => 'vendor-api-docs.json',
+                'annotations' => [
+                    base_path('app/Http/Controllers/Api/V1/Vendor'),
                 ],
             ],
         ],

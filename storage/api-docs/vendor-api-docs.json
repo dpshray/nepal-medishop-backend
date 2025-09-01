@@ -1,0 +1,126 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Medishop",
+        "description": "Medishop Project",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://192.168.100.23:8008/api/v1",
+            "description": "Localhost API Server 1"
+        },
+        {
+            "url": "http://127.0.0.1:8000/api/v1",
+            "description": "Localhost API Server 2"
+        }
+    ],
+    "paths": {
+        "/vendor/login": {
+            "post": {
+                "tags": [
+                    "VendorAuthentication"
+                ],
+                "summary": "Vendor login Api",
+                "description": "Login API for vendor.",
+                "operationId": "12b8b8afd697036030e9202b352f3ac9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "vendor@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Welcome, admin"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "properties": {
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "9c10176e-f1b1-37ae-8e0f-958d6176246c"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "admin"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "format": "email",
+                                                            "example": "admin@gmail.com"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "Bearer 3|9x5lWn2WdVWSrVGP7zOYSaOdEK9e4t5hIQ2Q27KX08ebeca4"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "VendorAuthentication",
+            "description": "VendorAuthentication"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
