@@ -5,6 +5,7 @@ use App\Http\Controllers\V1\Admin\CategoriesController;
 use App\Http\Controllers\V1\Admin\ProductController;
 use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Auth\AuthController;
+use App\Http\Controllers\V1\Client\CartController;
 use App\Http\Controllers\V1\Client\MainController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
@@ -33,6 +34,13 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/categories', 'categories');
     Route::get('/product-detail/{slug}', 'product_detail');
     Route::get('/banner','banner');
+});
+
+Route::controller(CartController::class)->group(function () {
+    Route::get('/view-cart', 'view_cart')->middleware('auth:sanctum');
+    Route::post('/add-to-cart', 'add_cart')->middleware('auth:sanctum');
+    Route::post('/update-cart/{cart}', 'update_cart')->middleware('auth:sanctum');
+    Route::delete('/delete-cart/{cart}', 'delete_from_cart')->middleware('auth:sanctum');
 });
 
 //Admin section
