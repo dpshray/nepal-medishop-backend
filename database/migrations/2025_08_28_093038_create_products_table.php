@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('pattern');
             $table->string('fabric');
             $table->string('material');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -175,23 +175,32 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
 
-        try {
-            foreach ($product->variants as $variant) {
-                $variant->clearMediaCollection(Variant::MEDIA_NAME);
-                $variant->delete();
-            }
-            $product->clearMediaCollection(Product::MEDIA_NAME);
+    try {
+        $product->delete();
 
-            $product->categories()->detach();
+        DB::commit();
 
-            $product->delete();
-
-            DB::commit();
-
-            return $this->apiSuccess("Product deleted successfully.");
-        } catch (Exception $e) {
-            DB::rollBack();
-            return $this->apiError("Failed to delete product: " . $e->getMessage());
-        }
+        return $this->apiSuccess("Product moved to trash successfully.");
+    } catch (Exception $e) {
+        DB::rollBack();
+        return $this->apiError("Failed to delete product: " . $e->getMessage());
     }
+    }
+    public function restore_product($id)
+    {
+        DB::beginTransaction();
+
+    try {
+        $product = Product::withTrashed()->findOrFail($id);
+        $product->restore();
+
+        DB::commit();
+
+        return $this->apiSuccess("Product has been restore successfully.");
+    } catch (Exception $e) {
+        DB::rollBack();
+        return $this->apiError("Failed to restore product: " . $e->getMessage());
+    }
+    }
+
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -12,6 +13,7 @@ class Product extends Model implements HasMedia
 {
     //
     use InteractsWithMedia, HasEvents;
+    use SoftDeletes;
     const MEDIA_NAME = 'product';
     protected $fillable = [
         'name',
