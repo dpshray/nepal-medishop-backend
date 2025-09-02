@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Enums\UserTypeEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,7 +19,8 @@ class UserLoginResource extends JsonResource
         return [
             "uuid" => $this->uuid,
             "name" => $this->name,
-            "email" => $this->email
+            "email" => $this->email,
+            "user_type" => UserTypeEnum::tryFrom($this->user_type)?->name
         ];
     }
 }
