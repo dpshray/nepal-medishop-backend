@@ -11,13 +11,7 @@ Route::prefix('v1')->controller(ClientAuthController::class)->group(function () 
         Route::post('/logout', 'logout')->middleware(['auth:sanctum']);
         Route::post('/register', 'register');
         Route::get('verification/verify', 'emailVerifier')->name('verification.verify')->middleware(['signed']);
-        // Route::post('/forget-password', 'forget_password');        //reset password
-        // Route::post('/reset-password', 'reset_password');
-    });
-    Route::prefix('admin')->controller(AdminAuthController::class)->group(function(){
-        Route::post('login','login');
-    });
-    Route::prefix('vendor')->controller(VendorAuthController::class)->group(function(){
-        Route::post('login','login');
+        Route::post('forgot-password', 'sendPasswordResetLink');
+        Route::match(['GET', 'POST'], 'password-resetor/{token}', 'paswordResetorFormHandler')->name('password.reset');
     });
 });

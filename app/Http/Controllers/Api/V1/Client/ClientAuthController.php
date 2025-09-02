@@ -15,6 +15,10 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class ClientAuthController extends ClientController
 {
@@ -67,7 +71,7 @@ class ClientAuthController extends ClientController
         }
 
         $user->markEmailAsVerified();
-        return view('auth.client.mail.email_verified');
+        return view('auth.mail.email_verified');
     }
 
 
@@ -155,5 +159,82 @@ class ClientAuthController extends ClientController
     {
         (new SanctumTokenService())->del();
         return $this->apiSuccess('You are logged out');
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/forgot-password",
+     *     summary="Forgot password form handler",
+     *     description="Forgot password form handler",
+     *     operationId="ForgotPassword",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="vendor@gmail.com"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User logout successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example="true"),
+     *             @OA\Property(property="data", type="string", example=null),
+     *             @OA\Property(property="message", type="string", example="You are logged out")
+     *         )
+     *     )
+     * )
+     */
+    function sendPasswordResetLink(Request $request){
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+        $status = Password::ResetLinkSent;
+        if (Password::RESET_LINK_SENT == 'passwords.sent') {
+            return $this->apiSuccess('A password reset link has been sent to your email.');
+        }
+        return $this->apiError($status);
+    }
+
+    function paswordResetorFormHandler(Request $request, $token){
+
+        if ($request->isMethod('POST')) {
+            $request->validate([
+                // 'token' => 'required',
+                'email' => 'required|email',
+                'password' => 'required|min:8|confirmed',
+            ]);
+            try {
+                $credentials = $request->only('email', 'password', 'password_confirmation');
+                $credentials['token'] = $token;
+                $status = Password::reset(
+                    $credentials,
+                    function (User $user, string $password) {
+                        $user->forceFill([
+                            'password' => Hash::make($password)
+                        ])->setRememberToken(Str::random(60));
+                        $user->save();
+                        event(new PasswordReset($user));
+                    }
+                );
+            } catch (\Exception $e) {
+                dd($e);
+            }
+            if ($status === Password::PasswordReset) {
+                return $this->apiSuccess('password has been reset');
+            }
+            $message = match ($status) {
+                Password::INVALID_USER => 'Invalid user/email',
+                Password::INVALID_TOKEN => 'Token is invalid/expired',
+                default => 'Error occured. please try again'
+            };
+            return $this->apiError($message);
+        }
+        return view('auth.mail.password-reset', compact('token'));
     }
 }

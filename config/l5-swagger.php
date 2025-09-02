@@ -21,7 +21,7 @@ return [
             ],
         ],      
 
-        'vendor' => [
+        /* 'vendor' => [
             'api' => [
                 'title' => 'Vendor API Doc',
             ],
@@ -37,9 +37,9 @@ return [
                     base_path('app/Http/Controllers/Api/V1/Vendor'),
                 ],
             ],
-        ],
+        ], */
 
-        'admin' => [
+        /* 'admin' => [
             'api' => [
                 'title' => 'Admin API Docs',
             ],
@@ -55,7 +55,7 @@ return [
                     base_path('app/Http/Controllers/Api/V1/Admin'),
                 ],
             ],
-        ],
+        ], */
     ],
     'defaults' => [
         'routes' => [
