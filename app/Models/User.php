@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\UserTypeEnum;
+use App\Models\Traits\UuidModelTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,17 +13,18 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword;
 
+
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-    use HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, UuidModelTrait;
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
+        'uuid',
         'name',
         'email',
         'password',
@@ -53,6 +55,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         ];
     }
 
+    public function vendor(){
+        return $this->hasOne(Vendor::class);
+    }
+
     function isAdmin(){
         return $this->user_type == UserTypeEnum::ADMIN->value;
     }
@@ -60,4 +66,5 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     function isVendor(){
         return $this->user_type == UserTypeEnum::VENDOR->value;
     }
+
 }

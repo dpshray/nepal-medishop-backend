@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
  *     url="http://192.168.100.23:8008/api/v1",
  *     description="Localhost API Server 1"
  * )
- */
+*/
 class AdminController extends Controller
 {
 }

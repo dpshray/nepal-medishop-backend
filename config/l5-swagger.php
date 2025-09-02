@@ -39,7 +39,7 @@ return [
             ],
         ], */
 
-        /* 'admin' => [
+        'admin' => [
             'api' => [
                 'title' => 'Admin API Docs',
             ],
@@ -55,7 +55,7 @@ return [
                     base_path('app/Http/Controllers/Api/V1/Admin'),
                 ],
             ],
-        ], */
+        ],
     ],
     'defaults' => [
         'routes' => [

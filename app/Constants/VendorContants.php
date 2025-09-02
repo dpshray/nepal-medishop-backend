@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Constants;
+
+class VendorContants
+{
+    const VENDOR_CITIZENSHIP_CARD = 'VENDOR_CITIZENSHIP_CARD';
+    const VENDOR_BUSINESS_LICENSE = 'VENDOR_BUSINESS_LICENSE';
+    const VENDOR_TAX_CERTIFICATE = 'VENDOR_TAX_CERTIFICATE';
+}

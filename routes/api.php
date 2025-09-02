@@ -15,9 +15,11 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-require __DIR__ . '/auth.php';
+
 Route::prefix('v1')->group(function(){
     //client
+    require __DIR__ . '/auth.php';
+    require __DIR__ . '/admin.php';
     Route::controller(MainController::class)->group(function () {
         Route::get('/product', 'product');
         Route::get('/categories', 'categories');
