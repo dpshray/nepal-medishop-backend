@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Api\V1\Client;
 
 use App\Enums\UserTypeEnum;
+use App\Exceptions\LoginException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\Login\UserLoginRequest;
 use App\Http\Requests\Auth\Register\UserRegisterRequest;
+use App\Http\Resources\User\UserLoginResource;
 use App\Models\User;
+use App\Services\SanctumTokenService;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ClientAuthController extends ClientController
 {
@@ -63,5 +68,92 @@ class ClientAuthController extends ClientController
 
         $user->markEmailAsVerified();
         return view('auth.client.mail.email_verified');
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/login",
+     *     summary="Login Api",
+     *     description="Login API(user_type : USER | VENDOR | ADMIN).",
+     *     tags={"Authentication"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", format="email", example="vendor@gmail.com"),
+     *             @OA\Property(property="password", type="string", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful vendor login",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Welcome, vendor00"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="user",
+     *                     type="object",
+     *                     @OA\Property(property="uuid", type="string", format="uuid", example="0b831981-5ad1-3bdc-a1bd-b514676b3f98"),
+     *                     @OA\Property(property="name", type="string", example="vendor00"),
+     *                     @OA\Property(property="email", type="string", format="email", example="vendor@gmail.com"),
+     *                     @OA\Property(property="user_type", type="string", example="VENDOR")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="token",
+     *                     type="string",
+     *                     example="Bearer 4|VzkoJxyMfelFTKdiJlEnN3n3OhqTxS5SKSzDxJ2z61dd765a"
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function login(UserLoginRequest $request)
+    {
+        try {
+            $formData = $request->validated();
+            $STS = new SanctumTokenService();
+            ['user' => $user, 'token' => $token] = $STS->check($formData)->make();
+            return $this->apiSuccess("Welcome, $user->name", [
+                'user' => new UserLoginResource($user),
+                'token' => $token
+            ]);
+        } catch (LoginException $e) {
+            return $this->apiError($e->getMessage(), $e->getCode());
+        } catch (\Exception $e) {
+            Log::info($e);
+            return $this->apiError('Something went wrong. please try again later.');
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     security={{"sanctum": {}}}, 
+     *     path="/logout",
+     *     summary="User logout",
+     *     description="logs out a user.",
+     *     operationId="LogoutUser",
+     *     tags={"Authentication"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="User logout successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example="true"),
+     *             @OA\Property(property="data", type="string", example=null),
+     *             @OA\Property(property="message", type="string", example="You are logged out")
+     *         )
+     *     )
+     * )
+     */
+    public function logout()
+    {
+        (new SanctumTokenService())->del();
+        return $this->apiSuccess('You are logged out');
     }
 }
