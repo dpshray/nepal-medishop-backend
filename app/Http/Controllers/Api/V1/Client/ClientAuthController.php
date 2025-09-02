@@ -6,6 +6,7 @@ use App\Enums\UserTypeEnum;
 use App\Exceptions\LoginException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\Login\UserLoginRequest;
+use App\Http\Requests\Auth\Password\ForgetPasswordRequest;
 use App\Http\Requests\Auth\Register\UserRegisterRequest;
 use App\Http\Resources\User\UserLoginResource;
 use App\Models\User;
@@ -187,10 +188,7 @@ class ClientAuthController extends ClientController
      *     )
      * )
      */
-    function sendPasswordResetLink(Request $request){
-        $request->validate([
-            'email' => 'required|email|exists:users,email'
-        ]);
+    function sendPasswordResetLink(ForgetPasswordRequest $request){
         $status = Password::sendResetLink(
             $request->only('email')
         );
