@@ -26,7 +26,7 @@ class ClientAuthController extends ClientController
     /**
      * @OA\Post(
      *     path="/register",
-     *     summary="User Register Form",
+     *     summary="User Register Form(only client can register)",
      *     description="Registration form for user.",
      *     tags={"Authentication"},
      *     security={{"bearerAuth":{}}},

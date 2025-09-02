@@ -9,10 +9,6 @@
         {
             "url": "http://192.168.100.23:8008/api/v1",
             "description": "Localhost API Server 1"
-        },
-        {
-            "url": "http://127.0.0.1:8000/api/v1",
-            "description": "Localhost API Server 2"
         }
     ],
     "paths": {
@@ -21,7 +17,7 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "User Register Form",
+                "summary": "User Register Form(only client can register)",
                 "description": "Registration form for user.",
                 "operationId": "c16ecd14f226bec66e9eb8ad7a1725a9",
                 "requestBody": {
