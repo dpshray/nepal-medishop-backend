@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Constants\VendorContants;
+use App\Enums\UserTypeEnum;
 use App\Events\VendorCreateEvent;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ class VendorService {
 
     public function store(Request $request){
         $user = $request->safe()->only(["name", "email", "mobile_number"]);
+        $user['user_type'] = UserTypeEnum::VENDOR->value;
         $password = str()->random(10);
         $user['password'] = $password;
         $vendor = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate"]);
