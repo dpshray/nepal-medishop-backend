@@ -96,6 +96,12 @@
             transform: rotate(360deg);
         }
     }
+    #show_password_checkbox{
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        margin: 20px 75px -30px 0px;
+    }
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
@@ -118,7 +124,6 @@
                     type="email"
                     name="email"
                     id="email"
-                    name="email"
                     required
                 />
             </div>
@@ -136,6 +141,14 @@
                     name="password_confirmation"
                     required
                 />
+            </div>
+            <div id="show_password_checkbox">
+                <div>
+                    <input type="checkbox" onclick="togglePasswordVisibility(this)" id="password_visibility_checkbox">
+                </div>
+                <label for="password_visibility_checkbox">
+                    show password
+                </label>
             </div>
             <div class="buttonWrapper">
                 <button
@@ -162,19 +175,24 @@
 
     enableSubmitButton();
 
+    function togglePasswordVisibility(e) {
+        if (e.checked && (password.type === "password" && confirm_password.type === "password")) {
+            password.type = confirm_password.type = "text";
+        } else {
+            password.type = confirm_password.type = "password";
+        }
+    }
+
     function validatePassword() {
         console.log([password.value, confirm_password.value]);
         if (password.value != confirm_password.value) {
-            confirm_password.setCustomValidity("Passwords Don't Match");
+            toastr.error("Passwords Don't Match");
             return false;
         } else {
             confirm_password.setCustomValidity("");
             return true;
         }
     }
-
-    password.onchange = validatePassword;
-    confirm_password.onkeyup = validatePassword;
 
     function enableSubmitButton() {
         document.getElementById("submitButton").disabled = false;

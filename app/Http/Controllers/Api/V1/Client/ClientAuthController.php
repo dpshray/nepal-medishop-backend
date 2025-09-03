@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1\Client;
 
 use App\Enums\UserTypeEnum;
 use App\Exceptions\LoginException;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\Login\UserLoginRequest;
 use App\Http\Requests\Auth\Password\ForgetPasswordRequest;
 use App\Http\Requests\Auth\Register\UserRegisterRequest;
@@ -20,6 +19,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class ClientAuthController extends ClientController
 {
@@ -212,7 +212,12 @@ class ClientAuthController extends ClientController
                 $credentials['token'] = $token;
                 $status = Password::reset(
                     $credentials,
-                    function (User $user, string $password) {
+                    function (User $user, string $password) use($request){
+                        if (Hash::check($password, $user->password)) {
+                            throw ValidationException::withMessages([
+                                'password' => ['Your new password cannot be the same as your current password.'],
+                            ]);
+                        }
                         $user->forceFill([
                             'password' => Hash::make($password)
                         ])->setRememberToken(Str::random(60));
@@ -221,7 +226,7 @@ class ClientAuthController extends ClientController
                     }
                 );
             } catch (\Exception $e) {
-                dd($e);
+                return $this->apiError($e->getMessage(),422);
             }
             if ($status === Password::PasswordReset) {
                 return $this->apiSuccess('password has been reset');
