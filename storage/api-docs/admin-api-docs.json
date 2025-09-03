@@ -37,9 +37,9 @@
                                     "bank_name",
                                     "bank_account_holder_name",
                                     "bank_account_number",
-                                    "vendor_citizenship_card",
-                                    "vendor_business_license",
-                                    "vendor_tax_certificate",
+                                    "vendor_citizenship_card[]",
+                                    "vendor_business_license[]",
+                                    "vendor_tax_certificate[]",
                                     "name",
                                     "email",
                                     "mobile_number"
@@ -108,7 +108,11 @@
                                         "type": "string",
                                         "example": "21547741201300157899"
                                     },
-                                    "vendor_citizenship_card": {
+                                    "is_verified": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "vendor_citizenship_card[]": {
                                         "description": "Multiple image files to upload vendor citizenship card",
                                         "type": "array",
                                         "items": {
@@ -116,7 +120,7 @@
                                             "format": "binary"
                                         }
                                     },
-                                    "vendor_business_license": {
+                                    "vendor_business_license[]": {
                                         "description": "Multiple image files to upload vendor business license",
                                         "type": "array",
                                         "items": {
@@ -124,7 +128,7 @@
                                             "format": "binary"
                                         }
                                     },
-                                    "vendor_tax_certificate": {
+                                    "vendor_tax_certificate[]": {
                                         "description": "Multiple image files to upload vendor tax certificate",
                                         "type": "array",
                                         "items": {
@@ -140,44 +144,23 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Success response",
+                        "description": "Vendor added successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": "true"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": "10"
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "Lilly Lee"
-                                                },
-                                                "dob": {
-                                                    "type": "string",
-                                                    "format": "date",
-                                                    "example": "2082-01-15"
-                                                },
-                                                "gender": {
-                                                    "type": "boolean",
-                                                    "example": "FEMALE"
-                                                },
-                                                "media": {
-                                                    "type": "string",
-                                                    "example": "http://127.0.0.1:8000/storage/36/conversions/flowers-7382926_1920-thumbnail.jpg"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
                                         "message": {
                                             "type": "string",
-                                            "example": "An infant added successfully"
+                                            "example": "Vendor added"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"

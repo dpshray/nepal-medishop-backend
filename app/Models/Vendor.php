@@ -23,9 +23,13 @@ class Vendor extends Model implements HasMedia
         "postal_code",
         "bank_name",
         "bank_account_holder_name",
-        "bank_account_number"
+        "bank_account_number",
+        "is_verified"
     ];
 
+    function user(){
+        return $this->belongsTo(User::class);
+    }
 
     public function registerMediaCollections(): void
     {

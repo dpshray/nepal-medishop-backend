@@ -23,7 +23,7 @@ class VendorStoreRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|email|unique:users,email',
             'mobile_number' => 'required',
             'store_name' => 'required|max:255',
             'store_description' => 'required',
@@ -43,15 +43,19 @@ class VendorStoreRequest extends FormRequest
             'vendor_business_license.*' => ['image'],
             'vendor_tax_certificate' => ['required'],
             'vendor_tax_certificate.*' => ['image'],
+            'is_verified' => 'sometimes|between:0,1'
         ];
     }
 
     public function messages()
     {
         return [
-            'vendor_citizenship_card.array' => 'Citizenship card is required',
-            'vendor_business_license.array' => 'Business license is required',
-            'vendor_tax_certificate.array' => 'Tax certificate is required',
+            'vendor_citizenship_card.*.required' => 'Citizenship card is required',
+            'vendor_citizenship_card.*.image' => 'Citizenship card is must be image',
+            'vendor_business_license.*.required' => 'Business license is required',
+            'vendor_business_license.*.image' => 'Business license is must be image',
+            'vendor_tax_certificate.*.required' => 'Tax certificate is required',
+            'vendor_tax_certificate.*.image' => 'Tax certificate is must be image',
         ];
     }
 }

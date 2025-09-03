@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth\Register;
+namespace App\Http\Requests\Auth\Password;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserRegisterRequest extends FormRequest
+class ResetPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,16 +22,8 @@ class UserRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'mobile_number'=>'required|string',
-            'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ];
-    }
-
-    public function messages(){
-        return [
-            // 'email.unique' => 'Email has already been taken.'
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
         ];
     }
 }

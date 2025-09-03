@@ -9,39 +9,128 @@
         {
             "url": "http://192.168.100.23:8008/api/v1",
             "description": "Localhost API Server 1"
-        },
-        {
-            "url": "http://127.0.0.1:8000/api/v1",
-            "description": "Localhost API Server 2"
         }
     ],
     "paths": {
-        "/vendor/login": {
+        "/vendor/registration": {
             "post": {
                 "tags": [
-                    "VendorAuthentication"
+                    "Vendor"
                 ],
-                "summary": "Vendor login Api",
-                "description": "Login API for vendor.",
-                "operationId": "12b8b8afd697036030e9202b352f3ac9",
+                "summary": "Store a vendor",
+                "description": "Save an information of a vendor.",
+                "operationId": "StoreVendor",
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
+                                    "store_name",
+                                    "store_description",
+                                    "location",
+                                    "country",
+                                    "state",
+                                    "district",
+                                    "municipality",
+                                    "postal_code",
+                                    "bank_name",
+                                    "bank_account_holder_name",
+                                    "bank_account_number",
+                                    "vendor_citizenship_card[]",
+                                    "vendor_business_license[]",
+                                    "vendor_tax_certificate[]",
+                                    "name",
                                     "email",
-                                    "password"
+                                    "mobile_number"
                                 ],
                                 "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "Dave Chappelle"
+                                    },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "vendor@gmail.com"
+                                        "example": "dev.chappelle@mailinator.com"
                                     },
-                                    "password": {
+                                    "mobile_number": {
                                         "type": "string",
-                                        "example": "password123"
+                                        "example": "9452114525"
+                                    },
+                                    "store_name": {
+                                        "type": "string",
+                                        "example": "Lilly Lee Store"
+                                    },
+                                    "store_description": {
+                                        "type": "string",
+                                        "example": "Lilly Lee Store Description"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "Maharajgunj"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "Nepal"
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "Bagmati Province"
+                                    },
+                                    "district": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "Kathmandu"
+                                    },
+                                    "municipality": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "Budhanilkantha Municipality"
+                                    },
+                                    "postal_code": {
+                                        "type": "string",
+                                        "example": "4528"
+                                    },
+                                    "bank_name": {
+                                        "type": "string",
+                                        "example": "Laxmi Sunrise"
+                                    },
+                                    "bank_account_holder_name": {
+                                        "type": "string",
+                                        "example": "Laxmi Thapa"
+                                    },
+                                    "bank_account_number": {
+                                        "type": "string",
+                                        "example": "21547741201300157899"
+                                    },
+                                    "vendor_citizenship_card[]": {
+                                        "description": "Multiple image files to upload vendor citizenship card",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "vendor_business_license[]": {
+                                        "description": "Multiple image files to upload vendor business license",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "vendor_tax_certificate[]": {
+                                        "description": "Multiple image files to upload vendor tax certificate",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -51,42 +140,19 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful login",
+                        "description": "Vendor added successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Welcome, admin"
+                                            "example": "Vendor has been registered. please check your email to verify"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "user": {
-                                                    "properties": {
-                                                        "uuid": {
-                                                            "type": "string",
-                                                            "format": "uuid",
-                                                            "example": "9c10176e-f1b1-37ae-8e0f-958d6176246c"
-                                                        },
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "admin"
-                                                        },
-                                                        "email": {
-                                                            "type": "string",
-                                                            "format": "email",
-                                                            "example": "admin@gmail.com"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "Bearer 3|9x5lWn2WdVWSrVGP7zOYSaOdEK9e4t5hIQ2Q27KX08ebeca4"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "success": {
                                             "type": "boolean",
@@ -98,19 +164,14 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         }
     },
     "tags": [
         {
-            "name": "VendorAuthentication",
-            "description": "VendorAuthentication"
+            "name": "Vendor",
+            "description": "Vendor"
         }
     ],
     "components": {

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Constants\VendorContants;
+use App\Events\VendorCreateEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\VendorStoreRequest;
 use App\Models\User;
+use App\Services\VendorService;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -38,7 +41,7 @@ class AdminVendorController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","vendor_citizenship_card","vendor_business_license","vendor_tax_certificate","name","email","mobile_number"},
+     *                 required={"store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","vendor_citizenship_card[]","vendor_business_license[]","vendor_tax_certificate[]","name","email","mobile_number"},
      *                 @OA\Property(property="name", type="string", format="email", example="Dave Chappelle"),
      *                 @OA\Property(property="email", type="string", format="email", example="dev.chappelle@mailinator.com"),
      *                 @OA\Property(property="mobile_number", type="string", example="9452114525"),
@@ -53,8 +56,9 @@ class AdminVendorController extends Controller
      *                 @OA\Property(property="bank_name", type="string", example="Laxmi Sunrise"),
      *                 @OA\Property(property="bank_account_holder_name", type="string", example="Laxmi Thapa"),
      *                 @OA\Property(property="bank_account_number", type="string", example="21547741201300157899"),
+     *                 @OA\Property(property="is_verified", type="integer", example=1),
      *                 @OA\Property(
-     *                     property="vendor_citizenship_card",
+     *                     property="vendor_citizenship_card[]",
      *                     type="array",
      *                     @OA\Items(
      *                         type="string",
@@ -63,7 +67,7 @@ class AdminVendorController extends Controller
      *                     description="Multiple image files to upload vendor citizenship card"
      *                 ),
      *                 @OA\Property(
-     *                     property="vendor_business_license",
+     *                     property="vendor_business_license[]",
      *                     type="array",
      *                     @OA\Items(
      *                         type="string",
@@ -72,7 +76,7 @@ class AdminVendorController extends Controller
      *                     description="Multiple image files to upload vendor business license"
      *                 ),
      *                 @OA\Property(
-     *                     property="vendor_tax_certificate",
+     *                     property="vendor_tax_certificate[]",
      *                     type="array",
      *                     @OA\Items(
      *                         type="string",
@@ -85,38 +89,20 @@ class AdminVendorController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Success response",
+     *         description="Vendor added successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="status", type="boolean", example="true"),
-     *             @OA\Property(
-     *                  property="data", 
-     *                  type="object",
-     *                  @OA\Property(property="id", type="integer", example="10"),
-     *                  @OA\Property(property="name", type="string", example="Lilly Lee"),
-     *                  @OA\Property(property="dob", type="date", example="2082-01-15"),
-     *                  @OA\Property(property="gender", type="boolean", example="FEMALE"),
-     *                  @OA\Property(property="media", type="string", example="http://127.0.0.1:8000/storage/36/conversions/flowers-7382926_1920-thumbnail.jpg")
-     *                 ),
-     *             @OA\Property(property="message", type="string", example="An infant added successfully")
+     *             @OA\Property(property="message", type="string", example="Vendor added"),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
      */
     public function store(VendorStoreRequest $request)
     {
-        // Log::info(request()->all());
         DB::transaction(function () use($request){
-            $user = $request->safe()->only(["name", "email", "mobile_number"]);
-            $password = str()->random(10);
-            $user['password'] = $password;
-            $vendor = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate"]);
-            $user = User::create($user)
-                ->vendor()
-                ->create($vendor);
-            $user->addMedia($request->file('vendor_citizenship_card'))->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
-            $user->addMedia($request->file('vendor_business_license'))->toMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
-            $user->addMedia($request->file('vendor_tax_certificate'))->toMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
+            app(VendorService::class)->store($request);
         });
         return $this->apiSuccess('Vendor added');
     }
