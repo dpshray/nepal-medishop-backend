@@ -8,4 +8,7 @@ Route::prefix('admin')
     ->middleware(['auth:sanctum', AdminMiddleware::class])
     ->group(function(){
         Route::apiResource('vendor', AdminVendorController::class);
+        Route::controller(AdminVendorController::class)->group(function(){
+            Route::get('vendor-verified-toggler/{vendor:uuid}', 'toggleVendorVerifiedStatus');
+        });
 });

@@ -7,6 +7,7 @@ use App\Events\VendorCreateEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\VendorStoreRequest;
 use App\Models\User;
+use App\Models\Vendor;
 use App\Services\VendorService;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -129,5 +130,61 @@ class AdminVendorController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/vendor-verified-toggler/{uuid}",
+     *     summary="Toggle vendor verification status",
+     *     description="Toggle vendor verification status",
+     *     operationId="VendorVerifierToggler",
+     *     tags={"Vendor"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="Uuid of a vendor",
+     *         @OA\Schema(type="string", example="ff5487b6-72f4-4a7f-bd0f-0abbde78db27")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully retrieved solutions",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Solutions retrieved successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="exam_id", type="integer"),
+     *                     @OA\Property(property="student_id", type="integer"),
+     *                     @OA\Property(property="answer", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No solutions found for this exam",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No solutions found for this exam.")
+     *         )
+     *     )
+     * )
+     */
+    function toggleVendorVerifiedStatus(Vendor $vendor){
+        $current_verification_status = $vendor->is_verified;
+        $message = 'Vendor verification status changed to ACTIVE';
+        if ((int)$current_verification_status == 1) {
+            $message = 'Vendor verification status changed to INACTIVE';
+        }
+        $vendor->update(['is_verified' => !(bool)$current_verification_status]);
+        return $this->apiSuccess($message);
     }
 }

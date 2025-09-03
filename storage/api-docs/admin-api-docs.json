@@ -175,6 +175,95 @@
                     }
                 ]
             }
+        },
+        "/admin/vendor-verified-toggler/{uuid}": {
+            "get": {
+                "tags": [
+                    "Vendor"
+                ],
+                "summary": "Toggle vendor verification status",
+                "description": "Toggle vendor verification status",
+                "operationId": "VendorVerifierToggler",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Uuid of a vendor",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "ff5487b6-72f4-4a7f-bd0f-0abbde78db27"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved solutions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Solutions retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "exam_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "student_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "answer": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No solutions found for this exam",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No solutions found for this exam."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [

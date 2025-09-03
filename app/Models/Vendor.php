@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use App\Constants\VendorContants;
+use App\Models\Traits\UuidModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia, MediaCollections\Models\Media};
 
 class Vendor extends Model implements HasMedia
 {
-    use SoftDeletes, InteractsWithMedia;
+    use SoftDeletes, InteractsWithMedia, UuidModelTrait;
+    
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
