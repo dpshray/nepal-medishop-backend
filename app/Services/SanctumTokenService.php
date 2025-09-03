@@ -36,9 +36,9 @@ class SanctumTokenService
         $this->user = $user = User::select('id','uuid','user_type','name','email','password', 'email_verified_at')->firstWhere('email', $email);
 
         if (!$user->hasVerifiedEmail()) {
-            throw new LoginException('email not verified', 403);
+            throw new LoginException('Email not verified', 403);
         } else if (!$user || !Hash::check($password, $user->password)) {
-            throw new LoginException('Invalid Credentials', 401);
+            throw new LoginException('Username/password does not match', 401);
         }
         return $this;
     }
