@@ -28,4 +28,10 @@ class UserRegisterRequest extends FormRequest
             'password' => 'required|string|min:8|confirmed',
         ];
     }
+
+    public function messages(){
+        return [
+            'email.unique' => 'Email has already been taken.'
+        ];
+    }
 }
