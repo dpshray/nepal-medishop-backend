@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('variants', function (Blueprint $table) {
             $table->id();
+            $table->string('status');
             $table->uuid('uuid');
             $table->foreignId('product_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('volume');
             $table->decimal('price', 10, 2);
             $table->decimal('discounted_price',10,2)->nullable(); // optional if price differs
-            $table->boolean('in_stock')->default(1);
+            $table->unsignedSmallInteger('purchase_limit')->nullable();
+            $table->unsignedMediumInteger('items_in_stock')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
