@@ -149,33 +149,14 @@ class AdminVendorController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successfully retrieved solutions",
+     *         description="Vendor status updated successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Solutions retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="exam_id", type="integer"),
-     *                     @OA\Property(property="student_id", type="integer"),
-     *                     @OA\Property(property="answer", type="string"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time")
-     *                 )
-     *             )
+     *             @OA\Property(property="message", type="string", example="Vendor verification status changed to ACTIVE"),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="No solutions found for this exam",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="No solutions found for this exam.")
-     *         )
-     *     )
      * )
      */
     function toggleVendorVerifiedStatus(Vendor $vendor){
