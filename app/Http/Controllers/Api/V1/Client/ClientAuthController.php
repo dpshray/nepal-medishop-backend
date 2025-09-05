@@ -215,7 +215,7 @@ class ClientAuthController extends ClientController
                     function (User $user, string $password) use($request){
                         if (Hash::check($password, $user->password)) {
                             throw ValidationException::withMessages([
-                                'password' => ['Your new password cannot be the same as your current password.'],
+                                'password' => ['Please choose a different password.'],
                             ]);
                         }
                         $user->forceFill([
