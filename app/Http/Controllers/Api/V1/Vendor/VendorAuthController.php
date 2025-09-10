@@ -21,7 +21,7 @@ class VendorAuthController extends VendorController
      * @OA\Post(
      *     path="/vendor/registration",
      *     summary="Store a vendor",
-     *     description="Save an information of a vendor.",
+     *     description="Registration api of a vendor.",
      *     operationId="StoreVendor",
      *     tags={"Vendor"},
      *     @OA\RequestBody(

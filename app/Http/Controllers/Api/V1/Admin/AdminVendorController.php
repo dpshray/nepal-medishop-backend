@@ -33,8 +33,8 @@ class AdminVendorController extends Controller
      * @OA\Post(
      *     security={{"sanctum": {}}},
      *     path="/admin/vendor",
-     *     summary="Store a vendor",
-     *     description="Save an information of a vendor.",
+     *     summary="Register a vendor by admin",
+     *     description="Save/Register an information of a vendor.",
      *     operationId="StoreVendor",
      *     tags={"Vendor"},
      *     @OA\RequestBody(
