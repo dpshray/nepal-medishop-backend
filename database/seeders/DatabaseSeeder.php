@@ -29,12 +29,12 @@ class DatabaseSeeder extends Seeder
 
 
         $categories = [
-            ['id' => 1, 'title' => 'Pain Relief', 'slug' => str()->slug('Pain Relief')],
-            ['id' => 2, 'title' => 'Antibiotics', 'slug' => str()->slug('Antibiotics')],
-            ['id' => 3, 'title' => 'Vitamins & Supplements', 'slug' => str()->slug('Vitamins & Supplements')],
-            ['id' => 4, 'title' => 'Cough & Cold', 'slug' => str()->slug('Cough & Cold')],
-            ['id' => 5, 'title' => 'Skin Care', 'slug' => str()->slug('Skin Care')],
-            ['id' => 6, 'title' => 'Diabetes Care', 'slug' => str()->slug('Diabetes Care')],
+            ['id' => 1, 'name' => 'Pain Relief', 'slug' => str()->slug('Pain Relief')],
+            ['id' => 2, 'name' => 'Antibiotics', 'slug' => str()->slug('Antibiotics')],
+            ['id' => 3, 'name' => 'Vitamins & Supplements', 'slug' => str()->slug('Vitamins & Supplements')],
+            ['id' => 4, 'name' => 'Cough & Cold', 'slug' => str()->slug('Cough & Cold')],
+            ['id' => 5, 'name' => 'Skin Care', 'slug' => str()->slug('Skin Care')],
+            ['id' => 6, 'name' => 'Diabetes Care', 'slug' => str()->slug('Diabetes Care')],
         ];
         DB::table('categories')->insert($categories);
 
