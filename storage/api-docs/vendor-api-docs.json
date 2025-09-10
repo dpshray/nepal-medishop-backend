@@ -26,7 +26,7 @@
                     "Vendor"
                 ],
                 "summary": "Store a vendor",
-                "description": "Save an information of a vendor.",
+                "description": "Registration api of a vendor.",
                 "operationId": "StoreVendor",
                 "requestBody": {
                     "required": true,

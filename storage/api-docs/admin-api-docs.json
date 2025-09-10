@@ -25,8 +25,8 @@
                 "tags": [
                     "Vendor"
                 ],
-                "summary": "Store a vendor",
-                "description": "Save an information of a vendor.",
+                "summary": "Register a vendor by admin",
+                "description": "Save/Register an information of a vendor.",
                 "operationId": "StoreVendor",
                 "requestBody": {
                     "required": true,
@@ -393,6 +393,72 @@
                 ]
             }
         },
+        "/admin/brand/{slug}": {
+            "get": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Show an active brand",
+                "description": "Show an active brand.",
+                "operationId": "BrandShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of brand",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sun-pharma"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Showing brand",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Showing brand"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "sun-pharma"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Sun Pharma"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/brand/{brand}": {
             "delete": {
                 "tags": [
@@ -455,7 +521,7 @@
                     {
                         "name": "brand",
                         "in": "path",
-                        "description": "An infant id of the belonging user",
+                        "description": "Brand ID of a brand",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -515,6 +581,350 @@
                     }
                 ]
             }
+        },
+        "/admin/category": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get all active category",
+                "description": "Get all active category.",
+                "operationId": "CategoryList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active category lists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Active category lists"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "pfizer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Pfizer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Store a product category",
+                "description": "Store a product category.",
+                "operationId": "StoreCategory",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Neurology"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category create response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category added successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/category/{slug}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Show an active category",
+                "description": "Show an active category.",
+                "operationId": "CategoryShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of category",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "skin-care"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Showing category",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Showing category"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "sun-pharma"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Sun Pharma"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/category/{category}": {
+            "delete": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Delete a category(soft).",
+                "description": "Delete a category(soft).",
+                "operationId": "CategoryDelete",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "ID of the category to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Update category based on ID",
+                "description": "Update category based on ID",
+                "operationId": "CategoryUpdate",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "An infant id of the belonging user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Anesthesiology"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category update response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category updated successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
@@ -525,6 +935,10 @@
         {
             "name": "Brand",
             "description": "Brand"
+        },
+        {
+            "name": "Category",
+            "description": "Category"
         }
     ],
     "components": {
