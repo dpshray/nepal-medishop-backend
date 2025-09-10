@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
+use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -17,4 +18,5 @@ Route::prefix('admin')
         });
         Route::apiResource('brand', AdminBrandController::class);
         Route::apiResource('category', AdminCategoryController::class);
+        Route::apiResource('category.tag', AdminTagController::class)->shallow()->scoped(['category' => 'slug']);
 });

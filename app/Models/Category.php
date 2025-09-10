@@ -23,4 +23,8 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+
+    public function tags(){
+        return $this->hasMany(Tag::class);
+    }
 }

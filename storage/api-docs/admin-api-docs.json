@@ -925,6 +925,370 @@
                     }
                 ]
             }
+        },
+        "/admin/category/{category}/tag": {
+            "get": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Get all active category tag",
+                "description": "Get all active category tag.",
+                "operationId": "TagList",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "Slug of a category",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "vitamins-supplements"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active tag lists of category",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Active tag lists of category : Vitamins & Supplements"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 8
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "vitamin-c"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Vitamin C"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Store a product tag",
+                "description": "Store a product tag.",
+                "operationId": "StoreTag",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "Slug of category",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "skin-care"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Broad Spectrum"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category create response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category added successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/tag/{tag}": {
+            "get": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Show an active tag",
+                "description": "Show an active tag.",
+                "operationId": "TagShow",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "in": "path",
+                        "description": "Slug of tag",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "omega-3"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Showing tag",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Showing tag"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "sun-pharma"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Sun Pharma"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Delete a tag(soft).",
+                "description": "Delete a tag(soft).",
+                "operationId": "TagDelete",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "in": "path",
+                        "description": "ID of the tag to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tag successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tag removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Update tag based on ID",
+                "description": "Update tag based on ID",
+                "operationId": "TagUpdate",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "in": "path",
+                        "description": "ID of a tag",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Anesthesiology"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tag update response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tag updated successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
@@ -939,6 +1303,10 @@
         {
             "name": "Category",
             "description": "Category"
+        },
+        {
+            "name": "Tag",
+            "description": "Tag"
         }
     ],
     "components": {
