@@ -82,7 +82,7 @@ class ClientAuthController extends ClientController
      *     summary="Login Api",
      *     description="Login API(user_type : USER | VENDOR | ADMIN).",
      *     tags={"Authentication"},
-     *     security={{"bearerAuth":{}}},
+     *     security={{"sanctum": {}}}, 
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -159,7 +159,7 @@ class ClientAuthController extends ClientController
     public function logout()
     {
         (new SanctumTokenService())->del();
-        return $this->apiSuccess('You are logged out');
+        return $this->apiSuccess('You are logged out.');
     }
 
     /**
@@ -229,7 +229,7 @@ class ClientAuthController extends ClientController
                 return $this->apiError($e->getMessage(),422);
             }
             if ($status === Password::PasswordReset) {
-                return $this->apiSuccess('password has been reset');
+                return $this->apiSuccess('Your password has been reset.');
             }
             $message = match ($status) {
                 Password::INVALID_USER => 'Invalid user/email',
