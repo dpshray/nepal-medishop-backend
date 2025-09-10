@@ -1,7 +1,10 @@
 <?php
 
+use App\Enums\RouteParamEnum;
+use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
+use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -12,5 +15,6 @@ Route::prefix('admin')
         Route::controller(AdminVendorController::class)->group(function(){
             Route::get('vendor-verified-toggler/{vendor:uuid}', 'toggleVendorVerifiedStatus');
         });
-        Route::apiResource('brand', AdminBrandController::class)->except(['show']);
+        Route::apiResource('brand', AdminBrandController::class);
+        Route::apiResource('category', AdminCategoryController::class);
 });

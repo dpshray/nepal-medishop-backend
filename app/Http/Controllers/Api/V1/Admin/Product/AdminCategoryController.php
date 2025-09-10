@@ -3,26 +3,25 @@
 namespace App\Http\Controllers\Api\V1\Admin\Product;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\BrandStoreRequest;
-use App\Http\Resources\Admin\AdminBrandResource;
-use App\Models\Brand;
+use App\Http\Requests\Admin\CategoryStoreRequest;
+use App\Http\Resources\Admin\AdminCategoryResource;
+use App\Models\Category;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class AdminBrandController extends Controller
+class AdminCategoryController extends Controller
 {
     use ResponseTrait, PaginationTrait;
 
     /**
      * @OA\Get(
      *     security={{"sanctum": {}}},
-     *     path="/admin/brand",
-     *     summary="Get all active brand",
-     *     description="Get all active brand.",
-     *     operationId="BrandList",
-     *     tags={"Brand"},
+     *     path="/admin/category",
+     *     summary="Get all active category",
+     *     description="Get all active category.",
+     *     operationId="CategoryList",
+     *     tags={"Category"},
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -39,9 +38,9 @@ class AdminBrandController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Active brand lists",
+     *         description="Active category lists",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Active brand lists"),
+     *             @OA\Property(property="message", type="string", example="Active category lists"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -63,36 +62,36 @@ class AdminBrandController extends Controller
      *         )
      *     )
      * )
-    */
+     */
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $pagination = Brand::paginate($per_page);
-        $data = $this->makePaginationResponse($pagination, fn($items) => new AdminBrandResource($items))->data;
-        return $this->apiSuccess('Active brand lists', $data);
+        $pagination = Category::paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($items) => new AdminCategoryResource($items))->data;
+        return $this->apiSuccess('Active category lists', $data);
     }
 
     /**
      * @OA\Get(
      *     security={{"sanctum": {}}},
-     *     path="/admin/brand/{slug}",
-     *     summary="Show an active brand",
-     *     description="Show an active brand.",
-     *     operationId="BrandShow",
-     *     tags={"Brand"},
+     *     path="/admin/category/{slug}",
+     *     summary="Show an active category",
+     *     description="Show an active category.",
+     *     operationId="CategoryShow",
+     *     tags={"Category"},
      *     @OA\Parameter(
      *         name="slug",
      *         in="path",
      *         required=true,
-     *         description="Slug of brand",
-     *         @OA\Schema(type="string", example="sun-pharma")
+     *         description="Slug of category",
+     *         @OA\Schema(type="string", example="skin-care")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Showing brand",
+     *         description="Showing category",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Showing brand"),
+     *             @OA\Property(property="message", type="string", example="Showing category"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -105,9 +104,10 @@ class AdminBrandController extends Controller
      *     )
      * )
      */
-    public function show($slug){
-        $brand = Brand::firstWhere('slug',$slug);
-        return $this->apiSuccess('Showing brand', new AdminBrandResource($brand));
+    public function show($slug)
+    {
+        $category = Category::firstWhere('slug', $slug);
+        return $this->apiSuccess('Showing category', new AdminCategoryResource($category));
     }
 
     /**
@@ -116,49 +116,49 @@ class AdminBrandController extends Controller
     /**
      * @OA\Post(
      *     security={{"sanctum": {}}},
-     *     path="/admin/brand",
-     *     summary="Store a product brand",
-     *     description="Store a product brand.",
-     *     operationId="StoreBrand",
-     *     tags={"Brand"},
+     *     path="/admin/category",
+     *     summary="Store a product category",
+     *     description="Store a product category.",
+     *     operationId="StoreCategory",
+     *     tags={"Category"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
      *             required={"name"},
-     *             @OA\Property(property="name", type="string", example="Merck"),
+     *             @OA\Property(property="name", type="string", example="Neurology"),
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Vendor added successfully",
+     *         description="Category create response",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Brand added successfully."),
+     *             @OA\Property(property="message", type="string", example="Category added successfully."),
      *             @OA\Property(property="data", type="object", nullable=true, example=null),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     ),
      * )
      */
-    public function store(BrandStoreRequest $request)
+    public function store(CategoryStoreRequest $request)
     {
-        Brand::create($request->validated());
-        return $this->apiSuccess('Brand added successfully.');
+        Category::create($request->validated());
+        return $this->apiSuccess('Category added successfully.');
     }
 
     /**
      * @OA\Patch(
      *     security={{"sanctum": {}}},
-     *     path="/admin/brand/{brand}",
-     *     summary="Update brand based on ID",
-     *     description="Update brand based on ID",
-     *     operationId="BrandUpdate",
-     *     tags={"Brand"},
+     *     path="/admin/category/{category}",
+     *     summary="Update category based on ID",
+     *     description="Update category based on ID",
+     *     operationId="CategoryUpdate",
+     *     tags={"Category"},
      *     @OA\Parameter(
-     *         name="brand",
+     *         name="category",
      *         in="path",
      *         required=true,
-     *         description="Brand ID of a brand",
+     *         description="An infant id of the belonging user",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\RequestBody(
@@ -167,16 +167,16 @@ class AdminBrandController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 required={"name"},
-     *                 @OA\Property(property="name", type="string", example="Merck")
+     *                 @OA\Property(property="name", type="string", example="Anesthesiology")
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Vendor added successfully",
+     *         description="Category update response",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Brand updated successfully."),
+     *             @OA\Property(property="message", type="string", example="Category updated successfully."),
      *             @OA\Property(property="data", type="object", nullable=true, example=null),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -184,41 +184,41 @@ class AdminBrandController extends Controller
      *   )
      * )
      */
-    public function update(BrandStoreRequest $request, Brand $brand)
+    public function update(CategoryStoreRequest $request, Category $category)
     {
-        $brand->update($request->validated());
-        return $this->apiSuccess('Brand updated successfully.');
+        $category->update($request->validated());
+        return $this->apiSuccess('Category updated successfully.');
     }
 
     /**
      * @OA\Delete(
      *     security={{"sanctum": {}}}, 
-     *     path="/admin/brand/{brand}",
-     *     operationId="BrandDelete",
-     *     tags={"Brand"},
-     *     summary="Delete a brand(soft).",
-     *     description="Delete a brand(soft).",
+     *     path="/admin/category/{category}",
+     *     operationId="CategoryDelete",
+     *     tags={"Category"},
+     *     summary="Delete a category(soft).",
+     *     description="Delete a category(soft).",
      *     @OA\Parameter(
-     *         name="brand",
+     *         name="category",
      *         in="path",
      *         required=true,
-     *         description="ID of the brand to delete",
+     *         description="ID of the category to delete",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Brand successfully deleted",
+     *         description="Category successfully deleted",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="boolean", example=true),
      *             @OA\Property(property="data", type="null", example=null),
-     *             @OA\Property(property="message", type="string", example="Brand removed successfully.")
+     *             @OA\Property(property="message", type="string", example="Category removed successfully.")
      *         )
      *     )
      * )
-    */
-    public function destroy(Brand $brand)
+     */
+    public function destroy(Category $category)
     {
-        $brand->delete();
-        return $this->apiSuccess('Brand removed successfully.');
+        $category->delete();
+        return $this->apiSuccess('Category removed successfully.');
     }
 }

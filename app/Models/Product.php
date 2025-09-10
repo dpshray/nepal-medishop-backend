@@ -12,9 +12,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Product extends Model implements HasMedia
 {
     //
-    use InteractsWithMedia, HasEvents;
-    use SoftDeletes;
-    const MEDIA_NAME = 'product';
+    use InteractsWithMedia, HasEvents, SoftDeletes;
+
+    const PRODUCT_FEATURE = 'PRODUCT_FEATURE';
+    const PRODUCT_GALLERY = 'PRODUCT_GALLERY';
+    
     protected $fillable = [
         'name',
         'slug',
@@ -25,6 +27,7 @@ class Product extends Model implements HasMedia
         'fabric',
         'material',
     ];
+    
     public function categories()
     {
         return $this->belongsToMany(Categories::class, 'product_categories');
@@ -34,10 +37,12 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(Variant::class);
     }
+
     public function cart()
     {
         return $this->hasMany(Cart::class);
     }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::MEDIA_NAME)
