@@ -292,12 +292,139 @@
                     }
                 }
             }
+        },
+        "/get-brand-list": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all active brand",
+                "description": "Get all active brand.",
+                "operationId": "ClientBrandList",
+                "responses": {
+                    "200": {
+                        "description": "List of active brands",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of active brands"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "pfizer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Pfizer"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                    },
+                                                    "is_featured": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "is_popular": {
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/get-category-list": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all active categories",
+                "description": "Get all active categories.",
+                "operationId": "ClientCategoryList",
+                "responses": {
+                    "200": {
+                        "description": "List of active categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of active categories"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "pfizer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Pfizer"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "format": "url",
+                                                        "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
         {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Product",
+            "description": "Product"
         }
     ],
     "components": {

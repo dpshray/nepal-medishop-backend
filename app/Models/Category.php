@@ -24,6 +24,11 @@ class Category extends Model implements HasMedia
         'slug',
     ];
 
+    public function scopeActive($qry)
+    {
+        return $qry->where('status', 1);
+    }
+
     public function products()
     {
         return $this->belongsToMany(Product::class);

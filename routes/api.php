@@ -1,14 +1,5 @@
 <?php
 
-use App\Http\Controllers\V1\Admin\BannerController;
-use App\Http\Controllers\V1\Admin\CategoriesController;
-use App\Http\Controllers\V1\Admin\ProductController;
-use App\Http\Controllers\V1\Admin\UserController;
-use App\Http\Controllers\V1\Auth\AuthController;
-use App\Http\Controllers\V1\Client\CartController;
-use App\Http\Controllers\V1\Client\MainController;
-use App\Http\Middleware\AdminMiddleware;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -20,4 +11,5 @@ Route::prefix('v1')->group(function(){
     require __DIR__ . '/auth.php';
     require __DIR__ . '/admin.php';
     require __DIR__ . '/vendor.php';
+    require __DIR__ . '/client.php';
 });
