@@ -20,8 +20,8 @@ class ClientBrandResource extends JsonResource
             'slug' => $this->slug,
             'name' => $this->name,
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Brand::BRAND_IMAGE)),
-            'is_featured' => $this->is_featured,
-            'is_popular' => $this->is_popular,
+            'is_featured' => (int)$this->is_featured,
+            'is_popular' => (int)$this->is_popular,
         ];
     }
 }
