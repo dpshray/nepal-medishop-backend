@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->string('status');
+            $table->boolean('status')->default(1);
             $table->unsignedBigInteger('added_by');
             $table->foreign('added_by')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('brand_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
