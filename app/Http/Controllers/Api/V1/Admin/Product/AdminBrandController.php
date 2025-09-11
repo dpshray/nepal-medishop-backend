@@ -146,8 +146,20 @@ class AdminBrandController extends Controller
      *                     type="file",
      *                     format="binary",
      *                     description="Brand image"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="is_featured",
+     *                     type="boolean",
+     *                     example=true,
+     *                     description="Indicates if the brand is featured"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="is_popular",
+     *                     type="boolean",
+     *                     example=false,
+     *                     description="Indicates if the brand is popular"
      *                 )
-     *             )
+     *             ),
      *         )
      *     ),
      *     @OA\Response(
@@ -201,6 +213,18 @@ class AdminBrandController extends Controller
      *                     type="string",
      *                     format="binary",
      *                     description="Brand image"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="is_featured",
+     *                     type="boolean",
+     *                     example=true,
+     *                     description="Indicates if the brand is featured"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="is_popular",
+     *                     type="boolean",
+     *                     example=false,
+     *                     description="Indicates if the brand is popular"
      *                 )
      *             )
      *         )
@@ -217,7 +241,7 @@ class AdminBrandController extends Controller
      *     ),
      *   )
      * )
-    */
+     */
     public function update(BrandStoreRequest $request, Brand $brand)
     {
         $brand->update($request->validated());

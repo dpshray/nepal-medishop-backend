@@ -363,6 +363,16 @@
                                         "description": "Brand image",
                                         "type": "file",
                                         "format": "binary"
+                                    },
+                                    "is_featured": {
+                                        "description": "Indicates if the brand is featured",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "is_popular": {
+                                        "description": "Indicates if the brand is popular",
+                                        "type": "boolean",
+                                        "example": false
                                     }
                                 },
                                 "type": "object"
@@ -517,6 +527,16 @@
                                         "description": "Brand image",
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "is_featured": {
+                                        "description": "Indicates if the brand is featured",
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "is_popular": {
+                                        "description": "Indicates if the brand is popular",
+                                        "type": "boolean",
+                                        "example": false
                                     }
                                 },
                                 "type": "object"

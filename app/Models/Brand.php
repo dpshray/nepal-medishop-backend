@@ -20,6 +20,8 @@ class Brand extends Model implements HasMedia
 
     protected $fillable = [
         'name',
+        'is_featured',
+        'is_popular'
     ];
 
     public function scopeActive($qry){

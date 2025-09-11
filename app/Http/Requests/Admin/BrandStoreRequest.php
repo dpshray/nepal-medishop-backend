@@ -27,14 +27,26 @@ class BrandStoreRequest extends FormRequest
             $brand_id = $this->brand->id;
             $rule = [
                 'name' => 'required|max:255|unique:brands,name,' . $brand_id,
+                'is_featured' => 'sometimes|boolean',
+                'is_popular' => 'sometimes|boolean',
                 'image' => 'sometimes|nullable|image|exclude'
             ];
         } else{ #create
             $rule = [
                 'name' => 'required|max:255|unique:brands,name',
+                'is_featured' => 'sometimes|boolean',
+                'is_popular' => 'sometimes|boolean',
                 'image' => 'required|image|exclude'
             ];
         }
         return $rule;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_popular' => filter_var($this->is_popular, FILTER_VALIDATE_BOOLEAN),
+            'is_featured' => filter_var($this->is_featured, FILTER_VALIDATE_BOOLEAN),
+        ]);
     }
 }
