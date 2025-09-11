@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('status');
+            $table->unsignedBigInteger('added_by');
+            $table->foreign('added_by')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('brand_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('slug')->unique();
             $table->string('name');
