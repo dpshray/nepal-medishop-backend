@@ -41,6 +41,7 @@ class AdminBrandController extends Controller
      *         response=200,
      *         description="Active brand lists",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="message", type="string", example="Active brand lists"),
      *             @OA\Property(
      *                 property="data",
@@ -52,23 +53,29 @@ class AdminBrandController extends Controller
      *                         type="object",
      *                         @OA\Property(property="id", type="integer", example=1),
      *                         @OA\Property(property="slug", type="string", example="pfizer"),
-     *                         @OA\Property(property="name", type="string", example="Pfizer")
+     *                         @OA\Property(property="name", type="string", example="Pfizer"),
+     *                         @OA\Property(
+     *                             property="image",
+     *                             type="string",
+     *                             format="url",
+     *                             example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                         )
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=3),
-     *                 @OA\Property(property="total_items", type="integer", example=5)
+     *                 @OA\Property(property="total_page", type="integer", example=1),
+     *                 @OA\Property(property="total_items", type="integer", example=6),
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
-    */
+     */
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $pagination = Brand::paginate($per_page);
-        $data = $this->makePaginationResponse($pagination, fn($items) => new AdminBrandResource($items))->data;
+        $pagination = Brand::with(['media'])->paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($items) => AdminBrandResource::collection($items))->data;
         return $this->apiSuccess('Active brand lists', $data);
     }
 
@@ -98,7 +105,13 @@ class AdminBrandController extends Controller
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=3),
      *                 @OA\Property(property="slug", type="string", example="sun-pharma"),
-     *                 @OA\Property(property="name", type="string", example="Sun Pharma")
+     *                 @OA\Property(property="name", type="string", example="Sun Pharma"),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="url",
+     *                     example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                 )
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -106,7 +119,7 @@ class AdminBrandController extends Controller
      * )
      */
     public function show($slug){
-        $brand = Brand::firstWhere('slug',$slug);
+        $brand = Brand::with('media')->firstWhere('slug',$slug);
         return $this->apiSuccess('Showing brand', new AdminBrandResource($brand));
     }
 
@@ -123,9 +136,18 @@ class AdminBrandController extends Controller
      *     tags={"Brand"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name"},
-     *             @OA\Property(property="name", type="string", example="Merck"),
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"name", "image"},
+     *                 @OA\Property(property="name", type="string", example="Merck"),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="file",
+     *                     format="binary",
+     *                     description="Brand image"
+     *                 )
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -142,12 +164,17 @@ class AdminBrandController extends Controller
      */
     public function store(BrandStoreRequest $request)
     {
-        Brand::create($request->validated());
+        DB::transaction(function () use($request){
+            Brand::create($request->validated())
+                ->addMedia($request->image)
+                ->toMediaCollection(Brand::BRAND_IMAGE);
+        });
+
         return $this->apiSuccess('Brand added successfully.');
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Post(
      *     security={{"sanctum": {}}},
      *     path="/admin/brand/{brand}",
      *     summary="Update brand based on ID",
@@ -164,10 +191,17 @@ class AdminBrandController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
-     *             mediaType="application/json",
+     *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"name"},
-     *                 @OA\Property(property="name", type="string", example="Merck")
+     *                 required={"name","_method"},
+     *                 @OA\Property(property="name", type="string", example="Merck"),
+     *                 @OA\Property(property="_method", type="string", example="patch"),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Brand image"
+     *                 )
      *             )
      *         )
      *     ),
@@ -183,10 +217,13 @@ class AdminBrandController extends Controller
      *     ),
      *   )
      * )
-     */
+    */
     public function update(BrandStoreRequest $request, Brand $brand)
     {
         $brand->update($request->validated());
+        if ($request->hasFile('image')) {
+            $brand->addMedia($request->image)->toMediaCollection(Brand::BRAND_IMAGE);
+        }
         return $this->apiSuccess('Brand updated successfully.');
     }
 

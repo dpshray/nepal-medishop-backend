@@ -5,10 +5,14 @@ namespace App\Models;
 use App\Models\Traits\SlugTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-class Brand extends Model
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+class Brand extends Model implements HasMedia
 {
-    use SlugTrait, SoftDeletes;
+    use SlugTrait, SoftDeletes, InteractsWithMedia;
+
+    const BRAND_IMAGE = 'BRAND_IMAGE';
 
     public $timestamps = false;
 
@@ -17,4 +21,9 @@ class Brand extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(self::BRAND_IMAGE)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));
+    }
 }

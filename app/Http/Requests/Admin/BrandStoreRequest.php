@@ -22,11 +22,19 @@ class BrandStoreRequest extends FormRequest
     public function rules(): array
     {
         $brand_id = null;
-        if ($this->brand) {
+        $rule = [];
+        if ($this->brand) { #edit request
             $brand_id = $this->brand->id;
+            $rule = [
+                'name' => 'required|max:255|unique:brands,name,' . $brand_id,
+                'image' => 'sometimes|nullable|image|exclude'
+            ];
+        } else{ #create
+            $rule = [
+                'name' => 'required|max:255|unique:brands,name',
+                'image' => 'required|image|exclude'
+            ];
         }
-        return [
-            'name' => 'required|max:255|unique:brands,name,' . $brand_id
-        ];
+        return $rule;
     }
 }
