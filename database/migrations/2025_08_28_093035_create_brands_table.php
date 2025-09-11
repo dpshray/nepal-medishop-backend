@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
+            $table->boolean('status')->default(1);
             $table->string('slug')->unique();
             $table->string('name')->unique();
             $table->softDeletes();
