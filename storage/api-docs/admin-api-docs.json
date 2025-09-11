@@ -661,11 +661,16 @@
                                                             },
                                                             "slug": {
                                                                 "type": "string",
-                                                                "example": "pfizer"
+                                                                "example": "pain-relief"
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Pfizer"
+                                                                "example": "Pain Relief"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
                                                             }
                                                         },
                                                         "type": "object"
@@ -677,11 +682,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 2
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 5
+                                                    "example": 6
                                                 }
                                             },
                                             "type": "object"
@@ -713,15 +718,21 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "name"
+                                    "name",
+                                    "image"
                                 ],
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "Neurology"
+                                        "example": "Merck"
+                                    },
+                                    "image": {
+                                        "description": "Category image",
+                                        "type": "file",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -798,15 +809,20 @@
                                             "properties": {
                                                 "id": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 5
                                                 },
                                                 "slug": {
                                                     "type": "string",
-                                                    "example": "sun-pharma"
+                                                    "example": "skin-care"
                                                 },
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "Sun Pharma"
+                                                    "example": "Skin Care"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "format": "url",
+                                                    "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
                                                 }
                                             },
                                             "type": "object"
@@ -830,6 +846,87 @@
             }
         },
         "/admin/category/{category}": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Update category based on ID",
+                "description": "Update category based on ID",
+                "operationId": "CategoryUpdate",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "An infant id of the belonging user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "_method"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Merck"
+                                    },
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "patch"
+                                    },
+                                    "image": {
+                                        "description": "Brand image",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category update response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category updated successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "delete": {
                 "tags": [
                     "Category"
@@ -866,77 +963,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Category removed successfully."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "patch": {
-                "tags": [
-                    "Category"
-                ],
-                "summary": "Update category based on ID",
-                "description": "Update category based on ID",
-                "operationId": "CategoryUpdate",
-                "parameters": [
-                    {
-                        "name": "category",
-                        "in": "path",
-                        "description": "An infant id of the belonging user",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Anesthesiology"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Category update response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category updated successfully."
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "example": null,
-                                            "nullable": true
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
                                         }
                                     },
                                     "type": "object"

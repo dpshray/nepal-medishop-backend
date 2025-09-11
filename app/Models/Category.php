@@ -5,12 +5,17 @@ namespace App\Models;
 use App\Models\Traits\SlugTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Category extends Model
+class Category extends Model implements HasMedia
 {
-    use SlugTrait, SoftDeletes;
+    use SlugTrait, SoftDeletes, InteractsWithMedia;
 
     public $timestamps = false;
+
+    const CATEGORY_IMAGE = 'CATEGORY_IMAGE';
 
     protected $hidden = ['deleted_at'];
 
@@ -26,5 +31,10 @@ class Category extends Model
 
     public function tags(){
         return $this->hasMany(Tag::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(self::CATEGORY_IMAGE)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));
     }
 }

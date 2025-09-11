@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
         // User::factory(10)->create();
         $faker = Faker::create();
         User::create([
+            'id' => 1,
             'uuid' => $faker->uuid(),
             'name' => 'admin',
             'email' => 'admin@gmail.com',
@@ -28,21 +29,23 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         User::create([
-            'uuid' => $faker->uuid(),
-            'name' => 'user00',
-            'email' => 'user@gmail.com',
-            'mobile_number'=>$faker->numerify('98########'),
-            'password' => Hash::make('password123'),
-            'user_type' => UserTypeEnum::USER->value,
-            'email_verified_at' => now(),
-        ]);
-        User::create([
+            'id' => 2,
             'uuid' => $faker->uuid(),
             'name' => 'vendor00',
             'email' => 'vendor@gmail.com',
             'mobile_number'=>$faker->numerify('98########'),
             'password' => Hash::make('password123'),
             'user_type' => UserTypeEnum::VENDOR->value,
+            'email_verified_at' => now(),
+        ]);
+        User::create([
+            'id' => 3,
+            'uuid' => $faker->uuid(),
+            'name' => 'user00',
+            'email' => 'user@gmail.com',
+            'mobile_number'=>$faker->numerify('98########'),
+            'password' => Hash::make('password123'),
+            'user_type' => UserTypeEnum::USER->value,
             'email_verified_at' => now(),
         ]);
     }

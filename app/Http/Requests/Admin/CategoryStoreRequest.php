@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 
 class CategoryStoreRequest extends FormRequest
 {
@@ -22,11 +23,19 @@ class CategoryStoreRequest extends FormRequest
     public function rules(): array
     {
         $category_id = null;
-        if ($this->category) {
+        $rule = [];
+        if ($this->category) { #edit request
             $category_id = $this->category->id;
+            $rule = [
+                'name' => 'required|max:255|unique:categories,name,' . $category_id,
+                'image' => 'sometimes|nullable|image|exclude'
+            ];
+        } else { #create
+            $rule = [
+                'name' => 'required|max:255|unique:categories,name',
+                'image' => 'required|image|exclude'
+            ];
         }
-        return [
-            'name' => 'required|max:255|unique:categories,name,' . $category_id
-        ];
+        return $rule;
     }
 }

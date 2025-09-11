@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminCategoryController extends Controller
 {
@@ -40,6 +41,7 @@ class AdminCategoryController extends Controller
      *         response=200,
      *         description="Active category lists",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="message", type="string", example="Active category lists"),
      *             @OA\Property(
      *                 property="data",
@@ -50,13 +52,19 @@ class AdminCategoryController extends Controller
      *                     @OA\Items(
      *                         type="object",
      *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="slug", type="string", example="pfizer"),
-     *                         @OA\Property(property="name", type="string", example="Pfizer")
+     *                         @OA\Property(property="slug", type="string", example="pain-relief"),
+     *                         @OA\Property(property="name", type="string", example="Pain Relief"),
+     *                         @OA\Property(
+     *                             property="image",
+     *                             type="string",
+     *                             format="url",
+     *                             example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                         )
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=3),
-     *                 @OA\Property(property="total_items", type="integer", example=5)
+     *                 @OA\Property(property="total_page", type="integer", example=2),
+     *                 @OA\Property(property="total_items", type="integer", example=6),
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -66,8 +74,8 @@ class AdminCategoryController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $pagination = Category::paginate($per_page);
-        $data = $this->makePaginationResponse($pagination, fn($items) => new AdminCategoryResource($items))->data;
+        $pagination = Category::with('media')->paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($items) => AdminCategoryResource::collection($items))->data;
         return $this->apiSuccess('Active category lists', $data);
     }
 
@@ -95,9 +103,15 @@ class AdminCategoryController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=3),
-     *                 @OA\Property(property="slug", type="string", example="sun-pharma"),
-     *                 @OA\Property(property="name", type="string", example="Sun Pharma")
+     *                 @OA\Property(property="id", type="integer", example=5),
+     *                 @OA\Property(property="slug", type="string", example="skin-care"),
+     *                 @OA\Property(property="name", type="string", example="Skin Care"),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="url",
+     *                     example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                 )
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -106,7 +120,7 @@ class AdminCategoryController extends Controller
      */
     public function show($slug)
     {
-        $category = Category::firstWhere('slug', $slug);
+        $category = Category::with('media')->firstWhere('slug', $slug);
         return $this->apiSuccess('Showing category', new AdminCategoryResource($category));
     }
 
@@ -123,9 +137,18 @@ class AdminCategoryController extends Controller
      *     tags={"Category"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name"},
-     *             @OA\Property(property="name", type="string", example="Neurology"),
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"name", "image"},
+     *                 @OA\Property(property="name", type="string", example="Merck"),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="file",
+     *                     format="binary",
+     *                     description="Category image"
+     *                 )
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -142,12 +165,16 @@ class AdminCategoryController extends Controller
      */
     public function store(CategoryStoreRequest $request)
     {
-        Category::create($request->validated());
+        DB::transaction(function () use($request){
+            Category::create($request->validated())
+                ->addMedia($request->image)
+                ->toMediaCollection(Category::CATEGORY_IMAGE);
+        });
         return $this->apiSuccess('Category added successfully.');
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Post(
      *     security={{"sanctum": {}}},
      *     path="/admin/category/{category}",
      *     summary="Update category based on ID",
@@ -164,10 +191,17 @@ class AdminCategoryController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
-     *             mediaType="application/json",
+     *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"name"},
-     *                 @OA\Property(property="name", type="string", example="Anesthesiology")
+     *                 required={"name","_method"},
+     *                 @OA\Property(property="name", type="string", example="Merck"),
+     *                 @OA\Property(property="_method", type="string", example="patch"),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Brand image"
+     *                 )
      *             )
      *         )
      *     ),
@@ -187,6 +221,9 @@ class AdminCategoryController extends Controller
     public function update(CategoryStoreRequest $request, Category $category)
     {
         $category->update($request->validated());
+        if ($request->hasFile('image')) {
+            $category->addMedia($request->image)->toMediaCollection(Category::CATEGORY_IMAGE);
+        }
         return $this->apiSuccess('Category updated successfully.');
     }
 
