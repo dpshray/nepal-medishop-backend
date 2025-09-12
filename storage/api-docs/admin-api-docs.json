@@ -62,14 +62,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Active vendor lists",
+                        "description": "Inactive vendor lists",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Active vendor lists"
+                                            "example": "Inactive vendor lists"
                                         },
                                         "data": {
                                             "properties": {
@@ -80,19 +80,24 @@
                                                             "user_uuid": {
                                                                 "type": "string",
                                                                 "format": "uuid",
-                                                                "example": "1e7b7361-ef65-442f-99dd-f06a20490b59"
+                                                                "example": "0c8f6da3-58fb-4f5e-ae52-5494a38a3b0e"
+                                                            },
+                                                            "vendor_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "04546ab6-bb58-41f4-b1d7-e42cbd7ec778"
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Dave Chappelle"
+                                                                "example": "vendor280"
                                                             },
                                                             "mobile_number": {
                                                                 "type": "string",
-                                                                "example": "9452114525"
+                                                                "example": "9870807888"
                                                             },
                                                             "store_name": {
                                                                 "type": "string",
-                                                                "example": "Lilly Lee Store"
+                                                                "example": "Kovacek and Sons"
                                                             }
                                                         },
                                                         "type": "object"
@@ -104,11 +109,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 4
+                                                    "example": 17
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 16
+                                                    "example": 17
                                                 }
                                             },
                                             "type": "object"

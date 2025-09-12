@@ -54,9 +54,10 @@ class AdminVendorController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Active vendor lists",
+     *         description="Inactive vendor lists",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Active vendor lists"),
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Inactive vendor lists"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -65,15 +66,16 @@ class AdminVendorController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="1e7b7361-ef65-442f-99dd-f06a20490b59"),
-     *                         @OA\Property(property="name", type="string", example="Dave Chappelle"),
-     *                         @OA\Property(property="mobile_number", type="string", example="9452114525"),
-     *                         @OA\Property(property="store_name", type="string", example="Lilly Lee Store"),
+     *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="0c8f6da3-58fb-4f5e-ae52-5494a38a3b0e"),
+     *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="04546ab6-bb58-41f4-b1d7-e42cbd7ec778"),
+     *                         @OA\Property(property="name", type="string", example="vendor280"),
+     *                         @OA\Property(property="mobile_number", type="string", example="9870807888"),
+     *                         @OA\Property(property="store_name", type="string", example="Kovacek and Sons"),
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=4),
-     *                 @OA\Property(property="total_items", type="integer", example=16),
+     *                 @OA\Property(property="total_page", type="integer", example=17),
+     *                 @OA\Property(property="total_items", type="integer", example=17),
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -86,7 +88,10 @@ class AdminVendorController extends Controller
         $verified_vendor = $request->query('verified_vendors',1);
         $pagination = User::filterByRole(UserTypeEnum::VENDOR)
             ->with(['vendor'])
-            ->whereRelation('vendor','is_verified', $verified_vendor)
+            ->when(
+                $verified_vendor == 1,
+                fn($qry) => $qry->whereRelation('vendor', 'verified_at','!=',null), 
+                fn($qry) => $qry->whereRelation('vendor', 'verified_at', null))
             ->latest()
             ->paginate($per_page);
         // $items = $pagination->items();
@@ -299,12 +304,14 @@ class AdminVendorController extends Controller
      * )
      */
     function toggleVendorVerifiedStatus(Vendor $vendor){
-        $current_verification_status = $vendor->is_verified;
+        $current_verification_status = $vendor->verified_at != null;
         $message = 'Vendor verification status changed to ACTIVE';
         if ((int)$current_verification_status == 1) {
             $message = 'Vendor verification status changed to INACTIVE';
         }
-        $vendor->update(['is_verified' => !(bool)$current_verification_status]);
+        $vendor->update([
+            'verified_at' => !(bool)$current_verification_status ? now() : null
+        ]);
         return $this->apiSuccess($message);
     }
 }

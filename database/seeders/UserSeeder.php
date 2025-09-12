@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
             $vendor = User::create($new_user)
             ->vendor()
             ->create([
-                'is_verified' => $faker->boolean(50),
+                'verified_at' => $faker->boolean(50) ? now() : null,
                 'store_name' => $faker->company(),
                 'store_description' => $faker->realText(350),
                 'location' => $faker->address(),

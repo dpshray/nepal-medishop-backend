@@ -26,7 +26,7 @@ class Vendor extends Model implements HasMedia
         "bank_name",
         "bank_account_holder_name",
         "bank_account_number",
-        "is_verified"
+        "verified_at"
     ];
 
     const CITIZENSHIP_CARD = 'VENDOR_CITIZENSHIP_CARD';

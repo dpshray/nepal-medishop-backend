@@ -18,6 +18,7 @@ class AdminVendorUserList extends JsonResource
         // return parent::toArray($request);
         return [
             'user_uuid' => $this->uuid,
+            'vendor_uuid' => $this->whenLoaded('vendor', fn() => $this->vendor->uuid),
             'name' => $this->name,
             'mobile_number' => $this->mobile_number,
             'store_name' => $this->whenLoaded('vendor', fn() => $this->vendor->store_name),
