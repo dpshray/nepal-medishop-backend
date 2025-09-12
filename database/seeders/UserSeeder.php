@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
             ->create([
                 'is_verified' => $faker->boolean(50),
                 'store_name' => $faker->company(),
-                'store_description' => $faker->randomHtml(1,2),
+                'store_description' => $faker->realText(350),
                 'location' => $faker->address(),
                 'country' => 'Nepal',
                 'state' => $faker->state(),

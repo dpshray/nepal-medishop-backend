@@ -29,6 +29,10 @@ class Vendor extends Model implements HasMedia
         "is_verified"
     ];
 
+    const CITIZENSHIP_CARD = 'VENDOR_CITIZENSHIP_CARD';
+    const BUSINESS_LICENSE = 'VENDOR_BUSINESS_LICENSE';
+    const TAX_CERTIFICATE = 'VENDOR_TAX_CERTIFICATE';
+
     function user(){
         return $this->belongsTo(User::class);
     }

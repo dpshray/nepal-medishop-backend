@@ -23,6 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
      *
      * @var list<string>
      */
+
     protected $fillable = [
         'uuid',
         'name',
@@ -53,6 +54,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function scopeFilterByRole($query, UserTypeEnum $role){
+        return $query->where('user_type', $role);
     }
 
     public function vendor(){

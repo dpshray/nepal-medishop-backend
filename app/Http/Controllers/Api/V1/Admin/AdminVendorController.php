@@ -2,28 +2,98 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Constants\VendorContants;
-use App\Events\VendorCreateEvent;
+use App\Enums\UserTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\VendorStoreRequest;
+use App\Http\Resources\Admin\Vendor\AdminVendorUserList;
+use App\Http\Resources\Admin\Vendor\AdminVendorUserResource;
 use App\Models\User;
 use App\Models\Vendor;
 use App\Services\VendorService;
+use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AdminVendorController extends Controller
 {
-    use ResponseTrait;
+    use ResponseTrait, PaginationTrait;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/vendor",
+     *     summary="Vendor list",
+     *     description="Get vendor list.",
+     *     operationId="VendorList",
+     *     tags={"Vendor"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Page number of list",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),     
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Items on each page",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="verified_vendors",
+     *         in="query",
+     *         required=false,
+     *         description="Filter vendor lists based on verified/unverified(0 and 1)",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Active vendor lists",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Active vendor lists"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="1e7b7361-ef65-442f-99dd-f06a20490b59"),
+     *                         @OA\Property(property="name", type="string", example="Dave Chappelle"),
+     *                         @OA\Property(property="mobile_number", type="string", example="9452114525"),
+     *                         @OA\Property(property="store_name", type="string", example="Lilly Lee Store"),
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=4),
+     *                 @OA\Property(property="total_items", type="integer", example=16),
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    public function index(Request $request)
     {
-        //
+        $per_page = $request->per_page;
+        $verified_vendor = $request->query('verified_vendors',1);
+        $pagination = User::filterByRole(UserTypeEnum::VENDOR)
+            ->with(['vendor'])
+            ->whereRelation('vendor','is_verified', $verified_vendor)
+            ->latest()
+            ->paginate($per_page);
+        // $items = $pagination->items();
+        // return new AdminVendorUserList($items);
+        $data = $this->makePaginationResponse($pagination, fn($items) => AdminVendorUserList::collection($items))->data;
+        $stat = $verified_vendor == 1 ? 'Active' : 'Inactive';
+        return $this->apiSuccess("$stat vendor lists", $data);
     }
 
     /**
@@ -99,7 +169,7 @@ class AdminVendorController extends Controller
      *         )
      *     )
      * )
-     */
+    */
     public function store(VendorStoreRequest $request)
     {
         DB::transaction(function () use($request){
@@ -111,9 +181,78 @@ class AdminVendorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/vendor/{uuid}",
+     *     summary="Vendor user show",
+     *     description="Vendor user show.",
+     *     operationId="VendorShow",
+     *     tags={"Vendor"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=false,
+     *         description="Vendor user uuid",
+     *         @OA\Schema(type="string", example="c80dbce7-a3b5-476f-a618-4f59d4c8bdae")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vendor user detail",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Vendor user detail"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="name", type="string", example="Dave Chappelle"),
+     *                 @OA\Property(property="email", type="string", example="dev.chappelle@mailinator.com"),
+     *                 @OA\Property(property="mobile_number", type="string", example="9452114525"),
+     *                 @OA\Property(
+     *                     property="vendor_details",
+     *                     type="object",
+     *                     @OA\Property(property="is_verified", type="boolean", example=true),
+     *                     @OA\Property(property="store_name", type="string", example="Lilly Lee Store"),
+     *                     @OA\Property(property="store_description", type="string", example="Lilly Lee Store Description"),
+     *                     @OA\Property(property="location", type="string", example="Maharajgunj"),
+     *                     @OA\Property(property="country", type="string", example="Nepal"),
+     *                     @OA\Property(property="state", type="string", example="Bagmati Province"),
+     *                     @OA\Property(property="district", type="string", example="Kathmandu"),
+     *                     @OA\Property(property="municipality", type="string", example="Budhanilkantha Municipality"),
+     *                     @OA\Property(property="postal_code", type="string", example="4528"),
+     *                     @OA\Property(property="bank_name", type="string", example="Laxmi Sunrise"),
+     *                     @OA\Property(property="bank_account_holder_name", type="string", example="Laxmi Thapa"),
+     *                     @OA\Property(property="bank_account_number", type="string", example="21547741201300156000"),
+     *                     @OA\Property(
+     *                         property="documents",
+     *                         type="object",
+     *                         @OA\Property(
+     *                             property="citizenship_card",
+     *                             type="array",
+     *                             @OA\Items(type="string", format="url", example="http://127.0.0.1:8000/storage/93/meadow-16044_1920.jpg")
+     *                         ),
+     *                         @OA\Property(
+     *                             property="tax_certificate",
+     *                             type="array",
+     *                             @OA\Items(type="string", format="url", example="http://127.0.0.1:8000/storage/95/lucas-k-wQLAGv4_OYs-unsplash.jpg")
+     *                         ),
+     *                         @OA\Property(
+     *                             property="business_license",
+     *                             type="array",
+     *                             @OA\Items(type="string", format="url", example="http://127.0.0.1:8000/storage/91/animal-4855514_1920.jpg")
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    public function show($uuid)
     {
-        //
+        $user = User::with(['vendor' => ['media']])->firstWhere('uuid', $uuid);
+        $user = new AdminVendorUserResource($user);
+        return $this->apiSuccess('Vendor user detail', $user);
     }
 
     /**

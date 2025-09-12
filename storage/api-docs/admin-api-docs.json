@@ -21,6 +21,115 @@
     ],
     "paths": {
         "/admin/vendor": {
+            "get": {
+                "tags": [
+                    "Vendor"
+                ],
+                "summary": "Vendor list",
+                "description": "Get vendor list.",
+                "operationId": "VendorList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "verified_vendors",
+                        "in": "query",
+                        "description": "Filter vendor lists based on verified/unverified(0 and 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active vendor lists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Active vendor lists"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "user_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "1e7b7361-ef65-442f-99dd-f06a20490b59"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Dave Chappelle"
+                                                            },
+                                                            "mobile_number": {
+                                                                "type": "string",
+                                                                "example": "9452114525"
+                                                            },
+                                                            "store_name": {
+                                                                "type": "string",
+                                                                "example": "Lilly Lee Store"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 16
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Vendor"
@@ -165,6 +274,154 @@
                                             "type": "object",
                                             "example": null,
                                             "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/vendor/{uuid}": {
+            "get": {
+                "tags": [
+                    "Vendor"
+                ],
+                "summary": "Vendor user show",
+                "description": "Vendor user show.",
+                "operationId": "VendorShow",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Vendor user uuid",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "c80dbce7-a3b5-476f-a618-4f59d4c8bdae"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendor user detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor user detail"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Dave Chappelle"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "dev.chappelle@mailinator.com"
+                                                },
+                                                "mobile_number": {
+                                                    "type": "string",
+                                                    "example": "9452114525"
+                                                },
+                                                "vendor_details": {
+                                                    "properties": {
+                                                        "is_verified": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "store_name": {
+                                                            "type": "string",
+                                                            "example": "Lilly Lee Store"
+                                                        },
+                                                        "store_description": {
+                                                            "type": "string",
+                                                            "example": "Lilly Lee Store Description"
+                                                        },
+                                                        "location": {
+                                                            "type": "string",
+                                                            "example": "Maharajgunj"
+                                                        },
+                                                        "country": {
+                                                            "type": "string",
+                                                            "example": "Nepal"
+                                                        },
+                                                        "state": {
+                                                            "type": "string",
+                                                            "example": "Bagmati Province"
+                                                        },
+                                                        "district": {
+                                                            "type": "string",
+                                                            "example": "Kathmandu"
+                                                        },
+                                                        "municipality": {
+                                                            "type": "string",
+                                                            "example": "Budhanilkantha Municipality"
+                                                        },
+                                                        "postal_code": {
+                                                            "type": "string",
+                                                            "example": "4528"
+                                                        },
+                                                        "bank_name": {
+                                                            "type": "string",
+                                                            "example": "Laxmi Sunrise"
+                                                        },
+                                                        "bank_account_holder_name": {
+                                                            "type": "string",
+                                                            "example": "Laxmi Thapa"
+                                                        },
+                                                        "bank_account_number": {
+                                                            "type": "string",
+                                                            "example": "21547741201300156000"
+                                                        },
+                                                        "documents": {
+                                                            "properties": {
+                                                                "citizenship_card": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string",
+                                                                        "format": "url",
+                                                                        "example": "http://127.0.0.1:8000/storage/93/meadow-16044_1920.jpg"
+                                                                    }
+                                                                },
+                                                                "tax_certificate": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string",
+                                                                        "format": "url",
+                                                                        "example": "http://127.0.0.1:8000/storage/95/lucas-k-wQLAGv4_OYs-unsplash.jpg"
+                                                                    }
+                                                                },
+                                                                "business_license": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string",
+                                                                        "format": "url",
+                                                                        "example": "http://127.0.0.1:8000/storage/91/animal-4855514_1920.jpg"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "success": {
                                             "type": "boolean",
