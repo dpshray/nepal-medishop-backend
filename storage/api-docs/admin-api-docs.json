@@ -900,6 +900,60 @@
                 ]
             }
         },
+        "/admin/toggle-brand-status/{brand}": {
+            "get": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Toggle brand status",
+                "description": "Toggle brand status.",
+                "operationId": "BrandStatusToggle",
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "path",
+                        "description": "Slug of brand",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sunovion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Brand status changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Brand status changed to ACTIVE"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/category": {
             "get": {
                 "tags": [
@@ -1275,6 +1329,60 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Category removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/toggle-category-status/{category}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Toggle category status",
+                "description": "Toggle category status.",
+                "operationId": "CategoryStatusToggle",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "Slug of category",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "kidney-liver-care"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category status changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category status changed to ACTIVE"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"

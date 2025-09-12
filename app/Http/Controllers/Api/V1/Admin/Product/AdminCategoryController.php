@@ -276,4 +276,44 @@ class AdminCategoryController extends Controller
         $category->delete();
         return $this->apiSuccess('Category removed successfully.');
     }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/toggle-category-status/{category}",
+     *     summary="Toggle category status",
+     *     description="Toggle category status.",
+     *     operationId="CategoryStatusToggle",
+     *     tags={"Category"},
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of category",
+     *         @OA\Schema(type="string", example="kidney-liver-care")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category status changed successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Category status changed to ACTIVE"),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function statusToggler(Category $category)
+    {
+        $current_status = (int)$category->status;
+        $message = 'Category status changed to ACTIVE';
+        if ($current_status == 1) {
+            $message = 'Category status changed to INACTIVE';
+        }
+        $category->update([
+            'status' => !$current_status
+        ]);
+        return $this->apiSuccess($message);
+    }
 }

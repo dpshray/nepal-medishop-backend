@@ -293,4 +293,43 @@ class AdminBrandController extends Controller
         $brand->delete();
         return $this->apiSuccess('Brand removed successfully.');
     }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/toggle-brand-status/{brand}",
+     *     summary="Toggle brand status",
+     *     description="Toggle brand status.",
+     *     operationId="BrandStatusToggle",
+     *     tags={"Brand"},
+     *     @OA\Parameter(
+     *         name="brand",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of brand",
+     *         @OA\Schema(type="string", example="sunovion")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Brand status changed successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Brand status changed to ACTIVE"),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function statusToggler(Brand $brand){
+        $current_status = (int)$brand->status;
+        $message = 'Brand status changed to ACTIVE';
+        if ($current_status == 1) {
+            $message = 'Brand status changed to INACTIVE';
+        }
+        $brand->update([
+            'status' => !$current_status
+        ]);
+        return $this->apiSuccess($message);
+    }
 }
