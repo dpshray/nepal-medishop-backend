@@ -90,80 +90,80 @@ class DatabaseSeeder extends Seeder
 
         $tags = [
             // Pain Relief (Category 1)
-            ['id' => 1, 'category_id' => 1, 'name' => 'Paracetamol', 'slug' => str()->slug('Paracetamol')],
-            ['id' => 2, 'category_id' => 1, 'name' => 'Ibuprofen', 'slug' => str()->slug('Ibuprofen')],
-            ['id' => 3, 'category_id' => 1, 'name' => 'Muscle Relaxant', 'slug' => str()->slug('Muscle Relaxant')],
-            ['id' => 4, 'category_id' => 1, 'name' => 'Aspirin', 'slug' => str()->slug('Aspirin')],
-            ['id' => 5, 'category_id' => 1, 'name' => 'Naproxen', 'slug' => str()->slug('Naproxen')],
+            ['id' => 1, 'name' => 'Paracetamol', 'slug' => str()->slug('Paracetamol')],
+            ['id' => 2, 'name' => 'Ibuprofen', 'slug' => str()->slug('Ibuprofen')],
+            ['id' => 3, 'name' => 'Muscle Relaxant', 'slug' => str()->slug('Muscle Relaxant')],
+            ['id' => 4, 'name' => 'Aspirin', 'slug' => str()->slug('Aspirin')],
+            ['id' => 5, 'name' => 'Naproxen', 'slug' => str()->slug('Naproxen')],
 
             // Antibiotics (Category 2)
-            ['id' => 6, 'category_id' => 2, 'name' => 'Amoxicillin', 'slug' => str()->slug('Amoxicillin')],
-            ['id' => 7, 'category_id' => 2, 'name' => 'Azithromycin', 'slug' => str()->slug('Azithromycin')],
-            ['id' => 8, 'category_id' => 2, 'name' => 'Ciprofloxacin', 'slug' => str()->slug('Ciprofloxacin')],
-            ['id' => 9, 'category_id' => 2, 'name' => 'Doxycycline', 'slug' => str()->slug('Doxycycline')],
-            ['id' => 10, 'category_id' => 2, 'name' => 'Levofloxacin', 'slug' => str()->slug('Levofloxacin')],
+            ['id' => 6, 'name' => 'Amoxicillin', 'slug' => str()->slug('Amoxicillin')],
+            ['id' => 7, 'name' => 'Azithromycin', 'slug' => str()->slug('Azithromycin')],
+            ['id' => 8, 'name' => 'Ciprofloxacin', 'slug' => str()->slug('Ciprofloxacin')],
+            ['id' => 9, 'name' => 'Doxycycline', 'slug' => str()->slug('Doxycycline')],
+            ['id' => 10, 'name' => 'Levofloxacin', 'slug' => str()->slug('Levofloxacin')],
 
             // Vitamins & Supplements (Category 3)
-            ['id' => 11, 'category_id' => 3, 'name' => 'Vitamin C', 'slug' => str()->slug('Vitamin C')],
-            ['id' => 12, 'category_id' => 3, 'name' => 'Multivitamin', 'slug' => str()->slug('Multivitamin')],
-            ['id' => 13, 'category_id' => 3, 'name' => 'Calcium', 'slug' => str()->slug('Calcium')],
-            ['id' => 14, 'category_id' => 3, 'name' => 'Omega-3', 'slug' => str()->slug('Omega-3')],
-            ['id' => 15, 'category_id' => 3, 'name' => 'Vitamin D', 'slug' => str()->slug('Vitamin D')],
+            ['id' => 11, 'name' => 'Vitamin C', 'slug' => str()->slug('Vitamin C')],
+            ['id' => 12, 'name' => 'Multivitamin', 'slug' => str()->slug('Multivitamin')],
+            ['id' => 13, 'name' => 'Calcium', 'slug' => str()->slug('Calcium')],
+            ['id' => 14, 'name' => 'Omega-3', 'slug' => str()->slug('Omega-3')],
+            ['id' => 15, 'name' => 'Vitamin D', 'slug' => str()->slug('Vitamin D')],
 
             // Cough & Cold (Category 4)
-            ['id' => 16, 'category_id' => 4, 'name' => 'Syrup', 'slug' => str()->slug('Syrup')],
-            ['id' => 17, 'category_id' => 4, 'name' => 'Lozenges', 'slug' => str()->slug('Lozenges')],
-            ['id' => 18, 'category_id' => 4, 'name' => 'Decongestant', 'slug' => str()->slug('Decongestant')],
-            ['id' => 19, 'category_id' => 4, 'name' => 'Antihistamine', 'slug' => str()->slug('Antihistamine')],
-            ['id' => 20, 'category_id' => 4, 'name' => 'Nasal Spray', 'slug' => str()->slug('Nasal Spray')],
+            ['id' => 16, 'name' => 'Syrup', 'slug' => str()->slug('Syrup')],
+            ['id' => 17, 'name' => 'Lozenges', 'slug' => str()->slug('Lozenges')],
+            ['id' => 18, 'name' => 'Decongestant', 'slug' => str()->slug('Decongestant')],
+            ['id' => 19, 'name' => 'Antihistamine', 'slug' => str()->slug('Antihistamine')],
+            ['id' => 20, 'name' => 'Nasal Spray', 'slug' => str()->slug('Nasal Spray')],
 
             // Skin Care (Category 5)
-            ['id' => 21, 'category_id' => 5, 'name' => 'Anti-fungal', 'slug' => str()->slug('Anti-fungal')],
-            ['id' => 22, 'category_id' => 5, 'name' => 'Acne Treatment', 'slug' => str()->slug('Acne Treatment')],
-            ['id' => 23, 'category_id' => 5, 'name' => 'Moisturizer', 'slug' => str()->slug('Moisturizer')],
-            ['id' => 24, 'category_id' => 5, 'name' => 'Sunscreen', 'slug' => str()->slug('Sunscreen')],
-            ['id' => 25, 'category_id' => 5, 'name' => 'Anti-aging', 'slug' => str()->slug('Anti-aging')],
+            ['id' => 21, 'name' => 'Anti-fungal', 'slug' => str()->slug('Anti-fungal')],
+            ['id' => 22, 'name' => 'Acne Treatment', 'slug' => str()->slug('Acne Treatment')],
+            ['id' => 23, 'name' => 'Moisturizer', 'slug' => str()->slug('Moisturizer')],
+            ['id' => 24, 'name' => 'Sunscreen', 'slug' => str()->slug('Sunscreen')],
+            ['id' => 25, 'name' => 'Anti-aging', 'slug' => str()->slug('Anti-aging')],
 
             // Diabetes Care (Category 6)
-            ['id' => 26, 'category_id' => 6, 'name' => 'Insulin', 'slug' => str()->slug('Insulin')],
-            ['id' => 27, 'category_id' => 6, 'name' => 'Glucose Monitor', 'slug' => str()->slug('Glucose Monitor')],
-            ['id' => 28, 'category_id' => 6, 'name' => 'Metformin', 'slug' => str()->slug('Metformin')],
-            ['id' => 29, 'category_id' => 6, 'name' => 'Test Strips', 'slug' => str()->slug('Test Strips')],
-            ['id' => 30, 'category_id' => 6, 'name' => 'Sitagliptin', 'slug' => str()->slug('Sitagliptin')],
+            ['id' => 26, 'name' => 'Insulin', 'slug' => str()->slug('Insulin')],
+            ['id' => 27, 'name' => 'Glucose Monitor', 'slug' => str()->slug('Glucose Monitor')],
+            ['id' => 28, 'name' => 'Metformin', 'slug' => str()->slug('Metformin')],
+            ['id' => 29, 'name' => 'Test Strips', 'slug' => str()->slug('Test Strips')],
+            ['id' => 30, 'name' => 'Sitagliptin', 'slug' => str()->slug('Sitagliptin')],
 
             // Heart Care (Category 7)
-            ['id' => 31, 'category_id' => 7, 'name' => 'Statins', 'slug' => str()->slug('Statins')],
-            ['id' => 32, 'category_id' => 7, 'name' => 'Beta Blockers', 'slug' => str()->slug('Beta Blockers')],
-            ['id' => 33, 'category_id' => 7, 'name' => 'ACE Inhibitors', 'slug' => str()->slug('ACE Inhibitors')],
+            ['id' => 31, 'name' => 'Statins', 'slug' => str()->slug('Statins')],
+            ['id' => 32, 'name' => 'Beta Blockers', 'slug' => str()->slug('Beta Blockers')],
+            ['id' => 33, 'name' => 'ACE Inhibitors', 'slug' => str()->slug('ACE Inhibitors')],
 
             // Digestive Health (Category 8)
-            ['id' => 34, 'category_id' => 8, 'name' => 'Antacids', 'slug' => str()->slug('Antacids')],
-            ['id' => 35, 'category_id' => 8, 'name' => 'Probiotics', 'slug' => str()->slug('Probiotics')],
+            ['id' => 34, 'name' => 'Antacids', 'slug' => str()->slug('Antacids')],
+            ['id' => 35, 'name' => 'Probiotics', 'slug' => str()->slug('Probiotics')],
 
             // Eye Care (Category 9)
-            ['id' => 36, 'category_id' => 9, 'name' => 'Eye Drops', 'slug' => str()->slug('Eye Drops')],
-            ['id' => 37, 'category_id' => 9, 'name' => 'Lubricating Drops', 'slug' => str()->slug('Lubricating Drops')],
+            ['id' => 36, 'name' => 'Eye Drops', 'slug' => str()->slug('Eye Drops')],
+            ['id' => 37, 'name' => 'Lubricating Drops', 'slug' => str()->slug('Lubricating Drops')],
 
             // Ear, Nose & Throat (Category 10)
-            ['id' => 38, 'category_id' => 10, 'name' => 'Ear Drops', 'slug' => str()->slug('Ear Drops')],
-            ['id' => 39, 'category_id' => 10, 'name' => 'Throat Spray', 'slug' => str()->slug('Throat Spray')],
+            ['id' => 38, 'name' => 'Ear Drops', 'slug' => str()->slug('Ear Drops')],
+            ['id' => 39, 'name' => 'Throat Spray', 'slug' => str()->slug('Throat Spray')],
 
             // Immunity Boosters (Category 11)
-            ['id' => 40, 'category_id' => 11, 'name' => 'Herbal Supplements', 'slug' => str()->slug('Herbal Supplements')],
-            ['id' => 41, 'category_id' => 11, 'name' => 'Vitamin B Complex', 'slug' => str()->slug('Vitamin B Complex')],
+            ['id' => 40, 'name' => 'Herbal Supplements', 'slug' => str()->slug('Herbal Supplements')],
+            ['id' => 41, 'name' => 'Vitamin B Complex', 'slug' => str()->slug('Vitamin B Complex')],
 
             // Neurological Care (Category 12)
-            ['id' => 42, 'category_id' => 12, 'name' => 'Pain Relievers', 'slug' => str()->slug('Pain Relievers')],
+            ['id' => 42, 'name' => 'Pain Relievers', 'slug' => str()->slug('Pain Relievers')],
 
             // Weight Management (Category 13)
-            ['id' => 43, 'category_id' => 13, 'name' => 'Fat Burners', 'slug' => str()->slug('Fat Burners')],
+            ['id' => 43, 'name' => 'Fat Burners', 'slug' => str()->slug('Fat Burners')],
 
             // Hormonal Care (Category 14)
-            ['id' => 44, 'category_id' => 14, 'name' => 'Thyroid Supplements', 'slug' => str()->slug('Thyroid Supplements')],
+            ['id' => 44, 'name' => 'Thyroid Supplements', 'slug' => str()->slug('Thyroid Supplements')],
 
             // Kidney & Liver Care (Category 15)
-            ['id' => 45, 'category_id' => 15, 'name' => 'Liver Detox', 'slug' => str()->slug('Liver Detox')],
-            ['id' => 46, 'category_id' => 15, 'name' => 'Kidney Support', 'slug' => str()->slug('Kidney Support')],
+            ['id' => 45, 'name' => 'Liver Detox', 'slug' => str()->slug('Liver Detox')],
+            ['id' => 46, 'name' => 'Kidney Support', 'slug' => str()->slug('Kidney Support')],
         ];
 
         DB::table('tags')->insert($tags);

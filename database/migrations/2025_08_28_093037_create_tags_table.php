@@ -14,11 +14,8 @@ return new class extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->boolean('status')->default(1);
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->string('name');
-            $table->unique(['category_id','slug']);
             $table->softDeletes();
         });
     }
