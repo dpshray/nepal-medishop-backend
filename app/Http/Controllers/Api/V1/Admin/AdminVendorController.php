@@ -49,7 +49,7 @@ class AdminVendorController extends Controller
      *         name="verified_vendors",
      *         in="query",
      *         required=false,
-     *         description="Filter vendor lists based on verified/unverified(0 and 1)",
+     *         description="Filter vendor lists based on verified/unverified(1->verified and 0->unverified)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
@@ -97,7 +97,7 @@ class AdminVendorController extends Controller
         // $items = $pagination->items();
         // return new AdminVendorUserList($items);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminVendorUserList::collection($items))->data;
-        $stat = $verified_vendor == 1 ? 'Active' : 'Inactive';
+        $stat = $verified_vendor == 1 ? 'Verified' : 'Unverified';
         return $this->apiSuccess("$stat vendor lists", $data);
     }
 

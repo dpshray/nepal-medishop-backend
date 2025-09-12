@@ -52,7 +52,7 @@
                     {
                         "name": "verified_vendors",
                         "in": "query",
-                        "description": "Filter vendor lists based on verified/unverified(0 and 1)",
+                        "description": "Filter vendor lists based on verified/unverified(1->verified and 0->unverified)",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -505,8 +505,8 @@
                 "tags": [
                     "Brand"
                 ],
-                "summary": "Get all active brand",
-                "description": "Get all active brand.",
+                "summary": "Get all active/inactive brand",
+                "description": "Get all active/inactive brand.",
                 "operationId": "BrandList",
                 "parameters": [
                     {
@@ -523,6 +523,16 @@
                         "name": "per_page",
                         "in": "query",
                         "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Show active/inactive brands(values: 0 and 1)",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -895,8 +905,8 @@
                 "tags": [
                     "Category"
                 ],
-                "summary": "Get all active category",
-                "description": "Get all active category.",
+                "summary": "Get all active/inactive category",
+                "description": "Get all active/inactive category.",
                 "operationId": "CategoryList",
                 "parameters": [
                     {
@@ -913,6 +923,26 @@
                         "name": "per_page",
                         "in": "query",
                         "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Show active/inactive categories(values: 0 and 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Show active/inactive categories(values: 0 and 1)",
                         "required": false,
                         "schema": {
                             "type": "integer",

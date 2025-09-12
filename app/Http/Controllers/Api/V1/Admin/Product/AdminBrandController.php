@@ -19,8 +19,8 @@ class AdminBrandController extends Controller
      * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/admin/brand",
-     *     summary="Get all active brand",
-     *     description="Get all active brand.",
+     *     summary="Get all active/inactive brand",
+     *     description="Get all active/inactive brand.",
      *     operationId="BrandList",
      *     tags={"Brand"},
      *     @OA\Parameter(
@@ -35,6 +35,13 @@ class AdminBrandController extends Controller
      *         in="query",
      *         required=false,
      *         description="Items on each page",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         required=false,
+     *         description="Show active/inactive brands(values: 0 and 1)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
@@ -74,9 +81,13 @@ class AdminBrandController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $pagination = Brand::with(['media'])->paginate($per_page);
+        $status = $request->query('status') == 1 ? 1 : 0;
+        $pagination = Brand::with(['media'])
+            ->where('status', $status)
+            ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminBrandResource::collection($items))->data;
-        return $this->apiSuccess('Active brand lists', $data);
+        $msg = $status == 1 ? 'Active' : 'Inactive';
+        return $this->apiSuccess("$msg brand lists", $data);
     }
 
     /**

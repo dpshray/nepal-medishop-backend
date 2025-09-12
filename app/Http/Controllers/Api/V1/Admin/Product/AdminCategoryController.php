@@ -19,8 +19,8 @@ class AdminCategoryController extends Controller
      * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/admin/category",
-     *     summary="Get all active category",
-     *     description="Get all active category.",
+     *     summary="Get all active/inactive category",
+     *     description="Get all active/inactive category.",
      *     operationId="CategoryList",
      *     tags={"Category"},
      *     @OA\Parameter(
@@ -35,6 +35,20 @@ class AdminCategoryController extends Controller
      *         in="query",
      *         required=false,
      *         description="Items on each page",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         required=false,
+     *         description="Show active/inactive categories(values: 0 and 1)",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         required=false,
+     *         description="Show active/inactive categories(values: 0 and 1)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
@@ -74,9 +88,13 @@ class AdminCategoryController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $pagination = Category::with('media')->paginate($per_page);
+        $status = $request->query('status') == 1 ? 1 : 0;
+        $pagination = Category::with('media')
+            ->where('status', $status)
+            ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminCategoryResource::collection($items))->data;
-        return $this->apiSuccess('Active category lists', $data);
+        $msg = $status == 1 ? 'Active' : 'Inactive';
+        return $this->apiSuccess("$msg category lists", $data);
     }
 
     /**
