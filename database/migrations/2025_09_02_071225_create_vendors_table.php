@@ -15,7 +15,6 @@ return new class extends Migration
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->boolean('is_verified')->default(false);
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('store_name');
@@ -29,6 +28,7 @@ return new class extends Migration
             $table->string('bank_name');
             $table->string('bank_account_holder_name');
             $table->string('bank_account_number');
+            $table->timestamp('verified_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
