@@ -2,10 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserTypeEnum;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,10 +18,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        info('Removing all previous images...');
+        $path = storage_path('app/public');
+        $directories = File::directories($path);
+        foreach ($directories as $directory) {
+            File::deleteDirectory($directory);
+        }
+        info('Images removed');
+
+        $this->essentialsSeeders();
+
         $this->call([
             UserSeeder::class,
             // ProductSeeder::class,
         ]);
+    }
+
+    private function essentialsSeeders(){
         $brands = [
             ['id' => 1, 'name' => 'Pfizer', 'slug' => str()->slug('Pfizer', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
             ['id' => 2, 'name' => 'Cipla', 'slug' => str()->slug('Cipla', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
@@ -150,5 +167,27 @@ class DatabaseSeeder extends Seeder
         ];
 
         DB::table('tags')->insert($tags);
+
+        $faker = Faker::create();
+        User::create([
+            'id' => UserTypeEnum::ADMIN->value,
+            'uuid' => $faker->uuid(),
+            'name' => 'admin',
+            'email' => 'admin@gmail.com',
+            'mobile_number' => $faker->numerify('98########'),
+            'password' => Hash::make('password123'),
+            'user_type' => UserTypeEnum::ADMIN->value,
+            'email_verified_at' => now(),
+        ]);
+        User::create([
+            'id' => UserTypeEnum::USER->value,
+            'uuid' => $faker->uuid(),
+            'name' => 'user00',
+            'email' => 'user@gmail.com',
+            'mobile_number' => $faker->numerify('98########'),
+            'password' => Hash::make('password123'),
+            'user_type' => UserTypeEnum::USER->value,
+            'email_verified_at' => now(),
+        ]);
     }
 }
