@@ -41,7 +41,7 @@ class AdminBrandController extends Controller
      *         name="status",
      *         in="query",
      *         required=false,
-     *         description="Show active/inactive brands(values: 0 and 1)",
+     *         description="Toggle active/inactive brands(values: 0 and 1)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
