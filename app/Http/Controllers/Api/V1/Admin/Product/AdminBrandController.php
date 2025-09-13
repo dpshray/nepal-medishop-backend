@@ -81,7 +81,7 @@ class AdminBrandController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $status = $request->query('status') == 1 ? 1 : 0;
+        $status = $request->query('status',1) == 1 ? 1 : 0;
         $pagination = Brand::with(['media'])
             ->where('status', $status)
             ->paginate($per_page);

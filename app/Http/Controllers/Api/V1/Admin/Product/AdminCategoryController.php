@@ -44,13 +44,6 @@ class AdminCategoryController extends Controller
      *         description="Show active/inactive categories(values: 0 and 1)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         required=false,
-     *         description="Show active/inactive categories(values: 0 and 1)",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Active category lists",
@@ -88,7 +81,7 @@ class AdminCategoryController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $status = $request->query('status') == 1 ? 1 : 0;
+        $status = $request->query('status',1) == 1 ? 1 : 0;
         $pagination = Category::with('media')
             ->where('status', $status)
             ->paginate($per_page);
