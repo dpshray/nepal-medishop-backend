@@ -532,7 +532,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "Show active/inactive brands(values: 0 and 1)",
+                        "description": "Toggle active/inactive brands(values: 0 and 1)",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -986,17 +986,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "Show active/inactive categories(values: 0 and 1)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "description": "Show active/inactive categories(values: 0 and 1)",
+                        "description": "Toggle active/inactive categories(values: 0 and 1)",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -1398,25 +1388,15 @@
                 ]
             }
         },
-        "/admin/category/{category}/tag": {
+        "/admin/tag": {
             "get": {
                 "tags": [
                     "Tag"
                 ],
-                "summary": "Get all active category tag",
-                "description": "Get all active category tag.",
+                "summary": "Get all active/inactive tag",
+                "description": "Get all active/inactive tag.",
                 "operationId": "TagList",
                 "parameters": [
-                    {
-                        "name": "category",
-                        "in": "path",
-                        "description": "Slug of a category",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "vitamins-supplements"
-                        }
-                    },
                     {
                         "name": "page",
                         "in": "query",
@@ -1436,18 +1416,28 @@
                             "type": "integer",
                             "example": 1
                         }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Toggle active/inactive tags(values: 0 and 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Active tag lists of category",
+                        "description": "Active/Inactive tag list",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Active tag lists of category : Vitamins & Supplements"
+                                            "example": "Active tag lists"
                                         },
                                         "data": {
                                             "properties": {
@@ -1510,18 +1500,6 @@
                 "summary": "Store a product tag",
                 "description": "Store a product tag.",
                 "operationId": "StoreTag",
-                "parameters": [
-                    {
-                        "name": "category",
-                        "in": "path",
-                        "description": "Slug of category",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "skin-care"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1543,14 +1521,14 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Category create response",
+                        "description": "Tag create response",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Category added successfully."
+                                            "example": "Tag added successfully."
                                         },
                                         "data": {
                                             "type": "object",
@@ -1741,6 +1719,60 @@
                                         },
                                         "data": {
                                             "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/toggle-tag-status/{tag}": {
+            "get": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Toggle tag status",
+                "description": "Toggle tag status.",
+                "operationId": "TagStatusToggle",
+                "parameters": [
+                    {
+                        "name": "tag",
+                        "in": "path",
+                        "description": "Slug of tag",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sunovion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tag status changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tag status changed to ACTIVE"
+                                        },
+                                        "data": {
+                                            "type": "string",
                                             "example": null,
                                             "nullable": true
                                         },

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1\Admin\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\TagStoreRequest;
 use App\Http\Resources\Admin\AdminTagResource;
-use App\Models\Category;
 use App\Models\Tag;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
@@ -18,18 +17,11 @@ class AdminTagController extends Controller
     /**
      * @OA\Get(
      *     security={{"sanctum": {}}},
-     *     path="/admin/category/{category}/tag",
-     *     summary="Get all active category tag",
-     *     description="Get all active category tag.",
+     *     path="/admin/tag",
+     *     summary="Get all active/inactive tag",
+     *     description="Get all active/inactive tag.",
      *     operationId="TagList",
      *     tags={"Tag"},
-     *     @OA\Parameter(
-     *         name="category",
-     *         in="path",
-     *         required=true,
-     *         description="Slug of a category",
-     *         @OA\Schema(type="string", example="vitamins-supplements")
-     *     ),
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -44,12 +36,19 @@ class AdminTagController extends Controller
      *         description="Items on each page",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         required=false,
+     *         description="Toggle active/inactive tags(values: 0 and 1)",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Active tag lists of category",
+     *         description="Active/Inactive tag list",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Active tag lists of category : Vitamins & Supplements"),
+     *             @OA\Property(property="message", type="string", example="Active tag lists"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -72,12 +71,14 @@ class AdminTagController extends Controller
      *     )
      * )
      */
-    public function index(Request $request, Category $category)
+    public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $pagination = $category->tags()->paginate($per_page);
+        $status = $request->query('status', 1) == 1 ? 1 : 0;
+        $pagination = Tag::where('status', $status)->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminTagResource::collection($item))->data;
-        return $this->apiSuccess("Active tag lists of category : $category->name", $data);
+        $msg = $status == 1 ? 'Active' : 'Inactive';
+        return $this->apiSuccess("$msg tag lists", $data);
     }
 
     /**
@@ -125,18 +126,11 @@ class AdminTagController extends Controller
     /**
      * @OA\Post(
      *     security={{"sanctum": {}}},
-     *     path="/admin/category/{category}/tag",
+     *     path="/admin/tag",
      *     summary="Store a product tag",
      *     description="Store a product tag.",
      *     operationId="StoreTag",
      *     tags={"Tag"},
-     *     @OA\Parameter(
-     *         name="category",
-     *         in="path",
-     *         required=true,
-     *         description="Slug of category",
-     *         @OA\Schema(type="string", example="skin-care")
-     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -146,19 +140,19 @@ class AdminTagController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Category create response",
+     *         description="Tag create response",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Category added successfully."),
+     *             @OA\Property(property="message", type="string", example="Tag added successfully."),
      *             @OA\Property(property="data", type="object", nullable=true, example=null),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     ),
      * )
      */
-    public function store(TagStoreRequest $request, Category $category)
+    public function store(TagStoreRequest $request)
     {
-        $category->tags()->create($request->validated());
+        Tag::create($request->validated());
         return $this->apiSuccess('Tag added successfully.');
     }
 
@@ -202,13 +196,6 @@ class AdminTagController extends Controller
      */
     public function update(TagStoreRequest $request, Tag $tag)
     {
-        $tag_duplicate = $tag->category->tags()->where([
-            ['name', $request->name],
-            ['id', '!=', $tag->id]
-        ])->exists();
-        if ($tag_duplicate) {
-            return $this->apiError('Tag already exists for this category', 400);
-        }
         $tag->update($request->validated());
         return $this->apiSuccess('Tag updated successfully.');
     }
@@ -243,5 +230,45 @@ class AdminTagController extends Controller
     {
         $tag->delete();
         return $this->apiSuccess('Tag removed successfully.');
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/toggle-tag-status/{tag}",
+     *     summary="Toggle tag status",
+     *     description="Toggle tag status.",
+     *     operationId="TagStatusToggle",
+     *     tags={"Tag"},
+     *     @OA\Parameter(
+     *         name="tag",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of tag",
+     *         @OA\Schema(type="string", example="sunovion")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Tag status changed successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Tag status changed to ACTIVE"),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function statusToggler(Tag $tag)
+    {
+        $current_status = (int)$tag->status;
+        $message = 'Tag status changed to ACTIVE';
+        if ($current_status == 1) {
+            $message = 'Tag status changed to INACTIVE';
+        }
+        $tag->update([
+            'status' => !$current_status
+        ]);
+        return $this->apiSuccess($message);
     }
 }

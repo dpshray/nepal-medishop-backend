@@ -18,7 +18,8 @@ Route::prefix('admin')
         });
         Route::apiResource('brand', AdminBrandController::class);
         Route::apiResource('category', AdminCategoryController::class);
-        Route::apiResource('category.tag', AdminTagController::class)->shallow()->scoped(['category' => 'slug']);
+        Route::apiResource('tag', AdminTagController::class);
         Route::get('toggle-brand-status/{brand:slug}', [AdminBrandController::class, 'statusToggler']);
         Route::get('toggle-category-status/{category:slug}', [AdminCategoryController::class, 'statusToggler']);
+        Route::get('toggle-tag-status/{tag:slug}', [AdminTagController::class, 'statusToggler']);
 });
