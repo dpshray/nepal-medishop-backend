@@ -35,10 +35,6 @@ class Category extends Model implements HasMedia
         return $this->belongsToMany(Product::class);
     }
 
-    public function tags(){
-        return $this->hasMany(Tag::class);
-    }
-
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::CATEGORY_IMAGE)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));

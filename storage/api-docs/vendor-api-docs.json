@@ -55,7 +55,6 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "format": "email",
                                         "example": "Dave Chappelle"
                                     },
                                     "email": {
@@ -77,27 +76,22 @@
                                     },
                                     "location": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Maharajgunj"
                                     },
                                     "country": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Nepal"
                                     },
                                     "state": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Bagmati Province"
                                     },
                                     "district": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Kathmandu"
                                     },
                                     "municipality": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Budhanilkantha Municipality"
                                     },
                                     "postal_code": {

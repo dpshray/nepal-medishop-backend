@@ -169,7 +169,6 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "format": "email",
                                         "example": "Dave Chappelle"
                                     },
                                     "email": {
@@ -191,27 +190,22 @@
                                     },
                                     "location": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Maharajgunj"
                                     },
                                     "country": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Nepal"
                                     },
                                     "state": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Bagmati Province"
                                     },
                                     "district": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Kathmandu"
                                     },
                                     "municipality": {
                                         "type": "string",
-                                        "format": "date",
                                         "example": "Budhanilkantha Municipality"
                                     },
                                     "postal_code": {
@@ -1388,6 +1382,199 @@
                 ]
             }
         },
+        "/admin/product": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Add a product by admin",
+                "description": "Add a product by admin.",
+                "operationId": "CreateProduct",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "brand_id",
+                                    "name",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "brand_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Fast&Up Charge with Natural Vitamin C and Zinc for Immunity - 20 Effervescent Tablets - Orange Flavour"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "<table border='1' cellpadding='6'><tr><th>Brand</th><td>OSOAA</td></tr></table>"
+                                    },
+                                    "categories": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        }
+                                    },
+                                    "variations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "size_value": {
+                                                    "type": "number",
+                                                    "example": 100
+                                                },
+                                                "size_unit": {
+                                                    "type": "string",
+                                                    "example": "gm"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "example": 1000
+                                                },
+                                                "discount_price": {
+                                                    "type": "number",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product added successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/product-media/{uuid}": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Add product medias(featured/gallery)",
+                "description": "Add product medias(featured/gallery).",
+                "operationId": "AddProductMedia",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "featured_image",
+                                    "gallery_images[]"
+                                ],
+                                "properties": {
+                                    "featured_image": {
+                                        "description": "Main/featured image of product",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "gallery_images[]": {
+                                        "description": "Additional gallery images (multiple allowed)",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        },
+                                        "collectionFormat": "multi"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product media added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Media saved successfully of product: Product Name."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/tag": {
             "get": {
                 "tags": [
@@ -1807,6 +1994,10 @@
         {
             "name": "Category",
             "description": "Category"
+        },
+        {
+            "name": "Product",
+            "description": "Product"
         },
         {
             "name": "Tag",

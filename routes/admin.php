@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
+use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -22,4 +23,6 @@ Route::prefix('admin')
         Route::get('toggle-brand-status/{brand:slug}', [AdminBrandController::class, 'statusToggler']);
         Route::get('toggle-category-status/{category:slug}', [AdminCategoryController::class, 'statusToggler']);
         Route::get('toggle-tag-status/{tag:slug}', [AdminTagController::class, 'statusToggler']);
+        Route::apiResource('product', AdminProductController::class);
+        Route::post('product-media/{product:uuid}', [AdminProductController::class, 'storeMedia']);
 });

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Traits\SlugTrait;
+use App\Models\Traits\UuidModelTrait;
 use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,50 +14,37 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Product extends Model implements HasMedia
 {
     //
-    use InteractsWithMedia, HasEvents, SoftDeletes;
+    use InteractsWithMedia, HasEvents, SoftDeletes, UuidModelTrait, SlugTrait;
 
     const PRODUCT_FEATURE = 'PRODUCT_FEATURE';
     const PRODUCT_GALLERY = 'PRODUCT_GALLERY';
     
     protected $fillable = [
+        'added_by',
+        'brand_id',
         'name',
         'slug',
         'description',
-        'price',
-        'discount_price',
-        'pattern',
-        'fabric',
-        'material',
     ];
     
     public function categories()
     {
-        return $this->belongsToMany(Categories::class, 'product_categories');
+        return $this->belongsToMany(Category::class);
+    }
+    
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
     }
 
-    public function variants()
+    public function variations()
     {
-        return $this->hasMany(Variant::class);
-    }
-
-    public function cart()
-    {
-        return $this->hasMany(Cart::class);
+        return $this->hasMany(ProductVariation::class);
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection(self::MEDIA_NAME)
-            // ->singleFile()
-            ->registerMediaConversions(function (Media $media) {
-                $this->addMediaConversion('image')->nonQueued();
-            });
-    }
-    public function getDiscountPercentAttribute()
-    {
-        if ($this->discount_price && $this->price > 0) {
-            return round((($this->price - $this->discount_price) / $this->price) * 100, 2);
-        }
-        return null;
+        $this->addMediaCollection(self::PRODUCT_FEATURE)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));
+        $this->addMediaCollection(self::PRODUCT_GALLERY)->useFallbackUrl(asset('assets/img/default-brand-category.png'));
     }
 }
