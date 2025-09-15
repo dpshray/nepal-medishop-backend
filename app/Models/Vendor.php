@@ -37,6 +37,10 @@ class Vendor extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
+    function vendorProducts(){
+        return $this->hasMany(ProductVendor::class);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
