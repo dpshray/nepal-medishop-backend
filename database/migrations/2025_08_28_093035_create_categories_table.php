@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->string('slug')->unique();
             $table->string('name')->unique();
+            $table->text('detail')->nullable();
             $table->softDeletes();
         });
     }

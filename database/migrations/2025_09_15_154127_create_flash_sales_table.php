@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_variations', function (Blueprint $table) {
+        Schema::create('flash_sales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->decimal('size_value', 8, 2);  // e.g. 100
-            $table->string('size_unit', 10);      // e.g. gm, ml
-            $table->timestamps();
+            $table->boolean('status')->default(true);
+            $table->string('title')->nullable();
+            $table->timestamp('start_timestamps');
+            $table->timestamp('end_timestamps');
             $table->softDeletes();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_variations');
+        Schema::dropIfExists('flash_sales');
     }
 };
