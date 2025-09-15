@@ -33,8 +33,8 @@ class ProductStoreRequest extends FormRequest
             'variations' => 'required|array',
             'variations.*.size_value' => 'required|numeric',
             'variations.*.size_unit' => 'required|string',
-            'variations.*.price' => 'required|numeric',
-            'variations.*.discount_price' => 'nullable|numeric|lt:variations.*.price',
+            // 'variations.*.price' => 'required|numeric',
+            // 'variations.*.discount_price' => 'nullable|numeric|lt:variations.*.price',
         ];
     }
 
@@ -42,8 +42,8 @@ class ProductStoreRequest extends FormRequest
         return [
             'categories.*.distinct' => 'Categories has a duplicate values.',
             'tags.*.distinct' => 'Tags has a duplicate values.',
-            'variations.*.discount.lt' => 'Discount price must be lower than actual price.',
-            'variations.*.price.numeric' => 'Price must be in numeric.'
+            // 'variations.*.discount.lt' => 'Discount price must be lower than actual price.',
+            // 'variations.*.price.numeric' => 'Price must be in numeric.'
         ];
     }
 }

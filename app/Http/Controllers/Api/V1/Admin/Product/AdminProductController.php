@@ -63,9 +63,7 @@ class AdminProductController extends Controller
      *                     @OA\Items(
      *                         type="object",
      *                         @OA\Property(property="size_value", type="number", example=100),
-     *                         @OA\Property(property="size_unit", type="string", example="gm"),
-     *                         @OA\Property(property="price", type="number", example=1000),
-     *                         @OA\Property(property="discount_price", type="number", example=100)
+     *                         @OA\Property(property="size_unit", type="string", example="gm")
      *                     )
      *                 )
      *             )
