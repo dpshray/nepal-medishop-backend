@@ -49,15 +49,22 @@ class AdminVendorController extends Controller
      *         name="verified_vendors",
      *         in="query",
      *         required=false,
-     *         description="Filter vendor lists based on verified/unverified(1->verified and 0->unverified)",
-     *         @OA\Schema(type="integer", example=1)
+     *         description="Filter vendor lists based on verified/unverified(All -> 'All list', 1->verified, 0->unverified)",
+     *         @OA\Schema(type="string", example="All")
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Search vendor based on name/email",
+     *         @OA\Schema(type="string", example="vendor")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Inactive vendor lists",
+     *         description="All vendor lists",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Inactive vendor lists"),
+     *             @OA\Property(property="message", type="string", example="All vendor lists"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -66,38 +73,54 @@ class AdminVendorController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="0c8f6da3-58fb-4f5e-ae52-5494a38a3b0e"),
-     *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="04546ab6-bb58-41f4-b1d7-e42cbd7ec778"),
-     *                         @OA\Property(property="name", type="string", example="vendor280"),
-     *                         @OA\Property(property="mobile_number", type="string", example="9870807888"),
-     *                         @OA\Property(property="store_name", type="string", example="Kovacek and Sons"),
+     *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="5612b43f-30fa-4c1b-8ac1-2e05813e8192"),
+     *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="0414ef1e-e41d-4cc0-b677-69ae806d31ad"),
+     *                         @OA\Property(property="verified", type="boolean", example=false),
+     *                         @OA\Property(property="name", type="string", example="vendor30639760073"),
+     *                         @OA\Property(property="email", type="string", example="vendor30639760073@gmail.com"),
+     *                         @OA\Property(property="mobile_number", type="string", example="9884722415"),
+     *                         @OA\Property(property="store_name", type="string", example="Jones-Boyle")
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=17),
-     *                 @OA\Property(property="total_items", type="integer", example=17),
+     *                 @OA\Property(property="total_page", type="integer", example=15),
+     *                 @OA\Property(property="total_items", type="integer", example=30)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
-     */
+    */
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $verified_vendor = $request->query('verified_vendors',1);
+        $search = $request->query('search', null);
+        $verified_vendor = $request->query('verified_vendors', 'All');
+
         $pagination = User::filterByRole(UserTypeEnum::VENDOR)
-            ->with(['vendor'])
-            ->when(
-                $verified_vendor == 1,
-                fn($qry) => $qry->whereRelation('vendor', 'verified_at','!=',null), 
-                fn($qry) => $qry->whereRelation('vendor', 'verified_at', null))
+            ->with('vendor')
+            // apply search only when provided; group the ORs so they don't break other filters
+            ->when($search, function ($q, $search) {
+                $q->where(function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            // apply verified filter only when not "All"
+            ->when($verified_vendor !== 'All', function ($q) use ($verified_vendor) {
+                if ((string)$verified_vendor === '1') {
+                    $q->whereHas('vendor', fn($q2) => $q2->whereNotNull('verified_at'));
+                } else { // assume 0
+                    $q->whereHas('vendor', fn($q2) => $q2->whereNull('verified_at'));
+                }
+            })
             ->latest()
             ->paginate($per_page);
+
         // $items = $pagination->items();
         // return new AdminVendorUserList($items);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminVendorUserList::collection($items))->data;
-        $stat = $verified_vendor == 1 ? 'Verified' : 'Unverified';
+        $stat = $verified_vendor == 'All' ? 'All' : ($verified_vendor == 1 ? 'Verified' : 'Unverified');
         return $this->apiSuccess("$stat vendor lists", $data);
     }
 

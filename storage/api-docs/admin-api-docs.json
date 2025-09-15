@@ -52,24 +52,34 @@
                     {
                         "name": "verified_vendors",
                         "in": "query",
-                        "description": "Filter vendor lists based on verified/unverified(1->verified and 0->unverified)",
+                        "description": "Filter vendor lists based on verified/unverified(All -> 'All list', 1->verified, 0->unverified)",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "string",
+                            "example": "All"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search vendor based on name/email",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "vendor"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Inactive vendor lists",
+                        "description": "All vendor lists",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Inactive vendor lists"
+                                            "example": "All vendor lists"
                                         },
                                         "data": {
                                             "properties": {
@@ -80,24 +90,32 @@
                                                             "user_uuid": {
                                                                 "type": "string",
                                                                 "format": "uuid",
-                                                                "example": "0c8f6da3-58fb-4f5e-ae52-5494a38a3b0e"
+                                                                "example": "5612b43f-30fa-4c1b-8ac1-2e05813e8192"
                                                             },
                                                             "vendor_uuid": {
                                                                 "type": "string",
                                                                 "format": "uuid",
-                                                                "example": "04546ab6-bb58-41f4-b1d7-e42cbd7ec778"
+                                                                "example": "0414ef1e-e41d-4cc0-b677-69ae806d31ad"
+                                                            },
+                                                            "verified": {
+                                                                "type": "boolean",
+                                                                "example": false
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "vendor280"
+                                                                "example": "vendor30639760073"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "vendor30639760073@gmail.com"
                                                             },
                                                             "mobile_number": {
                                                                 "type": "string",
-                                                                "example": "9870807888"
+                                                                "example": "9884722415"
                                                             },
                                                             "store_name": {
                                                                 "type": "string",
-                                                                "example": "Kovacek and Sons"
+                                                                "example": "Jones-Boyle"
                                                             }
                                                         },
                                                         "type": "object"
@@ -109,11 +127,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 17
+                                                    "example": 15
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 17
+                                                    "example": 30
                                                 }
                                             },
                                             "type": "object"
@@ -1438,14 +1456,6 @@
                                                 "size_unit": {
                                                     "type": "string",
                                                     "example": "gm"
-                                                },
-                                                "price": {
-                                                    "type": "number",
-                                                    "example": 1000
-                                                },
-                                                "discount_price": {
-                                                    "type": "number",
-                                                    "example": 100
                                                 }
                                             },
                                             "type": "object"
