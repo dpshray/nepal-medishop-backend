@@ -29,7 +29,7 @@ class VendorProductSeeder extends Seeder
                     $vendor_product = $user->vendor->vendorProducts()->create([
                         'product_id' => $rp->id,
                         'is_featured' => fake()->boolean(50),
-                        'rating' => rand(0,5)
+                        'rating' => round(mt_rand(0, 500) / 100, 1)
                     ]);
                     $variations = $rp->variations;
                     $temp = [];
