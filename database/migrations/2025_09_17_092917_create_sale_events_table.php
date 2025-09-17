@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('flash_sales', function (Blueprint $table) {
+        Schema::create('sale_events', function (Blueprint $table) {
             $table->id();
             $table->boolean('status')->default(true);
             $table->string('title')->nullable();
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flash_sales');
+        Schema::dropIfExists('sale_events');
     }
 };

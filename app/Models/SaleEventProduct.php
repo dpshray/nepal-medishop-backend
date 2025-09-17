@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FlashSaleProduct extends Model
+class SaleEventProduct extends Model
 {
     public $timestamps = false;
 }
