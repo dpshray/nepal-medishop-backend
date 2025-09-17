@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ProductSeeder::class,
             VendorProductSeeder::class,
-            FlashSaleSeeder::class
+            // FlashSaleSeeder::class
         ]);
     }
 

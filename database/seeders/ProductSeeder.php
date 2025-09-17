@@ -45,22 +45,27 @@ class ProductSeeder extends Seeder
                     [
                         "size_value" => 100,
                         "size_unit" => "gm",
+                        'platform_price' => rand(200,500)
                     ],
                     [
                         "size_value" => 200,
-                        "size_unit" => "gm"
+                        "size_unit" => "gm",
+                        'platform_price' => rand(1000,1500)
                     ],
                     [
                         "size_value" => 500,
-                        "size_unit" => "gm"
+                        "size_unit" => "gm",
+                        'platform_price' => rand(2000,2500)
                     ],
                     [
                         "size_value" => 650,
-                        "size_unit" => "gm"
+                        "size_unit" => "gm",
+                        'platform_price' => rand(3000,3500)
                     ],
                     [
                         "size_value" => 800,
-                        "size_unit" => "gm"
+                        "size_unit" => "gm",
+                        'platform_price' => rand(4000,5000)
                     ]
                 ];
 

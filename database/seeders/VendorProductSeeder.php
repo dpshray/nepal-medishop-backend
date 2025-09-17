@@ -34,11 +34,12 @@ class VendorProductSeeder extends Seeder
                     $variations = $rp->variations;
                     $temp = [];
                     foreach ($variations as $variation) {
+                        $price = rand(1000, 5000);
                         $temp[] = [
                             'product_variation_id' => $variation->id,
-                            'price' => rand(1000,5000),
-                            'discount_price' => rand(100,200),
-                            'platform_price' => rand(7000,8000)
+                            'price' => $price,
+                            'discount_price' => $price - rand(100,200),
+                            'units_in_stock' => rand(50, 200)
                         ];
                     } 
                     $vendor_product->vendorPrices()->createMany($temp);
