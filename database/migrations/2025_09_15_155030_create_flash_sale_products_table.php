@@ -18,7 +18,7 @@ return new class extends Migration
         Schema::create('flash_sale_products', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(FlashSale::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            // $table->foreignIdFor(Product::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Product::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(VendorProductPrice::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('flash_sale_price', 10, 2);
             $table->decimal('platform_price', 10, 2);

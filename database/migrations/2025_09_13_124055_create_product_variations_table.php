@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('size_value', 8, 2);  // e.g. 100
             $table->string('size_unit', 10);      // e.g. gm, ml
+            $table->decimal('platform_price', 10, 2);
             $table->timestamps();
             $table->softDeletes();
         });
