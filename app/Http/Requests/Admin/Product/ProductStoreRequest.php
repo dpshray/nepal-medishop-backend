@@ -22,9 +22,13 @@ class ProductStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $product_id = null;
+        if ($this->product) {
+            $product_id = $this->product->id;
+        }
+        $rules = [
             'brand_id' => 'required|exists:brands,id',
-            'name' => 'required',
+            'name' => 'required|unique:products,name,' . $product_id,
             'description' => 'sometimes',
             'categories' => 'required|array',
             'categories.*' => 'distinct|exists:categories,id',
@@ -33,17 +37,31 @@ class ProductStoreRequest extends FormRequest
             'variations' => 'required|array',
             'variations.*.size_value' => 'required|numeric',
             'variations.*.size_unit' => 'required|string',
-            // 'variations.*.price' => 'required|numeric',
-            // 'variations.*.discount_price' => 'nullable|numeric|lt:variations.*.price',
+            'variations.*.platform_price' => 'required|numeric',
+            'variations.*.platform_discount_price' => 'sometimes|nullable|numeric',
         ];
+        if ($product_id == null) {
+            $rules = array_merge($rules, [
+                'featured_image' => 'required|image|exclude',
+                'gallery_images' => 'required|array|exclude',
+                'gallery_images.*' => 'image'
+            ]);
+        }
+        return $rules;
     }
 
     function messages(){
         return [
             'categories.*.distinct' => 'Categories has a duplicate values.',
             'tags.*.distinct' => 'Tags has a duplicate values.',
-            // 'variations.*.discount.lt' => 'Discount price must be lower than actual price.',
-            // 'variations.*.price.numeric' => 'Price must be in numeric.'
         ];
+    }
+
+    function prepareForValidation()
+    {
+        $converted = array_map(function ($item) {
+            return json_decode($item, true);
+        }, $this->variations);
+        $this->merge(['variations' => $converted]);
     }
 }

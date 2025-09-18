@@ -24,6 +24,7 @@ class CategoryStoreRequest extends FormRequest
     {
         $category_id = null;
         $rule = [];
+        // Log::info($this->category);
         if ($this->category) { #edit request
             $category_id = $this->category->id;
             $rule = [
