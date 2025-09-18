@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('product_vendors', function (Blueprint $table) {
             $table->id();
             $table->boolean('status')->default(1);
+            $table->boolean('is_approved')->default(0);
             $table->unsignedBigInteger('vendor_id');
             $table->foreign('vendor_id')->references('id')->on('vendors')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();

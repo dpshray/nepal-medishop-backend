@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('added_by');
             $table->foreign('added_by')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('updated_by')->nullable()->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('brand_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->string('slug')->unique();
             $table->string('name');
