@@ -17,7 +17,6 @@ return new class extends Migration
         Schema::create('sale_event_products', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(SaleEvent::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignIdFor(Product::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignIdFor(VendorProductPrice::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('event_sale_price', 10, 2);
             $table->decimal('platform_price', 10, 2);

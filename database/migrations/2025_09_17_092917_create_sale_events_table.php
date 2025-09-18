@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->boolean('status')->default(true);
             $table->string('title')->nullable();
+            $table->decimal('price', 10, 2)->nullable();
             $table->timestamp('start_timestamps');
             $table->timestamp('end_timestamps');
             $table->softDeletes();
