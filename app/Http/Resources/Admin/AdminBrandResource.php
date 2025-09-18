@@ -21,6 +21,9 @@ class AdminBrandResource extends JsonResource
             'slug' => $this->slug,
             'name' => $this->name,
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Brand::BRAND_IMAGE)),
+            'is_featured' => (bool) $this->is_featured,
+            'is_popular' => (bool) $this->is_popular,
+            'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Brand::BRAND_IMAGE))
         ];
     }
 }
