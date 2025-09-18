@@ -60,7 +60,7 @@ class UserSeeder extends Seeder
                 'bank_account_holder_name' => $faker->name(),
                 'bank_account_number' => $faker->creditCardNumber(),
             ]);
-            $image = public_path('assets\img\company-registration-certificate.jpg');
+            $image = public_path('assets/img/company-registration-certificate.jpg');
             clone($vendor)->addMedia($image)->preservingOriginal()->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
             clone($vendor)->addMedia($image)->preservingOriginal()->toMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
             clone($vendor)->addMedia($image)->preservingOriginal()->toMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
