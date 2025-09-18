@@ -16,8 +16,8 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->string('title')->nullable();
             $table->decimal('price', 10, 2)->nullable();
-            $table->timestamp('start_timestamps')->nullable(false);
-            $table->timestamp('end_timestamps')->nullable(false);
+            $table->dateTime('start_timestamps')->nullable(false);
+            $table->dateTime('end_timestamps')->nullable(false);
             $table->softDeletes();
         });
     }
