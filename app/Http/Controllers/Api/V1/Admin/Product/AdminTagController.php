@@ -73,9 +73,11 @@ class AdminTagController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->per_page;
+        $per_page = $request->query('per_page', Tag::count());
         $status = $request->query('status', 1) == 1 ? 1 : 0;
-        $pagination = Tag::where('status', $status)->paginate($per_page);
+        $pagination = Tag::where('status', $status)
+            ->orderBy('id','DESC')
+            ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminTagResource::collection($item))->data;
         $msg = $status == 1 ? 'Active' : 'Inactive';
         return $this->apiSuccess("$msg tag lists", $data);

@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Api\V1\Admin\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Product\ProductMediaStoreRequest;
 use App\Http\Requests\Admin\Product\ProductStoreRequest;
+use App\Http\Resources\Admin\Product\AdminProductDetailResource;
+use App\Http\Resources\Admin\Product\AdminProductList;
+use App\Http\Resources\Admin\Product\AdminProductResource;
 use App\Models\Product;
+use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,81 +18,119 @@ use Illuminate\Support\Facades\Log;
 
 class AdminProductController extends Controller
 {
-    use ResponseTrait;
+    use ResponseTrait, PaginationTrait;
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
-
     /**
-     * Store a newly created resource in storage.
-     */
-    /**
-     * @OA\Post(
+     * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/admin/product",
-     *     summary="Add a product by admin",
-     *     description="Add a product by admin.",
-     *     operationId="CreateProduct",
+     *     summary="Get all active/inactive product",
+     *     description="Get all active/inactive product.",
+     *     operationId="ProductList",
      *     tags={"Product"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 required={"brand_id","name","description"},
-     *                 @OA\Property(property="brand_id", type="integer", example=5),
-     *                 @OA\Property(property="name", type="string", example="Fast&Up Charge with Natural Vitamin C and Zinc for Immunity - 20 Effervescent Tablets - Orange Flavour"),
-     *                 @OA\Property(
-     *                     property="description",
-     *                     type="string",
-     *                     example="<table border='1' cellpadding='6'><tr><th>Brand</th><td>OSOAA</td></tr></table>"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="categories",
-     *                     type="array",
-     *                     @OA\Items(type="integer", example=1)
-     *                 ),
-     *                 @OA\Property(
-     *                     property="tags",
-     *                     type="array",
-     *                     @OA\Items(type="integer", example=1)
-     *                 ),
-     *                 @OA\Property(
-     *                     property="variations",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="object",
-     *                         @OA\Property(property="size_value", type="number", example=100),
-     *                         @OA\Property(property="size_unit", type="string", example="gm")
-     *                     )
-     *                 )
-     *             )
-     *         )
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Page number of list",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),     
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Items on each page",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         required=false,
+     *         description="Toggle active/inactive brands(values: 0, 1, blank)",
+     *         @OA\Schema(type="integer", example="1")
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Search product based on name",
+     *         @OA\Schema(type="string", example="benedril")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Product added successfully",
+     *         description="Admin published product list",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Product added successfully."),
-     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="message", type="string", example="Admin published product list."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="items",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(property="uuid", type="string", example="70cac94e-65e1-457b-8fe8-829c1ca837bd"),
+     *                             @OA\Property(property="published", type="boolean", example=true),
+     *                             @OA\Property(property="name", type="string", example="Provident explicabo voluptatem eaque hic sit."),
+     *                             @OA\Property(property="brand", type="string", example="Abbott"),
+     *                             @OA\Property(property="lowest_variant_price", type="number", format="float", example=1211),
+     *                             @OA\Property(property="total_stock", type="integer", example=106)
+     *                         )
+     *                     ),
+     *                     @OA\Property(property="page", type="integer", example=1),
+     *                     @OA\Property(property="total_page", type="integer", example=100),
+     *                     @OA\Property(property="total_items", type="integer", example=100)
+     *                 )
+     *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
      */
+    public function index(Request $request)
+    {
+        $per_page = $request->per_page;
+        $search = $request->query('search',null);
+        $status = $request->query('status', null);
+        $msg = 'All';
+        if ($status != null) {
+            if ($status == 1) {
+                $msg = 'published';
+            }else{
+                $msg = 'unpublished';
+            }
+        }
+        $pagination = Product::with(['brand', 'cheapestVariation', 'productVendorPrices'])
+            ->when($status != null, fn($qry) => $qry->where('status', $status))
+            ->when($search != null, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
+            ->latest()
+            ->paginate($per_page);
+        $product = $this->makePaginationResponse($pagination, fn($item) => AdminProductResource::collection($item));
+        return $this->apiSuccess("Admin $msg product list.", $product);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(ProductStoreRequest $request)
     {
+        // dd($request->all());
         DB::transaction(function () use($request){
             $product = $request->safe()->merge(['added_by' => Auth::id()])->all();
             $product = Product::create($product);
             $product->categories()->attach($request->categories);
             $product->tags()->attach($request->tags);
             $product->variations()->createMany($request->variations);
+            $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
+            foreach ($request->file('gallery_images') as $GI) {
+                $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
+            }
         });
         return $this->apiSuccess('Product added successfully.');
     }
@@ -96,25 +138,161 @@ class AdminProductController extends Controller
     /**
      * Display the specified resource.
      */
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/product/{uuid}",
+     *     summary="Show product",
+     *     description="Show product.",
+     *     operationId="ProductShow",
+     *     tags={"Product"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="Uuid of product",
+     *         @OA\Schema(type="string", example="1b01cd1a-27d4-4dc1-bf0e-a572ce0aa581")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Showing brand",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Showing brand"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=3),
+     *                 @OA\Property(property="slug", type="string", example="sun-pharma"),
+     *                 @OA\Property(property="name", type="string", example="Sun Pharma"),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="url",
+     *                     example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+    */
     public function show(Product $product)
     {
-        //
+        $product->loadMissing(['variations','categories','tags','media']);
+        $product->loadCount(['productVendors']);
+        $product = new AdminProductDetailResource($product);
+        return $this->apiSuccess('Product detail', $product);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductStoreRequest $request, Product $product)
     {
-        //
+        // dd($request->validated());
+        DB::transaction(function () use ($request, $product) {
+            $data = $request->safe()->merge(['updated_by' => Auth::id()])->all();
+            $product->update($data);
+            $product->categories()->sync($request->categories);
+            $product->tags()->sync($request->tags);
+            $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->all();
+            $product->variations()->whereNotIn('id', $variation_to_avoid)->delete();
+            foreach ($request->variations as $variation) {
+                Log::info($product->variations()->firstWhere('id', $variation['variation_id']));
+                $product->variations()->firstWhere('id', $variation['variation_id'])->update($variation);
+            }
+            if ($request->hasFile('featured_image')) {
+                $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
+            }
+            if ($request->hasFile('gallery_images')) {
+                foreach ($request->file('gallery_images') as $GI) {
+                    $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
+                }
+            }
+        });
+        return $this->apiSuccess('Product updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
+    /**
+     * @OA\Delete(
+     *     security={{"sanctum": {}}}, 
+     *     path="/admin/product/{uuid}",
+     *     operationId="ProductDelete",
+     *     tags={"Product"},
+     *     summary="Delete a product(soft).",
+     *     description="Delete a product(soft).",
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the product to delete",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category successfully deleted",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="data", type="null", example=null),
+     *             @OA\Property(property="message", type="string", example="Product removed successfully..")
+     *         )
+     *     )
+     * )
+     */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return $this->apiSuccess('Product removed successfully.');
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/toggle-product-status/{uuid}",
+     *     summary="Change product published product",
+     *     description="Change product published product.",
+     *     operationId="ProductToggleStatus",
+     *     tags={"Product"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="Uuid of product",
+     *         @OA\Schema(type="string", example="1b01cd1a-27d4-4dc1-bf0e-a572ce0aa581")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Showing brand",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Showing brand"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=3),
+     *                 @OA\Property(property="slug", type="string", example="sun-pharma"),
+     *                 @OA\Property(property="name", type="string", example="Sun Pharma"),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="url",
+     *                     example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function statusToggler(Product $product){
+        $current_status = $product->status;
+        $product->update(['status' => !$current_status]);
+        $status = $current_status == 1 ? 'Inactive' : 'Active'; 
+        return $this->apiSuccess("Product status changed to $status");
     }
 
     /**

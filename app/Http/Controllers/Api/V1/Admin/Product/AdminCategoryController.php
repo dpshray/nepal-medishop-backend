@@ -80,10 +80,11 @@ class AdminCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->per_page;
+        $per_page = $request->query('per_page', Category::count());
         $status = $request->query('status',1) == 1 ? 1 : 0;
         $pagination = Category::with('media')
             ->where('status', $status)
+            ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminCategoryResource::collection($items))->data;
         $msg = $status == 1 ? 'Active' : 'Inactive';
@@ -196,7 +197,7 @@ class AdminCategoryController extends Controller
      *         name="category",
      *         in="path",
      *         required=true,
-     *         description="An infant id of the belonging user",
+     *         description="Category id of category",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\RequestBody(

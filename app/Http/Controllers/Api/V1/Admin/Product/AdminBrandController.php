@@ -61,17 +61,14 @@ class AdminBrandController extends Controller
      *                         @OA\Property(property="id", type="integer", example=1),
      *                         @OA\Property(property="slug", type="string", example="pfizer"),
      *                         @OA\Property(property="name", type="string", example="Pfizer"),
-     *                         @OA\Property(
-     *                             property="image",
-     *                             type="string",
-     *                             format="url",
-     *                             example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
-     *                         )
+     *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/assets/img/default-brand-category.png"),
+     *                         @OA\Property(property="is_featured", type="boolean", example=false),
+     *                         @OA\Property(property="is_popular", type="boolean", example=true)
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=1),
-     *                 @OA\Property(property="total_items", type="integer", example=6),
+     *                 @OA\Property(property="total_page", type="integer", example=26),
+     *                 @OA\Property(property="total_items", type="integer", example=26)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -80,10 +77,11 @@ class AdminBrandController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->per_page;
+        $per_page = $request->query('per_page', Brand::count());
         $status = $request->query('status',1) == 1 ? 1 : 0;
         $pagination = Brand::with(['media'])
             ->where('status', $status)
+            ->orderBy('id','DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminBrandResource::collection($items))->data;
         $msg = $status == 1 ? 'Active' : 'Inactive';
