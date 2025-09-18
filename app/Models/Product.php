@@ -21,10 +21,13 @@ class Product extends Model implements HasMedia
     
     protected $fillable = [
         'added_by',
+        'updated_by',
         'brand_id',
         'name',
         'slug',
         'description',
+        'status',
+        'rating'
     ];
     
     public function categories()
@@ -40,6 +43,23 @@ class Product extends Model implements HasMedia
     public function variations()
     {
         return $this->hasMany(ProductVariation::class);
+    }
+
+    function brand(){
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function cheapestVariation()
+    {
+        return $this->hasOne(ProductVariation::class)->orderBy('platform_price');
+    }
+
+    function productVendors(){
+        return $this->hasMany(ProductVendor::class);
+    }
+
+    function productVendorPrices(){
+        return $this->hasManyThrough(VendorProductPrice::class, ProductVendor::class);
     }
 
     public function registerMediaCollections(): void

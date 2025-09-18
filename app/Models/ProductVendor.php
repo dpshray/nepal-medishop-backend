@@ -9,4 +9,8 @@ class ProductVendor extends Model
     function vendorPrices(){
         return $this->hasMany(VendorProductPrice::class);
     }
+
+    function product(){
+        return $this->belongsTo(Product::class);
+    }
 }
