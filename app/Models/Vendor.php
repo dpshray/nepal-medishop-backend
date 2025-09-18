@@ -43,8 +43,8 @@ class Vendor extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
-        $this->addMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
-        $this->addMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
+        $this->addMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD)->singleFile();
+        $this->addMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE)->singleFile();
+        $this->addMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE)->singleFile();
     }
 }

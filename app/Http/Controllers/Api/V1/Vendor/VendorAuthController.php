@@ -29,7 +29,7 @@ class VendorAuthController extends VendorController
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","vendor_citizenship_card[]","vendor_business_license[]","vendor_tax_certificate[]","name","email","mobile_number"},
+     *                 required={"store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","vendor_citizenship_card","vendor_business_license","vendor_tax_certificate","name","email","mobile_number"},
      *                 @OA\Property(property="name", type="string", example="Dave Chappelle"),
      *                 @OA\Property(property="email", type="string", format="email", example="dev.chappelle@mailinator.com"),
      *                 @OA\Property(property="mobile_number", type="string", example="9452114525"),
@@ -45,30 +45,21 @@ class VendorAuthController extends VendorController
      *                 @OA\Property(property="bank_account_holder_name", type="string", example="Laxmi Thapa"),
      *                 @OA\Property(property="bank_account_number", type="string", example="21547741201300157899"),
      *                 @OA\Property(
-     *                     property="vendor_citizenship_card[]",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="string",
-     *                         format="binary"
-     *                     ),
+     *                     property="vendor_citizenship_card",
+     *                     type="string",
+     *                     format="binary",
      *                     description="Multiple image files to upload vendor citizenship card"
      *                 ),
      *                 @OA\Property(
-     *                     property="vendor_business_license[]",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="string",
-     *                         format="binary"
-     *                     ),
+     *                     property="vendor_business_license",
+     *                     type="string",
+     *                     format="binary",
      *                     description="Multiple image files to upload vendor business license"
      *                 ),
      *                 @OA\Property(
-     *                     property="vendor_tax_certificate[]",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="string",
-     *                         format="binary"
-     *                     ),
+     *                     property="vendor_tax_certificate",
+     *                     type="string",
+     *                     format="binary",
      *                     description="Multiple image files to upload vendor tax certificate"
      *                 )
      *             )

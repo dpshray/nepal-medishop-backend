@@ -28,15 +28,9 @@ class VendorService {
             ->vendor()
             ->create($vendor);
         
-        foreach ($request->file('vendor_citizenship_card') as $image) {
-            $vendor->addMedia($image)->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
-        }
-        foreach ($request->file('vendor_business_license') as $image) {
-            $vendor->addMedia($image)->toMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
-        }
-        foreach ($request->file('vendor_tax_certificate') as $image) {
-            $vendor->addMedia($image)->toMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
-        }
+        $vendor->addMedia($request->file('vendor_citizenship_card'))->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
+        $vendor->addMedia($request->file('vendor_business_license'))->toMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
+        $vendor->addMedia($request->file('vendor_tax_certificate'))->toMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
 
         $link = URL::temporarySignedRoute(
             'verification.verify',
