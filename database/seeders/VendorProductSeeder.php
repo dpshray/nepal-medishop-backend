@@ -27,6 +27,7 @@ class VendorProductSeeder extends Seeder
                 Log::info(count($random_product));
                 foreach ($random_product as $rp) {
                     $vendor_product = $user->vendor->vendorProducts()->create([
+                        'is_approved' => true,
                         'product_id' => $rp->id,
                         'is_featured' => fake()->boolean(50),
                         'rating' => round(mt_rand(0, 500) / 100, 1)
@@ -38,7 +39,7 @@ class VendorProductSeeder extends Seeder
                         $temp[] = [
                             'product_variation_id' => $variation->id,
                             'price' => $price,
-                            'discount_price' => $price - rand(100,200),
+                            'discount_price' => fake()->boolean(50) ? null : $price - rand(100, 200),
                             'units_in_stock' => rand(50, 200)
                         ];
                     } 

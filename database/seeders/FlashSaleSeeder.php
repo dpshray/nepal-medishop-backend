@@ -4,9 +4,11 @@ namespace Database\Seeders;
 
 use App\Models\FlashSale;
 use App\Models\ProductVendor;
+use App\Models\SaleEvent;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FlashSaleSeeder extends Seeder
 {
@@ -15,30 +17,32 @@ class FlashSaleSeeder extends Seeder
      */
     public function run(): void
     {
+
         $vendor_products = ProductVendor::select('id', 'product_id')
-            ->with('vendorPrices:id,product_vendor_id,platform_price')
+            ->with(['vendorPrices:id,product_vendor_id', 'product.variations'])
             ->take(50)
             ->get();
         $temp = [];
         foreach ($vendor_products as $vp) {
-            foreach ($vp->vendorPrices as $vprc) {
+            foreach ($vp->product->variations as $vprc) {
                 $temp[] = [
                     'vendor_product_price_id' => $vprc->id,
-                    'flash_sale_price' => $vprc->platform_price,
-                    'platform_price' => $vprc->platform_price - ($vprc->platform_price * rand(25,50)/100),
-                    'stock_limit' => 25,
+                    'product_id' => $vp->product_id,
+                    'event_sale_price' => $vprc->platform_price,
+                    'platform_price' => $vprc->platform_price - ($vprc->platform_price * rand(10, 50) / 100),
+                    'stock_limit' => rand(20, 25),
                     'max_purchase' => 2,
                 ];
             }
         }
-        DB::transaction(function () use($temp){
-            FlashSale::create([
+        DB::transaction(function () use ($temp) {
+            SaleEvent::create([
                 'title' => 'Flash Sale',
                 'start_timestamps' => now()->startOfDay(),
                 'end_timestamps' => now()->endOfDay(),
             ])
-            ->flashProducts()
-            ->createMany($temp);
+                ->saleEventProducts()
+                ->createMany($temp);
         });
     }
 }
