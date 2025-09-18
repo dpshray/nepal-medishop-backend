@@ -23,6 +23,7 @@ Route::prefix('admin')
         Route::get('toggle-brand-status/{brand:slug}', [AdminBrandController::class, 'statusToggler']);
         Route::get('toggle-category-status/{category:slug}', [AdminCategoryController::class, 'statusToggler']);
         Route::get('toggle-tag-status/{tag:slug}', [AdminTagController::class, 'statusToggler']);
-        Route::apiResource('product', AdminProductController::class);
+        Route::apiResource('product', AdminProductController::class)->scoped(['product' => 'uuid']);
+        Route::get('toggle-product-status/{product:uuid}', [AdminProductController::class, 'statusToggler']);
         Route::post('product-media/{product:uuid}', [AdminProductController::class, 'storeMedia']);
 });
