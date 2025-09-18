@@ -405,6 +405,81 @@
                     }
                 }
             }
+        },
+        "/fetch-section/{section}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get product based on section",
+                "description": "Get product based on section.",
+                "operationId": "ClientSectionList",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Section of product(recent,flash,featured,popular)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "recent"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of product based on sections",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of active categories"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "pfizer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Pfizer"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "format": "url",
+                                                        "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "tags": [

@@ -177,9 +177,9 @@
                                     "bank_name",
                                     "bank_account_holder_name",
                                     "bank_account_number",
-                                    "vendor_citizenship_card[]",
-                                    "vendor_business_license[]",
-                                    "vendor_tax_certificate[]",
+                                    "vendor_citizenship_card",
+                                    "vendor_business_license",
+                                    "vendor_tax_certificate",
                                     "name",
                                     "email",
                                     "mobile_number"
@@ -246,29 +246,20 @@
                                         "type": "integer",
                                         "example": 1
                                     },
-                                    "vendor_citizenship_card[]": {
+                                    "vendor_citizenship_card": {
                                         "description": "Multiple image files to upload vendor citizenship card",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
+                                        "type": "string",
+                                        "format": "binary"
                                     },
-                                    "vendor_business_license[]": {
+                                    "vendor_business_license": {
                                         "description": "Multiple image files to upload vendor business license",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
+                                        "type": "string",
+                                        "format": "binary"
                                     },
-                                    "vendor_tax_certificate[]": {
+                                    "vendor_tax_certificate": {
                                         "description": "Multiple image files to upload vendor tax certificate",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -584,7 +575,15 @@
                                                             "image": {
                                                                 "type": "string",
                                                                 "format": "url",
-                                                                "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                                "example": "http://192.168.100.23:8008/assets/img/default-brand-category.png"
+                                                            },
+                                                            "is_featured": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            },
+                                                            "is_popular": {
+                                                                "type": "boolean",
+                                                                "example": true
                                                             }
                                                         },
                                                         "type": "object"
@@ -596,11 +595,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 1
+                                                    "example": 26
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 6
+                                                    "example": 26
                                                 }
                                             },
                                             "type": "object"
@@ -1225,7 +1224,7 @@
                     {
                         "name": "category",
                         "in": "path",
-                        "description": "An infant id of the belonging user",
+                        "description": "Category id of category",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -1401,87 +1400,312 @@
             }
         },
         "/admin/product": {
-            "post": {
+            "get": {
                 "tags": [
                     "Product"
                 ],
-                "summary": "Add a product by admin",
-                "description": "Add a product by admin.",
-                "operationId": "CreateProduct",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "brand_id",
-                                    "name",
-                                    "description"
-                                ],
-                                "properties": {
-                                    "brand_id": {
-                                        "type": "integer",
-                                        "example": 5
-                                    },
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Fast&Up Charge with Natural Vitamin C and Zinc for Immunity - 20 Effervescent Tablets - Orange Flavour"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "<table border='1' cellpadding='6'><tr><th>Brand</th><td>OSOAA</td></tr></table>"
-                                    },
-                                    "categories": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer",
-                                            "example": 1
-                                        }
-                                    },
-                                    "tags": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer",
-                                            "example": 1
-                                        }
-                                    },
-                                    "variations": {
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "size_value": {
-                                                    "type": "number",
-                                                    "example": 100
-                                                },
-                                                "size_unit": {
-                                                    "type": "string",
-                                                    "example": "gm"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    }
-                                },
-                                "type": "object"
-                            }
+                "summary": "Get all active/inactive product",
+                "description": "Get all active/inactive product.",
+                "operationId": "ProductList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Toggle active/inactive brands(values: 0, 1, blank)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": "1"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search product based on name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "benedril"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
-                        "description": "Product added successfully",
+                        "description": "Admin published product list",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Product added successfully."
+                                            "example": "Admin published product list."
                                         },
                                         "data": {
-                                            "type": "object",
-                                            "example": null,
-                                            "nullable": true
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "uuid": {
+                                                                        "type": "string",
+                                                                        "example": "70cac94e-65e1-457b-8fe8-829c1ca837bd"
+                                                                    },
+                                                                    "published": {
+                                                                        "type": "boolean",
+                                                                        "example": true
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Provident explicabo voluptatem eaque hic sit."
+                                                                    },
+                                                                    "brand": {
+                                                                        "type": "string",
+                                                                        "example": "Abbott"
+                                                                    },
+                                                                    "lowest_variant_price": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 1211
+                                                                    },
+                                                                    "total_stock": {
+                                                                        "type": "integer",
+                                                                        "example": 106
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "total_page": {
+                                                            "type": "integer",
+                                                            "example": 100
+                                                        },
+                                                        "total_items": {
+                                                            "type": "integer",
+                                                            "example": 100
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/product/{uuid}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Show product",
+                "description": "Show product.",
+                "operationId": "ProductShow",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Uuid of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "1b01cd1a-27d4-4dc1-bf0e-a572ce0aa581"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Showing brand",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Showing brand"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "sun-pharma"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Sun Pharma"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "format": "url",
+                                                    "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Delete a product(soft).",
+                "description": "Delete a product(soft).",
+                "operationId": "ProductDelete",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "ID of the product to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product removed successfully.."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/toggle-product-status/{uuid}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Change product published product",
+                "description": "Change product published product.",
+                "operationId": "ProductToggleStatus",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Uuid of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "1b01cd1a-27d4-4dc1-bf0e-a572ce0aa581"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Showing brand",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Showing brand"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "sun-pharma"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Sun Pharma"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "format": "url",
+                                                    "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "success": {
                                             "type": "boolean",

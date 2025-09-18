@@ -45,9 +45,9 @@
                                     "bank_name",
                                     "bank_account_holder_name",
                                     "bank_account_number",
-                                    "vendor_citizenship_card[]",
-                                    "vendor_business_license[]",
-                                    "vendor_tax_certificate[]",
+                                    "vendor_citizenship_card",
+                                    "vendor_business_license",
+                                    "vendor_tax_certificate",
                                     "name",
                                     "email",
                                     "mobile_number"
@@ -110,29 +110,20 @@
                                         "type": "string",
                                         "example": "21547741201300157899"
                                     },
-                                    "vendor_citizenship_card[]": {
+                                    "vendor_citizenship_card": {
                                         "description": "Multiple image files to upload vendor citizenship card",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
+                                        "type": "string",
+                                        "format": "binary"
                                     },
-                                    "vendor_business_license[]": {
+                                    "vendor_business_license": {
                                         "description": "Multiple image files to upload vendor business license",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
+                                        "type": "string",
+                                        "format": "binary"
                                     },
-                                    "vendor_tax_certificate[]": {
+                                    "vendor_tax_certificate": {
                                         "description": "Multiple image files to upload vendor tax certificate",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
