@@ -25,6 +25,7 @@ class ProductSeeder extends Seeder
                     'brand_id' => rand(1, 15),
                     'name' => fake()->sentence(),
                     'description' => implode('', array_map(fn($text) => "<p>{$text}</p>", fake()->paragraphs())),
+                    'rating' => round(mt_rand(0, 500) / 100, 1)
                 ];
 
                 $categories = range(1, 15);
@@ -40,32 +41,44 @@ class ProductSeeder extends Seeder
                 $random_tags = is_array($randomKeys)
                     ? array_intersect_key($categories, array_flip($randomKeys))
                     : [$tags[$randomKeys]];
-
+                $apply_discount = fake()->boolean(50);
+                $platform_prices = [
+                    rand(100, 200),
+                    rand(1000, 1500),
+                    rand(2000, 2500),
+                    rand(3000, 3500),
+                    rand(4000, 5000)
+                ];
                 $variations = [
                     [
                         "size_value" => 100,
                         "size_unit" => "gm",
-                        'platform_price' => rand(200,500)
+                        'platform_price' => $platform_prices[0],
+                        'platform_discount_price' => $apply_discount ? $platform_prices[0] - ($platform_prices[0] * rand(10, 50) / 100) : null,
                     ],
                     [
                         "size_value" => 200,
                         "size_unit" => "gm",
-                        'platform_price' => rand(1000,1500)
+                        'platform_price' => $platform_prices[1],
+                        'platform_discount_price' => $apply_discount ? $platform_prices[1] - ($platform_prices[1] * rand(10, 50) / 100) : null,
                     ],
                     [
                         "size_value" => 500,
                         "size_unit" => "gm",
-                        'platform_price' => rand(2000,2500)
+                        'platform_price' => $platform_prices[2],
+                        'platform_discount_price' => $apply_discount ? $platform_prices[2] - ($platform_prices[2] * rand(10, 50) / 100) : null,
                     ],
                     [
                         "size_value" => 650,
                         "size_unit" => "gm",
-                        'platform_price' => rand(3000,3500)
+                        'platform_price' => $platform_prices[3],
+                        'platform_discount_price' => $apply_discount ? $platform_prices[3] - ($platform_prices[3] * rand(10, 50) / 100) : null,
                     ],
                     [
                         "size_value" => 800,
                         "size_unit" => "gm",
-                        'platform_price' => rand(4000,5000)
+                        'platform_price' => $platform_prices[4],
+                        'platform_discount_price' => $apply_discount ? $platform_prices[4] - ($platform_prices[4] * rand(10, 50) / 100) : null,
                     ]
                 ];
 

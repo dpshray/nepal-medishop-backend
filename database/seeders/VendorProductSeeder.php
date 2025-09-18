@@ -30,7 +30,6 @@ class VendorProductSeeder extends Seeder
                         'is_approved' => true,
                         'product_id' => $rp->id,
                         'is_featured' => fake()->boolean(50),
-                        'rating' => round(mt_rand(0, 500) / 100, 1)
                     ]);
                     $variations = $rp->variations;
                     $temp = [];
