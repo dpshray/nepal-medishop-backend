@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->boolean('status')->default(0);
             $table->uuid('uuid');
             $table->char('user_type')->default(UserTypeEnum::USER->value);
             $table->string('name');
