@@ -58,37 +58,33 @@ class AdminProductController extends Controller
      *         description="Search product based on name",
      *         @OA\Schema(type="string", example="benedril")
      *     ),
-     *     @OA\Response(
+     *      @OA\Response(
      *         response=200,
-     *         description="Admin published product list",
+     *         description="Admin published product list.",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Admin published product list."),
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(
-     *                     property="data",
-     *                     type="object",
-     *                     @OA\Property(
-     *                         property="items",
-     *                         type="array",
-     *                         @OA\Items(
-     *                             type="object",
-     *                             @OA\Property(property="uuid", type="string", example="70cac94e-65e1-457b-8fe8-829c1ca837bd"),
-     *                             @OA\Property(property="published", type="boolean", example=true),
-     *                             @OA\Property(property="name", type="string", example="Provident explicabo voluptatem eaque hic sit."),
-     *                             @OA\Property(property="brand", type="string", example="Abbott"),
-     *                             @OA\Property(property="lowest_variant_price", type="number", format="float", example=1211),
-     *                             @OA\Property(property="total_stock", type="integer", example=106)
-     *                         )
-     *                     ),
-     *                     @OA\Property(property="page", type="integer", example=1),
-     *                     @OA\Property(property="total_page", type="integer", example=100),
-     *                     @OA\Property(property="total_items", type="integer", example=100)
-     *                 )
-     *             ),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="uuid", type="string", format="uuid", example="7974511b-6bd7-42b9-81bc-00d519e37af1"),
+     *                         @OA\Property(property="published", type="boolean", example=true),
+     *                         @OA\Property(property="name", type="string", example="Sure Grow Procapil Scalp Solution - Hair Serum - 60ml"),
+     *                         @OA\Property(property="brand", type="string", example="Bayer"),
+     *                         @OA\Property(property="lowest_variant_price", type="number", format="float", example=1500),
+     *                         @OA\Property(property="total_stock", type="integer", example=0)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=103),
+     *                 @OA\Property(property="total_items", type="integer", example=103)
+     *             )
      *         )
      *     )
      * )
@@ -111,7 +107,7 @@ class AdminProductController extends Controller
             ->when($search != null, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
             ->latest()
             ->paginate($per_page);
-        $product = $this->makePaginationResponse($pagination, fn($item) => AdminProductResource::collection($item));
+        $product = $this->makePaginationResponse($pagination, fn($item) => AdminProductResource::collection($item))->data;
         return $this->apiSuccess("Admin $msg product list.", $product);
     }
 

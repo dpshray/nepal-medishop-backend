@@ -438,39 +438,67 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of product based on sections",
+                        "description": "Recent products",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "List of active categories"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "slug": {
-                                                        "type": "string",
-                                                        "example": "pfizer"
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "Pfizer"
-                                                    },
-                                                    "image": {
-                                                        "type": "string",
-                                                        "format": "url",
-                                                        "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
+                                            "example": "recent products"
                                         },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Voluptatum nobis fuga eum eum repudiandae quae."
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Takeda"
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3.8
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 166
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 222.44,
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

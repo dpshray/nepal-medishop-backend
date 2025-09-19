@@ -119,26 +119,30 @@ class MasterDataController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of product based on sections",
+     *         description="Recent products",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="List of active categories"),
+     *             @OA\Property(property="message", type="string", example="recent products"),
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(property="slug", type="string", example="pfizer"),
-     *                     @OA\Property(property="name", type="string", example="Pfizer"),
-     *                     @OA\Property(
-     *                         property="image",
-     *                         type="string",
-     *                         format="url",
-     *                         example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="name", type="string", example="Voluptatum nobis fuga eum eum repudiandae quae."),
+     *                         @OA\Property(property="brand", type="string", example="Takeda"),
+     *                         @OA\Property(property="rating", type="number", format="float", example=3.8),
+     *                         @OA\Property(property="price", type="number", format="float", example=166),
+     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=222.44)
      *                     )
-     *                 )
-     *             ),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=4),
+     *                 @OA\Property(property="total_items", type="integer", example=40)
+     *             )
      *         )
      *     )
      * )
@@ -151,7 +155,7 @@ class MasterDataController extends Controller
             ClientProductSectionEnum::FEATURED->value => $product->where('is_featured',1),
             ClientProductSectionEnum::FLASH->value => $product->where('is_featured', 1)
         };
-        $pagination = $product->paginate($per_page);
+        $pagination = $product->latest()->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => ProductCardResource::collection($item))->data;
         return $this->apiSuccess("$section products", $data);
     }

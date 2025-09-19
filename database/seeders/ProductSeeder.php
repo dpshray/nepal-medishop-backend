@@ -19,13 +19,15 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            for ($i = 1; $i <= 100; $i++) {
+            for ($i = 1; $i <= 300; $i++) {
                 $product = [
+                    'is_featured' => fake()->boolean(50),
                     'added_by' => 1,
                     'brand_id' => rand(1, 15),
                     'name' => fake()->sentence(),
                     'description' => implode('', array_map(fn($text) => "<p>{$text}</p>", fake()->paragraphs())),
-                    'rating' => round(mt_rand(0, 500) / 100, 1)
+                    'rating' => round(mt_rand(0, 500) / 100, 1),
+                    'created_at' => fake()->dateTimeInInterval('now','+7 days')
                 ];
 
                 $categories = range(1, 15);

@@ -16,12 +16,12 @@ class ProductCardResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
-        $item_price = $this->cheapestVariation;
+        $item = $this->cheapestVariation;
         // dd($this->product);
-        $platform_price = $item_price->platform_price;
+        $platform_price = $item->platform_price;
         $discount_price = null;
-        if ($item_price->platform_discount_price) {
-            $discount_percent = (($item_price->price - $item_price->platform_discount_price)/ $item_price->price) * 100;
+        if ($item->platform_discount_price) {
+            $discount_percent = (($platform_price - $item->platform_discount_price)/ $platform_price) * 100;
             $discount_price = round($platform_price + ($discount_percent * $platform_price)/100, 2);  
         }
         return [

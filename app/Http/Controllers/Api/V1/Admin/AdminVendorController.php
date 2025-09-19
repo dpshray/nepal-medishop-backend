@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Constants\VendorContants;
 use App\Enums\UserTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\VendorStoreRequest;
@@ -65,6 +66,7 @@ class AdminVendorController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="All vendor lists"),
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -73,24 +75,24 @@ class AdminVendorController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="5612b43f-30fa-4c1b-8ac1-2e05813e8192"),
-     *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="0414ef1e-e41d-4cc0-b677-69ae806d31ad"),
-     *                         @OA\Property(property="verified", type="boolean", example=false),
-     *                         @OA\Property(property="name", type="string", example="vendor30639760073"),
-     *                         @OA\Property(property="email", type="string", example="vendor30639760073@gmail.com"),
-     *                         @OA\Property(property="mobile_number", type="string", example="9884722415"),
-     *                         @OA\Property(property="store_name", type="string", example="Jones-Boyle")
+     *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="42f9e1a0-0699-425e-af15-2b7485206e68"),
+     *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="64cc5e61-c98f-41f7-997c-2b4fbedbf4dc"),
+     *                         @OA\Property(property="status", type="boolean", example=true),
+     *                         @OA\Property(property="verified", type="boolean", example=true),
+     *                         @OA\Property(property="name", type="string", example="vendor30956945"),
+     *                         @OA\Property(property="email", type="string", format="email", example="vendor30956945@gmail.com"),
+     *                         @OA\Property(property="mobile_number", type="string", example="9808096921"),
+     *                         @OA\Property(property="store_name", type="string", example="Oberbrunner PLC")
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=15),
+     *                 @OA\Property(property="total_page", type="integer", example=30),
      *                 @OA\Property(property="total_items", type="integer", example=30)
-     *             ),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *             )
      *         )
      *     )
      * )
-    */
+     */
     public function index(Request $request)
     {
         $per_page = $request->per_page;
@@ -188,7 +190,7 @@ class AdminVendorController extends Controller
      *         )
      *     )
      * )
-     */
+    */
     public function store(VendorStoreRequest $request)
     {
         DB::transaction(function () use($request){
@@ -212,7 +214,7 @@ class AdminVendorController extends Controller
      *         name="uuid",
      *         in="path",
      *         required=false,
-     *         description="Vendor user uuid",
+     *         description="Vendor's user uuid",
      *         @OA\Schema(type="string", example="c80dbce7-a3b5-476f-a618-4f59d4c8bdae")
      *     ),
      *     @OA\Response(
@@ -269,7 +271,7 @@ class AdminVendorController extends Controller
      */
     public function show($uuid)
     {
-        $user = User::with(['vendor' => ['media']])->firstWhere('uuid', $uuid);
+        $user = User::with(['vendor' => ['media']])->where('uuid', $uuid)->firstOrFail();
         $user = new AdminVendorUserResource($user);
         return $this->apiSuccess('Vendor user detail', $user);
     }
@@ -277,17 +279,118 @@ class AdminVendorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    /**
+     * @OA\Post(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/vendor/{uuid}",
+     *     summary="Update a vendor by admin",
+     *     description="Update information of a vendor.",
+     *     operationId="UpdateVendor",
+     *     tags={"Vendor"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="Vendor's user uuid",
+     *         @OA\Schema(type="string", example="c80dbce7-a3b5-476f-a618-4f59d4c8bdae")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"_method","store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","name","email","mobile_number"},
+     *                 @OA\Property(property="_method", type="string", example="patch"),
+     *                 @OA\Property(property="name", type="string", example="Dave Chappelle"),
+     *                 @OA\Property(property="email", type="string", format="email", example="dev.chappelle@mailinator.com"),
+     *                 @OA\Property(property="mobile_number", type="string", example="9452114525"),
+     *                 @OA\Property(property="store_name", type="string", example="Lilly Lee Store"),
+     *                 @OA\Property(property="store_description", type="string", example="Lilly Lee Store Description"),
+     *                 @OA\Property(property="location", type="string", example="Maharajgunj"),
+     *                 @OA\Property(property="country", type="string", example="Nepal"),
+     *                 @OA\Property(property="state", type="string", example="Bagmati Province"),
+     *                 @OA\Property(property="district", type="string", example="Kathmandu"),
+     *                 @OA\Property(property="municipality", type="string", example="Budhanilkantha Municipality"),
+     *                 @OA\Property(property="postal_code", type="string", example="4528"),
+     *                 @OA\Property(property="bank_name", type="string", example="Laxmi Sunrise"),
+     *                 @OA\Property(property="bank_account_holder_name", type="string", example="Laxmi Thapa"),
+     *                 @OA\Property(property="bank_account_number", type="string", example="21547741201300157899"),
+     *                 @OA\Property(property="is_verified", type="integer", example=1),
+     *                 @OA\Property(property="vendor_citizenship_card", type="string", format="binary", description="Multiple image files to upload vendor citizenship card"),
+     *                 @OA\Property(property="vendor_business_license", type="string", format="binary", description="Multiple image files to upload vendor business license"),
+     *                 @OA\Property(property="vendor_tax_certificate", type="string", format="binary", description="Multiple image files to upload vendor tax certificate")
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vendor updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Vendor updated"),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+
+    public function update(VendorStoreRequest $request, $uuid)
     {
-        //
+        $user = User::where('uuid', $uuid)->firstOrFail();
+        DB::transaction(function () use ($request,$user) {
+            $user_data = $request->safe()->only(["name", "email", "mobile_number"]);
+            $vendor_data = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate",'is_verified']);
+            $vendor_data['verified_at'] = $request->is_verified == 1 ? now() : null;
+            Log::info($vendor_data);
+            tap($user, fn() =>$user->update($user_data))->vendor()->update($vendor_data);
+            if ($request->hasFile('vendor_citizenship_card')) {
+                $user->vendor->addMedia($request->file('vendor_citizenship_card'))->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
+            }
+            if ($request->file('vendor_business_license')) {
+                $user->vendor->addMedia($request->file('vendor_business_license'))->toMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
+            }
+            if ($request->file('vendor_tax_certificate')) {
+                $user->vendor->addMedia($request->file('vendor_tax_certificate'))->toMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
+            }
+        });
+        return $this->apiSuccess('Vendor updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    /**
+     * @OA\Delete(
+     *     security={{"sanctum": {}}}, 
+     *     path="/admin/vendor/{uuid}",
+     *     operationId="VendorDelete",
+     *     tags={"Vendor"},
+     *     summary="Delete a vendor(soft).",
+     *     description="Delete a vendor(soft).",
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of the vendor to delete",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Brand successfully deleted",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="data", type="null", example=null),
+     *             @OA\Property(property="message", type="string", example="Vendor removed succesfully.")
+     *         )
+     *     )
+     * )
+    */
+    public function destroy($uuid)
     {
-        //
+        Vendor::where('uuid', $uuid)->firstOrFail()->delete();
+        return $this->apiSuccess('Vendor removed succesfully.');
     }
 
     /**

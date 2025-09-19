@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AdminUrlParamEnum;
 use App\Enums\RouteParamEnum;
 use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;

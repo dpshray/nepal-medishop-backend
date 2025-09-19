@@ -22,7 +22,7 @@ class VendorService {
         $user['password'] = $password;
         $vendor = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate"]);
         if (Auth::check() && Auth::user()->isAdmin()) {
-            $vendor['is_verified'] = $request->is_verified == 1 ? now() : null;
+            $vendor['verified_at'] = $request->is_verified == 1 ? now() : null;
         }
         $vendor = User::create($user)
             ->vendor()

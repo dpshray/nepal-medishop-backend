@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
         while ($user <= 30) {
             $name = 'vendor' . $user.$faker->randomNumber();
             $new_user = [
+                'status' => 1,
                 'user_type' => UserTypeEnum::VENDOR->value,
                 'uuid' => $faker->uuid(),
                 'name' => $name,
@@ -34,7 +35,7 @@ class UserSeeder extends Seeder
             ];
             if ($just_once) {
                 $new_user = [
-                    'id' => UserTypeEnum::VENDOR->value,
+                    'status' => 1,
                     'uuid' => $faker->uuid(),
                     'name' => 'vendor00',
                     'email' => 'vendor@gmail.com',
@@ -71,6 +72,7 @@ class UserSeeder extends Seeder
         while ($user <= 30) {
             $name = 'user' . $faker->randomNumber().$user;
             $vendor = User::create([
+                'status' => 1,
                 'user_type' => UserTypeEnum::USER->value,
                 'uuid' => $faker->uuid(),
                 'name' => $name,

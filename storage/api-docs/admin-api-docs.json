@@ -81,6 +81,10 @@
                                             "type": "string",
                                             "example": "All vendor lists"
                                         },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "data": {
                                             "properties": {
                                                 "items": {
@@ -90,32 +94,37 @@
                                                             "user_uuid": {
                                                                 "type": "string",
                                                                 "format": "uuid",
-                                                                "example": "5612b43f-30fa-4c1b-8ac1-2e05813e8192"
+                                                                "example": "42f9e1a0-0699-425e-af15-2b7485206e68"
                                                             },
                                                             "vendor_uuid": {
                                                                 "type": "string",
                                                                 "format": "uuid",
-                                                                "example": "0414ef1e-e41d-4cc0-b677-69ae806d31ad"
+                                                                "example": "64cc5e61-c98f-41f7-997c-2b4fbedbf4dc"
+                                                            },
+                                                            "status": {
+                                                                "type": "boolean",
+                                                                "example": true
                                                             },
                                                             "verified": {
                                                                 "type": "boolean",
-                                                                "example": false
+                                                                "example": true
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "vendor30639760073"
+                                                                "example": "vendor30956945"
                                                             },
                                                             "email": {
                                                                 "type": "string",
-                                                                "example": "vendor30639760073@gmail.com"
+                                                                "format": "email",
+                                                                "example": "vendor30956945@gmail.com"
                                                             },
                                                             "mobile_number": {
                                                                 "type": "string",
-                                                                "example": "9884722415"
+                                                                "example": "9808096921"
                                                             },
                                                             "store_name": {
                                                                 "type": "string",
-                                                                "example": "Jones-Boyle"
+                                                                "example": "Oberbrunner PLC"
                                                             }
                                                         },
                                                         "type": "object"
@@ -127,7 +136,7 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 15
+                                                    "example": 30
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
@@ -135,10 +144,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -313,7 +318,7 @@
                     {
                         "name": "uuid",
                         "in": "path",
-                        "description": "Vendor user uuid",
+                        "description": "Vendor's user uuid",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -434,6 +439,217 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Vendor"
+                ],
+                "summary": "Update a vendor by admin",
+                "description": "Update information of a vendor.",
+                "operationId": "UpdateVendor",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Vendor's user uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "c80dbce7-a3b5-476f-a618-4f59d4c8bdae"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "_method",
+                                    "store_name",
+                                    "store_description",
+                                    "location",
+                                    "country",
+                                    "state",
+                                    "district",
+                                    "municipality",
+                                    "postal_code",
+                                    "bank_name",
+                                    "bank_account_holder_name",
+                                    "bank_account_number",
+                                    "name",
+                                    "email",
+                                    "mobile_number"
+                                ],
+                                "properties": {
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "patch"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Dave Chappelle"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "dev.chappelle@mailinator.com"
+                                    },
+                                    "mobile_number": {
+                                        "type": "string",
+                                        "example": "9452114525"
+                                    },
+                                    "store_name": {
+                                        "type": "string",
+                                        "example": "Lilly Lee Store"
+                                    },
+                                    "store_description": {
+                                        "type": "string",
+                                        "example": "Lilly Lee Store Description"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Maharajgunj"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Nepal"
+                                    },
+                                    "state": {
+                                        "type": "string",
+                                        "example": "Bagmati Province"
+                                    },
+                                    "district": {
+                                        "type": "string",
+                                        "example": "Kathmandu"
+                                    },
+                                    "municipality": {
+                                        "type": "string",
+                                        "example": "Budhanilkantha Municipality"
+                                    },
+                                    "postal_code": {
+                                        "type": "string",
+                                        "example": "4528"
+                                    },
+                                    "bank_name": {
+                                        "type": "string",
+                                        "example": "Laxmi Sunrise"
+                                    },
+                                    "bank_account_holder_name": {
+                                        "type": "string",
+                                        "example": "Laxmi Thapa"
+                                    },
+                                    "bank_account_number": {
+                                        "type": "string",
+                                        "example": "21547741201300157899"
+                                    },
+                                    "is_verified": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "vendor_citizenship_card": {
+                                        "description": "Multiple image files to upload vendor citizenship card",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "vendor_business_license": {
+                                        "description": "Multiple image files to upload vendor business license",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "vendor_tax_certificate": {
+                                        "description": "Multiple image files to upload vendor tax certificate",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vendor updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor updated"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Vendor"
+                ],
+                "summary": "Delete a vendor(soft).",
+                "description": "Delete a vendor(soft).",
+                "operationId": "VendorDelete",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of the vendor to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Brand successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor removed succesfully."
                                         }
                                     },
                                     "type": "object"
@@ -1451,7 +1667,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Admin published product list",
+                        "description": "Admin published product list.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1460,64 +1676,60 @@
                                             "type": "string",
                                             "example": "Admin published product list."
                                         },
-                                        "data": {
-                                            "properties": {
-                                                "data": {
-                                                    "properties": {
-                                                        "items": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "properties": {
-                                                                    "uuid": {
-                                                                        "type": "string",
-                                                                        "example": "70cac94e-65e1-457b-8fe8-829c1ca837bd"
-                                                                    },
-                                                                    "published": {
-                                                                        "type": "boolean",
-                                                                        "example": true
-                                                                    },
-                                                                    "name": {
-                                                                        "type": "string",
-                                                                        "example": "Provident explicabo voluptatem eaque hic sit."
-                                                                    },
-                                                                    "brand": {
-                                                                        "type": "string",
-                                                                        "example": "Abbott"
-                                                                    },
-                                                                    "lowest_variant_price": {
-                                                                        "type": "number",
-                                                                        "format": "float",
-                                                                        "example": 1211
-                                                                    },
-                                                                    "total_stock": {
-                                                                        "type": "integer",
-                                                                        "example": 106
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            }
-                                                        },
-                                                        "page": {
-                                                            "type": "integer",
-                                                            "example": 1
-                                                        },
-                                                        "total_page": {
-                                                            "type": "integer",
-                                                            "example": 100
-                                                        },
-                                                        "total_items": {
-                                                            "type": "integer",
-                                                            "example": 100
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "7974511b-6bd7-42b9-81bc-00d519e37af1"
+                                                            },
+                                                            "published": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Sure Grow Procapil Scalp Solution - Hair Serum - 60ml"
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Bayer"
+                                                            },
+                                                            "lowest_variant_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1500
+                                                            },
+                                                            "total_stock": {
+                                                                "type": "integer",
+                                                                "example": 0
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 103
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 103
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

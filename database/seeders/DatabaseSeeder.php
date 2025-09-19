@@ -172,6 +172,7 @@ class DatabaseSeeder extends Seeder
 
         $faker = Faker::create();
         User::create([
+            'status' => 1,
             'id' => UserTypeEnum::ADMIN->value,
             'uuid' => $faker->uuid(),
             'name' => 'admin',
@@ -182,6 +183,7 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         User::create([
+            'status' => 1,
             'id' => UserTypeEnum::USER->value,
             'uuid' => $faker->uuid(),
             'name' => 'user00',
