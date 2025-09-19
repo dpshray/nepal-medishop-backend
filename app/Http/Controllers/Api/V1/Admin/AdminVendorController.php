@@ -100,7 +100,6 @@ class AdminVendorController extends Controller
         $verified_vendor = $request->query('verified_vendors', 'All');
 
         $pagination = User::filterByRole(UserTypeEnum::VENDOR)
-            ->has('vendor')
             ->with('vendor')
             // apply search only when provided; group the ORs so they don't break other filters
             ->when($search, function ($q, $search) {
