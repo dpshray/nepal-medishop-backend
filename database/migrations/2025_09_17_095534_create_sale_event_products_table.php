@@ -18,11 +18,8 @@ return new class extends Migration
         Schema::create('sale_event_products', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(SaleEvent::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignIdFor(ProductVariation::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->decimal('event_sale_price', 10, 2);
-            // $table->decimal('platform_price', 10, 2);
-            $table->unsignedSmallInteger('stock_limit')->nullable();
-            $table->unsignedSmallInteger('max_purchase')->nullable();
+            $table->foreignIdFor(Product::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->unique(['sale_event_id', 'user_id']);
         });
     }
 

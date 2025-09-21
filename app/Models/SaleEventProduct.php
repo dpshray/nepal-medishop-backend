@@ -8,7 +8,7 @@ class SaleEventProduct extends Model
 {
     public $timestamps = false;
 
-    public function variant(){
-        return $this->belongsTo(ProductVariation::class,'product_variation_id');
+    public function saleEventProductPrices(){
+        return $this->hasMany(SaleEventProductPrice::class);
     }
 }

@@ -27,24 +27,25 @@ class FlashSaleSeeder extends Seeder
         $temp = [];
         foreach ($vendor_products as $vp) {
             foreach ($vp->variations as $vprc) {
-                $temp[] = [
+                $temp[$vp->id][] = [
                     'product_variation_id' => $vprc->id,
-                    // 'product_id' => $vp->product_id,
                     'event_sale_price' => $vprc->platform_price,
-                    // 'platform_price' => $vprc->platform_price - ($vprc->platform_price * rand(10, 50) / 100),
                     'stock_limit' => rand(20, 25),
-                    'max_purchase' => 2,
                 ];
             }
         }
         DB::transaction(function () use ($temp) {
-            SaleEvent::create([
+            $se = SaleEvent::create([
                 'title' => 'Flash Sale',
                 'start_timestamps' => now()->startOfDay(),
                 'end_timestamps' => now()->endOfDay(),
-            ])
-                ->saleEventProducts()
-                ->createMany($temp);
+            ]);
+            foreach ($temp as $pid => $item) {
+                $se->saleEventProducts()
+                    ->create(['product_id' => $pid])
+                    ->saleEventProductPrices()
+                    ->createMany($item);
+            }
         });
     }
 }
