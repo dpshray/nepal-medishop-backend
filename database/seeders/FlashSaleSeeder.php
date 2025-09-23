@@ -33,13 +33,32 @@ class FlashSaleSeeder extends Seeder
             ];
         }
         Log::info($temp);
-        DB::transaction(function () use ($temp, $items) {
-            Package::create([
+        
+        $img_A = public_path('assets/img/packages/package-1.jpg');
+        $img_B   = public_path('assets/img/packages/package-2.jpg');
+        $img_C   = public_path('assets/img/packages/package-3.jpg');
+        $img_D   = public_path('assets/img/packages/package-4.jpg');
+        $img_E   = public_path('assets/img/packages/package-5.jpg');
+
+        $product_media = [
+            $img_A,
+            $img_B,
+            $img_C,
+            $img_D,
+            $img_E,
+        ];
+        $randomKey   = array_rand($product_media);
+        $randomImage = $product_media[$randomKey];
+        
+        DB::transaction(function () use ($temp, $items, $randomImage) {
+            $package = Package::create([
                 'title' => $this->randomPackageName(),
                 'price' => $items * 1000
-            ])
-            ->packageProducts()
-            ->createMany($temp);
+            ]);
+            tap($package, function($pkg) use($temp){
+                $pkg->packageProducts()
+                ->createMany($temp);
+            })->addMedia($randomImage)->preservingOriginal()->toMediaCollection(Package::PACKAGE_MEIDA);
         });
     }
 
