@@ -1781,6 +1781,10 @@
                                                     "type": "string",
                                                     "example": "sun-pharma"
                                                 },
+                                                "brand": {
+                                                    "type": "string",
+                                                    "example": "Bristol-Myers Squibb"
+                                                },
                                                 "name": {
                                                     "type": "string",
                                                     "example": "Sun Pharma"
