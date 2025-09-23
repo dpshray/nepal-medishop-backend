@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')
     ->middleware(['auth:sanctum', AdminMiddleware::class])
     ->group(function(){
-        Route::apiResource('vendor', AdminVendorController::class);
+        Route::apiResource('vendor', AdminVendorController::class)->parameters(['vendor' => 'user'])->scoped(['user' => 'uuid']);
         Route::controller(AdminVendorController::class)->group(function(){
-            Route::get('vendor-verified-toggler/{vendor:uuid}', 'toggleVendorVerifiedStatus');
+            Route::get('vendor-verified-toggler/{user:uuid}', 'toggleVendorVerifiedStatus');
         });
         Route::apiResource('brand', AdminBrandController::class);
         Route::apiResource('category', AdminCategoryController::class);

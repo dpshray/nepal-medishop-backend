@@ -100,6 +100,7 @@ class AdminVendorController extends Controller
         $verified_vendor = $request->query('verified_vendors', 'All');
 
         $pagination = User::filterByRole(UserTypeEnum::VENDOR)
+            ->has('vendor')
             ->with('vendor')
             // apply search only when provided; group the ORs so they don't break other filters
             ->when($search, function ($q, $search) {
@@ -214,7 +215,7 @@ class AdminVendorController extends Controller
      *         name="uuid",
      *         in="path",
      *         required=false,
-     *         description="Vendor's user uuid",
+     *         description="User(vendor) uuid",
      *         @OA\Schema(type="string", example="c80dbce7-a3b5-476f-a618-4f59d4c8bdae")
      *     ),
      *     @OA\Response(
@@ -269,9 +270,9 @@ class AdminVendorController extends Controller
      *     )
      * )
      */
-    public function show($uuid)
+    public function show(User $user)
     {
-        $user = User::with(['vendor' => ['media']])->where('uuid', $uuid)->firstOrFail();
+        $user->loadMissing(['vendor' => ['media']]);
         $user = new AdminVendorUserResource($user);
         return $this->apiSuccess('Vendor user detail', $user);
     }
@@ -291,7 +292,7 @@ class AdminVendorController extends Controller
      *         name="uuid",
      *         in="path",
      *         required=true,
-     *         description="Vendor's user uuid",
+     *         description="User(vendor) uuid",
      *         @OA\Schema(type="string", example="c80dbce7-a3b5-476f-a618-4f59d4c8bdae")
      *     ),
      *     @OA\RequestBody(
@@ -328,7 +329,7 @@ class AdminVendorController extends Controller
      *         description="Vendor updated successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Vendor updated"),
+     *             @OA\Property(property="message", type="string", example="Vendor updated successfully."),
      *             @OA\Property(property="data", type="object", nullable=true, example=null),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -336,10 +337,9 @@ class AdminVendorController extends Controller
      * )
      */
 
-    public function update(VendorStoreRequest $request, $uuid)
+    public function update(VendorStoreRequest $request, User $user)
     {
-        $user = User::where('uuid', $uuid)->firstOrFail();
-        DB::transaction(function () use ($request,$user) {
+        DB::transaction(function () use ($request, $user) {
             $user_data = $request->safe()->only(["name", "email", "mobile_number"]);
             $vendor_data = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate",'is_verified']);
             $vendor_data['verified_at'] = $request->is_verified == 1 ? now() : null;
@@ -373,7 +373,7 @@ class AdminVendorController extends Controller
      *         name="uuid",
      *         in="path",
      *         required=true,
-     *         description="UUID of the vendor to delete",
+     *         description="UUID of the user(vendor) to delete",
      *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
@@ -387,9 +387,9 @@ class AdminVendorController extends Controller
      *     )
      * )
     */
-    public function destroy($uuid)
+    public function destroy(User $user)
     {
-        Vendor::where('uuid', $uuid)->firstOrFail()->delete();
+        $user->vendor()->delete();
         return $this->apiSuccess('Vendor removed succesfully.');
     }
 
@@ -405,7 +405,7 @@ class AdminVendorController extends Controller
      *         name="uuid",
      *         in="path",
      *         required=true,
-     *         description="Uuid of a vendor",
+     *         description="Uuid of a user(vendor)",
      *         @OA\Schema(type="string", example="ff5487b6-72f4-4a7f-bd0f-0abbde78db27")
      *     ),
      *     @OA\Response(
@@ -420,7 +420,8 @@ class AdminVendorController extends Controller
      *     ),
      * )
      */
-    function toggleVendorVerifiedStatus(Vendor $vendor){
+    function toggleVendorVerifiedStatus(User $user){
+        $vendor = $user->vendor;
         $current_verification_status = $vendor->verified_at != null;
         $message = 'Vendor verification status changed to ACTIVE';
         if ((int)$current_verification_status == 1) {

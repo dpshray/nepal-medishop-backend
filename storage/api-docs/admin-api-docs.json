@@ -318,7 +318,7 @@
                     {
                         "name": "uuid",
                         "in": "path",
-                        "description": "Vendor's user uuid",
+                        "description": "User(vendor) uuid",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -464,7 +464,7 @@
                     {
                         "name": "uuid",
                         "in": "path",
-                        "description": "Vendor's user uuid",
+                        "description": "User(vendor) uuid",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -590,7 +590,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Vendor updated"
+                                            "example": "Vendor updated successfully."
                                         },
                                         "data": {
                                             "type": "object",
@@ -625,7 +625,7 @@
                     {
                         "name": "uuid",
                         "in": "path",
-                        "description": "UUID of the vendor to delete",
+                        "description": "UUID of the user(vendor) to delete",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -677,7 +677,7 @@
                     {
                         "name": "uuid",
                         "in": "path",
-                        "description": "Uuid of a vendor",
+                        "description": "Uuid of a user(vendor)",
                         "required": true,
                         "schema": {
                             "type": "string",
