@@ -12,12 +12,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, UuidModelTrait;
+    use HasFactory, Notifiable, HasApiTokens, UuidModelTrait, SoftDeletes;
+    
+    protected $dates = ['deleted_at'];
     /**
      * The attributes that are mass assignable.
      *
@@ -57,7 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     }
 
     public function scopeFilterByRole($query, UserTypeEnum $role){
-        return $query->where('user_type', (string)$role);
+        return $query->where('user_type', $role);
     }
 
     public function vendor(){
