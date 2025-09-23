@@ -503,11 +503,6 @@
                                         "type": "string",
                                         "example": "Dave Chappelle"
                                     },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "dev.chappelle@mailinator.com"
-                                    },
                                     "mobile_number": {
                                         "type": "string",
                                         "example": "9452114525"
