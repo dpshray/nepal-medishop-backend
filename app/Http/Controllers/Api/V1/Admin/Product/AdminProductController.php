@@ -105,7 +105,7 @@ class AdminProductController extends Controller
         $pagination = Product::with(['brand', 'cheapestVariation', 'productVendorPrices'])
             ->when($status != null, fn($qry) => $qry->where('status', $status))
             ->when($search != null, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
-            ->latest()
+            ->latest('id')
             ->paginate($per_page);
         $product = $this->makePaginationResponse($pagination, fn($item) => AdminProductResource::collection($item))->data;
         return $this->apiSuccess("Admin $msg product list.", $product);
@@ -160,6 +160,7 @@ class AdminProductController extends Controller
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=3),
      *                 @OA\Property(property="slug", type="string", example="sun-pharma"),
+     *                 @OA\Property(property="brand", type="string", example="Bristol-Myers Squibb"),
      *                 @OA\Property(property="name", type="string", example="Sun Pharma"),
      *                 @OA\Property(
      *                     property="image",
@@ -172,10 +173,10 @@ class AdminProductController extends Controller
      *         )
      *     )
      * )
-    */
+     */
     public function show(Product $product)
     {
-        $product->loadMissing(['variations','categories','tags','media']);
+        $product->loadMissing(['variations','categories','tags','media','brand']);
         $product->loadCount(['productVendors']);
         $product = new AdminProductDetailResource($product);
         return $this->apiSuccess('Product detail', $product);
