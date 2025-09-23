@@ -54,14 +54,19 @@ class ProductStoreRequest extends FormRequest
         return [
             'categories.*.distinct' => 'Categories has a duplicate values.',
             'tags.*.distinct' => 'Tags has a duplicate values.',
+            'variations.required' => 'variation is required.',
+            'variations.*.size_value.required' => 'size value is required.',
+            'variations.*.size_unit.required' => 'size unit is required.',
+            'variations.*.platform_price.required' => 'platform price is required.',
         ];
     }
 
     function prepareForValidation()
     {
         $converted = array_map(function ($item) {
-            return json_decode($item, true);
+            return is_array($item) ? $item : json_decode($item, true);
         }, $this->variations);
         $this->merge(['variations' => $converted]);
+        
     }
 }
