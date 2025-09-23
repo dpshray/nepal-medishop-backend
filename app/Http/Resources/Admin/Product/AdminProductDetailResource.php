@@ -19,6 +19,7 @@ class AdminProductDetailResource extends JsonResource
         return [
             'name' => $this->name,
             'slug' => $this->slug,
+            'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
             'description' => $this->description,
             'added_date' => $this->created_at,
             'no_of_vendors' => $this->whenCounted('productVendors', fn() => $this->product_vendors_count),
