@@ -26,6 +26,10 @@ class Brand extends Model implements HasMedia
         return $qry->where('status',1);
     }
 
+    function products() {
+        return $this->hasMany(Product::class);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::BRAND_IMAGE)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));

@@ -288,6 +288,9 @@ class AdminBrandController extends Controller
     */
     public function destroy(Brand $brand)
     {
+        if ($brand->has('products')) {
+            return $this->apiError("Deletion failed: This brand has associated products. Delete those products or change their brand before trying again.", 409);
+        }
         $brand->delete();
         return $this->apiSuccess('Brand removed successfully.');
     }
