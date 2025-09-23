@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\FlashSale;
+use App\Models\Package;
 use App\Models\Product;
 use App\Models\ProductVendor;
 use App\Models\SaleEvent;
@@ -19,33 +20,34 @@ class FlashSaleSeeder extends Seeder
     public function run(): void
     {
 
-        $vendor_products = Product::select('id')
+        $items = rand(5, 10);
+        $products = Product::select('id')
             ->with(['variations'])
             ->inRandomOrder()
-            ->take(50)
+            ->take($items)
             ->get();
         $temp = [];
-        foreach ($vendor_products as $vp) {
-            foreach ($vp->variations as $vprc) {
-                $temp[$vp->id][] = [
-                    'product_variation_id' => $vprc->id,
-                    'event_sale_price' => $vprc->platform_price,
-                    'stock_limit' => rand(20, 25),
-                ];
-            }
+        foreach ($products as $p) {
+            $temp[] = [
+                'product_variation_id' => $p->variations->random()->id 
+            ];
         }
-        DB::transaction(function () use ($temp) {
-            $se = SaleEvent::create([
-                'title' => 'Flash Sale',
-                'start_timestamps' => now()->startOfDay(),
-                'end_timestamps' => now()->endOfDay(),
-            ]);
-            foreach ($temp as $pid => $item) {
-                $se->saleEventProducts()
-                    ->create(['product_id' => $pid])
-                    ->saleEventProductPrices()
-                    ->createMany($item);
-            }
+        Log::info($temp);
+        DB::transaction(function () use ($temp, $items) {
+            Package::create([
+                'title' => $this->randomPackageName(),
+                'price' => $items * 1000
+            ])
+            ->packageProducts()
+            ->createMany($temp);
         });
+    }
+
+    function randomPackageName(): string
+    {
+        $adjectives = ['Starter', 'Family', 'Mega', 'Premium', 'Smart', 'Quick', 'Value', 'Super', 'Power', 'Deluxe'];
+        $nouns = ['Pack', 'Bundle', 'Set', 'Box', 'Deal', 'Combo', 'Kit', 'Offer'];
+
+        return $adjectives[array_rand($adjectives)] . ' ' . $nouns[array_rand($nouns)];
     }
 }
