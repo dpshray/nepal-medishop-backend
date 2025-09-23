@@ -25,13 +25,11 @@ class VendorStoreRequest extends FormRequest
     public function rules(): array
     {
         $user_id = null;
-        $user_uuid = $this->vendor; #this is actually user id
-        if($user_uuid){
-            $user_id = User::where('uuid', $user_uuid)->firstOrFail()->id;
+        if($this->user){
+            $user_id = $this->user->id;
         }
         $rules = [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$user_id,
             'mobile_number' => 'required',
             'store_name' => 'required|max:255',
             'store_description' => 'required',
@@ -49,6 +47,7 @@ class VendorStoreRequest extends FormRequest
         ];
         if ($user_id == null) {
             $rules = array_merge($rules, [
+                'email' => 'required|email|unique:users,email',
                 'vendor_citizenship_card' => ['required'],
                 'vendor_citizenship_card.*' => ['image'],
                 'vendor_business_license' => ['required'],
@@ -70,5 +69,12 @@ class VendorStoreRequest extends FormRequest
             'vendor_tax_certificate.*.required' => 'Tax certificate is required',
             'vendor_tax_certificate.*.image' => 'Tax certificate is must be image',
         ];
+    }
+
+    function prepareForValidation()
+    {
+        return $this->merge([
+            'is_verified' => filter_var($this->is_verified, FILTER_VALIDATE_BOOLEAN) ? 1 : 0
+        ]);
     }
 }

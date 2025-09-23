@@ -303,7 +303,6 @@ class AdminVendorController extends Controller
      *                 required={"_method","store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","name","email","mobile_number"},
      *                 @OA\Property(property="_method", type="string", example="patch"),
      *                 @OA\Property(property="name", type="string", example="Dave Chappelle"),
-     *                 @OA\Property(property="email", type="string", format="email", example="dev.chappelle@mailinator.com"),
      *                 @OA\Property(property="mobile_number", type="string", example="9452114525"),
      *                 @OA\Property(property="store_name", type="string", example="Lilly Lee Store"),
      *                 @OA\Property(property="store_description", type="string", example="Lilly Lee Store Description"),
