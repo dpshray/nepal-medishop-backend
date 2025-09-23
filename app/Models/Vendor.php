@@ -10,10 +10,8 @@ use Spatie\MediaLibrary\{HasMedia, InteractsWithMedia, MediaCollections\Models\M
 
 class Vendor extends Model implements HasMedia
 {
-    use SoftDeletes, InteractsWithMedia, UuidModelTrait;
+    use InteractsWithMedia, UuidModelTrait;
     
-    protected $dates = ['deleted_at'];
-
     protected $fillable = [
         "store_name",
         "store_description",

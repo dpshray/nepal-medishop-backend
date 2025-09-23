@@ -4,19 +4,16 @@ namespace App\Models;
 
 use App\Models\Traits\SlugTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Brand extends Model implements HasMedia
 {
-    use SlugTrait, SoftDeletes, InteractsWithMedia;
+    use SlugTrait, InteractsWithMedia;
 
     const BRAND_IMAGE = 'BRAND_IMAGE';
 
     public $timestamps = false;
-
-    protected $hidden = ['deleted_at'];
 
     protected $fillable = [
         'name',

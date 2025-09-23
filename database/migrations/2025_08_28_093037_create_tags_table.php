@@ -16,7 +16,6 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->string('slug')->unique();
             $table->string('name');
-            $table->softDeletes();
         });
     }
 

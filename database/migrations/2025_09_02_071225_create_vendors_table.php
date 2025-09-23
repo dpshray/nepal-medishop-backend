@@ -30,7 +30,6 @@ return new class extends Migration
             $table->string('bank_account_number');
             $table->timestamp('verified_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

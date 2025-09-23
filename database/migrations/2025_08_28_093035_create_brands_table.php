@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_popular')->default(false);
-            $table->softDeletes();
         });
     }
 
