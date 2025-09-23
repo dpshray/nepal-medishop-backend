@@ -59,7 +59,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     }
 
     public function scopeFilterByRole($query, UserTypeEnum $role){
-        return $query->where('user_type', $role);
+        return $query->where('user_type', (string)$role->value);
     }
 
     public function vendor(){
