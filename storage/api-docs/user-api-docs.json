@@ -406,23 +406,23 @@
                 }
             }
         },
-        "/fetch-section/{section}": {
+        "/products/": {
             "get": {
                 "tags": [
                     "Product"
                 ],
-                "summary": "Get product based on section",
-                "description": "Get product based on section.",
-                "operationId": "ClientSectionList",
+                "summary": "Get product based on category slug",
+                "description": "Get product based on category slug.",
+                "operationId": "ClientProductList",
                 "parameters": [
                     {
-                        "name": "section",
-                        "in": "path",
-                        "description": "Section of product(recent,flash,featured,popular)",
-                        "required": true,
+                        "name": "category_slug",
+                        "in": "query",
+                        "description": "slug of a category('all' to fetch all random products)",
+                        "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "recent"
+                            "example": "all"
                         }
                     },
                     {
@@ -434,22 +434,28 @@
                             "type": "integer",
                             "example": 10
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Recent products",
+                        "description": "All product lists",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "recent products"
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
+                                            "example": "All product lists."
                                         },
                                         "data": {
                                             "properties": {
@@ -459,27 +465,39 @@
                                                         "properties": {
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Voluptatum nobis fuga eum eum repudiandae quae."
+                                                                "example": "Consequuntur sunt suscipit dolorem maxime ut."
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "consequuntur-sunt-suscipit-dolorem-maxime-ut"
                                                             },
                                                             "brand": {
                                                                 "type": "string",
-                                                                "example": "Takeda"
+                                                                "example": "AstraZeneca"
                                                             },
                                                             "rating": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 3.8
+                                                                "example": 3.7
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 166
+                                                                "example": 2016.7
                                                             },
                                                             "previous_price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 222.44,
+                                                                "example": 2345,
                                                                 "nullable": true
+                                                            },
+                                                            "feature_image": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/576/visc-inhaler.jpg"
+                                                            },
+                                                            "liked": {
+                                                                "type": "boolean",
+                                                                "example": false
                                                             }
                                                         },
                                                         "type": "object"
@@ -491,11 +509,376 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 4
+                                                    "example": 30
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 40
+                                                    "example": 300
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{slug}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Show an product",
+                "description": "Show an active brand.",
+                "operationId": "ProductShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sun-pharma"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product detail response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product detail of: Incidunt ratione recusandae dolor quod."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Incidunt ratione recusandae dolor quod."
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "incidunt-ratione-recusandae-dolor-quod"
+                                                },
+                                                "brand": {
+                                                    "type": "string",
+                                                    "example": "AstraZeneca"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "<p>Qui impedit consectetur necessitatibus eos iste odio...</p>"
+                                                },
+                                                "added_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-09-24"
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Eye Care"
+                                                    }
+                                                },
+                                                "tags": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Doxycycline"
+                                                    }
+                                                },
+                                                "variations": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "variation_id": {
+                                                                "type": "integer",
+                                                                "example": 322
+                                                            },
+                                                            "size_value": {
+                                                                "type": "number",
+                                                                "example": 500
+                                                            },
+                                                            "size_unit": {
+                                                                "type": "string",
+                                                                "example": "gm"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1778.28
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2044,
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "featured_image": {
+                                                    "type": "string",
+                                                    "example": "http://192.168.100.23:8008/storage/601/medi-plaster.png"
+                                                },
+                                                "gallery_images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "http://192.168.100.23:8008/storage/602/tablets.jpg"
+                                                    }
+                                                },
+                                                "liked": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/packages": {
+            "get": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Get package list",
+                "description": "Get package list.",
+                "operationId": "ClientPackageList",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Package list response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Package lists"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Mega Combo"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "mega-combo"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3640
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 7000,
+                                                                "nullable": true
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2.8
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/1642/package-4.jpg"
+                                                            },
+                                                            "liked": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/package/{slug}": {
+            "get": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Show a package",
+                "description": "Show a package.",
+                "operationId": "PackageShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sun-pharma"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Package details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Package details retrieved successfully."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Mega Combo"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "<p>Eos veniam aliquam qui ex...</p>"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 7000
+                                                },
+                                                "discount_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 3640
+                                                },
+                                                "rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 2.8
+                                                },
+                                                "featured_image": {
+                                                    "type": "string",
+                                                    "example": "http://192.168.100.23:8008/storage/1642/package-4.jpg"
+                                                },
+                                                "gallery_images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "http://192.168.100.23:8008/storage/1643/package-1.jpg"
+                                                    }
+                                                },
+                                                "products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/236/tablets.jpg"
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Magni voluptas maiores quia consequuntur."
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "magni-voluptas-maiores-quia-consequuntur"
+                                                            },
+                                                            "size_value": {
+                                                                "type": "integer",
+                                                                "example": 650
+                                                            },
+                                                            "size_unit": {
+                                                                "type": "string",
+                                                                "example": "gm"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3468
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "liked": {
+                                                    "type": "boolean",
+                                                    "example": false
                                                 }
                                             },
                                             "type": "object"
@@ -518,6 +901,10 @@
         {
             "name": "Product",
             "description": "Product"
+        },
+        {
+            "name": "Package",
+            "description": "Package"
         }
     ],
     "components": {

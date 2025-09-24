@@ -62,6 +62,10 @@ class Product extends Model implements HasMedia
         return $this->hasManyThrough(VendorProductPrice::class, ProductVendor::class);
     }
 
+    function scopeActive($query){
+        return $query->where('status', 1);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::PRODUCT_FEATURE)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));

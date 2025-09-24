@@ -3,11 +3,13 @@
 namespace App\Http\Resources\User\Product\Card;
 
 use App\Models\Product;
+use App\Traits\HelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductCardResource extends JsonResource
 {
+    use HelperTrait;
     /**
      * Transform the resource into an array.
      *
@@ -17,19 +19,23 @@ class ProductCardResource extends JsonResource
     {
         // return parent::toArray($request);
         $item = $this->cheapestVariation;
-        $platform_price = $item->platform_price;
+        /* $platform_price = $item->platform_price;
         $previous_price = null;
         if ($item->platform_discount_price) {
             $previous_price = (float) $platform_price;
             $platform_price = $item->platform_discount_price;
-        }
+        } */
+        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $item->platform_discount_price);
+
         return [
             'name' => $this->name,
+            'slug' => $this->slug,
             'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
             'rating' => (float) $this->rating,
-            'price' => (float) $platform_price,
+            'price' => $price,
             'previous_price' => $previous_price,
-            'feature_image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE))
+            'feature_image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)),
+            'liked' => false
         ];
     }
 }
