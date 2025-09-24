@@ -19,7 +19,7 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            for ($i = 1; $i <= 300; $i++) {
+            for ($i = 1; $i <= 500; $i++) {
                 $product = [
                     'is_featured' => fake()->boolean(50),
                     'added_by' => 1,
