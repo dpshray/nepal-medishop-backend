@@ -320,36 +320,45 @@ class MasterDataController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Package details retrieved successfully."),
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="name", type="string", example="Mega Combo"),
-     *                 @OA\Property(property="description", type="string", example="<p>Eos veniam aliquam qui ex...</p>"),
-     *                 @OA\Property(property="price", type="number", format="float", example=7000),
-     *                 @OA\Property(property="discount_price", type="number", format="float", example=3640),
-     *                 @OA\Property(property="rating", type="number", format="float", example=2.8),
-     *                 @OA\Property(property="featured_image", type="string", example="http://192.168.100.23:8008/storage/1642/package-4.jpg"),
+     *                 @OA\Property(property="name", type="string", example="Super Kit"),
+     *                 @OA\Property(property="description", type="string", example="<p>Ullam placeat culpa dolor enim...</p>"),
+     *                 @OA\Property(property="price", type="number", format="float", example=10000),
+     *                 @OA\Property(property="discount_price", type="number", format="float", nullable=true, example=null),
+     *                 @OA\Property(property="rating", type="number", format="float", example=2.5),
+     *                 @OA\Property(property="featured_image", type="string", example="http://192.168.100.23:8008/storage/3211/package-3.jpg"),
      *                 @OA\Property(
      *                     property="gallery_images",
      *                     type="array",
-     *                     @OA\Items(type="string", example="http://192.168.100.23:8008/storage/1643/package-1.jpg")
+     *                     @OA\Items(type="string", example="http://192.168.100.23:8008/storage/3212/package-1.jpg")
      *                 ),
      *                 @OA\Property(
      *                     property="products",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/236/tablets.jpg"),
-     *                         @OA\Property(property="product_name", type="string", example="Magni voluptas maiores quia consequuntur."),
-     *                         @OA\Property(property="slug", type="string", example="magni-voluptas-maiores-quia-consequuntur"),
-     *                         @OA\Property(property="size_value", type="integer", example=650),
+     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/2921/cream.jpg"),
+     *                         @OA\Property(property="product_name", type="string", example="Odit quia nisi dolores nobis atque vel velit."),
+     *                         @OA\Property(property="slug", type="string", example="odit-quia-nisi-dolores-nobis-atque-vel-velit"),
+     *                         @OA\Property(property="size_value", type="number", example=500),
      *                         @OA\Property(property="size_unit", type="string", example="gm"),
-     *                         @OA\Property(property="price", type="number", format="float", example=3468)
+     *                         @OA\Property(property="price", type="number", example=2214)
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="categories",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="name", type="string", example="Antibiotics"),
+     *                         @OA\Property(property="slug", type="string", example="antibiotics")
      *                     )
      *                 ),
      *                 @OA\Property(property="liked", type="boolean", example=false)
-     *             )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )

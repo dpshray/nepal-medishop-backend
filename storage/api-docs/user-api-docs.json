@@ -803,44 +803,41 @@
                                             "type": "string",
                                             "example": "Package details retrieved successfully."
                                         },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "data": {
                                             "properties": {
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "Mega Combo"
+                                                    "example": "Super Kit"
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "<p>Eos veniam aliquam qui ex...</p>"
+                                                    "example": "<p>Ullam placeat culpa dolor enim...</p>"
                                                 },
                                                 "price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 7000
+                                                    "example": 10000
                                                 },
                                                 "discount_price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 3640
+                                                    "example": null,
+                                                    "nullable": true
                                                 },
                                                 "rating": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 2.8
+                                                    "example": 2.5
                                                 },
                                                 "featured_image": {
                                                     "type": "string",
-                                                    "example": "http://192.168.100.23:8008/storage/1642/package-4.jpg"
+                                                    "example": "http://192.168.100.23:8008/storage/3211/package-3.jpg"
                                                 },
                                                 "gallery_images": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "string",
-                                                        "example": "http://192.168.100.23:8008/storage/1643/package-1.jpg"
+                                                        "example": "http://192.168.100.23:8008/storage/3212/package-1.jpg"
                                                     }
                                                 },
                                                 "products": {
@@ -849,19 +846,19 @@
                                                         "properties": {
                                                             "image": {
                                                                 "type": "string",
-                                                                "example": "http://192.168.100.23:8008/storage/236/tablets.jpg"
+                                                                "example": "http://192.168.100.23:8008/storage/2921/cream.jpg"
                                                             },
                                                             "product_name": {
                                                                 "type": "string",
-                                                                "example": "Magni voluptas maiores quia consequuntur."
+                                                                "example": "Odit quia nisi dolores nobis atque vel velit."
                                                             },
                                                             "slug": {
                                                                 "type": "string",
-                                                                "example": "magni-voluptas-maiores-quia-consequuntur"
+                                                                "example": "odit-quia-nisi-dolores-nobis-atque-vel-velit"
                                                             },
                                                             "size_value": {
-                                                                "type": "integer",
-                                                                "example": 650
+                                                                "type": "number",
+                                                                "example": 500
                                                             },
                                                             "size_unit": {
                                                                 "type": "string",
@@ -869,8 +866,23 @@
                                                             },
                                                             "price": {
                                                                 "type": "number",
-                                                                "format": "float",
-                                                                "example": 3468
+                                                                "example": 2214
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Antibiotics"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "antibiotics"
                                                             }
                                                         },
                                                         "type": "object"
@@ -882,6 +894,10 @@
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
