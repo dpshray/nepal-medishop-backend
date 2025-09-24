@@ -503,7 +503,7 @@
                                                         "type": "object"
                                                     }
                                                 },
-                                                "page": {
+                                                "page_no": {
                                                     "type": "integer",
                                                     "example": 1
                                                 },
@@ -744,7 +744,7 @@
                                                         "type": "object"
                                                     }
                                                 },
-                                                "page": {
+                                                "page_no": {
                                                     "type": "integer",
                                                     "example": 1
                                                 },
