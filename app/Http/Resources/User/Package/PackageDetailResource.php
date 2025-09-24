@@ -20,7 +20,7 @@ class PackageDetailResource extends JsonResource
     {
         // return parent::toArray($request);
         ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($this->price, $this->discount_price);
-
+        $categories = [];
         return [
             'name' => $this->name,
             'description' => $this->description,
@@ -29,9 +29,12 @@ class PackageDetailResource extends JsonResource
             'rating' => (float) $this->rating,
             'featured_image' => $this->whenLoaded('media', fn() => $this->getFirstMedia(Package::PACKAGE_FEATURED)->getUrl()),
             'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Package::PACKAGE_GALLERY)->map(fn($item) => $item->getUrl())),
-            'products' => $this->packageProducts->map(function($item){
+            'products' => $this->packageProducts->map(function($item) use(&$categories){
                 $variant = $item->variant;
                 ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($variant->platform_price, $variant->platform_discount_price);
+                
+                $incoming_category = $variant->product->categories->map(fn($item) => ['name' => $item->name, 'slug' => $item->slug]);
+                $categories = [...$incoming_category, ...$categories];
                 return [
                     'image' => $variant->product->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl(),
                     'product_name' => $variant->product->name,
@@ -41,6 +44,7 @@ class PackageDetailResource extends JsonResource
                     'price' => $previous_price ?? $price,
                 ];
             }),
+            'categories' => collect($categories)->unique('slug')->all(),
             'liked' => false
         ];
     }
