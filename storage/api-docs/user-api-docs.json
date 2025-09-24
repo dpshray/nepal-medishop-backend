@@ -560,7 +560,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Product detail of: Incidunt ratione recusandae dolor quod."
+                                            "example": "Product detail fetched successfully."
                                         },
                                         "success": {
                                             "type": "boolean",

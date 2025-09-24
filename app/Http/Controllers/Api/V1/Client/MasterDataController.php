@@ -191,7 +191,7 @@ class MasterDataController extends Controller
      *         description="Product detail response",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Product detail of: Incidunt ratione recusandae dolor quod."),
+     *             @OA\Property(property="message", type="string", example="Product detail fetched successfully."),
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
@@ -238,7 +238,7 @@ class MasterDataController extends Controller
     function fetchProductDetail(Product $product){
         $product->loadMissing(['media', 'categories','tags','variations','brand']);
         $data = new ProductDetailResource($product);
-        return $this->apiSuccess("Product detail of: $product->name", $data);
+        return $this->apiSuccess("Product detail fetched successfully.", $data);
     }
 
     /**
