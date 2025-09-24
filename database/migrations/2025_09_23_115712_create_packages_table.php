@@ -16,6 +16,7 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->string('name')->nullable();
             $table->string('slug')->unique();
+            $table->text('description');
             $table->dateTime('start_timestamps')->nullable();
             $table->dateTime('end_timestamps')->nullable();
             $table->decimal('price', 10, 2);
