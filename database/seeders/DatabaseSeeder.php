@@ -37,6 +37,11 @@ class DatabaseSeeder extends Seeder
             FlashSaleSeeder::class,
             FlashSaleSeeder::class,
             FlashSaleSeeder::class,
+            FlashSaleSeeder::class,
+            FlashSaleSeeder::class,
+            FlashSaleSeeder::class,
+            FlashSaleSeeder::class,
+            FlashSaleSeeder::class,
         ]);
     }
 
