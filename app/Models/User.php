@@ -74,4 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         return $this->user_type == UserTypeEnum::VENDOR->value;
     }
 
+    function likes() {
+        return $this->morphMany(Like::class,'likable');
+    }
 }

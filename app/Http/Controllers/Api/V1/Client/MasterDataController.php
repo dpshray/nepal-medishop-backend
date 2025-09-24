@@ -368,5 +368,4 @@ class MasterDataController extends Controller
         $data = new PackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);
     }
-
 }
