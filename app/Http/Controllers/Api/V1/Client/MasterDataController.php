@@ -149,7 +149,7 @@ class MasterDataController extends Controller
      *                         @OA\Property(property="liked", type="boolean", example=false)
      *                     )
      *                 ),
-     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="page_no", type="integer", example=1),
      *                 @OA\Property(property="total_page", type="integer", example=30),
      *                 @OA\Property(property="total_items", type="integer", example=300)
      *             ),
@@ -168,7 +168,7 @@ class MasterDataController extends Controller
             $query = $query->whereRelation('categories','slug', $category_slug)->latest('id');
         }
         $pagination = $query->paginate($per_page);
-        $data = $this->makePaginationResponse($pagination, fn($item) => ProductCardResource::collection($item))->data;
+        $data = $this->setDataKey(['page' => 'page_no'])->makePaginationResponse($pagination, fn($item) => ProductCardResource::collection($item))->data;
         return $this->apiSuccess("All product lists.", $data);
     }
 
@@ -284,7 +284,7 @@ class MasterDataController extends Controller
      *                         @OA\Property(property="liked", type="boolean", example=false)
      *                     )
      *                 ),
-     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="page_no", type="integer", example=1),
      *                 @OA\Property(property="total_page", type="integer", example=1),
      *                 @OA\Property(property="total_items", type="integer", example=8)
      *             ),
@@ -296,7 +296,7 @@ class MasterDataController extends Controller
     public function fetchPackages(Request $request){
         $per_page = $request->query('per_page', 10);
         $pagination = Package::with('media')->orderBy('id','DESC')->paginate($per_page);
-        $data = $this->makePaginationResponse($pagination, fn($item) => PackageSingleResource::collection($item))->data;
+        $data = $this->setDataKey(['page' => 'page_no'])->makePaginationResponse($pagination, fn($item) => PackageSingleResource::collection($item))->data;
         return $this->apiSuccess('Package lists', $data);
     }
 
@@ -355,7 +355,7 @@ class MasterDataController extends Controller
      * )
      */
     function fetchPackageDetail(Package $package){
-        $package->loadMissing(['media', 'packageProducts.variant.product.media']);
+        $package->loadMissing(['media', 'packageProducts.variant.product.media', 'packageProducts.variant.product.categories']);
         $data = new PackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);
     }
