@@ -49,16 +49,25 @@ class FlashSaleSeeder extends Seeder
         ];
         $randomKey   = array_rand($product_media);
         $randomImage = $product_media[$randomKey];
-        
-        DB::transaction(function () use ($temp, $items, $randomImage) {
+
+        DB::transaction(function () use ($temp, $items, $randomImage, $randomKey, $product_media) {
+            $price = $items * 1000;
             $package = Package::create([
-                'title' => $this->randomPackageName(),
-                'price' => $items * 1000
+                'name' => $this->randomPackageName(),
+                'price' => $price,
+                'discount_price' => fake()->boolean(50) ? $price - ($price * rand(10, 50) / 100) : null,
+                'rating' => round(mt_rand(0, 500) / 100, 1),
+                'description' => implode('', array_map(fn($text) => "<p>{$text}</p>", fake()->paragraphs())),
             ]);
-            tap($package, function($pkg) use($temp){
+            $package = tap($package, function($pkg) use($temp){
                 $pkg->packageProducts()
                 ->createMany($temp);
-            })->addMedia($randomImage)->preservingOriginal()->toMediaCollection(Package::PACKAGE_MEIDA);
+            });
+            $package->addMedia($randomImage)->preservingOriginal()->toMediaCollection(Package::PACKAGE_FEATURED);
+            unset($product_media[$randomKey]);
+            foreach ($product_media as $GI) {
+                $package->addMedia($GI)->preservingOriginal()->toMediaCollection(Package::PACKAGE_GALLERY);
+            }
         });
     }
 
