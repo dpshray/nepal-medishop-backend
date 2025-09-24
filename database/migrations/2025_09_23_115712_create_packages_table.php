@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
             $table->boolean('status')->default(true);
-            $table->string('title')->nullable();
+            $table->string('name')->nullable();
+            $table->string('slug')->unique();
             $table->dateTime('start_timestamps')->nullable();
             $table->dateTime('end_timestamps')->nullable();
             $table->decimal('price', 10, 2);
-            $table->softDeletes();
+            $table->decimal('discount_price', 10, 2)->nullable();
+            $table->decimal('rating', 2, 1)->default(0);
         });
     }
 

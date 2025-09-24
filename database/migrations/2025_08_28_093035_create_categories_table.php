@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('name')->unique();
             $table->text('detail')->nullable();
+            $table->decimal('discount_percent', 5, 2)->nullable();
         });
     }
 
