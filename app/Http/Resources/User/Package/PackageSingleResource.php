@@ -24,7 +24,7 @@ class PackageSingleResource extends JsonResource
             $previous_price = (float) $price;
             $price = (float) $this->discount_price;
         } */
-        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($this->price, $this->discount_price);
+        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($this->price, $this->discount_percent);
 
         return [
             'name' => $this->name,

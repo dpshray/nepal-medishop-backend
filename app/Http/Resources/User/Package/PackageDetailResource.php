@@ -19,7 +19,7 @@ class PackageDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
-        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($this->price, $this->discount_price);
+        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($this->price, $this->discount_percent);
         $categories = [];
         return [
             'name' => $this->name,
@@ -31,7 +31,7 @@ class PackageDetailResource extends JsonResource
             'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Package::PACKAGE_GALLERY)->map(fn($item) => $item->getUrl())),
             'products' => $this->packageProducts->map(function($item) use(&$categories){
                 $variant = $item->variant;
-                ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($variant->platform_price, $variant->platform_discount_price);
+                ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($variant->platform_price, $variant->discount_percent);
                 
                 $incoming_category = $variant->product->categories->map(fn($item) => ['name' => $item->name, 'slug' => $item->slug]);
                 $categories = [...$incoming_category, ...$categories];

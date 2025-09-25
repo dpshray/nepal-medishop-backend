@@ -36,7 +36,7 @@ class ProductDetailResource extends JsonResource
                     $previous_price = (float) $price;
                     $price = $item->platform_discount_price;
                 } */
-                ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $item->platform_discount_price);
+                ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $this->discount_percent);
 
                 return [
                     'variation_id' => $item->id,
