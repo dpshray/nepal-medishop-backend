@@ -23,7 +23,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('name');
             $table->text('description');
+            $table->decimal('discount_percent', 5, 2)->nullable();
             $table->decimal('rating', 2, 1)->default(0);
+            $table->boolean('prescription_required')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime('start_timestamps')->nullable();
             $table->dateTime('end_timestamps')->nullable();
             $table->decimal('price', 10, 2);
-            $table->decimal('discount_price', 10, 2)->nullable();
+            $table->decimal('discount_percent', 5, 2)->nullable();
             $table->decimal('rating', 2, 1)->default(0);
         });
     }

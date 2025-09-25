@@ -18,8 +18,6 @@ return new class extends Migration
             $table->foreign('product_vendor_id')->references('id')->on('product_vendors')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('product_variation_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('price', 10, 2);
-            $table->decimal('discount_price', 10, 2)->nullable();
-            // $table->decimal('platform_price', 10, 2)->nullable();
             $table->unsignedSmallInteger('units_in_stock')->default(0);
             $table->timestamps();
             $table->softDeletes();
