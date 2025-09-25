@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedBigInteger('vendor_id');
             $table->foreign('vendor_id')->references('id')->on('vendors')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->unsignedBigInteger('views_count')->default(0);
             $table->boolean('is_featured')->default(0);
             $table->timestamps();
             $table->softDeletes();

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->decimal('discount_percent', 5, 2)->nullable();
             $table->decimal('rating', 2, 1)->default(0);
             $table->boolean('prescription_required')->default(0);
+            $table->unsignedBigInteger('views_count')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
