@@ -188,46 +188,46 @@ class MasterDataController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Product detail response",
+     *         description="Product detail fetched successfully",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Product detail fetched successfully."),
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="name", type="string", example="Incidunt ratione recusandae dolor quod."),
-     *                 @OA\Property(property="slug", type="string", example="incidunt-ratione-recusandae-dolor-quod"),
-     *                 @OA\Property(property="brand", type="string", example="AstraZeneca"),
-     *                 @OA\Property(property="description", type="string", example="<p>Qui impedit consectetur necessitatibus eos iste odio...</p>"),
-     *                 @OA\Property(property="added_date", type="string", format="date", example="2025-09-24"),
+     *                 @OA\Property(property="name", type="string", example="Alias esse velit quidem."),
+     *                 @OA\Property(property="slug", type="string", example="alias-esse-velit-quidem"),
+     *                 @OA\Property(property="brand", type="string", example="Abbott"),
+     *                 @OA\Property(property="description", type="string", example="<p>Dolorum repellat eaque voluptate possimus...</p>"),
+     *                 @OA\Property(property="added_date", type="string", format="date", example="2025-09-21"),
      *                 @OA\Property(
      *                     property="categories",
      *                     type="array",
-     *                     @OA\Items(type="string", example="Eye Care")
+     *                     @OA\Items(type="string", example="Cough & Cold")
      *                 ),
      *                 @OA\Property(
      *                     property="tags",
      *                     type="array",
-     *                     @OA\Items(type="string", example="Doxycycline")
+     *                     @OA\Items(type="string", example="Vitamin C")
      *                 ),
      *                 @OA\Property(
      *                     property="variations",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="variation_id", type="integer", example=322),
-     *                         @OA\Property(property="size_value", type="number", example=500),
-     *                         @OA\Property(property="size_unit", type="string", example="gm"),
-     *                         @OA\Property(property="price", type="number", format="float", example=1778.28),
-     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=2044)
+     *                         @OA\Property(property="variation_id", type="integer", example=123),
+     *                         @OA\Property(property="name", type="string", example="Variant-1"),
+     *                         @OA\Property(property="size_value", type="number", example=100),
+     *                         @OA\Property(property="size_unit", type="string", example="strip"),
+     *                         @OA\Property(property="price", type="number", example=169),
+     *                         @OA\Property(property="previous_price", type="number", nullable=true, example=null)
      *                     )
      *                 ),
-     *                 @OA\Property(property="featured_image", type="string", example="http://192.168.100.23:8008/storage/601/medi-plaster.png"),
+     *                 @OA\Property(property="featured_image", type="string", format="url", example="http://192.168.100.23:8008/storage/281/syrup.jpg"),
      *                 @OA\Property(
      *                     property="gallery_images",
      *                     type="array",
-     *                     @OA\Items(type="string", example="http://192.168.100.23:8008/storage/602/tablets.jpg")
+     *                     @OA\Items(type="string", format="url", example="http://192.168.100.23:8008/storage/282/tablets.jpg")
      *                 ),
      *                 @OA\Property(property="liked", type="boolean", example=false)
      *             )
