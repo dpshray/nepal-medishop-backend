@@ -1610,6 +1610,94 @@
                 ]
             }
         },
+        "/admin/product-units": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all available product units",
+                "description": "Get all available product units.",
+                "operationId": "ProductUnitList",
+                "responses": {
+                    "200": {
+                        "description": "Admin published product list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Admin published product list."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "7974511b-6bd7-42b9-81bc-00d519e37af1"
+                                                            },
+                                                            "published": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Sure Grow Procapil Scalp Solution - Hair Serum - 60ml"
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Bayer"
+                                                            },
+                                                            "lowest_variant_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1500
+                                                            },
+                                                            "total_stock": {
+                                                                "type": "integer",
+                                                                "example": 0
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 103
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 103
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/product": {
             "get": {
                 "tags": [
