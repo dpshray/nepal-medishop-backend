@@ -18,7 +18,6 @@ return new class extends Migration
             $table->decimal('size_value', 8, 2);
             $table->string('size_unit', 10);
             $table->decimal('platform_price', 10, 2);
-            $table->timestamps();
             $table->softDeletes();
         });
     }

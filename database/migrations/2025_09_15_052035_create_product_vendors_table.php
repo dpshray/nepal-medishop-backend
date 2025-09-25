@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreign('vendor_id')->references('id')->on('vendors')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->boolean('is_featured')->default(0);
-            $table->timestamps();
             $table->softDeletes();
         });
     }

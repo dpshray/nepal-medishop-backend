@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('product_variation_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('price', 10, 2);
             $table->unsignedSmallInteger('units_in_stock')->default(0);
-            $table->timestamps();
             $table->softDeletes();
         });
     }
