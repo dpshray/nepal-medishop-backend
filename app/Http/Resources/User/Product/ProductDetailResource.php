@@ -25,6 +25,7 @@ class ProductDetailResource extends JsonResource
             'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
             'description' => $this->description,
             'added_date' => $this->created_at->format('Y-m-d'),
+            'rating' => (float) $this->rating,
             'no_of_vendors' => $this->whenCounted('productVendors', fn() => $this->product_vendors_count),
             'categories' => $this->whenLoaded('categories', fn() => $this->categories->pluck('name')),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->pluck('name')),

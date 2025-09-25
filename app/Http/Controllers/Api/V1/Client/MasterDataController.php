@@ -195,39 +195,40 @@ class MasterDataController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="name", type="string", example="Alias esse velit quidem."),
-     *                 @OA\Property(property="slug", type="string", example="alias-esse-velit-quidem"),
-     *                 @OA\Property(property="brand", type="string", example="Abbott"),
-     *                 @OA\Property(property="description", type="string", example="<p>Dolorum repellat eaque voluptate possimus...</p>"),
-     *                 @OA\Property(property="added_date", type="string", format="date", example="2025-09-21"),
+     *                 @OA\Property(property="name", type="string", example="Placeat earum iusto iste perspiciatis vel."),
+     *                 @OA\Property(property="slug", type="string", example="placeat-earum-iusto-iste-perspiciatis-vel"),
+     *                 @OA\Property(property="brand", type="string", example="Bristol-Myers Squibb"),
+     *                 @OA\Property(property="description", type="string", example="<p>Omnis corporis aut a aut et ut sunt...</p>"),
+     *                 @OA\Property(property="added_date", type="string", format="date", example="2025-09-22"),
+     *                 @OA\Property(property="rating", type="number", format="float", example=3.8),
      *                 @OA\Property(
      *                     property="categories",
      *                     type="array",
-     *                     @OA\Items(type="string", example="Cough & Cold")
+     *                     @OA\Items(type="string", example="Weight Management")
      *                 ),
      *                 @OA\Property(
      *                     property="tags",
      *                     type="array",
-     *                     @OA\Items(type="string", example="Vitamin C")
+     *                     @OA\Items(type="string", example="Sunscreen")
      *                 ),
      *                 @OA\Property(
      *                     property="variations",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="variation_id", type="integer", example=123),
+     *                         @OA\Property(property="variation_id", type="integer", example=1132),
      *                         @OA\Property(property="name", type="string", example="Variant-1"),
-     *                         @OA\Property(property="size_value", type="number", example=100),
-     *                         @OA\Property(property="size_unit", type="string", example="strip"),
-     *                         @OA\Property(property="price", type="number", example=169),
-     *                         @OA\Property(property="previous_price", type="number", nullable=true, example=null)
+     *                         @OA\Property(property="size_value", type="integer", example=100),
+     *                         @OA\Property(property="size_unit", type="string", example="ml"),
+     *                         @OA\Property(property="price", type="number", format="float", example=167),
+     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=null)
      *                     )
      *                 ),
-     *                 @OA\Property(property="featured_image", type="string", format="url", example="http://192.168.100.23:8008/storage/281/syrup.jpg"),
+     *                 @OA\Property(property="featured_image", type="string", format="url", example="http://192.168.100.23:8008/storage/1881/syrup.jpg"),
      *                 @OA\Property(
      *                     property="gallery_images",
      *                     type="array",
-     *                     @OA\Items(type="string", format="url", example="http://192.168.100.23:8008/storage/282/tablets.jpg")
+     *                     @OA\Items(type="string", format="url", example="http://192.168.100.23:8008/storage/1882/tablets.jpg")
      *                 ),
      *                 @OA\Property(property="liked", type="boolean", example=false)
      *             )

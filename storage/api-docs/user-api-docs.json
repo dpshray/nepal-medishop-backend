@@ -570,37 +570,42 @@
                                             "properties": {
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "Alias esse velit quidem."
+                                                    "example": "Placeat earum iusto iste perspiciatis vel."
                                                 },
                                                 "slug": {
                                                     "type": "string",
-                                                    "example": "alias-esse-velit-quidem"
+                                                    "example": "placeat-earum-iusto-iste-perspiciatis-vel"
                                                 },
                                                 "brand": {
                                                     "type": "string",
-                                                    "example": "Abbott"
+                                                    "example": "Bristol-Myers Squibb"
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "<p>Dolorum repellat eaque voluptate possimus...</p>"
+                                                    "example": "<p>Omnis corporis aut a aut et ut sunt...</p>"
                                                 },
                                                 "added_date": {
                                                     "type": "string",
                                                     "format": "date",
-                                                    "example": "2025-09-21"
+                                                    "example": "2025-09-22"
+                                                },
+                                                "rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 3.8
                                                 },
                                                 "categories": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "string",
-                                                        "example": "Cough & Cold"
+                                                        "example": "Weight Management"
                                                     }
                                                 },
                                                 "tags": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "string",
-                                                        "example": "Vitamin C"
+                                                        "example": "Sunscreen"
                                                     }
                                                 },
                                                 "variations": {
@@ -609,26 +614,28 @@
                                                         "properties": {
                                                             "variation_id": {
                                                                 "type": "integer",
-                                                                "example": 123
+                                                                "example": 1132
                                                             },
                                                             "name": {
                                                                 "type": "string",
                                                                 "example": "Variant-1"
                                                             },
                                                             "size_value": {
-                                                                "type": "number",
+                                                                "type": "integer",
                                                                 "example": 100
                                                             },
                                                             "size_unit": {
                                                                 "type": "string",
-                                                                "example": "strip"
+                                                                "example": "ml"
                                                             },
                                                             "price": {
                                                                 "type": "number",
-                                                                "example": 169
+                                                                "format": "float",
+                                                                "example": 167
                                                             },
                                                             "previous_price": {
                                                                 "type": "number",
+                                                                "format": "float",
                                                                 "example": null,
                                                                 "nullable": true
                                                             }
@@ -639,14 +646,14 @@
                                                 "featured_image": {
                                                     "type": "string",
                                                     "format": "url",
-                                                    "example": "http://192.168.100.23:8008/storage/281/syrup.jpg"
+                                                    "example": "http://192.168.100.23:8008/storage/1881/syrup.jpg"
                                                 },
                                                 "gallery_images": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "string",
                                                         "format": "url",
-                                                        "example": "http://192.168.100.23:8008/storage/282/tablets.jpg"
+                                                        "example": "http://192.168.100.23:8008/storage/1882/tablets.jpg"
                                                     }
                                                 },
                                                 "liked": {
