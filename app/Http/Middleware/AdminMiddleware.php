@@ -19,7 +19,8 @@ class AdminMiddleware
     {
         if (!(bool)Auth::user()->isAdmin()) {
             throw new AuthenticationException('Not Authorized');
-        }        return $next($request);
+        }        
+        return $next($request);
     }
 
 }
