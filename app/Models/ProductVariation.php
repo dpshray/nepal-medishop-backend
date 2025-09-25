@@ -11,6 +11,7 @@ class ProductVariation extends Model
     protected $dates = ['deleted_at'];
     
     protected $fillable = [
+        'name',
         'size_value',
         'size_unit',
         'platform_price',

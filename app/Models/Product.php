@@ -27,7 +27,8 @@ class Product extends Model implements HasMedia
         'slug',
         'description',
         'status',
-        'rating'
+        'rating',
+        'prescription_required'
     ];
     
     public function categories()
