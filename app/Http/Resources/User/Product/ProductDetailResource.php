@@ -39,6 +39,7 @@ class ProductDetailResource extends JsonResource
 
                 return [
                     'variation_id' => $item->id,
+                    'name' => $item->name,
                     'size_value' => (float)$item->size_value,
                     'size_unit' => $item->size_unit,
                     'price' => $price,

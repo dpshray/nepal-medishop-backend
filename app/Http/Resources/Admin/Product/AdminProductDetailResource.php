@@ -19,14 +19,15 @@ class AdminProductDetailResource extends JsonResource
         return [
             'name' => $this->name,
             'slug' => $this->slug,
-            'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
+            'brand' => $this->whenLoaded('brand', fn() => ['id' => $this->brand->id, 'name' => $this->brand->name]),
             'description' => $this->description,
             'added_date' => $this->created_at,
             'no_of_vendors' => $this->whenCounted('productVendors', fn() => $this->product_vendors_count),
-            'categories' => $this->whenLoaded('categories', fn() => $this->categories->pluck('name')),
-            'tags' => $this->whenLoaded('tags', fn() => $this->tags->pluck('name')),
+            'categories' => $this->whenLoaded('categories', fn() => $this->categories->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
+            'tags' => $this->whenLoaded('tags', fn() => $this->tags->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
             'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(fn($item) => [
                 'variation_id' => $item->id,
+                'name' => $item->name,
                 'size_value' => (float)$item->size_value,
                 'size_unit' => $item->size_unit,
                 'admin_price' => (float)$item->platform_price

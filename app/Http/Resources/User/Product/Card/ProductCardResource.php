@@ -25,7 +25,7 @@ class ProductCardResource extends JsonResource
             $previous_price = (float) $platform_price;
             $platform_price = $item->platform_discount_price;
         } */
-        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $item->platform_discount_price);
+        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $this->discount_percent);
 
         return [
             'name' => $this->name,
