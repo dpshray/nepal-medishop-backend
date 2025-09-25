@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ProductUnitEnum;
 use App\Models\Categories;
 use App\Models\Product;
 use App\Models\Variant;
@@ -10,6 +11,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Arr;
 
 class ProductSeeder extends Seeder
 {
@@ -20,6 +22,8 @@ class ProductSeeder extends Seeder
     {
         DB::transaction(function () {
             for ($i = 1; $i <= 500; $i++) {
+                $apply_discount = fake()->boolean(50);
+
                 $product = [
                     'is_featured' => fake()->boolean(50),
                     'added_by' => 1,
@@ -27,7 +31,9 @@ class ProductSeeder extends Seeder
                     'name' => fake()->sentence(),
                     'description' => implode('', array_map(fn($text) => "<p>{$text}</p>", fake()->paragraphs())),
                     'rating' => round(mt_rand(0, 500) / 100, 1),
-                    'created_at' => fake()->dateTimeInInterval('now','+7 days')
+                    'discount_percent' => $apply_discount ? rand(1,5) : null,
+                    'prescription_required' => fake()->boolean(50),
+                    'created_at' => fake()->dateTimeInInterval('now','-7 days')
                 ];
 
                 $categories = range(1, 15);
@@ -43,7 +49,6 @@ class ProductSeeder extends Seeder
                 $random_tags = is_array($randomKeys)
                     ? array_intersect_key($categories, array_flip($randomKeys))
                     : [$tags[$randomKeys]];
-                $apply_discount = fake()->boolean(50);
                 $platform_prices = [
                     rand(100, 200),
                     rand(1000, 1500),
@@ -51,36 +56,41 @@ class ProductSeeder extends Seeder
                     rand(3000, 3500),
                     rand(4000, 5000)
                 ];
+
+                $randomUnit = Arr::random(
+                    array_map(fn($item) => $item->value, ProductUnitEnum::cases())
+                );
+
                 $variations = [
                     [
+                        "name" => "Variant-1",
                         "size_value" => 100,
-                        "size_unit" => "gm",
+                        "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[0],
-                        'platform_discount_price' => $apply_discount ? $platform_prices[0] - ($platform_prices[0] * rand(10, 50) / 100) : null,
                     ],
                     [
+                        "name" => "Variant-2",
                         "size_value" => 200,
-                        "size_unit" => "gm",
+                        "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[1],
-                        'platform_discount_price' => $apply_discount ? $platform_prices[1] - ($platform_prices[1] * rand(10, 50) / 100) : null,
                     ],
                     [
+                        "name" => "Variant-5",
                         "size_value" => 500,
-                        "size_unit" => "gm",
+                        "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[2],
-                        'platform_discount_price' => $apply_discount ? $platform_prices[2] - ($platform_prices[2] * rand(10, 50) / 100) : null,
                     ],
                     [
+                        "name" => "Variant-6",
                         "size_value" => 650,
-                        "size_unit" => "gm",
+                        "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[3],
-                        'platform_discount_price' => $apply_discount ? $platform_prices[3] - ($platform_prices[3] * rand(10, 50) / 100) : null,
                     ],
                     [
+                        "name" => "Variant-8",
                         "size_value" => 800,
-                        "size_unit" => "gm",
+                        "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[4],
-                        'platform_discount_price' => $apply_discount ? $platform_prices[4] - ($platform_prices[4] * rand(10, 50) / 100) : null,
                     ]
                 ];
 

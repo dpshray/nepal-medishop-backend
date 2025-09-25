@@ -55,7 +55,7 @@ class FlashSaleSeeder extends Seeder
             $package = Package::create([
                 'name' => $this->randomPackageName(),
                 'price' => $price,
-                'discount_price' => fake()->boolean(50) ? $price - ($price * rand(10, 50) / 100) : null,
+                'discount_percent' => fake()->boolean(50) ? rand(1, 5) : null,
                 'rating' => round(mt_rand(0, 500) / 100, 1),
                 'description' => implode('', array_map(fn($text) => "<p>{$text}</p>", fake()->paragraphs())),
             ]);

@@ -38,7 +38,6 @@ class VendorProductSeeder extends Seeder
                         $temp[] = [
                             'product_variation_id' => $variation->id,
                             'price' => $price,
-                            'discount_price' => fake()->boolean(50) ? null : $price - rand(100, 200),
                             'units_in_stock' => rand(50, 200)
                         ];
                     } 
