@@ -19,6 +19,50 @@ use Illuminate\Support\Facades\Log;
 class AdminProductController extends Controller
 {
     use ResponseTrait, PaginationTrait;
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/product-units",
+     *     summary="Get all available product units",
+     *     description="Get all available product units.",
+     *     operationId="ProductUnitList",
+     *     tags={"Product"},
+     *      @OA\Response(
+     *         response=200,
+     *         description="Admin published product list.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Admin published product list."),
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="uuid", type="string", format="uuid", example="7974511b-6bd7-42b9-81bc-00d519e37af1"),
+     *                         @OA\Property(property="published", type="boolean", example=true),
+     *                         @OA\Property(property="name", type="string", example="Sure Grow Procapil Scalp Solution - Hair Serum - 60ml"),
+     *                         @OA\Property(property="brand", type="string", example="Bayer"),
+     *                         @OA\Property(property="lowest_variant_price", type="number", format="float", example=1500),
+     *                         @OA\Property(property="total_stock", type="integer", example=0)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=103),
+     *                 @OA\Property(property="total_items", type="integer", example=103)
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    function productUnits(){
+        $units = array_map(fn($item) => $item->value, \App\Enums\ProductUnitEnum::cases());
+        return $this->apiSuccess('List of available product units', $units);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -196,7 +240,6 @@ class AdminProductController extends Controller
             $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->all();
             $product->variations()->whereNotIn('id', $variation_to_avoid)->delete();
             foreach ($request->variations as $variation) {
-                Log::info($product->variations()->firstWhere('id', $variation['variation_id']));
                 $product->variations()->firstWhere('id', $variation['variation_id'])->update($variation);
             }
             if ($request->hasFile('featured_image')) {
