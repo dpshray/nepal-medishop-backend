@@ -27,4 +27,5 @@ Route::prefix('admin')
         Route::apiResource('product', AdminProductController::class)->scoped(['product' => 'uuid']);
         Route::get('toggle-product-status/{product:uuid}', [AdminProductController::class, 'statusToggler']);
         Route::post('product-media/{product:uuid}', [AdminProductController::class, 'storeMedia']);
+        Route::get('product-units', [AdminProductController::class, 'productUnits']);
 });
