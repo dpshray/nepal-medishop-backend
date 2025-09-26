@@ -296,7 +296,7 @@ class MasterDataController extends Controller
      */
     public function fetchPackages(Request $request){
         $per_page = $request->query('per_page', 10);
-        $pagination = Package::with('media')->orderBy('id','DESC')->paginate($per_page);
+        $pagination = Package::with('media')->active()->orderBy('id','DESC')->paginate($per_page);
         $data = $this->setDataKey(['page' => 'page_no'])->makePaginationResponse($pagination, fn($item) => PackageSingleResource::collection($item))->data;
         return $this->apiSuccess('Package lists', $data);
     }
