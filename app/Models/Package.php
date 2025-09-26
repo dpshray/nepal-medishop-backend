@@ -17,8 +17,8 @@ class Package extends Model implements HasMedia
 
     public $timestamps = false;
 
-    function scopeActive() {
-        return $this->where('status', 1);
+    function scopeActive($query) {
+        return $query->where('status', 1);
     }
     function packageProducts(){
         return $this->hasMany(PackageProduct::class);
