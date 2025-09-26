@@ -219,7 +219,7 @@
                                                                 "type": "string",
                                                                 "example": "Laudantium quo ut vel id illo ut qui commodi."
                                                             },
-                                                            "uuid": {
+                                                            "product_uuid": {
                                                                 "type": "string",
                                                                 "example": "093db091-130c-4274-8293-2f9c7112466c"
                                                             },

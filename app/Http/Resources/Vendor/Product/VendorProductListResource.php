@@ -19,7 +19,7 @@ class VendorProductListResource extends JsonResource
             "status" => (boolean) $this->status,
             "is_approved_by_admin" => (boolean) $this->is_approved,
             "name" => $this->whenLoaded('product', fn() => $this->product->name),
-            'uuid' => $this->whenLoaded('product', fn() => $this->product->uuid),
+            'product_uuid' => $this->whenLoaded('product', fn() => $this->product->uuid),
             "brand" => $this->product->brand->name,
             "views_count" => $this->whenLoaded('product', fn() => $this->product->views_count),
             "total_units_in_stock" => (int) $this->units_in_stock_sum,

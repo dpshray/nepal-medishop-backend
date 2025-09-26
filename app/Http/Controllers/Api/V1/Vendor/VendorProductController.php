@@ -59,7 +59,7 @@ class VendorProductController extends Controller
      *                         @OA\Property(property="status", type="boolean", example=true),
      *                         @OA\Property(property="is_approved_by_admin", type="boolean", example=true),
      *                         @OA\Property(property="name", type="string", example="Laudantium quo ut vel id illo ut qui commodi."),
-     *                         @OA\Property(property="uuid", type="string", example="093db091-130c-4274-8293-2f9c7112466c"),
+     *                         @OA\Property(property="product_uuid", type="string", example="093db091-130c-4274-8293-2f9c7112466c"),
      *                         @OA\Property(property="brand", type="string", example="Johnson & Johnson"),
      *                         @OA\Property(property="views_count", type="integer", example=0),
      *                         @OA\Property(property="total_units_in_stock", type="integer", example=467),
