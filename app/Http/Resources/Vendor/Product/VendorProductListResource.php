@@ -16,14 +16,17 @@ class VendorProductListResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            "status" => (boolean) $this->status,
-            "is_approved_by_admin" => (boolean) $this->is_approved,
-            "name" => $this->whenLoaded('product', fn() => $this->product->name),
+            "product_name" => $this->whenLoaded('product', fn() => $this->product->name),
             'product_uuid' => $this->whenLoaded('product', fn() => $this->product->uuid),
-            "brand" => $this->product->brand->name,
-            "views_count" => $this->whenLoaded('product', fn() => $this->product->views_count),
-            "total_units_in_stock" => (int) $this->units_in_stock_sum,
-            'rating' => (float) $this->whenLoaded('product', fn() => $this->product->rating)
+            'brand' => $this->whenLoaded('product', fn() => $this->product->brand->name),
+            'variations' => $this->whenLoaded('product', function(){
+                return $this->product->variations->map(fn($item) => [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'size_value' => (float) $item->size_value,
+                    'size_unit' => $item->size_unit,
+                ]);
+            })
         ];
     }
 }

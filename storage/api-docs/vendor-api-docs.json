@@ -449,7 +449,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Stock added successfully"
+                                            "example": "Stock added successfully."
                                         },
                                         "success": {
                                             "type": "boolean",

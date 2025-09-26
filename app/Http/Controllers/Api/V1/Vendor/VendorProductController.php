@@ -77,14 +77,17 @@ class VendorProductController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->query('per_page', 10);
-        $pagination = ProductVendor::with(['product.brand'])
+        $per_page = $request->query('per_page', ProductVendor::count());
+        /* $pagination = ProductVendor::with(['product.brand'])
             ->whereRelation('product','status',1)
             ->withSum(['vendorPrices as units_in_stock_sum' => function ($q) {
                 $q->where('vendor_id', Auth::id());
             }], 'units_in_stock')            
             ->orderBy('units_in_stock_sum', 'DESC')
-            ->paginate($per_page);
+            ->paginate($per_page); */
+            $pagination = ProductVendor::with(['product.brand', 'product.variations'])
+                ->whereRelation('product', 'status', 1)
+                ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => VendorProductListResource::collection($item))->data;
         return $this->apiSuccess('Available product lists.', $data);
     }
@@ -182,15 +185,17 @@ class VendorProductController extends Controller
      *         description="Stock added successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Stock added successfully"),
+     *             @OA\Property(property="message", type="string", example="Stock added successfully."),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
      */
-    public function store(VendorProductStockStoreRequest $request, Product $product)
+    public function store(VendorProductStockStoreRequest $request)
     {
+
         $vendor_product = Auth::user()->vendorProducts();
+        $product = Product::where('uuid', $request->product_uuid)->firstOrFail();
         if ($vendor_product->firstWhere('product_id', $product->id)) {
             return $this->apiError('Stock entry for this product already exists in your vendor list.');
         }
@@ -200,8 +205,8 @@ class VendorProductController extends Controller
         if ($invalidIds->isNotEmpty()) {
             return $this->apiError('Some product variation IDs are invalid.');
         }
-        DB::transaction(fn() => $vendor_product->create(['product_id' => $product->id])->vendorPrices()->createMany($request->stock));
-        return $this->apiSuccess('Stock added successfully');
+        DB::transaction(fn() => $vendor_product->create(['product_id' => $product->id])->vendorPrices()->createMany($request->variations));
+        return $this->apiSuccess('Stock added successfully.');
     }
 
     /**

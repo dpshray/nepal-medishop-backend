@@ -22,10 +22,11 @@ class VendorProductStockStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'stock' => 'required|array',
-            'stock.*.product_variation_id' => 'required|exists:product_variations,id',
-            'stock.*.units_in_stock' => 'required|numeric',
-            'stock.*.price' => 'required|numeric',
+            'product_uuid' => 'required|exists:products,uuid',
+            'variations' => 'required|array',
+            'variations.*.product_variation_id' => 'required|exists:product_variations,id',
+            'variations.*.units_in_stock' => 'required|numeric',
+            'variations.*.price' => 'required|numeric',
         ];
     }
 }

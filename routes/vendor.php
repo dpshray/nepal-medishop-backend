@@ -13,7 +13,7 @@ Route::prefix('vendor')
             Route::controller(VendorProductController::class)->group(function(){
                 Route::get('product', 'index');
                 Route::get('product-variants/{product:uuid}', 'productVariants');
-                Route::post('product/{product:uuid}', 'store');
+                Route::post('product/{uuid?}', 'store');
             });
         });
         Route::post('registration', [VendorAuthController::class, 'registerVendor']);
