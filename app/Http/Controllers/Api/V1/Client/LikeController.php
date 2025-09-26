@@ -12,33 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class LikeController extends Controller
 {
     use ResponseTrait;
-    /**
-     * @OA\Get(
-     *     security={{"sanctum": {}}},
-     *     path="/favourite/{slug}/product",
-     *     summary="Toggle a favourite status of a product",
-     *     description="Toggle a favourite status of a product.",
-     *     operationId="ProductFavoutiteToggle",
-     *     tags={"Favourite"},
-     *     @OA\Parameter(
-     *         name="slug",
-     *         in="path",
-     *         required=true,
-     *         description="Slug of product",
-     *         @OA\Schema(type="string", example="soluta-cum-reiciendis-dolorum-sunt")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful toggle",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Item added to favourite"),
-     *             @OA\Property(property="data", type="string", nullable=true, example=null),
-     *             @OA\Property(property="success", type="boolean", example=true)
-     *         )
-     *     )
-     * )
-     */
+
     function toggleProductFavourite(Product $product){
         $query = $product->likes();
         $user_like = $query->where('user_id', Auth::id()); 
