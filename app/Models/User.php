@@ -66,6 +66,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         return $this->hasOne(Vendor::class);
     }
 
+    function vendorProducts() {
+        return $this->hasMany(ProductVendor::class,'vendor_id');
+    }
+
     function isAdmin(){
         return $this->user_type == UserTypeEnum::ADMIN->value;
     }

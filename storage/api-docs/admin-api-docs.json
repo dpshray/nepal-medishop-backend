@@ -714,6 +714,131 @@
                 ]
             }
         },
+        "/admin/fetch-vendor-products/{uuid}": {
+            "get": {
+                "tags": [
+                    "Vendor"
+                ],
+                "summary": "Vendor list",
+                "description": "Get vendor list.",
+                "operationId": "VendorProductList",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of user(vendor)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "0eebfe00-8bfd-4957-9947-503731e37a33"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendor product lists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor product lists"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "vendor_status": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "approved": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Soluta aut voluptas voluptatem beatae."
+                                                            },
+                                                            "product_variants": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "price": {
+                                                                            "type": "number",
+                                                                            "format": "float",
+                                                                            "example": 4335
+                                                                        },
+                                                                        "units_in_stock": {
+                                                                            "type": "integer",
+                                                                            "example": 69
+                                                                        },
+                                                                        "variation_name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-2"
+                                                                        },
+                                                                        "variation_size_value": {
+                                                                            "type": "integer",
+                                                                            "example": 200
+                                                                        },
+                                                                        "variation_size_unit": {
+                                                                            "type": "string",
+                                                                            "example": "capsule"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/brand": {
             "get": {
                 "tags": [
@@ -1620,69 +1745,34 @@
                 "operationId": "ProductUnitList",
                 "responses": {
                     "200": {
-                        "description": "Admin published product list.",
+                        "description": "List of available product units",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Admin published product list."
+                                            "example": "List of available product units"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "label": {
+                                                        "type": "string",
+                                                        "example": "Mg"
+                                                    },
+                                                    "value": {
+                                                        "type": "string",
+                                                        "example": "mg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
                                         },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "items": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "uuid": {
-                                                                "type": "string",
-                                                                "format": "uuid",
-                                                                "example": "7974511b-6bd7-42b9-81bc-00d519e37af1"
-                                                            },
-                                                            "published": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Sure Grow Procapil Scalp Solution - Hair Serum - 60ml"
-                                                            },
-                                                            "brand": {
-                                                                "type": "string",
-                                                                "example": "Bayer"
-                                                            },
-                                                            "lowest_variant_price": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 1500
-                                                            },
-                                                            "total_stock": {
-                                                                "type": "integer",
-                                                                "example": 0
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_page": {
-                                                    "type": "integer",
-                                                    "example": 103
-                                                },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 103
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

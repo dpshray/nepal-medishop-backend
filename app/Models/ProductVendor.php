@@ -9,6 +9,11 @@ class ProductVendor extends Model
     protected $fillable = [
         'product_id'
     ];
+
+    protected $hidden = [
+        'deleted_at'
+    ];
+
     public $timestamps = false;
 
     function vendorPrices(){

@@ -12,9 +12,18 @@ class VendorProductPrice extends Model
         "price",
         "units_in_stock",
     ];
+
+    protected $hidden = [
+        'deleted_at'
+    ];
+
     public $timestamps = false;
 
     function ProductVendor(){
         return $this->belongsTo(ProductVendor::class);
+    }
+
+    function variation() {
+        return $this->belongsTo(ProductVariation::class,'product_variation_id');
     }
 }

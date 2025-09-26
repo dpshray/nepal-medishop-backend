@@ -159,12 +159,325 @@
                     }
                 }
             }
+        },
+        "/vendor/product": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all available products",
+                "description": "Get all available products.",
+                "operationId": "VendorProductList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available product lists.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Available product lists."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "status": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "is_approved_by_admin": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Laudantium quo ut vel id illo ut qui commodi."
+                                                            },
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "example": "093db091-130c-4274-8293-2f9c7112466c"
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Johnson & Johnson"
+                                                            },
+                                                            "views_count": {
+                                                                "type": "integer",
+                                                                "example": 0
+                                                            },
+                                                            "total_units_in_stock": {
+                                                                "type": "integer",
+                                                                "example": 467
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3.6
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 88
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 88
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/product-variants/{uuid}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get products variants",
+                "description": "Get products variants.",
+                "operationId": "VendorProductVariant",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "54115543-b75c-4013-bf19-7aa4efd35240"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available product lists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Available product lists"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "status": {
+                                                                "description": "Product status (1=active, 0=inactive)",
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "is_approved_by_admin": {
+                                                                "description": "Approval status by admin",
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Laborum sunt facilis odio enim alias."
+                                                            },
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "54115543-b75c-4013-bf19-7aa4efd35240"
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Pfizer"
+                                                            },
+                                                            "views_count": {
+                                                                "type": "integer",
+                                                                "example": 0
+                                                            },
+                                                            "total_units_in_stock": {
+                                                                "type": "integer",
+                                                                "example": 753
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2.5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 96
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 96
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/product/{uuid}": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Add stock for vendor products",
+                "description": "Add stock details for product variations",
+                "operationId": "AddVendorStock",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "54115543-b75c-4013-bf19-7aa4efd35240"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "stock": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_variation_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "units_in_stock": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 500
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Stock added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Stock added successfully"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
         {
             "name": "Vendor",
             "description": "Vendor"
+        },
+        {
+            "name": "Product",
+            "description": "Product"
         }
     ],
     "components": {

@@ -6,6 +6,7 @@ use App\Constants\VendorContants;
 use App\Enums\UserTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\VendorStoreRequest;
+use App\Http\Resources\Admin\Vendor\AdminVendorProductListResource;
 use App\Http\Resources\Admin\Vendor\AdminVendorUserList;
 use App\Http\Resources\Admin\Vendor\AdminVendorUserResource;
 use App\Models\User;
@@ -430,5 +431,74 @@ class AdminVendorController extends Controller
             'verified_at' => !(bool)$current_verification_status ? now() : null
         ]);
         return $this->apiSuccess($message);
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/fetch-vendor-products/{uuid}",
+     *     summary="Vendor list",
+     *     description="Get vendor list.",
+     *     operationId="VendorProductList",
+     *     tags={"Vendor"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of user(vendor)",
+     *         @OA\Schema(type="string", example="0eebfe00-8bfd-4957-9947-503731e37a33")
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Items per page",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vendor product lists",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Vendor product lists"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="vendor_status", type="boolean", example=true),
+     *                         @OA\Property(property="approved", type="boolean", example=true),
+     *                         @OA\Property(property="product_name", type="string", example="Soluta aut voluptas voluptatem beatae."),
+     *                         @OA\Property(
+     *                             property="product_variants",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="price", type="number", format="float", example=4335),
+     *                                 @OA\Property(property="units_in_stock", type="integer", example=69),
+     *                                 @OA\Property(property="variation_name", type="string", example="Variant-2"),
+     *                                 @OA\Property(property="variation_size_value", type="integer", example=200),
+     *                                 @OA\Property(property="variation_size_unit", type="string", example="capsule")
+     *                             )
+     *                         )
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=1),
+     *                 @OA\Property(property="total_items", type="integer", example=1)
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+    */
+    function getVendorProduct(Request $request, User $user) {
+        $per_page = $request->query('per_page');
+        $pagination = $user->vendor->vendorProducts()->with(['product', 'vendorPrices.variation'])->paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($item) => AdminVendorProductListResource::collection($item))->data;
+        return $this->apiSuccess('Vendor product lists', $data);
     }
 }

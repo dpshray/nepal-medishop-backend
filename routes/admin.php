@@ -15,6 +15,7 @@ Route::prefix('admin')
     ->middleware(['auth:sanctum', AdminMiddleware::class])
     ->group(function(){
         Route::apiResource('vendor', AdminVendorController::class)->parameters(['vendor' => 'user'])->scoped(['user' => 'uuid']);
+        Route::get('fetch-vendor-products/{user:uuid}', [AdminVendorController::class, 'getVendorProduct']);
         Route::controller(AdminVendorController::class)->group(function(){
             Route::get('vendor-verified-toggler/{user:uuid}', 'toggleVendorVerifiedStatus');
         });
