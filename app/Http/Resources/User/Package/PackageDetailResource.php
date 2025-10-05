@@ -45,7 +45,7 @@ class PackageDetailResource extends JsonResource
                 ];
             }),
             'categories' => collect($categories)->unique('slug')->all(),
-            'liked' => false
+            'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false)
         ];
     }
 }

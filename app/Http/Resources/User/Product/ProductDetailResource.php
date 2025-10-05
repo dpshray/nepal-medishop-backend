@@ -49,7 +49,7 @@ class ProductDetailResource extends JsonResource
             })),
             'featured_image' => $this->whenLoaded('media', fn() => $this->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()),
             'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Product::PRODUCT_GALLERY)->map(fn($item) => $item->getUrl())),
-            'liked' => false
+            'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false)
         ];
     }
 }

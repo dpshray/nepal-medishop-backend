@@ -33,7 +33,7 @@ class PackageSingleResource extends JsonResource
             'previous_price' => $previous_price,
             'rating' => (float) $this->rating,
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Package::PACKAGE_FEATURED)),
-            'liked' => false
+            'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false)
         ];
     }
 }

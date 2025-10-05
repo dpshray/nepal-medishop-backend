@@ -97,7 +97,7 @@
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sanctum": []
                     }
                 ]
             }
@@ -291,6 +291,114 @@
                         }
                     }
                 }
+            }
+        },
+        "/favourite/{slug}/product": {
+            "get": {
+                "tags": [
+                    "Favourite"
+                ],
+                "summary": "Toggle a favourite status of a product",
+                "description": "Toggle a favourite status of a product.",
+                "operationId": "ProductFavoutiteToggle",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "soluta-cum-reiciendis-dolorum-sunt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful toggle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item added to favourite"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/favourite/{slug}/package": {
+            "get": {
+                "tags": [
+                    "Favourite"
+                ],
+                "summary": "Toggle a favourite status of a package",
+                "description": "Toggle a favourite status of a package.",
+                "operationId": "PackageFavoutiteToggle",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "super-box"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful toggle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item added to favourite"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/get-brand-list": {
@@ -528,7 +636,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/product/{slug}": {
@@ -669,7 +782,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/packages": {
@@ -780,7 +898,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/package/{slug}": {
@@ -916,7 +1039,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         }
     },
@@ -924,6 +1052,10 @@
         {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Favourite",
+            "description": "Favourite"
         },
         {
             "name": "Product",

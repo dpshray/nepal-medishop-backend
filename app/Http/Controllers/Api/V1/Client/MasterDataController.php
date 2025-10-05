@@ -16,6 +16,7 @@ use App\Models\Product;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MasterDataController extends Controller
@@ -100,6 +101,7 @@ class MasterDataController extends Controller
 
     /**
      * @OA\Get(
+     *     security={{"sanctum": {}}}, 
      *     path="/products/",
      *     summary="Get product based on category slug",
      *     description="Get product based on category slug.",
@@ -161,7 +163,7 @@ class MasterDataController extends Controller
     function fetchProducts(Request $request){
         $per_page = $request->query('per_page', 10);
         $category_slug = $request->query('category_slug');
-        $query = Product::with(['media','brand', 'cheapestVariation'])->active();
+        $query = Product::with(['media','brand', 'cheapestVariation', 'likes' => fn($qry) => $qry->where('user_id', Auth::id())])->active();
         if ($category_slug == 'all') {
             $query = $query->inRandomOrder();
         } else{
@@ -174,6 +176,7 @@ class MasterDataController extends Controller
 
     /**
      * @OA\Get(
+     *     security={{"sanctum": {}}}, 
      *     path="/product/{slug}",
      *     summary="Show an product",
      *     description="Show an active brand.",
@@ -237,13 +240,14 @@ class MasterDataController extends Controller
      * )
      */
     function fetchProductDetail(Product $product){
-        $product->loadMissing(['media', 'categories','tags','variations','brand']);
+        $product->loadMissing(['media', 'categories','tags','variations','brand','likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
         $data = new ProductDetailResource($product);
         return $this->apiSuccess("Product detail fetched successfully.", $data);
     }
 
     /**
      * @OA\Get(
+     *     security={{"sanctum": {}}}, 
      *     path="/packages",
      *     summary="Get package list",
      *     description="Get package list.",
@@ -296,13 +300,14 @@ class MasterDataController extends Controller
      */
     public function fetchPackages(Request $request){
         $per_page = $request->query('per_page', 10);
-        $pagination = Package::with('media')->active()->orderBy('id','DESC')->paginate($per_page);
+        $pagination = Package::with(['media', 'likes' => fn($qry) => $qry->where('user_id', Auth::id())])->active()->orderBy('id','DESC')->paginate($per_page);
         $data = $this->setDataKey(['page' => 'page_no'])->makePaginationResponse($pagination, fn($item) => PackageSingleResource::collection($item))->data;
         return $this->apiSuccess('Package lists', $data);
     }
 
     /**
      * @OA\Get(
+     *     security={{"sanctum": {}}}, 
      *     path="/package/{slug}",
      *     summary="Show a package",
      *     description="Show a package.",
@@ -365,7 +370,7 @@ class MasterDataController extends Controller
      * )
      */
     function fetchPackageDetail(Package $package){
-        $package->loadMissing(['media', 'packageProducts.variant.product.media', 'packageProducts.variant.product.categories']);
+        $package->loadMissing(['media', 'packageProducts.variant.product.media', 'packageProducts.variant.product.categories', 'likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
         $data = new PackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);
     }

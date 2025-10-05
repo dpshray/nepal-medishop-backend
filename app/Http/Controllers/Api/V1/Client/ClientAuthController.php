@@ -30,7 +30,7 @@ class ClientAuthController extends ClientController
      *     summary="User Register Form(only client can register)",
      *     description="Registration form for user.",
      *     tags={"Authentication"},
-     *     security={{"bearerAuth":{}}},
+     *     security={{"sanctum": {}}}, 
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(

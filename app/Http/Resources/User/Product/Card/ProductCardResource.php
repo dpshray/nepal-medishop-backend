@@ -35,7 +35,7 @@ class ProductCardResource extends JsonResource
             'price' => $price,
             'previous_price' => $previous_price,
             'feature_image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)),
-            'liked' => false
+            'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false)
         ];
     }
 }

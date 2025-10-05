@@ -24,6 +24,11 @@ class Package extends Model implements HasMedia
         return $this->hasMany(PackageProduct::class);
     }
 
+    function likes()
+    {
+        return $this->morphMany(Like::class, 'likable')->where('likable_type', __CLASS__);
+    }
+    
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::PACKAGE_FEATURED)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));
