@@ -350,7 +350,8 @@ class MasterDataController extends Controller
      *                         @OA\Property(property="slug", type="string", example="odit-quia-nisi-dolores-nobis-atque-vel-velit"),
      *                         @OA\Property(property="size_value", type="number", example=500),
      *                         @OA\Property(property="size_unit", type="string", example="gm"),
-     *                         @OA\Property(property="price", type="number", example=2214)
+     *                         @OA\Property(property="price", type="number", example=2214),
+     *                         @OA\Property(property="brand", type="string", example="Johnson & Johnson"),
      *                     )
      *                 ),
      *                 @OA\Property(
@@ -370,7 +371,12 @@ class MasterDataController extends Controller
      * )
      */
     function fetchPackageDetail(Package $package){
-        $package->loadMissing(['media', 'packageProducts.variant.product.media', 'packageProducts.variant.product.categories', 'likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
+        $package->loadMissing([
+            'media', 
+            'packageProducts.variant.product.media', 
+            'packageProducts.variant.product.categories',
+            'packageProducts.variant.product.brand', 
+            'likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
         $data = new PackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);
     }

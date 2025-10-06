@@ -42,6 +42,7 @@ class PackageDetailResource extends JsonResource
                     "size_value" =>  (float) $variant->size_value,
                     "size_unit" => $variant->size_unit,
                     'price' => $previous_price ?? $price,
+                    'brand' => $variant->product->brand->name
                 ];
             }),
             'categories' => collect($categories)->unique('slug')->all(),
