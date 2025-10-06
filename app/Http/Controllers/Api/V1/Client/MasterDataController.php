@@ -108,6 +108,13 @@ class MasterDataController extends Controller
      *     operationId="ClientProductList",
      *     tags={"Product"},
      *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="search product using name",
+     *         @OA\Schema(type="string", example="")
+     *     ),
+     *     @OA\Parameter(
      *         name="category_slug",
      *         in="query",
      *         required=false,
@@ -163,12 +170,17 @@ class MasterDataController extends Controller
     function fetchProducts(Request $request){
         $per_page = $request->query('per_page', 10);
         $category_slug = $request->query('category_slug');
-        $query = Product::with(['media','brand', 'cheapestVariation', 'likes' => fn($qry) => $qry->where('user_id', Auth::id())])->active();
-        if ($category_slug == 'all') {
-            $query = $query->inRandomOrder();
-        } else{
-            $query = $query->whereRelation('categories','slug', $category_slug)->latest('id');
-        }
+        $search = $request->query('search');
+        $query = Product::with([
+            'media',
+            'brand', 
+            'cheapestVariation', 
+            'likes' => fn($qry) => $qry->where('user_id', Auth::id())
+            ])
+            ->active()
+            ->when($search, fn($qry,$search) => $qry->whereLike('name', "%$search%"))
+            ->when($category_slug == 'all', fn($qry) => $qry->inRandomOrder(), fn($qry) => $qry->whereRelation('categories', 'slug', $category_slug)->latest('id'));
+
         $pagination = $query->paginate($per_page);
         $data = $this->setDataKey(['page' => 'page_no'])->makePaginationResponse($pagination, fn($item) => ProductCardResource::collection($item))->data;
         return $this->apiSuccess("All product lists.", $data);

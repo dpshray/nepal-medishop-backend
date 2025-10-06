@@ -524,6 +524,16 @@
                 "operationId": "ClientProductList",
                 "parameters": [
                     {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search product using name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
                         "name": "category_slug",
                         "in": "query",
                         "description": "slug of a category('all' to fetch all random products)",
