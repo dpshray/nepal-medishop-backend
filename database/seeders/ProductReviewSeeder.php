@@ -27,7 +27,7 @@ class ProductReviewSeeder extends Seeder
                     $temp[] = [
                         'user_id' => $user_id,
                         'review' => fake()->realText(fake()->numberBetween(200,500)),
-                        'rating' => rand(10, 50) / 10,
+                        'rating' => rand(1, 5),
                         'created_at' => $created_at,
                         'updated_at' => fake()->boolean(20) ? now() : $created_at
                     ];
