@@ -13,7 +13,9 @@ class Review extends Model
         'review',
         'user_id',
         'uuid',
-        'rating'
+        'rating',
+        'created_at',
+        'updated_at'
     ];
 
     function user() {
