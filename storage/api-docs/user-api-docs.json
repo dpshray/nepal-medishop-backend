@@ -347,60 +347,6 @@
                 ]
             }
         },
-        "/favourite/{slug}/package": {
-            "get": {
-                "tags": [
-                    "Favourite"
-                ],
-                "summary": "Toggle a favourite status of a package",
-                "description": "Toggle a favourite status of a package.",
-                "operationId": "PackageFavoutiteToggle",
-                "parameters": [
-                    {
-                        "name": "slug",
-                        "in": "path",
-                        "description": "Slug of package",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "super-box"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful toggle",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Item added to favourite"
-                                        },
-                                        "data": {
-                                            "type": "string",
-                                            "example": null,
-                                            "nullable": true
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
         "/get-brand-list": {
             "get": {
                 "tags": [
@@ -1060,6 +1006,359 @@
                     }
                 ]
             }
+        },
+        "/product/{slug}/review": {
+            "get": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Get reviews based on product slug.",
+                "description": "Get reviews based on product slug.",
+                "operationId": "ProductReviewList",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "pubg-sleeves-confortable-finger"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review fetched successfully."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "comment_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "972f4163-b858-4715-bca3-a8fac6ae2475"
+                                                            },
+                                                            "user_name": {
+                                                                "type": "string",
+                                                                "example": "vendor25391021"
+                                                            },
+                                                            "review": {
+                                                                "type": "string",
+                                                                "example": "Some product review another user"
+                                                            },
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "user_type": {
+                                                                "properties": {
+                                                                    "user_type": {
+                                                                        "type": "integer",
+                                                                        "example": 2
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string",
+                                                                        "example": "VENDOR"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "review_date": {
+                                                                "type": "string",
+                                                                "example": "07 Oct 2025"
+                                                            },
+                                                            "is_review_edited": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Store a product review",
+                "description": "Store a product review.",
+                "operationId": "StoreProductReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "review",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "review": {
+                                        "type": "string",
+                                        "example": "Some product review"
+                                    },
+                                    "rating": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Item reviewed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item reviewed successfully."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/product/{slug}/review/{uuid}": {
+            "delete": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Delete a review belonging to a user.",
+                "description": "Delete a review belonging to a user.",
+                "operationId": "DeleteProductReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a review",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "972f4163-b858-4715-bca3-a8fac6ae2459"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review has been removed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review has been removed."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Update a review belonging to a user.",
+                "description": "Update a review belonging to a user.",
+                "operationId": "UpdateProductReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a review",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "972f4163-b858-4715-bca3-a8fac6ae2459"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "review",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "review": {
+                                        "type": "string",
+                                        "example": "Some product review"
+                                    },
+                                    "rating": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Review has been updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review has been updated."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
@@ -1078,6 +1377,10 @@
         {
             "name": "Package",
             "description": "Package"
+        },
+        {
+            "name": "ProductReview",
+            "description": "ProductReview"
         }
     ],
     "components": {
