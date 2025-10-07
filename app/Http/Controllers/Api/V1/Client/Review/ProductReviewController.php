@@ -12,6 +12,7 @@ use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\UnauthorizedException;
 
 class ProductReviewController extends ClientController
@@ -61,27 +62,40 @@ class ProductReviewController extends ClientController
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(
-     *                     property="items",
+     *                     property="ratings",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="comment_uuid", type="string", format="uuid", example="972f4163-b858-4715-bca3-a8fac6ae2475"),
-     *                         @OA\Property(property="user_name", type="string", example="vendor25391021"),
-     *                         @OA\Property(property="review", type="string", example="Some product review another user"),
-     *                         @OA\Property(property="rating", type="integer", example=3),
-     *                         @OA\Property(
-     *                             property="user_type",
-     *                             type="object",
-     *                             @OA\Property(property="user_type", type="integer", example=2),
-     *                             @OA\Property(property="label", type="string", example="VENDOR")
-     *                         ),
-     *                         @OA\Property(property="review_date", type="string", example="07 Oct 2025"),
-     *                         @OA\Property(property="is_review_edited", type="boolean", example=false)
+     *                         @OA\Property(property="rating", type="number", format="float", example=5.0),
+     *                         @OA\Property(property="total_raters", type="integer", example=5)
      *                     )
      *                 ),
-     *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=1),
-     *                 @OA\Property(property="total_items", type="integer", example=1)
+     *                 @OA\Property(
+     *                     property="reviews",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="items",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(property="comment_uuid", type="string", format="uuid", example="6276ea8e-7c8d-4a38-961f-1643f734eeb1"),
+     *                             @OA\Property(property="user_name", type="string", example="user00"),
+     *                             @OA\Property(property="review", type="string", example="It's HIM. 'I don't believe you do lessons?' said Alice..."),
+     *                             @OA\Property(property="rating", type="number", format="float", example=1.0),
+     *                             @OA\Property(
+     *                                 property="user_type",
+     *                                 type="object",
+     *                                 @OA\Property(property="user_type", type="integer", example=3),
+     *                                 @OA\Property(property="label", type="string", example="USER")
+     *                             ),
+     *                             @OA\Property(property="review_date", type="string", example="03 Oct 2025"),
+     *                             @OA\Property(property="is_review_edited", type="boolean", example=false)
+     *                         )
+     *                     ),
+     *                     @OA\Property(property="page", type="integer", example=1),
+     *                     @OA\Property(property="total_page", type="integer", example=3),
+     *                     @OA\Property(property="total_items", type="integer", example=25)
+     *                 )
      *             )
      *         )
      *     )
@@ -89,9 +103,20 @@ class ProductReviewController extends ClientController
      */
     function index(Request $request, Product $product) {
         $per_page = $request->query('per_page', 10);
+        $ratings = DB::table('reviews')
+            ->select('rating', DB::raw('count(*) as total_raters'))
+            ->where([
+                ['reviewable_type', Product::class],
+                ['reviewable_id', $product->id],
+            ])
+            ->groupBy('rating')
+            ->orderBy('rating', 'DESC')
+            ->get()
+            ->map(fn($item) => ['rating' => (int) $item->rating, 'total_raters' => $item->total_raters]);
         $pagination = $product->reviews()->with(['user'])->paginate($per_page);
-        $data = $this->makePaginationResponse($pagination, fn($item) => ProductReviewListResource::collection($item))->data;
-        return $this->apiSuccess('Review fetched successfully.', $data);
+        
+        $reviews = $this->makePaginationResponse($pagination, fn($item) => ProductReviewListResource::collection($item))->data;
+        return $this->apiSuccess('Review fetched successfully.', compact('ratings','reviews'));
     }
 
     /**
