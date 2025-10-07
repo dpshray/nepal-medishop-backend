@@ -9,6 +9,7 @@ use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Validation\UnauthorizedException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,6 +30,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->expectsJson()) {
                 return (new ResponseTraitClass)->apiError($e->getMessage(), 401);
+            }
+        });
+        $exceptions->render(function (UnauthorizedException $e, Request $request) {
+            if ($request->expectsJson()) {
+                $message = $e->getMessage();
+                $message = empty($message) ? 'You don’t have permission to access or modify this resource.' : $message;
+                return (new ResponseTraitClass)->apiError($message, 401);
             }
         });
         $exceptions->render(function (ValidationException $e, Request $request) {
