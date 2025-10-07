@@ -22,14 +22,14 @@ class ProductReviewSeeder extends Seeder
         DB::transaction(function () use ($half_products, $user_ids) {
             Product::active()->take($half_products)->each(function ($product) use ($user_ids) {
                 $temp = [];
-                $created_at = fake()->dateTimeBetween('-7 days', '-1 days');
                 foreach ($user_ids as $user_id) {
+                    $created_at = fake()->dateTimeBetween('-7 days', '-1 days');
                     $temp[] = [
                         'user_id' => $user_id,
                         'review' => fake()->realText(fake()->numberBetween(200,500)),
                         'rating' => rand(10, 50) / 10,
                         'created_at' => $created_at,
-                        'updated_at' => fake()->boolean(30) ? now() : $created_at
+                        'updated_at' => fake()->boolean(20) ? now() : $created_at
                     ];
                 }
                 $product->reviews()->createMany($temp);
