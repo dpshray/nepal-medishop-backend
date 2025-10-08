@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
+use App\Http\Controllers\Api\V1\Client\Review\PackageReviewController;
 use App\Http\Controllers\Api\V1\Client\Review\ProductReviewController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,5 @@ Route::middleware(['auth:sanctum'])->group(function() {
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);
 Route::get('fetch-product-ratings/{product:slug}', [ProductReviewController::class, 'getProductRatingsByAllUser']);
+Route::apiResource('package.review', PackageReviewController::class)->except(['show'])->scoped(['package' => 'slug', 'review' => 'uuid']);
+Route::get('fetch-package-ratings/{package:slug}', [PackageReviewController::class, 'getPackageRatingsByAllUser']);
