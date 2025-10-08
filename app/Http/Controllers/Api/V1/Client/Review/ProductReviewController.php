@@ -139,7 +139,7 @@ class ProductReviewController extends ClientController
             ->groupBy('rating')
             ->orderBy('rating', 'DESC')
             ->get()
-            ->map(fn($item) => ['rating' => (int) $item->rating, 'total_raters' => $item->total_raters]);
+            ->map(fn($item) => ['rating' => (int) $item->rating, 'total_raters' => (int) $item->total_raters]);
         return $this->apiSuccess('Product ratings fetched successfully.', $ratings);
     }
 
