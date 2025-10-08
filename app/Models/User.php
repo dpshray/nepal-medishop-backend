@@ -21,7 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens, UuidModelTrait, SoftDeletes,InteractsWithMedia;
-    const MEDIA_NAME = 'user';
+    const USER_PROFILE = 'USER_PROFILE';
     protected $dates = ['deleted_at'];
     /**
      * The attributes that are mass assignable.
@@ -86,8 +86,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     }
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection(self::MEDIA_NAME)
+        $this->addMediaCollection(self::USER_PROFILE)
             ->singleFile()
+            ->useFallbackUrl(asset('assets/img/user-profile-default.png'))
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('image')->nonQueued();
             });

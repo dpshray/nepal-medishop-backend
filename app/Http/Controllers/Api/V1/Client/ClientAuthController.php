@@ -62,7 +62,7 @@ class ClientAuthController extends ClientController
             event(new Registered($user));
             if ($request->hasFile('image')) {
                 $user->addMedia($request->file('image'))
-                    ->toMediaCollection(User::MEDIA_NAME);
+                    ->toMediaCollection(User::USER_PROFILE);
             }
         });
         return $this->apiSuccess('Please check your email to verify registration');

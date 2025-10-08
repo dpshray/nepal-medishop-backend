@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Client\Review;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Product\Review\ClientProductReviewRequest;
+use App\Http\Resources\User\Review\PackageReviewListResource;
 use App\Http\Resources\User\Review\ProductReviewListResource;
 use App\Models\Package;
 use App\Models\Review;
@@ -90,7 +91,7 @@ class PackageReviewController extends Controller
         $per_page = $request->query('per_page', 10);
         $pagination = $package->reviews()->with(['user'])->latest()->paginate($per_page);
 
-        $reviews = $this->makePaginationResponse($pagination, fn($item) => ProductReviewListResource::collection($item))->data;
+        $reviews = $this->makePaginationResponse($pagination, fn($item) => PackageReviewListResource::collection($item))->data;
         return $this->apiSuccess('Review fetched successfully.', $reviews);
     }
     /**
@@ -137,7 +138,15 @@ class PackageReviewController extends Controller
             ->orderBy('rating', 'DESC')
             ->get()
             ->map(fn($item) => ['rating' => (int) $item->rating, 'total_raters' => (int) $item->total_raters]);
-        return $this->apiSuccess('package ratings fetched successfully.', $ratings);
+
+        $total_raters = (int) $ratings->sum('total_raters');
+
+        $averageRating = $ratings->reduce(function ($carry, $item) {
+            return $carry + ($item['rating'] * $item['total_raters']);
+        }, 0) / $ratings->sum('total_raters');
+        $avg_rating = (float) round($averageRating, 2);
+
+        return $this->apiSuccess('package ratings fetched successfully.', compact('ratings', 'total_raters', 'avg_rating'));
     }
     /**
      * @OA\Post(
