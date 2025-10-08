@@ -1653,20 +1653,34 @@
                                             "example": "Product ratings fetched successfully."
                                         },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "rating": {
-                                                        "type": "integer",
-                                                        "example": 5
-                                                    },
-                                                    "total_raters": {
-                                                        "type": "integer",
-                                                        "example": 9
+                                            "properties": {
+                                                "ratings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "total_raters": {
+                                                                "type": "integer",
+                                                                "example": 4
+                                                            }
+                                                        },
+                                                        "type": "object"
                                                     }
                                                 },
-                                                "type": "object"
-                                            }
+                                                "total_raters": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "avg_rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 3.12
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "success": {
                                             "type": "boolean",
