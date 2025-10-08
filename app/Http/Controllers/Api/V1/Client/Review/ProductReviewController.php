@@ -149,9 +149,11 @@ class ProductReviewController extends ClientController
         
         $total_raters = (int) $ratings->sum('total_raters');
 
-        $averageRating = $ratings->reduce(function ($carry, $item) {
-            return $carry + ($item['rating'] * $item['total_raters']);
-        }, 0) / $ratings->sum('total_raters');
+        $averageRating = $total_raters > 0
+            ? round($ratings->reduce(function ($carry, $item) {
+                return $carry + ($item['rating'] * $item['total_raters']);
+            }, 0) / $total_raters, 2)
+            : 0;
         $avg_rating = (float) round($averageRating, 2);
         
         return $this->apiSuccess('Product ratings fetched successfully.', compact('ratings', 'total_raters', 'avg_rating'));
