@@ -13,12 +13,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, UuidModelTrait, SoftDeletes;
-    
+    use HasFactory, Notifiable, HasApiTokens, UuidModelTrait, SoftDeletes,InteractsWithMedia;
+    const MEDIA_NAME = 'USER_PROFILE';
     protected $dates = ['deleted_at'];
     /**
      * The attributes that are mass assignable.
@@ -80,5 +81,14 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 
     function likes() {
         return $this->morphMany(Like::class,'likable');
+    }
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(self::MEDIA_NAME)
+            ->singleFile()
+            ->useFallbackUrl(asset('assets/img/default-brand-category.png'))
+            ->registerMediaConversions(function (Media $media) {
+                $this->addMediaConversion('image')->nonQueued();
+            });
     }
 }
