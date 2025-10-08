@@ -26,6 +26,7 @@ class UserRegisterRequest extends FormRequest
             'mobile_number'=>'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email|max:255',
             'password' => 'required|string|min:8|confirmed|max:255',
+            'image'=>'sometimes|file|mimes:png,jpg',
         ];
     }
 
