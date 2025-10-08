@@ -30,7 +30,7 @@ class ClientAuthController extends ClientController
      *     summary="User Register Form(only client can register)",
      *     description="Registration form for user.",
      *     tags={"Authentication"},
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -53,12 +53,17 @@ class ClientAuthController extends ClientController
      *     )
      * )
      */
-    function register(UserRegisterRequest $request){
+    function register(UserRegisterRequest $request)
+    {
         $form_data = $request->validated();
         $form_data['user_type'] = UserTypeEnum::USER->value;
-        DB::transaction(function () use($form_data){  
+        DB::transaction(function () use ($form_data, $request) {
             $user = User::create($form_data);
             event(new Registered($user));
+            if ($request->hasFile('image')) {
+                $user->addMedia($request->file('image'))
+                    ->toMediaCollection(User::MEDIA_NAME);
+            }
         });
         return $this->apiSuccess('Please check your email to verify registration');
     }
@@ -82,7 +87,7 @@ class ClientAuthController extends ClientController
      *     summary="Login Api",
      *     description="Login API(user_type : USER | VENDOR | ADMIN).",
      *     tags={"Authentication"},
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -138,7 +143,7 @@ class ClientAuthController extends ClientController
 
     /**
      * @OA\Post(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/logout",
      *     summary="User logout",
      *     description="logs out a user.",
@@ -188,7 +193,8 @@ class ClientAuthController extends ClientController
      *     )
      * )
      */
-    function sendPasswordResetLink(ForgetPasswordRequest $request){
+    function sendPasswordResetLink(ForgetPasswordRequest $request)
+    {
         $status = Password::sendResetLink(
             $request->only('email')
         );
@@ -199,7 +205,8 @@ class ClientAuthController extends ClientController
         return $this->apiError($status);
     }
 
-    function paswordResetorFormHandler(Request $request, $token){
+    function paswordResetorFormHandler(Request $request, $token)
+    {
 
         if ($request->isMethod('POST')) {
             $request->validate([
@@ -212,7 +219,7 @@ class ClientAuthController extends ClientController
                 $credentials['token'] = $token;
                 $status = Password::reset(
                     $credentials,
-                    function (User $user, string $password) use($request){
+                    function (User $user, string $password) use ($request) {
                         if (Hash::check($password, $user->password)) {
                             throw ValidationException::withMessages([
                                 'password' => ['Please choose a different password.'],
@@ -226,7 +233,7 @@ class ClientAuthController extends ClientController
                     }
                 );
             } catch (\Exception $e) {
-                return $this->apiError($e->getMessage(),422);
+                return $this->apiError($e->getMessage(), 422);
             }
             if ($status === Password::PasswordReset) {
                 return $this->apiSuccess('Your password has been reset.');
