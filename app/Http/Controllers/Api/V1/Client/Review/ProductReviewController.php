@@ -117,12 +117,18 @@ class ProductReviewController extends ClientController
      *             @OA\Property(property="message", type="string", example="Product ratings fetched successfully."),
      *             @OA\Property(
      *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(property="rating", type="integer", example=5),
-     *                     @OA\Property(property="total_raters", type="integer", example=9)
-     *                 )
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="ratings",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="rating", type="integer", example=5),
+     *                         @OA\Property(property="total_raters", type="integer", example=4)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="total_raters", type="integer", example=25),
+     *                 @OA\Property(property="avg_rating", type="number", format="float", example=3.12)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -140,7 +146,15 @@ class ProductReviewController extends ClientController
             ->orderBy('rating', 'DESC')
             ->get()
             ->map(fn($item) => ['rating' => (int) $item->rating, 'total_raters' => (int) $item->total_raters]);
-        return $this->apiSuccess('Product ratings fetched successfully.', $ratings);
+        
+        $total_raters = (int) $ratings->sum('total_raters');
+
+        $averageRating = $ratings->reduce(function ($carry, $item) {
+            return $carry + ($item['rating'] * $item['total_raters']);
+        }, 0) / $ratings->sum('total_raters');
+        $avg_rating = (float) round($averageRating, 2);
+        
+        return $this->apiSuccess('Product ratings fetched successfully.', compact('ratings', 'total_raters', 'avg_rating'));
     }
 
     /**
