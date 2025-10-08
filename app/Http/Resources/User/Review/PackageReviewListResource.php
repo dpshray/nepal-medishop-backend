@@ -18,6 +18,7 @@ class PackageReviewListResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
+            'image' => $this->whenLoaded('user', fn() => $this->user->getFirstMediaUrl(User::USER_PROFILE),),
             'comment_uuid' => $this->uuid,
             'user_name' => $this->whenLoaded('user', fn() => $this->user->name),
             'review' => $this->review,
@@ -25,7 +26,6 @@ class PackageReviewListResource extends JsonResource
             'user_type' => $this->whenLoaded('user', fn() => [
                 'user_type' => (int) $this->user->user_type,
                 'label' => UserTypeEnum::from($this->user->user_type)->name,
-                'image' => $this->whenLoaded('user', fn() => $this->user->getFirstMediaUrl(User::USER_PROFILE)),
             ]),
             'review_date' => $this->created_at->format('d M Y'),
             'is_review_edited' => $this->updated_at->gt($this->created_at) ? true : false
