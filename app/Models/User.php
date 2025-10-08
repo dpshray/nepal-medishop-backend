@@ -13,13 +13,15 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens, UuidModelTrait, SoftDeletes,InteractsWithMedia;
-    const MEDIA_NAME = 'USER_PROFILE';
+    const USER_PROFILE = 'USER_PROFILE';
     protected $dates = ['deleted_at'];
     /**
      * The attributes that are mass assignable.
@@ -84,9 +86,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     }
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection(self::MEDIA_NAME)
+        $this->addMediaCollection(self::USER_PROFILE)
             ->singleFile()
-            ->useFallbackUrl(asset('assets/img/default-brand-category.png'))
+            ->useFallbackUrl(asset('assets/img/user-profile-default.png'))
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('image')->nonQueued();
             });
