@@ -139,28 +139,14 @@ class PackageReviewController extends Controller
             ->groupBy('rating')
             ->orderBy('rating', 'DESC')
             ->get()
-            ->map(fn($item) => [
-                'rating' => (int) $item->rating,
-                'total_raters' => (int) $item->total_raters
-            ]);
-
+            ->map(fn($item) => ['rating' => (int) $item->rating, 'total_raters' => (int) $item->total_raters]);
         $total_raters = (int) $ratings->sum('total_raters');
-
-        if ($total_raters === 0) {
-            // No ratings yet
-            return $this->apiSuccess('Package ratings fetched successfully.', [
-                'ratings' => [],
-                'total_raters' => 0,
-                'avg_rating' => 0,
-            ]);
-        }
-
-        $averageRating = $ratings->reduce(function ($carry, $item) {
-            return $carry + ($item['rating'] * $item['total_raters']);
-        }, 0) / $total_raters;
-
-        $avg_rating = round($averageRating, 2);
-
+        $averageRating = $total_raters > 0
+            ? round($ratings->reduce(function ($carry, $item) {
+                return $carry + ($item['rating'] * $item['total_raters']);
+            }, 0) / $total_raters, 2)
+            : 0;
+        $avg_rating = (float) round($averageRating, 2);
         return $this->apiSuccess('Package ratings fetched successfully.', compact('ratings', 'total_raters', 'avg_rating'));
     }
 
