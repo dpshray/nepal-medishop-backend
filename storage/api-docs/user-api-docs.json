@@ -1049,7 +1049,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Review fetched successfully",
+                        "description": "Review fetched successfully.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1058,95 +1058,71 @@
                                             "type": "string",
                                             "example": "Review fetched successfully."
                                         },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "data": {
                                             "properties": {
-                                                "ratings": {
+                                                "items": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "rating": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 5
+                                                            "comment_uuid": {
+                                                                "type": "string",
+                                                                "example": "08435868-74ba-419c-8788-6c647868ec97"
                                                             },
-                                                            "total_raters": {
+                                                            "user_name": {
+                                                                "type": "string",
+                                                                "example": "user00"
+                                                            },
+                                                            "review": {
+                                                                "type": "string",
+                                                                "example": "I think.' And she squeezed herself up on tiptoe..."
+                                                            },
+                                                            "rating": {
                                                                 "type": "integer",
                                                                 "example": 5
+                                                            },
+                                                            "user_type": {
+                                                                "properties": {
+                                                                    "user_type": {
+                                                                        "type": "integer",
+                                                                        "example": 3
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string",
+                                                                        "example": "USER"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "review_date": {
+                                                                "type": "string",
+                                                                "example": "02 Oct 2025"
+                                                            },
+                                                            "is_review_edited": {
+                                                                "type": "boolean",
+                                                                "example": true
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
                                                 },
-                                                "reviews": {
-                                                    "properties": {
-                                                        "items": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "properties": {
-                                                                    "comment_uuid": {
-                                                                        "type": "string",
-                                                                        "format": "uuid",
-                                                                        "example": "6276ea8e-7c8d-4a38-961f-1643f734eeb1"
-                                                                    },
-                                                                    "user_name": {
-                                                                        "type": "string",
-                                                                        "example": "user00"
-                                                                    },
-                                                                    "review": {
-                                                                        "type": "string",
-                                                                        "example": "It's HIM. 'I don't believe you do lessons?' said Alice..."
-                                                                    },
-                                                                    "rating": {
-                                                                        "type": "number",
-                                                                        "format": "float",
-                                                                        "example": 1
-                                                                    },
-                                                                    "user_type": {
-                                                                        "properties": {
-                                                                            "user_type": {
-                                                                                "type": "integer",
-                                                                                "example": 3
-                                                                            },
-                                                                            "label": {
-                                                                                "type": "string",
-                                                                                "example": "USER"
-                                                                            }
-                                                                        },
-                                                                        "type": "object"
-                                                                    },
-                                                                    "review_date": {
-                                                                        "type": "string",
-                                                                        "example": "03 Oct 2025"
-                                                                    },
-                                                                    "is_review_edited": {
-                                                                        "type": "boolean",
-                                                                        "example": false
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            }
-                                                        },
-                                                        "page": {
-                                                            "type": "integer",
-                                                            "example": 1
-                                                        },
-                                                        "total_page": {
-                                                            "type": "integer",
-                                                            "example": 3
-                                                        },
-                                                        "total_items": {
-                                                            "type": "integer",
-                                                            "example": 25
-                                                        }
-                                                    },
-                                                    "type": "object"
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 25
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -1231,6 +1207,66 @@
                         "sanctum": []
                     }
                 ]
+            }
+        },
+        "/fetch-product-ratings/{slug}": {
+            "get": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Get ratings based on product slug.",
+                "description": "Get ratings based on product slug.",
+                "operationId": "ProductRatings",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "pubg-sleeves-confortable-finger"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product ratings fetched successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product ratings fetched successfully."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "rating": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "total_raters": {
+                                                        "type": "integer",
+                                                        "example": 9
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/product/{slug}/review/{uuid}": {

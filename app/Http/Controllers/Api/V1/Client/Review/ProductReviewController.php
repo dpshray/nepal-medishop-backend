@@ -23,6 +23,7 @@ class ProductReviewController extends ClientController
     {
         $this->middleware(['auth:sanctum'])->only(['store','update','destroy']);
     }
+
     /**
      * @OA\Get(
      *     path="/product/{slug}/review",
@@ -53,56 +54,82 @@ class ProductReviewController extends ClientController
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Review fetched successfully",
+     *         description="Review fetched successfully.",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Review fetched successfully."),
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(
-     *                     property="ratings",
+     *                     property="items",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="rating", type="number", format="float", example=5.0),
-     *                         @OA\Property(property="total_raters", type="integer", example=5)
+     *                         @OA\Property(property="comment_uuid", type="string", example="08435868-74ba-419c-8788-6c647868ec97"),
+     *                         @OA\Property(property="user_name", type="string", example="user00"),
+     *                         @OA\Property(property="review", type="string", example="I think.' And she squeezed herself up on tiptoe..."),
+     *                         @OA\Property(property="rating", type="integer", example=5),
+     *                         @OA\Property(
+     *                             property="user_type",
+     *                             type="object",
+     *                             @OA\Property(property="user_type", type="integer", example=3),
+     *                             @OA\Property(property="label", type="string", example="USER")
+     *                         ),
+     *                         @OA\Property(property="review_date", type="string", example="02 Oct 2025"),
+     *                         @OA\Property(property="is_review_edited", type="boolean", example=true)
      *                     )
      *                 ),
-     *                 @OA\Property(
-     *                     property="reviews",
-     *                     type="object",
-     *                     @OA\Property(
-     *                         property="items",
-     *                         type="array",
-     *                         @OA\Items(
-     *                             type="object",
-     *                             @OA\Property(property="comment_uuid", type="string", format="uuid", example="6276ea8e-7c8d-4a38-961f-1643f734eeb1"),
-     *                             @OA\Property(property="user_name", type="string", example="user00"),
-     *                             @OA\Property(property="review", type="string", example="It's HIM. 'I don't believe you do lessons?' said Alice..."),
-     *                             @OA\Property(property="rating", type="number", format="float", example=1.0),
-     *                             @OA\Property(
-     *                                 property="user_type",
-     *                                 type="object",
-     *                                 @OA\Property(property="user_type", type="integer", example=3),
-     *                                 @OA\Property(property="label", type="string", example="USER")
-     *                             ),
-     *                             @OA\Property(property="review_date", type="string", example="03 Oct 2025"),
-     *                             @OA\Property(property="is_review_edited", type="boolean", example=false)
-     *                         )
-     *                     ),
-     *                     @OA\Property(property="page", type="integer", example=1),
-     *                     @OA\Property(property="total_page", type="integer", example=3),
-     *                     @OA\Property(property="total_items", type="integer", example=25)
-     *                 )
-     *             )
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=3),
+     *                 @OA\Property(property="total_items", type="integer", example=25)
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
      */
     function index(Request $request, Product $product) {
         $per_page = $request->query('per_page', 10);
+        $pagination = $product->reviews()->with(['user'])->latest()->paginate($per_page);
+        
+        $reviews = $this->makePaginationResponse($pagination, fn($item) => ProductReviewListResource::collection($item))->data;
+        return $this->apiSuccess('Review fetched successfully.', $reviews);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/fetch-product-ratings/{slug}",
+     *     summary="Get ratings based on product slug.",
+     *     description="Get ratings based on product slug.",
+     *     operationId="ProductRatings",
+     *     tags={"ProductReview"},
+     *     @OA\Parameter(
+     *         name="slug",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of product",
+     *         @OA\Schema(type="string", example="pubg-sleeves-confortable-finger")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product ratings fetched successfully.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Product ratings fetched successfully."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="rating", type="integer", example=5),
+     *                     @OA\Property(property="total_raters", type="integer", example=9)
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function getProductRatingsByAllUser(Product $product) {
         $ratings = DB::table('reviews')
             ->select('rating', DB::raw('count(*) as total_raters'))
             ->where([
@@ -113,10 +140,7 @@ class ProductReviewController extends ClientController
             ->orderBy('rating', 'DESC')
             ->get()
             ->map(fn($item) => ['rating' => (int) $item->rating, 'total_raters' => $item->total_raters]);
-        $pagination = $product->reviews()->with(['user'])->paginate($per_page);
-        
-        $reviews = $this->makePaginationResponse($pagination, fn($item) => ProductReviewListResource::collection($item))->data;
-        return $this->apiSuccess('Review fetched successfully.', compact('ratings','reviews'));
+        return $this->apiSuccess('Product ratings fetched successfully.', $ratings);
     }
 
     /**

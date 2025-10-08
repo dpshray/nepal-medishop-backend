@@ -19,4 +19,5 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::get('favourite/{package:slug}/package', 'togglePackageFavourite');
     });
 });
-Route::apiResource('product.review',ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);
+Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);
+Route::get('fetch-product-ratings/{product:slug}', [ProductReviewController::class, 'getProductRatingsByAllUser']);
