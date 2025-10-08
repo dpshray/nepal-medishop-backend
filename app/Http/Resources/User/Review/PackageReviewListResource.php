@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User\Review;
 
 use App\Enums\UserTypeEnum;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,7 +24,8 @@ class PackageReviewListResource extends JsonResource
             'rating' => (float) $this->rating,
             'user_type' => $this->whenLoaded('user', fn() => [
                 'user_type' => (int) $this->user->user_type,
-                'label' => UserTypeEnum::from($this->user->user_type)->name
+                'label' => UserTypeEnum::from($this->user->user_type)->name,
+                'image' => $this->whenLoaded('user', fn() => $this->user->getFirstMediaUrl(User::USER_PROFILE)),
             ]),
             'review_date' => $this->created_at->format('d M Y'),
             'is_review_edited' => $this->updated_at->gt($this->created_at) ? true : false
