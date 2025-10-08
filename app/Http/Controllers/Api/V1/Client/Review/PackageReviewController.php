@@ -18,10 +18,10 @@ use Illuminate\Validation\UnauthorizedException;
 class PackageReviewController extends Controller
 {
     //
-    use ResponseTrait,PaginationTrait;
+    use ResponseTrait, PaginationTrait;
     function __construct()
     {
-        $this->middleware(['auth:sanctum'])->only(['store','update','destroy']);
+        $this->middleware(['auth:sanctum'])->only(['store', 'update', 'destroy']);
     }
     /**
      * @OA\Get(
@@ -87,7 +87,8 @@ class PackageReviewController extends Controller
      *     )
      * )
      */
-    function index(Request $request, Package $package) {
+    function index(Request $request, Package $package)
+    {
         $per_page = $request->query('per_page', 10);
         $pagination = $package->reviews()->with(['user'])->latest()->paginate($per_page);
 
@@ -127,7 +128,8 @@ class PackageReviewController extends Controller
      *     )
      * )
      */
-    function getPackageRatingsByAllUser(Package $package) {
+    public function getPackageRatingsByAllUser(Package $package)
+    {
         $ratings = DB::table('reviews')
             ->select('rating', DB::raw('count(*) as total_raters'))
             ->where([
@@ -137,17 +139,31 @@ class PackageReviewController extends Controller
             ->groupBy('rating')
             ->orderBy('rating', 'DESC')
             ->get()
-            ->map(fn($item) => ['rating' => (int) $item->rating, 'total_raters' => (int) $item->total_raters]);
+            ->map(fn($item) => [
+                'rating' => (int) $item->rating,
+                'total_raters' => (int) $item->total_raters
+            ]);
 
         $total_raters = (int) $ratings->sum('total_raters');
 
+        if ($total_raters === 0) {
+            // No ratings yet
+            return $this->apiSuccess('Package ratings fetched successfully.', [
+                'ratings' => [],
+                'total_raters' => 0,
+                'avg_rating' => 0,
+            ]);
+        }
+
         $averageRating = $ratings->reduce(function ($carry, $item) {
             return $carry + ($item['rating'] * $item['total_raters']);
-        }, 0) / $ratings->sum('total_raters');
-        $avg_rating = (float) round($averageRating, 2);
+        }, 0) / $total_raters;
 
-        return $this->apiSuccess('package ratings fetched successfully.', compact('ratings', 'total_raters', 'avg_rating'));
+        $avg_rating = round($averageRating, 2);
+
+        return $this->apiSuccess('Package ratings fetched successfully.', compact('ratings', 'total_raters', 'avg_rating'));
     }
+
     /**
      * @OA\Post(
      *     security={{"sanctum": {}}},
@@ -235,7 +251,8 @@ class PackageReviewController extends Controller
      *   )
      * )
      */
-    function update(ClientProductReviewRequest $request, Package $package, Review $review) {
+    function update(ClientProductReviewRequest $request, Package $package, Review $review)
+    {
         throw_if($review->user->isNot(Auth::user()), UnauthorizedException::class);
         $data = $request->safe()->merge(['user_id' => Auth::id()])->all();
         $package->reviews()->firstWhere('uuid', $review->uuid)->update($data);
@@ -277,7 +294,8 @@ class PackageReviewController extends Controller
      *   )
      * )
      */
-    function destroy(Package $package, Review $review) {
+    function destroy(Package $package, Review $review)
+    {
         throw_if($review->user->isNot(Auth::user()), UnauthorizedException::class);
         $package->reviews()->firstWhere('uuid', $review->uuid)->delete();
         return $this->apiSuccess('Review has been removed.');
