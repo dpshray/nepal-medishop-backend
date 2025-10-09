@@ -26,6 +26,10 @@ use Illuminate\Http\Request;
  *     url="http://127.0.0.1:8000/api/v1",
  *     description="Localhost API Server 2"
  * )
+ * @OA\Server(
+ *     url="http://192.168.100.18:8000/api/v1",
+ *     description="Localhost API Server 3"
+ * )
  */
 class AdminController extends Controller
 {

@@ -14,13 +14,25 @@ class Package extends Model implements HasMedia
 
     const PACKAGE_FEATURED = 'PACKAGE_FEATURED';
     const PACKAGE_GALLERY = 'PACKAGE_GALLERY';
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'price',
+        'discount_percent',
+        'start_timestamps',
+        'end_timestamps',
+        'status',
+    ];
 
     public $timestamps = false;
 
-    function scopeActive($query) {
+    function scopeActive($query)
+    {
         return $query->where('status', 1);
     }
-    function packageProducts(){
+    function packageProducts()
+    {
         return $this->hasMany(PackageProduct::class);
     }
 
@@ -37,5 +49,10 @@ class Package extends Model implements HasMedia
     {
         $this->addMediaCollection(self::PACKAGE_FEATURED)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));
         $this->addMediaCollection(self::PACKAGE_GALLERY)->useFallbackUrl(asset('assets/img/default-brand-category.png'));
+    }
+    public function products()
+    {
+        return $this->belongsToMany(ProductVariation::class, 'package_products')
+            ->withPivot('quantity');
     }
 }
