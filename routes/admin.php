@@ -4,6 +4,7 @@ use App\Enums\AdminUrlParamEnum;
 use App\Enums\RouteParamEnum;
 use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
+use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
@@ -29,4 +30,5 @@ Route::prefix('admin')
         Route::get('toggle-product-status/{product:uuid}', [AdminProductController::class, 'statusToggler']);
         Route::post('product-media/{product:uuid}', [AdminProductController::class, 'storeMedia']);
         Route::get('product-units', [AdminProductController::class, 'productUnits']);
+        Route::apiResource('package',AdminPackageController::class)->except(['show'])->scoped(['package' => 'slug']);
 });
