@@ -17,6 +17,10 @@
         {
             "url": "http://127.0.0.1:8000/api/v1",
             "description": "Localhost API Server 2"
+        },
+        {
+            "url": "http://192.168.100.18:8000/api/v1",
+            "description": "Localhost API Server 3"
         }
     ],
     "paths": {
@@ -830,6 +834,489 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/package": {
+            "get": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Get all active/inactive package",
+                "description": "Get all active/inactive package.",
+                "operationId": "packageList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Toggle active/inactive brands(values: 0, 1, blank)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": "1"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search product based on name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "benedril"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Admin published product list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Admin published product list."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "Package_name": {
+                                                                "type": "string",
+                                                                "example": "Super package"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "super-package"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Sure Grow Procapil Scalp Solution - Hair Serum - 60ml"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "example": 5000
+                                                            },
+                                                            "discount_percent": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 10
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "example": 5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 103
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 103
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Create a new package",
+                "description": "Store a new package with its associated products and images.",
+                "operationId": "cb48d8c4ef4b2a3cc6dde51ca40150cf",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "description",
+                                    "price",
+                                    "start_timestamps",
+                                    "end_timestamps",
+                                    "status",
+                                    "products",
+                                    "featured_image"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Summer Deal Package"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Includes multiple skincare products at a discounted rate."
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 4999.99
+                                    },
+                                    "discount_percent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10.5
+                                    },
+                                    "start_timestamps": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-10-01 00:00:00"
+                                    },
+                                    "end_timestamps": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-10-31 23:59:59"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_variation_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_variation_id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "featured_image": {
+                                        "description": "Single featured image for the package",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "gallery_images": {
+                                        "description": "Optional multiple gallery images for the package",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Package created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Package added successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/package/{package}": {
+            "put": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Update an existing package",
+                "description": "Update a package's details, associated products, and images.",
+                "operationId": "7efa2762d36613be9f884b59acca3869",
+                "parameters": [
+                    {
+                        "name": "package",
+                        "in": "path",
+                        "description": "Slug of the package to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "super-package"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Summer Deal Package Updated"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated description of the package."
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 5999.99
+                                    },
+                                    "discount_percent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 15
+                                    },
+                                    "start_timestamps": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-10-01 00:00:00"
+                                    },
+                                    "end_timestamps": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-10-31 23:59:59"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "products": {
+                                        "description": "Optional array of products to update. Existing products will be replaced if using sync().",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_variation_id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "featured_image": {
+                                        "description": "Optional new featured image to replace the existing one.",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "gallery_images": {
+                                        "description": "Optional new gallery images to replace existing ones.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Package updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Package updated successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Package not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Delete a package",
+                "description": "Permanently deletes a package and all its associations.",
+                "operationId": "b76e5cb60fdd2f85aa0e8f1c3834e9db",
+                "parameters": [
+                    {
+                        "name": "package",
+                        "in": "path",
+                        "description": "Slug or ID of the package to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "super-package"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Package deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Package not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 },
                 "security": [
@@ -2609,6 +3096,10 @@
         {
             "name": "Vendor",
             "description": "Vendor"
+        },
+        {
+            "name": "Package",
+            "description": "Package"
         },
         {
             "name": "Brand",
