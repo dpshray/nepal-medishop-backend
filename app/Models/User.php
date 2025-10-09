@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\UserTypeEnum;
+use App\Models\Purchase\Order;
 use App\Models\Traits\UuidModelTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -84,6 +85,11 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     function likes() {
         return $this->morphMany(Like::class,'likable');
     }
+
+    function orders() {
+        return $this->hasMany(Order::class);
+    }
+    
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::USER_PROFILE)

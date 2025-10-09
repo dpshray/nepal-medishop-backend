@@ -1007,6 +1007,133 @@
                 ]
             }
         },
+        "/cash-on-delivery": {
+            "post": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Cash on delivery order.",
+                "description": "Cash on delivery order.",
+                "operationId": "CODOrder",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "mobile",
+                                    "address",
+                                    "products"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "James P. Sullivan"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "james.sullivan100@example.com"
+                                    },
+                                    "mobile": {
+                                        "type": "string",
+                                        "example": "9854112547"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Shyambhu, Kathmandu"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "some description of this order COD"
+                                    },
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_slug",
+                                                "variant_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_slug": {
+                                                    "type": "string",
+                                                    "example": "unde-a-maiores-et-omnis"
+                                                },
+                                                "variant_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "packages": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "package_slug",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "package_slug": {
+                                                    "type": "string",
+                                                    "example": "deluxe-box"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful registration",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Please check your email to verify registration"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/package/{slug}/review": {
             "get": {
                 "tags": [
@@ -1862,6 +1989,10 @@
         {
             "name": "Package",
             "description": "Package"
+        },
+        {
+            "name": "Order",
+            "description": "Order"
         },
         {
             "name": "PackageReview",
