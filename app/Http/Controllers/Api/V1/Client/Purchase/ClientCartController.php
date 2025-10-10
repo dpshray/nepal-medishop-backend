@@ -179,7 +179,7 @@ class ClientCartController extends Controller
                     "variant_name" => $item['variant_name'],
                     "image" => $item['image'],
                     "variant_id" => empty($item['variant_id']) ? null : (int) $item['variant_id'],
-                    "quantity" => $item['quantity'],
+                    "quantity" => (int) $item['quantity'],
                     "price" => (float) $item['price'],
                     "subtotal" => (float) $item['subtotal'],
                 ];
