@@ -1011,6 +1011,168 @@
                 ]
             }
         },
+        "/user/profile": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get authenticated user profile",
+                "description": "Retrieve details of the currently authenticated user.",
+                "operationId": "d131fd395f0ffba5a93155925bb6e566",
+                "responses": {
+                    "200": {
+                        "description": "User profile retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "user detail"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Active"
+                                                },
+                                                "user_type": {
+                                                    "type": "string",
+                                                    "example": "Admin"
+                                                },
+                                                "mobile_number": {
+                                                    "type": "string",
+                                                    "example": "+9779812345678"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update authenticated user profile",
+                "description": "Update user's name, mobile number, and optional profile image. Use `_method=PUT` for method spoofing.",
+                "operationId": "b3e59f21d71b007c120cab54b23b1682",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "_method"
+                                ],
+                                "properties": {
+                                    "_method": {
+                                        "description": "Laravel method spoofing for PUT/PATCH requests",
+                                        "type": "string",
+                                        "example": "PUT"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "mobile_number": {
+                                        "type": "string",
+                                        "example": "9840000000"
+                                    },
+                                    "image": {
+                                        "description": "Optional profile image to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "profile update successfull"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "mobile_number": {
+                                                    "type": "string",
+                                                    "example": "9840000000"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/storage/profile/abcd1234.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/package/{slug}/review": {
             "get": {
                 "tags": [
@@ -1866,6 +2028,10 @@
         {
             "name": "Package",
             "description": "Package"
+        },
+        {
+            "name": "User",
+            "description": "User"
         },
         {
             "name": "PackageReview",

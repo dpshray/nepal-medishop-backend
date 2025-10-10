@@ -17,12 +17,16 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,HasMedia
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, UuidModelTrait, SoftDeletes,InteractsWithMedia;
+    use HasFactory, Notifiable, HasApiTokens, UuidModelTrait, SoftDeletes, InteractsWithMedia;
     const USER_PROFILE = 'USER_PROFILE';
     protected $dates = ['deleted_at'];
+    protected $casts = [
+        'user_type' => UserTypeEnum::class,
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -61,28 +65,34 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         ];
     }
 
-    public function scopeFilterByRole($query, UserTypeEnum $role){
+    public function scopeFilterByRole($query, UserTypeEnum $role)
+    {
         return $query->where('user_type', (string)$role->value);
     }
 
-    public function vendor(){
+    public function vendor()
+    {
         return $this->hasOne(Vendor::class);
     }
 
-    function vendorProducts() {
-        return $this->hasMany(ProductVendor::class,'vendor_id');
+    function vendorProducts()
+    {
+        return $this->hasMany(ProductVendor::class, 'vendor_id');
     }
 
-    function isAdmin(){
+    function isAdmin()
+    {
         return $this->user_type == UserTypeEnum::ADMIN->value;
     }
 
-    function isVendor(){
+    function isVendor()
+    {
         return $this->user_type == UserTypeEnum::VENDOR->value;
     }
 
-    function likes() {
-        return $this->morphMany(Like::class,'likable');
+    function likes()
+    {
+        return $this->morphMany(Like::class, 'likable');
     }
     public function registerMediaCollections(): void
     {
