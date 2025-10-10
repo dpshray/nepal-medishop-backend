@@ -133,6 +133,7 @@ class CODPurchaseController extends Controller
 
                 );
                 $user->orders()->create($order)->orderItems()->createMany($order_items);
+                $user->cart()->delete();
             });
         }else{ # Guest user
             DB::transaction(function () use ($request, $order_items, $order_detail) {
