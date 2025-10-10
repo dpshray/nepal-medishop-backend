@@ -1120,13 +1120,13 @@
             }
         },
         "/admin/package/{package}": {
-            "put": {
+            "post": {
                 "tags": [
                     "Package"
                 ],
                 "summary": "Update an existing package",
                 "description": "Update a package's details, associated products, and images.",
-                "operationId": "7efa2762d36613be9f884b59acca3869",
+                "operationId": "5349cfdb93e6969a408f392a97c9458f",
                 "parameters": [
                     {
                         "name": "package",
@@ -1177,6 +1177,10 @@
                                         "type": "boolean",
                                         "example": true
                                     },
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "PATCH"
+                                    },
                                     "products": {
                                         "description": "Optional array of products to update. Existing products will be replaced if using sync().",
                                         "type": "array",
@@ -1199,8 +1203,8 @@
                                         "type": "string",
                                         "format": "binary"
                                     },
-                                    "gallery_images": {
-                                        "description": "Optional new gallery images to replace existing ones.",
+                                    "gallery_images[]": {
+                                        "description": "Optional replace old gallery images for the package",
                                         "type": "array",
                                         "items": {
                                             "type": "string",
