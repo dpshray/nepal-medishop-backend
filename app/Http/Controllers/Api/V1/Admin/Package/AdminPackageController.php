@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Package;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Package\PackageStoreRequest;
+use App\Http\Requests\Admin\Package\PackageUpdateRequest;
 use App\Http\Resources\Admin\Package\AdminPackageResource;
 use App\Models\Package;
 use App\Traits\PaginationTrait;
@@ -231,7 +232,7 @@ class AdminPackageController extends Controller
         return $this->apiSuccess('Package added successfully.');
     }
     /**
-     * @OA\Put(
+     * @OA\Post(
      *     path="/admin/package/{package}",
      *     summary="Update an existing package",
      *     description="Update a package's details, associated products, and images.",
@@ -258,7 +259,7 @@ class AdminPackageController extends Controller
      *                 @OA\Property(property="start_timestamps", type="string", format="date-time", example="2025-10-01 00:00:00"),
      *                 @OA\Property(property="end_timestamps", type="string", format="date-time", example="2025-10-31 23:59:59"),
      *                 @OA\Property(property="status", type="boolean", example=true),
-     *
+     *                 @OA\Property(property="_method", type="string", example="PATCH"),
      *                 @OA\Property(
      *                     property="products",
      *                     type="array",
@@ -278,10 +279,13 @@ class AdminPackageController extends Controller
      *                 ),
      *
      *                 @OA\Property(
-     *                     property="gallery_images",
+     *                     property="gallery_images[]",
      *                     type="array",
-     *                     @OA\Items(type="string", format="binary"),
-     *                     description="Optional new gallery images to replace existing ones."
+     *                     @OA\Items(
+     *                         type="string",
+     *                         format="binary"
+     *                     ),
+     *                     description="Optional replace old gallery images for the package"
      *                 )
      *             )
      *         )
@@ -320,19 +324,19 @@ class AdminPackageController extends Controller
      * )
      */
 
-    function update(Package $package, PackageStoreRequest $request)
+    function update(PackageUpdateRequest $request, Package $package)
     {
         $data = $request->validated();
         DB::transaction(function () use ($data, $request, $package) {
             $package->update([
-                'name' => $data['name'],
-                'slug' => Str::slug($data['name']),
-                'description' => $data['description'],
-                'price' => $data['price'],
-                'discount_percent' => $data['discount_percent'] ?? 0,
-                'start_timestamps' => $data['start_timestamps'],
-                'end_timestamps' => $data['end_timestamps'],
-                'status' => $data['status'],
+                'name' => $data['name'] ?? $package->name,
+                'slug' => Str::slug($data['name'] ?? $package->name),
+                'description' => $data['description'] ?? $package->description,
+                'price' => $data['price'] ?? $package->price,
+                'discount_percent' => $data['discount_percent'] ?? $package->discount_percent,
+                'start_timestamps' => $data['start_timestamps'] ?? $package->start_timestamps,
+                'end_timestamps' => $data['end_timestamps'] ?? $package->end_timestamps,
+                'status' => $data['status'] ?? $package->status,
             ]);
             if (!empty($data['products'])) {
                 $package->products()->sync(
