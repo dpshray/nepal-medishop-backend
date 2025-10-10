@@ -342,6 +342,7 @@ class MasterDataController extends Controller
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(property="name", type="string", example="Super Kit"),
+     *                 @OA\Property(property="slug", type="string", example="super-kit"),
      *                 @OA\Property(property="description", type="string", example="<p>Ullam placeat culpa dolor enim...</p>"),
      *                 @OA\Property(property="price", type="number", format="float", example=10000),
      *                 @OA\Property(property="discount_price", type="number", format="float", nullable=true, example=null),

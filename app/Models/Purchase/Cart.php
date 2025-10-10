@@ -17,6 +17,8 @@ class Cart extends Model
         'variant_id',
         'item_name',
         'item_slug',
+        'brand_name',
+        'variant_name',
         'image',
         'quantity',
         'price',

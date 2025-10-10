@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('variant_id')->nullable();
             $table->string('item_name');
             $table->string('item_slug');
+            $table->string('brand_name')->nullable();
+            $table->string('variant_name')->nullable();
             $table->string('image')->nullable();
             $table->unsignedTinyInteger('quantity');
             $table->decimal('price', 10, 2);

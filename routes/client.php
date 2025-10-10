@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ItemTypeEnum;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
 use App\Http\Controllers\Api\V1\Client\Purchase\ClientCartController;
@@ -24,7 +25,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::controller(ClientCartController::class)->group(function(){
         Route::post('add-to-cart', 'storeOnCart');
         Route::get('my-cart', 'fetchMyCart');
-        Route::post('update-cart', 'updateCartItems');
+        Route::get('remove-cart-item/item_type/{item_type}/slug/{slug}', 'cartItemRemover')->whereIn('item_type', ItemTypeEnum::cases());
     });
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);

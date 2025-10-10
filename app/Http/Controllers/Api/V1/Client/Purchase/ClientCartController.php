@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Client\Purchase;
 
+use App\Enums\ItemTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Purchase\AddToCartRequest;
 use App\Http\Resources\User\Purchase\OrderResource;
@@ -72,7 +73,7 @@ class ClientCartController extends Controller
     {
         $cart = [];
         if ($request->has('variant_id')) { #Product
-            $product_w_variant = Product::with(['variations' => fn($qry) => $qry->where('id', $request->variant_id), 'media'])
+            $product_w_variant = Product::with(['brand','variations' => fn($qry) => $qry->where('id', $request->variant_id), 'media'])
                 ->where('slug', $request->slug)->firstOrFail();
             $product_variation = $product_w_variant->variations->first();
             $product_actual_price = $product_variation->platform_price;
@@ -85,6 +86,8 @@ class ClientCartController extends Controller
                 'variant_id' => $request->variant_id,
                 'item_name' => $product_w_variant->name,
                 'item_slug' => $product_w_variant->slug,
+                'brand_name' => $product_w_variant->brand->name,
+                'variant_name' => (float) $product_variation->size_value.' '. $product_variation->size_unit,
                 'quantity' => $request->quantity,
                 'price' => $price,
                 'subtotal' => $price * $request->quantity,
@@ -167,9 +170,13 @@ class ClientCartController extends Controller
             ->values()
             ->map(function ($item) {
                 return [
+                    "item_type" => strtolower(class_basename($item['item_type'])),
                     "item_name" => $item['item_name'],
                     "item_slug" => $item['item_slug'],
+                    "brand_name" => $item['brand_name'],
+                    "variant_name" => $item['variant_name'],
                     "image" => $item['image'],
+                    "variant_id" => empty($item['variant_id']) ? null : (int) $item['variant_id'],
                     "quantity" => $item['quantity'],
                     "price" => (float) $item['price'],
                     "subtotal" => (float) $item['subtotal'],
@@ -183,8 +190,8 @@ class ClientCartController extends Controller
      * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/my-cart",
-     *     summary="Toggle a favourite status of a product",
-     *     description="Toggle a favourite status of a product.",
+     *     summary="Fetch cart items of a logged in user.",
+     *     description="Fetch cart items of a logged in user.",
      *     operationId="MyCart",
      *     tags={"Cart"},
      *     @OA\Response(
@@ -192,7 +199,7 @@ class ClientCartController extends Controller
      *         description="Cart items retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Cart items."),
+     *             @OA\Property(property="message", type="string", example="My Cart items."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -201,15 +208,19 @@ class ClientCartController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
+     *                         @OA\Property(property="item_type", type="string", example="product", description="Type of the item: Product or Package"),
      *                         @OA\Property(property="item_name", type="string", example="Debitis debitis autem consectetur saepe.", description="Name of the product or package."),
-     *                         @OA\Property(property="item_slug", type="string", example="debitis-debitis-autem-consectetur-saepe", description="slug of the product or package."),
-     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008//storage/91/medi-plaster.png", description="Image URL of the item."),
+     *                         @OA\Property(property="brand_name", type="string", example="Sanofi", description="Brand name of an item(product)."),
+     *                         @OA\Property(property="variant_name", type="string", example="100 patch", description="Variant name of an item(product)."),
+     *                         @OA\Property(property="item_slug", type="string", example="debitis-debitis-autem-consectetur-saepe", description="Unique slug of the item."),
+     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/91/medi-plaster.png", description="Image URL of the item."),
+     *                         @OA\Property(property="variant_id", type="integer", nullable=true, example=2, description="Variant ID if the item is a product, null if a package."),
      *                         @OA\Property(property="quantity", type="integer", example=2, description="Quantity of the item in the cart."),
      *                         @OA\Property(property="price", type="number", format="float", example=1385.28, description="Unit price of the item."),
      *                         @OA\Property(property="subtotal", type="number", format="float", example=2770.56, description="Subtotal = quantity * price")
      *                     )
      *                 ),
-     *                 @OA\Property(property="total", type="number", format="float", example=26355.09, description="Total price of all items in the cart")
+     *                 @OA\Property(property="total", type="number", format="float", example=12270.56, description="Total price of all items in the cart")
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -217,10 +228,56 @@ class ClientCartController extends Controller
      * )
      */
     function fetchMyCart() {
-        return $this->apiSuccess('Cart items.', $this->getUserCartItems());
+        return $this->apiSuccess('My Cart items.', $this->getUserCartItems());
     }
 
-    function updateCartItems(Request $request) {
-        
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/remove-cart-item/item_type/{item_type}/slug/{slug}",
+     *     summary="Remove a cart item of a logged in user.NOTE: slug value can be: package or product.",
+     *     description="Remove a cart item of a logged in user.",
+     *     operationId="MyCartItemRemover",
+     *     tags={"Cart"},
+     *     @OA\Parameter(
+     *         name="item_type",
+     *         in="path",
+     *         required=true,
+     *         description="Item type of an item(product/package)",
+     *         @OA\Schema(type="string", example="product")
+     *     ),
+     *     @OA\Parameter(
+     *         name="slug",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of an item",
+     *         @OA\Schema(type="string", example="starter-set")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Item removed from cart successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Item has been removed", description="Response message confirming item removal"),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null, description="Additional response data (null if not applicable)"),
+     *             @OA\Property(property="success", type="boolean", example=true, description="Indicates if the operation was successful")
+     *         )
+     *     )
+     * )
+     */
+    function cartItemRemover(Request $request, $item_type, $slug) {
+        $user_cart = Auth::user()->cart();
+        if ($item_type == ItemTypeEnum::PRODUCT->value) {
+            $user_cart->where([
+                ['item_type', Product::class],
+                ['item_slug', $slug]
+            ])->delete();
+        }elseif ($item_type == ItemTypeEnum::PACKAGE->value) {
+            $user_cart->where([
+                ['item_type', Package::class],
+                ['item_slug', $slug]
+            ])->delete();
+        }
+        return $this->apiSuccess('Item has been removed from cart.');
     }
 }
