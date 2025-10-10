@@ -1183,7 +1183,7 @@
                     "Order"
                 ],
                 "summary": "Cash on delivery order.",
-                "description": "Cash on delivery order.",
+                "description": "Cash on delivery order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
                 "operationId": "CODOrder",
                 "requestBody": {
                     "required": true,

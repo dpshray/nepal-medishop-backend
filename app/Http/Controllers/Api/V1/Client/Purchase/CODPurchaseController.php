@@ -24,7 +24,7 @@ class CODPurchaseController extends Controller
      * @OA\Post(
      *     path="/cash-on-delivery",
      *     summary="Cash on delivery order.",
-     *     description="Cash on delivery order.",
+     *     description="Cash on delivery order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
      *     operationId="CODOrder",
      *     tags={"Order"},
      *     security={{"sanctum": {}}},
