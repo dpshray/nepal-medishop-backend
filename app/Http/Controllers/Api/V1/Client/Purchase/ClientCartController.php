@@ -13,6 +13,7 @@ use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\UnauthorizedException;
 
 class ClientCartController extends Controller
 {
@@ -170,6 +171,7 @@ class ClientCartController extends Controller
             ->values()
             ->map(function ($item) {
                 return [
+                    "item_uuid" => $item['uuid'],
                     "item_type" => strtolower(class_basename($item['item_type'])),
                     "item_name" => $item['item_name'],
                     "item_slug" => $item['item_slug'],
@@ -208,6 +210,7 @@ class ClientCartController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
+     *                         @OA\Property(property="item_uuid", type="string", example="c3f6d58b-90f3-47ad-82ed-e1385df0ea2a", description="UUID of an item."),
      *                         @OA\Property(property="item_type", type="string", example="product", description="Type of the item: Product or Package"),
      *                         @OA\Property(property="item_name", type="string", example="Debitis debitis autem consectetur saepe.", description="Name of the product or package."),
      *                         @OA\Property(property="brand_name", type="string", example="Sanofi", description="Brand name of an item(product)."),
@@ -232,26 +235,86 @@ class ClientCartController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *     path="/update-cart-item/{uuid}",
+     *     summary="Update an item quantity of a cart. if quantity is 0, that item is removed.",
+     *     description="Update an item quantity of a cart.",
+     *     operationId="UpdateCartItem",
+     *     tags={"Cart"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of cart item",
+     *         @OA\Schema(type="string", example="58d8cb4a-11a9-4aee-89e0-d996f86254f4")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"quantity"},
+     *             @OA\Property(property="quantity", type="integer", example="5")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Cart item quantity updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="A cart item quantity has been updated.",
+     *                 description="Response message confirming the cart item quantity update"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="string",
+     *                 nullable=true,
+     *                 example=null,
+     *                 description="Additional response data (null if not applicable)"
+     *             ),
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 example=true,
+     *                 description="Indicates if the operation was successful"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    function cartItemUpdater(Request $request, Cart $cart) {
+        throw_if($cart->user->isNot(Auth::user()), UnauthorizedException::class);
+        $msg = 'A cart item quantity has been updated.';
+        if ($request->quantity == 0) {
+            $msg = 'A cart item has been removed.';
+            $cart->delete();
+        }else{
+            $quantity = $request->quantity;
+            $subtotal = $quantity * $cart->price;
+            $cart->update([
+                'quantity' => $quantity,
+                'subtotal' => $subtotal
+            ]);
+        }
+        return $this->apiSuccess($msg);
+    }
+
+    /**
      * @OA\Get(
      *     security={{"sanctum": {}}},
-     *     path="/remove-cart-item/item_type/{item_type}/slug/{slug}",
+     *     path="/remove-cart-item/{uuid}",
      *     summary="Remove a cart item of a logged in user.NOTE: slug value can be: package or product.",
      *     description="Remove a cart item of a logged in user.",
      *     operationId="MyCartItemRemover",
      *     tags={"Cart"},
      *     @OA\Parameter(
-     *         name="item_type",
+     *         name="uuid",
      *         in="path",
      *         required=true,
-     *         description="Item type of an item(product/package)",
-     *         @OA\Schema(type="string", example="product")
-     *     ),
-     *     @OA\Parameter(
-     *         name="slug",
-     *         in="path",
-     *         required=true,
-     *         description="Slug of an item",
-     *         @OA\Schema(type="string", example="starter-set")
+     *         description="Item uuid of an item(product/package)",
+     *         @OA\Schema(type="string", example="c3f6d58b-90f3-47ad-82ed-e1385df0ea2a")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -265,19 +328,9 @@ class ClientCartController extends Controller
      *     )
      * )
      */
-    function cartItemRemover(Request $request, $item_type, $slug) {
-        $user_cart = Auth::user()->cart();
-        if ($item_type == ItemTypeEnum::PRODUCT->value) {
-            $user_cart->where([
-                ['item_type', Product::class],
-                ['item_slug', $slug]
-            ])->delete();
-        }elseif ($item_type == ItemTypeEnum::PACKAGE->value) {
-            $user_cart->where([
-                ['item_type', Package::class],
-                ['item_slug', $slug]
-            ])->delete();
-        }
+    function cartItemRemover(Request $request, Cart $cart) {
+        throw_if($cart->user->isNot(Auth::user()), UnauthorizedException::class);
+        $cart->delete();
         return $this->apiSuccess('Item has been removed from cart.');
     }
 }

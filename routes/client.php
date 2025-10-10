@@ -25,7 +25,8 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::controller(ClientCartController::class)->group(function(){
         Route::post('add-to-cart', 'storeOnCart');
         Route::get('my-cart', 'fetchMyCart');
-        Route::get('remove-cart-item/item_type/{item_type}/slug/{slug}', 'cartItemRemover')->whereIn('item_type', ItemTypeEnum::cases());
+        Route::get('remove-cart-item/{cart:uuid}', 'cartItemRemover');
+        Route::post('update-cart-item/{cart:uuid}', 'cartItemUpdater');
     });
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);

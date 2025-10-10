@@ -5,6 +5,7 @@ namespace App\Models\Purchase;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\Traits\UuidModelTrait;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
@@ -28,4 +29,8 @@ class Cart extends Model
         'subtotal',
         'created_at'
     ];
+
+    function user() {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -1242,6 +1242,11 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
+                                                            "item_uuid": {
+                                                                "description": "UUID of an item.",
+                                                                "type": "string",
+                                                                "example": "c3f6d58b-90f3-47ad-82ed-e1385df0ea2a"
+                                                            },
                                                             "item_type": {
                                                                 "description": "Type of the item: Product or Package",
                                                                 "type": "string",
@@ -1326,7 +1331,83 @@
                 ]
             }
         },
-        "/remove-cart-item/item_type/{item_type}/slug/{slug}": {
+        "/update-cart-item/{uuid}": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Update an item quantity of a cart. if quantity is 0, that item is removed.",
+                "description": "Update an item quantity of a cart.",
+                "operationId": "UpdateCartItem",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of cart item",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "58d8cb4a-11a9-4aee-89e0-d996f86254f4"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": "5"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cart item quantity updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Response message confirming the cart item quantity update",
+                                            "type": "string",
+                                            "example": "A cart item quantity has been updated."
+                                        },
+                                        "data": {
+                                            "description": "Additional response data (null if not applicable)",
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "description": "Indicates if the operation was successful",
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/remove-cart-item/{uuid}": {
             "get": {
                 "tags": [
                     "Cart"
@@ -1336,23 +1417,13 @@
                 "operationId": "MyCartItemRemover",
                 "parameters": [
                     {
-                        "name": "item_type",
+                        "name": "uuid",
                         "in": "path",
-                        "description": "Item type of an item(product/package)",
+                        "description": "Item uuid of an item(product/package)",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "product"
-                        }
-                    },
-                    {
-                        "name": "slug",
-                        "in": "path",
-                        "description": "Slug of an item",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "starter-set"
+                            "example": "c3f6d58b-90f3-47ad-82ed-e1385df0ea2a"
                         }
                     }
                 ],
