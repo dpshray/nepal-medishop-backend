@@ -62,7 +62,7 @@ class CODPurchaseController extends Controller
      *         response=200,
      *         description="Successful registration",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Please check your email to verify registration"),
+     *             @OA\Property(property="message", type="string", example="Your order has been placed successfully."),
      *             @OA\Property(property="data", type="object", nullable=true, example=null),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )

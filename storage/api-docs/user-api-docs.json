@@ -1279,7 +1279,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Please check your email to verify registration"
+                                            "example": "Your order has been placed successfully."
                                         },
                                         "data": {
                                             "type": "object",
