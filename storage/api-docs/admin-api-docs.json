@@ -1120,6 +1120,143 @@
             }
         },
         "/admin/package/{package}": {
+            "get": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Get package details",
+                "description": "Retrieve details of a single package including associated products, variants, media, categories, and brand.",
+                "operationId": "b2edb6eff3553886d0dae455375aa9d7",
+                "parameters": [
+                    {
+                        "name": "package",
+                        "in": "path",
+                        "description": "slug of the package to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "smart-pack"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Package details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Package details retrieved successfully."
+                                        },
+                                        "data": {
+                                            "description": "Package details",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Summer Deal Package"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Includes multiple skincare products at a discounted rate."
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 4999.99
+                                                },
+                                                "discount_percent": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10.5
+                                                },
+                                                "status": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 12
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "variant_name": {
+                                                                "type": "string",
+                                                                "example": "Variant A"
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Product X"
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Brand Y"
+                                                            },
+                                                            "categories": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string",
+                                                                    "example": "Skincare"
+                                                                }
+                                                            },
+                                                            "media": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string",
+                                                                    "example": "http://example.com/storage/product_image.jpg"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "media": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "http://example.com/storage/package_image.jpg"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Package not found"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Package"

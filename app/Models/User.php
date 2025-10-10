@@ -23,9 +23,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     use HasFactory, Notifiable, HasApiTokens, UuidModelTrait, SoftDeletes, InteractsWithMedia;
     const USER_PROFILE = 'USER_PROFILE';
     protected $dates = ['deleted_at'];
-    protected $casts = [
-        'user_type' => UserTypeEnum::class,
-    ];
 
     /**
      * The attributes that are mass assignable.

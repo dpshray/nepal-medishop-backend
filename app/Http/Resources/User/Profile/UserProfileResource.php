@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User\Profile;
 
+use App\Enums\UserTypeEnum;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,7 +21,7 @@ class UserProfileResource extends JsonResource
             'name'=>$this->name,
             'email'=>$this->email,
             'status'=>$this->status?'Active':'InActive',
-            'user_type'=>$this->user_type->name,
+            "user_type" => UserTypeEnum::tryFrom($this->user_type)?->name,
             'mobile_number'=>$this->mobile_number,
             'image' => $this->getFirstMediaUrl(User::USER_PROFILE) ?: null,
         ];
