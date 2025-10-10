@@ -30,5 +30,5 @@ Route::prefix('admin')
         Route::get('toggle-product-status/{product:uuid}', [AdminProductController::class, 'statusToggler']);
         Route::post('product-media/{product:uuid}', [AdminProductController::class, 'storeMedia']);
         Route::get('product-units', [AdminProductController::class, 'productUnits']);
-        Route::apiResource('package',AdminPackageController::class)->except(['show'])->scoped(['package' => 'slug']);
+        Route::apiResource('package',AdminPackageController::class)->scoped(['package' => 'slug']);
 });
