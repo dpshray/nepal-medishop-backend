@@ -21,6 +21,7 @@ class PackageReviewListResource extends JsonResource
             'image' => $this->whenLoaded('user', fn() => $this->user->getFirstMediaUrl(User::USER_PROFILE),),
             'comment_uuid' => $this->uuid,
             'user_name' => $this->whenLoaded('user', fn() => $this->user->name),
+            'user_email' => $this->whenLoaded('user', fn() => $this->user->email),
             'review' => $this->review,
             'rating' => (float) $this->rating,
             'user_type' => $this->whenLoaded('user', fn() => [

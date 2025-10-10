@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Package;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Package\PackageStoreRequest;
 use App\Http\Requests\Admin\Package\PackageUpdateRequest;
+use App\Http\Resources\Admin\Package\AdminPackageDetailResource;
 use App\Http\Resources\Admin\Package\AdminPackageResource;
 use App\Models\Package;
 use App\Traits\PaginationTrait;
@@ -408,5 +409,84 @@ class AdminPackageController extends Controller
     {
         $package->delete();
         return $this->apiSuccess('Product removed successfully.');
+    }
+    /**
+     * @OA\Get(
+     *     path="/admin/package/{package}",
+     *     summary="Get package details",
+     *     description="Retrieve details of a single package including associated products, variants, media, categories, and brand.",
+     *     tags={"Package"},
+     *     security={{"sanctum": {}}},
+     *
+     *     @OA\Parameter(
+     *         name="package",
+     *         in="path",
+     *         required=true,
+     *         description="slug of the package to retrieve",
+     *         @OA\Schema(type="string", example="smart-pack")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Package details retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Package details retrieved successfully."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 description="Package details",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Summer Deal Package"),
+     *                 @OA\Property(property="description", type="string", example="Includes multiple skincare products at a discounted rate."),
+     *                 @OA\Property(property="price", type="number", format="float", example=4999.99),
+     *                 @OA\Property(property="discount_percent", type="number", format="float", example=10.5),
+     *                 @OA\Property(property="status", type="boolean", example=true),
+     *                 @OA\Property(
+     *                     property="products",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=12),
+     *                         @OA\Property(property="quantity", type="integer", example=3),
+     *                         @OA\Property(property="variant_name", type="string", example="Variant A"),
+     *                         @OA\Property(property="product_name", type="string", example="Product X"),
+     *                         @OA\Property(property="brand", type="string", example="Brand Y"),
+     *                         @OA\Property(
+     *                             property="categories",
+     *                             type="array",
+     *                             @OA\Items(type="string", example="Skincare")
+     *                         ),
+     *                         @OA\Property(
+     *                             property="media",
+     *                             type="array",
+     *                             @OA\Items(type="string", example="http://example.com/storage/product_image.jpg")
+     *                         )
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="media",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="http://example.com/storage/package_image.jpg")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Package not found"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=500, description="Internal Server Error")
+     * )
+     */
+    public function show(Package $package)
+    {
+        $package->loadMissing([
+            'media',
+            'packageProducts.variant.product.media',
+            'packageProducts.variant.product.categories',
+            'packageProducts.variant.product.brand',
+        ]);
+        $data = new AdminPackageDetailResource($package);
+        return $this->apiSuccess("Package details retrieved successfully.", $data);
     }
 }
