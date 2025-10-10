@@ -1,7 +1,9 @@
 <?php
 
+use App\Enums\ItemTypeEnum;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
+use App\Http\Controllers\Api\V1\Client\Purchase\ClientCartController;
 use App\Http\Controllers\Api\V1\Client\Purchase\CODPurchaseController;
 use App\Http\Controllers\Api\V1\Client\Review\PackageReviewController;
 use App\Http\Controllers\Api\V1\Client\Review\ProductReviewController;
@@ -19,6 +21,11 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::controller(LikeController::class)->group(function(){
         Route::get('favourite/{product:slug}/product', 'toggleProductFavourite');
         Route::get('favourite/{package:slug}/package', 'togglePackageFavourite');
+    });
+    Route::controller(ClientCartController::class)->group(function(){
+        Route::post('add-to-cart', 'storeOnCart');
+        Route::get('my-cart', 'fetchMyCart');
+        Route::get('remove-cart-item/item_type/{item_type}/slug/{slug}', 'cartItemRemover')->whereIn('item_type', ItemTypeEnum::cases());
     });
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);

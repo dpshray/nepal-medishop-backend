@@ -23,6 +23,7 @@ class PackageDetailResource extends JsonResource
         $categories = [];
         return [
             'name' => $this->name,
+            'slug' => $this->slug,
             'description' => $this->description,
             'price' => $price,
             'discount_price' => $previous_price,

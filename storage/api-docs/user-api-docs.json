@@ -903,6 +903,10 @@
                                                     "type": "string",
                                                     "example": "Super Kit"
                                                 },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "super-kit"
+                                                },
                                                 "description": {
                                                     "type": "string",
                                                     "example": "<p>Ullam placeat culpa dolor enim...</p>"
@@ -1121,6 +1125,257 @@
                                             "nullable": true
                                         },
                                         "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/add-to-cart": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add an item to the cart",
+                "description": "Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.  \n     *                 If omitted, the request is treated as adding a **package** to the cart.  \n     *                 If provided, the request is treated as adding a **product** to the cart.",
+                "operationId": "AddToCart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "slug",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "slug": {
+                                        "description": "Unique slug identifier for the product or package.",
+                                        "type": "string",
+                                        "example": "unde-a-maiores-et-omnis"
+                                    },
+                                    "variant_id": {
+                                        "description": "Variant ID of the product.  \n     *                 If omitted, the request is treated as adding a **package** to the cart.  \n     *                 If provided, the request is treated as adding a **product** to the cart.",
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+                                    },
+                                    "quantity": {
+                                        "description": "Number of items to add to the cart.",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Item has been added to cart",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item has been added to cart"
+                                        },
+                                        "data": {
+                                            "description": "Data payload (null if no cart details returned)",
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/my-cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Fetch cart items of a logged in user.",
+                "description": "Fetch cart items of a logged in user.",
+                "operationId": "MyCart",
+                "responses": {
+                    "200": {
+                        "description": "Cart items retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "My Cart items."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "cart_items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "item_type": {
+                                                                "description": "Type of the item: Product or Package",
+                                                                "type": "string",
+                                                                "example": "product"
+                                                            },
+                                                            "item_name": {
+                                                                "description": "Name of the product or package.",
+                                                                "type": "string",
+                                                                "example": "Debitis debitis autem consectetur saepe."
+                                                            },
+                                                            "brand_name": {
+                                                                "description": "Brand name of an item(product).",
+                                                                "type": "string",
+                                                                "example": "Sanofi"
+                                                            },
+                                                            "variant_name": {
+                                                                "description": "Variant name of an item(product).",
+                                                                "type": "string",
+                                                                "example": "100 patch"
+                                                            },
+                                                            "item_slug": {
+                                                                "description": "Unique slug of the item.",
+                                                                "type": "string",
+                                                                "example": "debitis-debitis-autem-consectetur-saepe"
+                                                            },
+                                                            "image": {
+                                                                "description": "Image URL of the item.",
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/91/medi-plaster.png"
+                                                            },
+                                                            "variant_id": {
+                                                                "description": "Variant ID if the item is a product, null if a package.",
+                                                                "type": "integer",
+                                                                "example": 2,
+                                                                "nullable": true
+                                                            },
+                                                            "quantity": {
+                                                                "description": "Quantity of the item in the cart.",
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "price": {
+                                                                "description": "Unit price of the item.",
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1385.28
+                                                            },
+                                                            "subtotal": {
+                                                                "description": "Subtotal = quantity * price",
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2770.56
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total": {
+                                                    "description": "Total price of all items in the cart",
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12270.56
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/remove-cart-item/item_type/{item_type}/slug/{slug}": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Remove a cart item of a logged in user.NOTE: slug value can be: package or product.",
+                "description": "Remove a cart item of a logged in user.",
+                "operationId": "MyCartItemRemover",
+                "parameters": [
+                    {
+                        "name": "item_type",
+                        "in": "path",
+                        "description": "Item type of an item(product/package)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "product"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of an item",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "starter-set"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item removed from cart successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Response message confirming item removal",
+                                            "type": "string",
+                                            "example": "Item has been removed"
+                                        },
+                                        "data": {
+                                            "description": "Additional response data (null if not applicable)",
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "description": "Indicates if the operation was successful",
                                             "type": "boolean",
                                             "example": true
                                         }
@@ -1997,6 +2252,10 @@
         {
             "name": "Order",
             "description": "Order"
+        },
+        {
+            "name": "Cart",
+            "description": "Cart"
         },
         {
             "name": "PackageReview",
