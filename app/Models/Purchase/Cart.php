@@ -4,10 +4,13 @@ namespace App\Models\Purchase;
 
 use App\Models\Package;
 use App\Models\Product;
+use App\Models\Traits\UuidModelTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
+    use UuidModelTrait;
+    
     public $timestamps = false;
 
     protected $fillable = [
