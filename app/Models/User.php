@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\UserTypeEnum;
+use App\Models\Purchase\Cart;
 use App\Models\Purchase\Order;
 use App\Models\Traits\UuidModelTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -84,6 +85,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
 
     function likes() {
         return $this->morphMany(Like::class,'likable');
+    }
+
+    function cart() {
+        return $this->hasMany(Cart::class);
     }
 
     function orders() {
