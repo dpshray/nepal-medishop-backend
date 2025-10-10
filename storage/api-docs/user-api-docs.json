@@ -1,0 +1,2445 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Medishop",
+        "description": "Medishop Project",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.medishop.dworklabs.com/api/v1",
+            "description": "Live API Server"
+        },
+        {
+            "url": "http://192.168.100.23:8008/api/v1",
+            "description": "Localhost API Server 1"
+        },
+        {
+            "url": "http://127.0.0.1:8000/api/v1",
+            "description": "Localhost API Server 2"
+        },
+        {
+            "url": "http://192.168.100.18:8000/api/v1",
+            "description": "Localhost API Server 3"
+        }
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Register Form(only client can register)",
+                "description": "Registration form for user.",
+                "operationId": "c16ecd14f226bec66e9eb8ad7a1725a9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "mobile_number",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "Dave Chappelle"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "dev.chappelle@mailinator.com"
+                                    },
+                                    "mobile_number": {
+                                        "type": "string",
+                                        "example": "9452114525"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful registration",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Please check your email to verify registration"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login Api",
+                "description": "Login API(user_type : USER | VENDOR | ADMIN).",
+                "operationId": "1ebd53789b5149840dfa569708b2a921",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "vendor@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful vendor login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Welcome, vendor00"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "properties": {
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "0b831981-5ad1-3bdc-a1bd-b514676b3f98"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "vendor00"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "format": "email",
+                                                            "example": "vendor@gmail.com"
+                                                        },
+                                                        "user_type": {
+                                                            "type": "string",
+                                                            "example": "VENDOR"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "Bearer 4|VzkoJxyMfelFTKdiJlEnN3n3OhqTxS5SKSzDxJ2z61dd765a"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User logout",
+                "description": "logs out a user.",
+                "operationId": "LogoutUser",
+                "responses": {
+                    "200": {
+                        "description": "User logout successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/forgot-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Forgot password form handler",
+                "description": "Forgot password form handler",
+                "operationId": "ForgotPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "vendor@gmail.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logout successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You are logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/favourite/{slug}/product": {
+            "get": {
+                "tags": [
+                    "Favourite"
+                ],
+                "summary": "Toggle a favourite status of a product",
+                "description": "Toggle a favourite status of a product.",
+                "operationId": "ProductFavoutiteToggle",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "soluta-cum-reiciendis-dolorum-sunt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful toggle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item added to favourite"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/get-brand-list": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all active brand",
+                "description": "Get all active brand.",
+                "operationId": "ClientBrandList",
+                "responses": {
+                    "200": {
+                        "description": "List of active brands",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of active brands"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "pfizer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Pfizer"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                    },
+                                                    "is_featured": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "is_popular": {
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get-category-list": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all active categories",
+                "description": "Get all active categories.",
+                "operationId": "ClientCategoryList",
+                "responses": {
+                    "200": {
+                        "description": "List of active categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of active categories"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "pfizer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Pfizer"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "format": "url",
+                                                        "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get product based on category slug",
+                "description": "Get product based on category slug.",
+                "operationId": "ClientProductList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search product using name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "category_slug",
+                        "in": "query",
+                        "description": "slug of a category('all' to fetch all random products)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "all"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All product lists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All product lists."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Consequuntur sunt suscipit dolorem maxime ut."
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "consequuntur-sunt-suscipit-dolorem-maxime-ut"
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "AstraZeneca"
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3.7
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2016.7
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2345,
+                                                                "nullable": true
+                                                            },
+                                                            "feature_image": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/576/visc-inhaler.jpg"
+                                                            },
+                                                            "liked": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page_no": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 300
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/product/{slug}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Show an product",
+                "description": "Show an active brand.",
+                "operationId": "ProductShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sun-pharma"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product detail fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product detail fetched successfully."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Placeat earum iusto iste perspiciatis vel."
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "placeat-earum-iusto-iste-perspiciatis-vel"
+                                                },
+                                                "brand": {
+                                                    "type": "string",
+                                                    "example": "Bristol-Myers Squibb"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "<p>Omnis corporis aut a aut et ut sunt...</p>"
+                                                },
+                                                "added_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-09-22"
+                                                },
+                                                "rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 3.8
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Weight Management"
+                                                    }
+                                                },
+                                                "tags": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Sunscreen"
+                                                    }
+                                                },
+                                                "variations": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "variation_id": {
+                                                                "type": "integer",
+                                                                "example": 1132
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Variant-1"
+                                                            },
+                                                            "size_value": {
+                                                                "type": "integer",
+                                                                "example": 100
+                                                            },
+                                                            "size_unit": {
+                                                                "type": "string",
+                                                                "example": "ml"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 167
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "featured_image": {
+                                                    "type": "string",
+                                                    "format": "url",
+                                                    "example": "http://192.168.100.23:8008/storage/1881/syrup.jpg"
+                                                },
+                                                "gallery_images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "format": "url",
+                                                        "example": "http://192.168.100.23:8008/storage/1882/tablets.jpg"
+                                                    }
+                                                },
+                                                "liked": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/packages": {
+            "get": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Get package list",
+                "description": "Get package list.",
+                "operationId": "ClientPackageList",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Package list response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Package lists"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Mega Combo"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "mega-combo"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3640
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 7000,
+                                                                "nullable": true
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2.8
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/1642/package-4.jpg"
+                                                            },
+                                                            "liked": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page_no": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/package/{slug}": {
+            "get": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Show a package",
+                "description": "Show a package.",
+                "operationId": "PackageShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sun-pharma"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Package details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Package details retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Super Kit"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "super-kit"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "<p>Ullam placeat culpa dolor enim...</p>"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10000
+                                                },
+                                                "discount_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 2.5
+                                                },
+                                                "featured_image": {
+                                                    "type": "string",
+                                                    "example": "http://192.168.100.23:8008/storage/3211/package-3.jpg"
+                                                },
+                                                "gallery_images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "http://192.168.100.23:8008/storage/3212/package-1.jpg"
+                                                    }
+                                                },
+                                                "products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/2921/cream.jpg"
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Odit quia nisi dolores nobis atque vel velit."
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "odit-quia-nisi-dolores-nobis-atque-vel-velit"
+                                                            },
+                                                            "size_value": {
+                                                                "type": "number",
+                                                                "example": 500
+                                                            },
+                                                            "size_unit": {
+                                                                "type": "string",
+                                                                "example": "gm"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "example": 2214
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Johnson & Johnson"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Antibiotics"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "antibiotics"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "liked": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/user/profile": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get authenticated user profile",
+                "description": "Retrieve details of the currently authenticated user.",
+                "operationId": "d131fd395f0ffba5a93155925bb6e566",
+                "responses": {
+                    "200": {
+                        "description": "User profile retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "user detail"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Active"
+                                                },
+                                                "user_type": {
+                                                    "type": "string",
+                                                    "example": "Admin"
+                                                },
+                                                "mobile_number": {
+                                                    "type": "string",
+                                                    "example": "+9779812345678"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update authenticated user profile",
+                "description": "Update user's name, mobile number, and optional profile image. Use `_method=PUT` for method spoofing.",
+                "operationId": "b3e59f21d71b007c120cab54b23b1682",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "_method"
+                                ],
+                                "properties": {
+                                    "_method": {
+                                        "description": "Laravel method spoofing for PUT/PATCH requests",
+                                        "type": "string",
+                                        "example": "PUT"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "mobile_number": {
+                                        "type": "string",
+                                        "example": "9840000000"
+                                    },
+                                    "image": {
+                                        "description": "Optional profile image to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "profile update successfull"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "mobile_number": {
+                                                    "type": "string",
+                                                    "example": "9840000000"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/storage/profile/abcd1234.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/cash-on-delivery": {
+            "post": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Cash on delivery order.",
+                "description": "Cash on delivery order.",
+                "operationId": "CODOrder",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "mobile",
+                                    "address",
+                                    "products"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "James P. Sullivan"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "james.sullivan100@example.com"
+                                    },
+                                    "mobile": {
+                                        "type": "string",
+                                        "example": "9854112547"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Shyambhu, Kathmandu"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "some description of this order COD"
+                                    },
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_slug",
+                                                "variant_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_slug": {
+                                                    "type": "string",
+                                                    "example": "unde-a-maiores-et-omnis"
+                                                },
+                                                "variant_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "packages": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "package_slug",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "package_slug": {
+                                                    "type": "string",
+                                                    "example": "deluxe-box"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful registration",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Please check your email to verify registration"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/add-to-cart": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add an item to the cart",
+                "description": "Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.  \n     *                 If omitted, the request is treated as adding a **package** to the cart.  \n     *                 If provided, the request is treated as adding a **product** to the cart.",
+                "operationId": "AddToCart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "slug",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "slug": {
+                                        "description": "Unique slug identifier for the product or package.",
+                                        "type": "string",
+                                        "example": "unde-a-maiores-et-omnis"
+                                    },
+                                    "variant_id": {
+                                        "description": "Variant ID of the product.  \n     *                 If omitted, the request is treated as adding a **package** to the cart.  \n     *                 If provided, the request is treated as adding a **product** to the cart.",
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+                                    },
+                                    "quantity": {
+                                        "description": "Number of items to add to the cart.",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Item has been added to cart",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item has been added to cart"
+                                        },
+                                        "data": {
+                                            "description": "Data payload (null if no cart details returned)",
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/my-cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Fetch cart items of a logged in user.",
+                "description": "Fetch cart items of a logged in user.",
+                "operationId": "MyCart",
+                "responses": {
+                    "200": {
+                        "description": "Cart items retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "My Cart items."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "cart_items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "item_type": {
+                                                                "description": "Type of the item: Product or Package",
+                                                                "type": "string",
+                                                                "example": "product"
+                                                            },
+                                                            "item_name": {
+                                                                "description": "Name of the product or package.",
+                                                                "type": "string",
+                                                                "example": "Debitis debitis autem consectetur saepe."
+                                                            },
+                                                            "brand_name": {
+                                                                "description": "Brand name of an item(product).",
+                                                                "type": "string",
+                                                                "example": "Sanofi"
+                                                            },
+                                                            "variant_name": {
+                                                                "description": "Variant name of an item(product).",
+                                                                "type": "string",
+                                                                "example": "100 patch"
+                                                            },
+                                                            "item_slug": {
+                                                                "description": "Unique slug of the item.",
+                                                                "type": "string",
+                                                                "example": "debitis-debitis-autem-consectetur-saepe"
+                                                            },
+                                                            "image": {
+                                                                "description": "Image URL of the item.",
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/91/medi-plaster.png"
+                                                            },
+                                                            "variant_id": {
+                                                                "description": "Variant ID if the item is a product, null if a package.",
+                                                                "type": "integer",
+                                                                "example": 2,
+                                                                "nullable": true
+                                                            },
+                                                            "quantity": {
+                                                                "description": "Quantity of the item in the cart.",
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "price": {
+                                                                "description": "Unit price of the item.",
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1385.28
+                                                            },
+                                                            "subtotal": {
+                                                                "description": "Subtotal = quantity * price",
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2770.56
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total": {
+                                                    "description": "Total price of all items in the cart",
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 12270.56
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/remove-cart-item/item_type/{item_type}/slug/{slug}": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Remove a cart item of a logged in user.NOTE: slug value can be: package or product.",
+                "description": "Remove a cart item of a logged in user.",
+                "operationId": "MyCartItemRemover",
+                "parameters": [
+                    {
+                        "name": "item_type",
+                        "in": "path",
+                        "description": "Item type of an item(product/package)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "product"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of an item",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "starter-set"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Item removed from cart successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Response message confirming item removal",
+                                            "type": "string",
+                                            "example": "Item has been removed"
+                                        },
+                                        "data": {
+                                            "description": "Additional response data (null if not applicable)",
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "description": "Indicates if the operation was successful",
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/package/{slug}/review": {
+            "get": {
+                "tags": [
+                    "PackageReview"
+                ],
+                "summary": "Get reviews based on package slug.",
+                "description": "Get reviews based on package slug.",
+                "operationId": "packageReviewList",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "pubg-sleeves-confortable-finger"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review fetched successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review fetched successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "comment_uuid": {
+                                                                "type": "string",
+                                                                "example": "08435868-74ba-419c-8788-6c647868ec97"
+                                                            },
+                                                            "user_name": {
+                                                                "type": "string",
+                                                                "example": "user00"
+                                                            },
+                                                            "review": {
+                                                                "type": "string",
+                                                                "example": "I think.' And she squeezed herself up on tiptoe..."
+                                                            },
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "user_type": {
+                                                                "properties": {
+                                                                    "user_type": {
+                                                                        "type": "integer",
+                                                                        "example": 3
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string",
+                                                                        "example": "USER"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "review_date": {
+                                                                "type": "string",
+                                                                "example": "02 Oct 2025"
+                                                            },
+                                                            "is_review_edited": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "PackageReview"
+                ],
+                "summary": "Store a package review",
+                "description": "Store a package review.",
+                "operationId": "StorepackageReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "review",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "review": {
+                                        "type": "string",
+                                        "example": "Some package review"
+                                    },
+                                    "rating": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Item reviewed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item reviewed successfully."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/fetch-package-ratings/{slug}": {
+            "get": {
+                "tags": [
+                    "PackageReview"
+                ],
+                "summary": "Get ratings based on package slug.",
+                "description": "Get ratings based on package slug.",
+                "operationId": "packageRatings",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "pubg-sleeves-confortable-finger"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "package ratings fetched successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "package ratings fetched successfully."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "rating": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "total_raters": {
+                                                        "type": "integer",
+                                                        "example": 9
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/package/{slug}/review/{uuid}": {
+            "delete": {
+                "tags": [
+                    "PackageReview"
+                ],
+                "summary": "Delete a review belonging to a user.",
+                "description": "Delete a review belonging to a user.",
+                "operationId": "DeletePackageReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a review",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "972f4163-b858-4715-bca3-a8fac6ae2459"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review has been removed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review has been removed."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "PackageReview"
+                ],
+                "summary": "Update a review belonging to a user.",
+                "description": "Update a review belonging to a user.",
+                "operationId": "UpdatePackageReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a review",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "972f4163-b858-4715-bca3-a8fac6ae2459"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "review",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "review": {
+                                        "type": "string",
+                                        "example": "Some package review"
+                                    },
+                                    "rating": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Review has been updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review has been updated."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/product/{slug}/review": {
+            "get": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Get reviews based on product slug.",
+                "description": "Get reviews based on product slug.",
+                "operationId": "ProductReviewList",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "pubg-sleeves-confortable-finger"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review fetched successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review fetched successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "comment_uuid": {
+                                                                "type": "string",
+                                                                "example": "08435868-74ba-419c-8788-6c647868ec97"
+                                                            },
+                                                            "user_name": {
+                                                                "type": "string",
+                                                                "example": "user00"
+                                                            },
+                                                            "review": {
+                                                                "type": "string",
+                                                                "example": "I think.' And she squeezed herself up on tiptoe..."
+                                                            },
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "user_type": {
+                                                                "properties": {
+                                                                    "user_type": {
+                                                                        "type": "integer",
+                                                                        "example": 3
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string",
+                                                                        "example": "USER"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "review_date": {
+                                                                "type": "string",
+                                                                "example": "02 Oct 2025"
+                                                            },
+                                                            "is_review_edited": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Store a product review",
+                "description": "Store a product review.",
+                "operationId": "StoreProductReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "review",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "review": {
+                                        "type": "string",
+                                        "example": "Some product review"
+                                    },
+                                    "rating": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Item reviewed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item reviewed successfully."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/fetch-product-ratings/{slug}": {
+            "get": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Get ratings based on product slug.",
+                "description": "Get ratings based on product slug.",
+                "operationId": "ProductRatings",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "pubg-sleeves-confortable-finger"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product ratings fetched successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product ratings fetched successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "ratings": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "total_raters": {
+                                                                "type": "integer",
+                                                                "example": 4
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total_raters": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "avg_rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 3.12
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{slug}/review/{uuid}": {
+            "delete": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Delete a review belonging to a user.",
+                "description": "Delete a review belonging to a user.",
+                "operationId": "DeleteProductReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a review",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "972f4163-b858-4715-bca3-a8fac6ae2459"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review has been removed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review has been removed."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "ProductReview"
+                ],
+                "summary": "Update a review belonging to a user.",
+                "description": "Update a review belonging to a user.",
+                "operationId": "UpdateProductReview",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "maccoffee-original-coffee"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a review",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "972f4163-b858-4715-bca3-a8fac6ae2459"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "review",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "review": {
+                                        "type": "string",
+                                        "example": "Some product review"
+                                    },
+                                    "rating": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Review has been updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Review has been updated."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication",
+            "description": "Authentication"
+        },
+        {
+            "name": "Favourite",
+            "description": "Favourite"
+        },
+        {
+            "name": "Product",
+            "description": "Product"
+        },
+        {
+            "name": "Package",
+            "description": "Package"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        },
+        {
+            "name": "Order",
+            "description": "Order"
+        },
+        {
+            "name": "Cart",
+            "description": "Cart"
+        },
+        {
+            "name": "PackageReview",
+            "description": "PackageReview"
+        },
+        {
+            "name": "ProductReview",
+            "description": "ProductReview"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
