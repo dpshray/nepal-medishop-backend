@@ -21,7 +21,17 @@ class AdminProductResource extends JsonResource
             'name' => $this->name,
             'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
             'lowest_variant_price' => $this->whenLoaded('cheapestVariation', fn() => (float)$this->cheapestVariation->platform_price),
-            'total_stock' => $this->whenLoaded('productVendorPrices', fn() => (int)$this->productVendorPrices()->sum('units_in_stock'))
+            'total_stock' => $this->whenLoaded('productVendorPrices', fn() => (int)$this->productVendorPrices()->sum('units_in_stock')),
+            'variations' => $this->whenLoaded('variations', function () {
+                return $this->variations->map(fn($item) => [
+                    'id'         => $item->id,
+                    'name'       => $item->name,
+                    'size_value' => (float) $item->size_value,
+                    'size_unit'  => $item->size_unit,
+                    'platform_price' => (float) $item->platform_price,
+                ]);
+            })
+
         ];
     }
 }
