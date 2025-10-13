@@ -198,8 +198,12 @@ class ProductReviewController extends ClientController
         if ($product->reviews()->where('user_id',Auth::id())->exists()) {
             return $this->apiError('You have already submitted a review for this item.',409);
         }
-        $data = $request->safe()->merge(['user_id' => Auth::id()])->all();
-        $product->reviews()->create($data);
+        DB::transaction(function () use($request,$product){
+            $data = $request->safe()->merge(['user_id' => Auth::id()])->all();
+            $product->reviews()->create($data);
+            $avg_rating = $product->reviews()->avg('rating');
+            $product->update(['rating' => $avg_rating]);
+        });
         return $this->apiSuccess('Item reviewed successfully.');
     }
 
