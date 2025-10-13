@@ -205,7 +205,7 @@ class ClientCartController extends Controller
                     "variant_id" => empty($item['variant_id']) ? null : (int) $item['variant_id'],
                     "quantity" => (int) $item['quantity'],
                     "price" => (float) $item['price'],
-                    "subtotal" => (float) $item['subtotal'],
+                    "subtotal" => (float) round($item['subtotal'], 2),
                 ];
             });
         
@@ -356,7 +356,7 @@ class ClientCartController extends Controller
         $user = Auth::user();
         throw_if($cart->user->isNot($user), UnauthorizedException::class);
         $user->cart()->where([
-            ['item_type', Product::class],
+            ['item_type', $cart->item_type],
             ['item_id', $cart->item_id]
         ])->delete();
         return $this->apiSuccess('Item has been removed from cart.');
