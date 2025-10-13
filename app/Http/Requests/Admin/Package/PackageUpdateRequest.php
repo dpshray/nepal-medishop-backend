@@ -26,14 +26,7 @@ class PackageUpdateRequest extends FormRequest
             'description' => 'sometimes|required|string',
             'price' => 'sometimes|required|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
-            'start_timestamps' => 'nullable|date',
-            'end_timestamps' => 'nullable|date|after_or_equal:start_timestamps',
             'status' => 'sometimes|required|boolean',
-
-            // For many-to-many relation (product_variation_id + quantity)
-            'products' => 'nullable|array',
-            'products.*.product_variation_id' => 'required_with:products|integer|exists:product_variations,id',
-            'products.*.quantity' => 'required_with:products|integer|min:1',
 
             // Media files
             'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
