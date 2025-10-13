@@ -888,7 +888,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Package details retrieved successfully",
+                        "description": "Package details retrieved successfully.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -897,45 +897,48 @@
                                             "type": "string",
                                             "example": "Package details retrieved successfully."
                                         },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "data": {
                                             "properties": {
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "Super Kit"
+                                                    "example": "Super Offer"
                                                 },
                                                 "slug": {
                                                     "type": "string",
-                                                    "example": "super-kit"
+                                                    "example": "super-offer"
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "<p>Ullam placeat culpa dolor enim...</p>"
+                                                    "example": "<p>Package details...</p>"
                                                 },
                                                 "price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 10000
+                                                    "example": 9000
                                                 },
                                                 "discount_price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": null,
-                                                    "nullable": true
+                                                    "example": 0
                                                 },
                                                 "rating": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 2.5
+                                                    "example": 2.8
                                                 },
                                                 "featured_image": {
                                                     "type": "string",
-                                                    "example": "http://192.168.100.23:8008/storage/3211/package-3.jpg"
+                                                    "example": "http://192.168.100.23:8008/storage/2636/package-1.jpg"
                                                 },
                                                 "gallery_images": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "string",
-                                                        "example": "http://192.168.100.23:8008/storage/3212/package-1.jpg"
+                                                        "example": "http://192.168.100.23:8008/storage/2637/package-2.jpg"
                                                     }
                                                 },
                                                 "products": {
@@ -944,31 +947,36 @@
                                                         "properties": {
                                                             "image": {
                                                                 "type": "string",
-                                                                "example": "http://192.168.100.23:8008/storage/2921/cream.jpg"
+                                                                "example": "http://192.168.100.23:8008/storage/2021/cream.jpg"
                                                             },
                                                             "product_name": {
                                                                 "type": "string",
-                                                                "example": "Odit quia nisi dolores nobis atque vel velit."
+                                                                "example": "At odio sed velit numquam."
                                                             },
                                                             "slug": {
                                                                 "type": "string",
-                                                                "example": "odit-quia-nisi-dolores-nobis-atque-vel-velit"
+                                                                "example": "at-odio-sed-velit-numquam"
                                                             },
                                                             "size_value": {
                                                                 "type": "number",
-                                                                "example": 500
+                                                                "example": 100
                                                             },
                                                             "size_unit": {
                                                                 "type": "string",
-                                                                "example": "gm"
+                                                                "example": "IU"
                                                             },
                                                             "price": {
                                                                 "type": "number",
-                                                                "example": 2214
+                                                                "format": "float",
+                                                                "example": 142
                                                             },
                                                             "brand": {
                                                                 "type": "string",
-                                                                "example": "Johnson & Johnson"
+                                                                "example": "Abbott"
+                                                            },
+                                                            "variant_name": {
+                                                                "type": "string",
+                                                                "example": "Variant-8"
                                                             }
                                                         },
                                                         "type": "object"
@@ -980,11 +988,11 @@
                                                         "properties": {
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Antibiotics"
+                                                                "example": "Heart Care"
                                                             },
                                                             "slug": {
                                                                 "type": "string",
-                                                                "example": "antibiotics"
+                                                                "example": "heart-care"
                                                             }
                                                         },
                                                         "type": "object"
@@ -996,10 +1004,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -1183,7 +1187,7 @@
                     "Order"
                 ],
                 "summary": "Cash on delivery order.",
-                "description": "Cash on delivery order.",
+                "description": "Cash on delivery order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
                 "operationId": "CODOrder",
                 "requestBody": {
                     "required": true,
@@ -1279,7 +1283,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Please check your email to verify registration"
+                                            "example": "Your order has been placed successfully."
                                         },
                                         "data": {
                                             "type": "object",
@@ -1310,7 +1314,7 @@
                     "Cart"
                 ],
                 "summary": "Add an item to the cart",
-                "description": "Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.  \n     *                 If omitted, the request is treated as adding a **package** to the cart.  \n     *                 If provided, the request is treated as adding a **product** to the cart.",
+                "description": "Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.  \n     *                 If omitted, the request is treated as adding a **package** to the cart.  \n     *                 If provided, the request is treated as adding a **product** to the cart.\n     *                 If both variant_id and quantity are omitted, product of cheapest variant item is added.",
                 "operationId": "AddToCart",
                 "requestBody": {
                     "required": true,

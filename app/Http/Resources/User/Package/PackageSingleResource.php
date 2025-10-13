@@ -29,8 +29,8 @@ class PackageSingleResource extends JsonResource
         return [
             'name' => $this->name,
             'slug' => $this->slug,
-            'price' => $price,
-            'previous_price' => $previous_price,
+            'price' => round($price, 2),
+            'previous_price' => round($previous_price, 2),
             'rating' => (float) $this->rating,
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Package::PACKAGE_FEATURED)),
             'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false)

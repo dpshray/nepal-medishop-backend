@@ -24,7 +24,7 @@ class CODPurchaseController extends Controller
      * @OA\Post(
      *     path="/cash-on-delivery",
      *     summary="Cash on delivery order.",
-     *     description="Cash on delivery order.",
+     *     description="Cash on delivery order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
      *     operationId="CODOrder",
      *     tags={"Order"},
      *     security={{"sanctum": {}}},
@@ -62,7 +62,7 @@ class CODPurchaseController extends Controller
      *         response=200,
      *         description="Successful registration",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Please check your email to verify registration"),
+     *             @OA\Property(property="message", type="string", example="Your order has been placed successfully."),
      *             @OA\Property(property="data", type="object", nullable=true, example=null),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -133,6 +133,7 @@ class CODPurchaseController extends Controller
 
                 );
                 $user->orders()->create($order)->orderItems()->createMany($order_items);
+                $user->cart()->delete();
             });
         }else{ # Guest user
             DB::transaction(function () use ($request, $order_items, $order_detail) {

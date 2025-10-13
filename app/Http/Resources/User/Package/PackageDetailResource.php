@@ -25,8 +25,8 @@ class PackageDetailResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'price' => $price,
-            'discount_price' => $previous_price,
+            'price' => round($price, 2),
+            'discount_price' => round($previous_price, 2),
             'rating' => (float) $this->rating,
             'featured_image' => $this->whenLoaded('media', fn() => $this->getFirstMedia(Package::PACKAGE_FEATURED)->getUrl()),
             'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Package::PACKAGE_GALLERY)->map(fn($item) => $item->getUrl())),
@@ -43,7 +43,8 @@ class PackageDetailResource extends JsonResource
                     "size_value" =>  (float) $variant->size_value,
                     "size_unit" => $variant->size_unit,
                     'price' => $previous_price ?? $price,
-                    'brand' => $variant->product->brand->name
+                    'brand' => $variant->product->brand->name,
+                    'variant_name' => $variant->name
                 ];
             }),
             'categories' => collect($categories)->unique('slug')->all(),
