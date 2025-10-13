@@ -101,6 +101,11 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     function orders() {
         return $this->hasMany(Order::class);
     }
+
+    public function latestOrder()
+    {
+        return $this->hasOne(Order::class)->latest();
+    }
     
     public function registerMediaCollections(): void
     {

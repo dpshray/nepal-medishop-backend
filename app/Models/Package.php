@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Purchase\OrderItem;
 use App\Models\Traits\SlugTrait;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -50,6 +51,12 @@ class Package extends Model implements HasMedia
         $this->addMediaCollection(self::PACKAGE_FEATURED)->singleFile()->useFallbackUrl(asset('assets/img/default-brand-category.png'));
         $this->addMediaCollection(self::PACKAGE_GALLERY)->useFallbackUrl(asset('assets/img/default-brand-category.png'));
     }
+
+    function orderItem()
+    {
+        return $this->hasMany(OrderItem::class, 'item_id')->where('item_type', Package::class);
+    }
+
     public function products()
     {
         return $this->belongsToMany(ProductVariation::class, 'package_products')

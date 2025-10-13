@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Purchase\OrderItem;
 use App\Models\Traits\SlugTrait;
 use App\Models\Traits\UuidModelTrait;
 use Illuminate\Database\Eloquent\Concerns\HasEvents;
@@ -75,6 +76,10 @@ class Product extends Model implements HasMedia
 
     function scopeActive($query){
         return $query->where('status', 1);
+    }
+
+    function orderItem() {
+        return $this->hasMany(OrderItem::class,'item_id')->where('item_type', Product::class);
     }
 
     public function registerMediaCollections(): void

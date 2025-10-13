@@ -3,12 +3,14 @@
 namespace App\Models\Purchase;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
     public $timestamps = false;
 
     protected $fillable = [
+        'user_type',
         'name', 
         'email', 
         'mobile', 
@@ -20,6 +22,18 @@ class Order extends Model
         'status',
         'created_at'
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($item) {
+            $item->order_code = Str::random(20);
+        });
+    }
     
     function orderItems() {
         return $this->hasMany(OrderItem::class);

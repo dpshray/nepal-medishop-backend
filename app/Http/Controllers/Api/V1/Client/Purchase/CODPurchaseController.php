@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Client\Purchase;
 
+use App\Enums\OrderUserTypeEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\PaymentMethodEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
@@ -31,7 +32,8 @@ class CODPurchaseController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name","email","mobile","address","products"},
+     *             required={"payment_method","name","email","mobile","address","products"},
+     *             @OA\Property(property="payment_method", type="string", example="COD"),
      *             @OA\Property(property="name", type="string", example="James P. Sullivan"),
      *             @OA\Property(property="email", type="string", format="email", example="james.sullivan100@example.com"),
      *             @OA\Property(property="mobile", type="string", example="9854112547"),
@@ -60,11 +62,31 @@ class CODPurchaseController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful registration",
+     *         description="Your order has been placed successfully.",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Your order has been placed successfully."),
-     *             @OA\Property(property="data", type="object", nullable=true, example=null),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="amount", type="number", format="float", example=27869.54),
+     *                 @OA\Property(property="order_number", type="string", example="UJUdS1lXDpl2OpSwyQJS"),
+     *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
+     *                 @OA\Property(property="date", type="string", example="2025/10/13"),
+     *                 @OA\Property(
+     *                     property="ordered_items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="item_name", type="string", example="Debitis debitis autem consectetur saepe."),
+     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-2"),
+     *                         @OA\Property(property="quantity", type="integer", example=1),
+     *                         @OA\Property(property="price", type="number", format="float", example=1385.28),
+     *                         @OA\Property(property="total", type="number", format="float", example=1385.28)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="delivery_address", type="string", example="Shyambhu, Kathmandu")
+     *             )
      *         )
      *     )
      * )
@@ -130,7 +152,7 @@ class CODPurchaseController extends Controller
                 $order = array_merge(
                     $request->only(['address', 'description']), 
                     $order_detail, 
-
+                    ['user_type' => OrderUserTypeEnum::USER->value]
                 );
                 $user->orders()->create($order)->orderItems()->createMany($order_items);
                 $user->cart()->delete();
@@ -139,11 +161,41 @@ class CODPurchaseController extends Controller
             DB::transaction(function () use ($request, $order_items, $order_detail) {
                 $order = array_merge(
                     $request->only(['name', 'email', 'mobile', 'address', 'description']),
-                    $order_detail
+                    $order_detail,
+                    ['user_type' => OrderUserTypeEnum::GUEST->value]
                 );
                 Order::create($order)->OrderItems()->createMany($order_items);
             });
         }
-        return $this->apiSuccess("Your order has been placed successfully.");
+        $user = Auth::user();
+        $order_items = $user->latestOrder->orderItems()->with(['package', 'product.variations'])->get()->map(function($item){
+            if ($item->item_type == Product::class) {
+                return [
+                    'item_name' => $item->product->name,
+                    'variant_name' => $item->product->variations->firstWhere('id', $item->item_variant_id)->name,
+                    'quantity' => (int) $item->quantity,
+                    'price' => (float) $item->price,
+                    'total' => (float) $item->total 
+                ];
+            }elseif ($item->item_type == Package::class) {
+                return [
+                    'item_name' => $item->package->name,
+                    'variant_name' => null,
+                    'quantity' => (int) $item->quantity,
+                    'price' => (float) $item->price,
+                    'total' => (float) $item->total
+                ];
+            }
+        });
+        $order = $user->latestOrder;
+        $response = [
+            'amount' => (float) $order->price,
+            'order_number' => $order->order_code,
+            'payment_method' => $order->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : 'N/A',
+            'date' => $order->created_at->format('Y/m/d'),
+            'ordered_items' => $order_items,
+            'delivery_address' => $order->address
+        ];
+        return $this->apiSuccess("Your order has been placed successfully.", $response);
     }
 }

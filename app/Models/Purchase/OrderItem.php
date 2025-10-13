@@ -2,6 +2,8 @@
 
 namespace App\Models\Purchase;
 
+use App\Models\Package;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderItem extends Model
@@ -16,4 +18,16 @@ class OrderItem extends Model
         'total',
         'created_at'
     ];
+
+    function product(){
+        return $this->belongsTo(Product::class,'item_id')->whereHas('orderItem', function ($q) {
+            $q->where('item_type', Product::class);
+        });
+    }
+
+    function package() {
+        return $this->belongsTo(Package::class,'item_id')->whereHas('orderItem', function ($q) {
+            $q->where('item_type', Package::class);
+        });
+    }
 }

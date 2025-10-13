@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Client\Purchase;
 
+use App\Enums\Purchase\PaymentMethodEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class CODRequest extends FormRequest
 {
@@ -23,6 +25,7 @@ class CODRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            'payment_method' => ['required', Rule::enum(PaymentMethodEnum::class)],
             'address' => 'required',
             'description' => 'nullable',
             'products.*' => 'sometimes|nullable|array',

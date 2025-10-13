@@ -1195,6 +1195,7 @@
                         "application/json": {
                             "schema": {
                                 "required": [
+                                    "payment_method",
                                     "name",
                                     "email",
                                     "mobile",
@@ -1202,6 +1203,10 @@
                                     "products"
                                 ],
                                 "properties": {
+                                    "payment_method": {
+                                        "type": "string",
+                                        "example": "COD"
+                                    },
                                     "name": {
                                         "type": "string",
                                         "example": "James P. Sullivan"
@@ -1276,7 +1281,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful registration",
+                        "description": "Your order has been placed successfully.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1285,14 +1290,66 @@
                                             "type": "string",
                                             "example": "Your order has been placed successfully."
                                         },
-                                        "data": {
-                                            "type": "object",
-                                            "example": null,
-                                            "nullable": true
-                                        },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 27869.54
+                                                },
+                                                "order_number": {
+                                                    "type": "string",
+                                                    "example": "UJUdS1lXDpl2OpSwyQJS"
+                                                },
+                                                "payment_method": {
+                                                    "type": "string",
+                                                    "example": "Cash on Delivery"
+                                                },
+                                                "date": {
+                                                    "type": "string",
+                                                    "example": "2025/10/13"
+                                                },
+                                                "ordered_items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "item_name": {
+                                                                "type": "string",
+                                                                "example": "Debitis debitis autem consectetur saepe."
+                                                            },
+                                                            "variant_name": {
+                                                                "type": "string",
+                                                                "example": "Variant-2",
+                                                                "nullable": true
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1385.28
+                                                            },
+                                                            "total": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1385.28
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "delivery_address": {
+                                                    "type": "string",
+                                                    "example": "Shyambhu, Kathmandu"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

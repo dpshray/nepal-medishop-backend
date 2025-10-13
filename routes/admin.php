@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
+use App\Http\Controllers\Api\V1\Purchase\AdminCODController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
