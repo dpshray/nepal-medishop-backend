@@ -24,7 +24,7 @@ class AddToCartRequest extends FormRequest
         return [
             "slug" => 'required|exclude',
             "variant_id" => 'sometimes|nullable|exists:product_variations,id',
-            "quantity" => 'required|numeric'
+            "quantity" => 'sometimes|nullable|numeric'
         ];
     }
 }

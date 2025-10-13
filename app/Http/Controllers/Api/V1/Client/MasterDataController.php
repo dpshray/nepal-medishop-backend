@@ -365,13 +365,7 @@ class MasterDataController extends Controller
      *                         @OA\Property(property="size_unit", type="string", example="IU"),
      *                         @OA\Property(property="price", type="number", format="float", example=142),
      *                         @OA\Property(property="brand", type="string", example="Abbott"),
-     *                         @OA\Property(
-     *                             property="variant",
-     *                             type="object",
-     *                             @OA\Property(property="name", type="string", example="Variant-1"),
-     *                             @OA\Property(property="size", type="string", example="100.00 IU"),
-     *                             @OA\Property(property="price", type="number", example=142)
-     *                         )
+     *                         @OA\Property(property="variant_name", type="string", example="Variant-8")
      *                     )
      *                 ),
      *                 @OA\Property(

@@ -24,7 +24,8 @@ class ClientCartController extends Controller
      *     summary="Add an item to the cart",
      *     description="Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.  
      *                 If omitted, the request is treated as adding a **package** to the cart.  
-     *                 If provided, the request is treated as adding a **product** to the cart.",
+     *                 If provided, the request is treated as adding a **product** to the cart.
+     *                 If both variant_id and quantity are omitted, product of cheapest variant item is added.",
      *     operationId="AddToCart",
      *     tags={"Cart"},
      *     security={{"sanctum": {}}},
@@ -73,7 +74,7 @@ class ClientCartController extends Controller
     function storeOnCart(AddToCartRequest $request)
     {
         $cart = [];
-        if ($request->has('variant_id')) { #Product
+        if ($request->has(["slug", "variant_id", "quantity"])) { #Product
             $product_w_variant = Product::with(['brand','variations' => fn($qry) => $qry->where('id', $request->variant_id), 'media'])
                 ->where('slug', $request->slug)->firstOrFail();
             $product_variation = $product_w_variant->variations->first();
@@ -88,14 +89,14 @@ class ClientCartController extends Controller
                 'item_name' => $product_w_variant->name,
                 'item_slug' => $product_w_variant->slug,
                 'brand_name' => $product_w_variant->brand->name,
-                'variant_name' => (float) $product_variation->size_value.' '. $product_variation->size_unit,
+                'variant_name' => ((float) $product_variation->size_value).' '. $product_variation->size_unit,
                 'quantity' => $request->quantity,
                 'price' => $price,
                 'subtotal' => $price * $request->quantity,
                 'created_at' => now(),
                 'image' => $product_w_variant->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()
             ])->all();
-        }else{ #Package
+        }elseif($request->has(["slug","quantity"])){ #Package
             $package = Package::where('slug', $request->slug)->firstOrFail();
             $package_actual_price = $package->price;
             $package_discount = $package->discount_percent;
@@ -111,6 +112,29 @@ class ClientCartController extends Controller
                 'subtotal' => $price * $request->quantity,
                 'created_at' => now(),
                 'image' => $package->getFirstMedia(Package::PACKAGE_FEATURED)->getUrl()
+            ])->all();
+        }else{ #A product w. default item
+            $product_w_variant = Product::with(['brand', 'cheapestVariation', 'media'])
+                ->where('slug', $request->slug)->firstOrFail();
+            $product_variation = $product_w_variant->variations->first();
+            $product_actual_price = $product_variation->platform_price;
+            $product_discount = $product_w_variant->discount_percent;
+            $price = empty($product_discount) ? $product_actual_price : ($product_actual_price - ($product_actual_price * $product_discount) / 100);
+            $quantity = 1; # As for default
+            $cart = $request->safe()->merge([
+                'user_id' => Auth::id(),
+                'item_type' => Product::class,
+                'item_id' => $product_w_variant->id,
+                'variant_id' => $product_variation->id,
+                'item_name' => $product_w_variant->name,
+                'item_slug' => $product_w_variant->slug,
+                'brand_name' => $product_w_variant->brand->name,
+                'variant_name' => ((float) $product_variation->size_value) . ' ' . $product_variation->size_unit,
+                'quantity' => $quantity,
+                'price' => $price,
+                'subtotal' => $price * $quantity,
+                'created_at' => now(),
+                'image' => $product_w_variant->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()
             ])->all();
         }
         Cart::create($cart);
@@ -329,8 +353,12 @@ class ClientCartController extends Controller
      * )
      */
     function cartItemRemover(Request $request, Cart $cart) {
-        throw_if($cart->user->isNot(Auth::user()), UnauthorizedException::class);
-        $cart->delete();
+        $user = Auth::user();
+        throw_if($cart->user->isNot($user), UnauthorizedException::class);
+        $user->cart()->where([
+            ['item_type', Product::class],
+            ['item_id', $cart->item_id]
+        ])->delete();
         return $this->apiSuccess('Item has been removed from cart.');
     }
 }
