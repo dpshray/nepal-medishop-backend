@@ -334,37 +334,44 @@ class MasterDataController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Package details retrieved successfully",
+     *         description="Package details retrieved successfully.",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Package details retrieved successfully."),
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="name", type="string", example="Super Kit"),
-     *                 @OA\Property(property="slug", type="string", example="super-kit"),
-     *                 @OA\Property(property="description", type="string", example="<p>Ullam placeat culpa dolor enim...</p>"),
-     *                 @OA\Property(property="price", type="number", format="float", example=10000),
-     *                 @OA\Property(property="discount_price", type="number", format="float", nullable=true, example=null),
-     *                 @OA\Property(property="rating", type="number", format="float", example=2.5),
-     *                 @OA\Property(property="featured_image", type="string", example="http://192.168.100.23:8008/storage/3211/package-3.jpg"),
+     *                 @OA\Property(property="name", type="string", example="Super Offer"),
+     *                 @OA\Property(property="slug", type="string", example="super-offer"),
+     *                 @OA\Property(property="description", type="string", example="<p>Package details...</p>"),
+     *                 @OA\Property(property="price", type="number", format="float", example=9000),
+     *                 @OA\Property(property="discount_price", type="number", format="float", example=0),
+     *                 @OA\Property(property="rating", type="number", format="float", example=2.8),
+     *                 @OA\Property(property="featured_image", type="string", example="http://192.168.100.23:8008/storage/2636/package-1.jpg"),
      *                 @OA\Property(
      *                     property="gallery_images",
      *                     type="array",
-     *                     @OA\Items(type="string", example="http://192.168.100.23:8008/storage/3212/package-1.jpg")
+     *                     @OA\Items(type="string", example="http://192.168.100.23:8008/storage/2637/package-2.jpg")
      *                 ),
      *                 @OA\Property(
      *                     property="products",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/2921/cream.jpg"),
-     *                         @OA\Property(property="product_name", type="string", example="Odit quia nisi dolores nobis atque vel velit."),
-     *                         @OA\Property(property="slug", type="string", example="odit-quia-nisi-dolores-nobis-atque-vel-velit"),
-     *                         @OA\Property(property="size_value", type="number", example=500),
-     *                         @OA\Property(property="size_unit", type="string", example="gm"),
-     *                         @OA\Property(property="price", type="number", example=2214),
-     *                         @OA\Property(property="brand", type="string", example="Johnson & Johnson"),
+     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/2021/cream.jpg"),
+     *                         @OA\Property(property="product_name", type="string", example="At odio sed velit numquam."),
+     *                         @OA\Property(property="slug", type="string", example="at-odio-sed-velit-numquam"),
+     *                         @OA\Property(property="size_value", type="number", example=100),
+     *                         @OA\Property(property="size_unit", type="string", example="IU"),
+     *                         @OA\Property(property="price", type="number", format="float", example=142),
+     *                         @OA\Property(property="brand", type="string", example="Abbott"),
+     *                         @OA\Property(
+     *                             property="variant",
+     *                             type="object",
+     *                             @OA\Property(property="name", type="string", example="Variant-1"),
+     *                             @OA\Property(property="size", type="string", example="100.00 IU"),
+     *                             @OA\Property(property="price", type="number", example=142)
+     *                         )
      *                     )
      *                 ),
      *                 @OA\Property(
@@ -372,13 +379,12 @@ class MasterDataController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="name", type="string", example="Antibiotics"),
-     *                         @OA\Property(property="slug", type="string", example="antibiotics")
+     *                         @OA\Property(property="name", type="string", example="Heart Care"),
+     *                         @OA\Property(property="slug", type="string", example="heart-care")
      *                     )
      *                 ),
      *                 @OA\Property(property="liked", type="boolean", example=false)
-     *             ),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *             )
      *         )
      *     )
      * )
