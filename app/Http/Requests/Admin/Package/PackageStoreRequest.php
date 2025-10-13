@@ -26,20 +26,12 @@ class PackageStoreRequest extends FormRequest
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'discount_percent' => 'nullable|numeric|min:0|max:100',
-            'start_timestamps' => 'nullable|date',
-            'end_timestamps' => 'nullable|date|after_or_equal:start_timestamps',
             'status' => 'required|boolean',
-
-            //product
-            'products' => 'required|array|min:1',
-            'products.*.product_variation_id' => 'required|integer|exists:product_variations,id',
-            'products.*.quantity' => 'required|integer|min:1',
 
             //image
             'featured_image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'gallery_images' => 'nullable|array',
             'gallery_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-
         ];
     }
     protected function prepareForValidation()

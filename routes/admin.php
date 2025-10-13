@@ -31,4 +31,6 @@ Route::prefix('admin')
         Route::post('product-media/{product:uuid}', [AdminProductController::class, 'storeMedia']);
         Route::get('product-units', [AdminProductController::class, 'productUnits']);
         Route::apiResource('package',AdminPackageController::class)->scoped(['package' => 'slug']);
+        Route::post('package/{slug}/add-product',[AdminPackageController::class,'add_product_to_package']);
+        Route::post('package/{slug}/update-product',[AdminPackageController::class,'update_package_product']);
 });
