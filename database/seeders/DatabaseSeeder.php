@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ProductSeeder::class,
             VendorProductSeeder::class,
+            ProductReviewSeeder::class,
+            PackageReviewSeeder::class,
             FlashSaleSeeder::class,
             FlashSaleSeeder::class,
             FlashSaleSeeder::class,
