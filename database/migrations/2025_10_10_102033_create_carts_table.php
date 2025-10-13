@@ -27,7 +27,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('quantity');
             $table->decimal('price', 10, 2);
             $table->decimal('subtotal', 10, 2);
-            $table->timestamp('created_at');
+            $table->date('created_at');
         });
     }
 

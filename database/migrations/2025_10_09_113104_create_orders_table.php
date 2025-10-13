@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('payment_status');
             $table->string('status');
-            $table->date('created_at');
+            $table->timestamp('created_at');
         });
     }
 
