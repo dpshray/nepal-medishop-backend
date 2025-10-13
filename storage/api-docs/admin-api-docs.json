@@ -976,7 +976,7 @@
                     "Package"
                 ],
                 "summary": "Create a new package",
-                "description": "Store a new package with its associated products and images.",
+                "description": "Create a new package with name, description, pricing, and optional images.",
                 "operationId": "cb48d8c4ef4b2a3cc6dde51ca40150cf",
                 "requestBody": {
                     "required": true,
@@ -987,10 +987,7 @@
                                     "name",
                                     "description",
                                     "price",
-                                    "start_timestamps",
-                                    "end_timestamps",
                                     "status",
-                                    "products",
                                     "featured_image"
                                 ],
                                 "properties": {
@@ -1000,7 +997,7 @@
                                     },
                                     "description": {
                                         "type": "string",
-                                        "example": "Includes multiple skincare products at a discounted rate."
+                                        "example": "A special summer package with discounted products."
                                     },
                                     "price": {
                                         "type": "number",
@@ -1008,56 +1005,30 @@
                                         "example": 4999.99
                                     },
                                     "discount_percent": {
+                                        "description": "Optional discount percentage",
                                         "type": "number",
                                         "format": "float",
-                                        "example": 10.5
-                                    },
-                                    "start_timestamps": {
-                                        "type": "string",
-                                        "format": "date-time",
-                                        "example": "2025-10-01 00:00:00"
-                                    },
-                                    "end_timestamps": {
-                                        "type": "string",
-                                        "format": "date-time",
-                                        "example": "2025-10-31 23:59:59"
+                                        "example": 10,
+                                        "nullable": true
                                     },
                                     "status": {
+                                        "description": "Package status (true = active, false = inactive)",
                                         "type": "boolean",
                                         "example": true
                                     },
-                                    "products": {
-                                        "type": "array",
-                                        "items": {
-                                            "required": [
-                                                "product_variation_id",
-                                                "quantity"
-                                            ],
-                                            "properties": {
-                                                "product_variation_id": {
-                                                    "type": "integer",
-                                                    "example": 12
-                                                },
-                                                "quantity": {
-                                                    "type": "integer",
-                                                    "example": 3
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
                                     "featured_image": {
-                                        "description": "Single featured image for the package",
+                                        "description": "Required featured image of the package",
                                         "type": "string",
                                         "format": "binary"
                                     },
                                     "gallery_images": {
-                                        "description": "Optional multiple gallery images for the package",
+                                        "description": "Optional array of gallery images",
                                         "type": "array",
                                         "items": {
                                             "type": "string",
                                             "format": "binary"
-                                        }
+                                        },
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -1107,6 +1078,121 @@
                     },
                     "401": {
                         "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/package/{slug}/add-product": {
+            "post": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Add products to a package",
+                "description": "Attach one or more product variations to an existing package. The package is identified by its slug.",
+                "operationId": "23d67794bb8bb7583549eeaecff3603b",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of the package to which products will be added",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "summer-deal-package"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "products"
+                                ],
+                                "properties": {
+                                    "products": {
+                                        "description": "List of products to attach to the package",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_variation_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_variation_id": {
+                                                    "description": "The ID of the product variation",
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "quantity": {
+                                                    "description": "Quantity of this product in the package",
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Products added to package successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Products added successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Package not found"
                     },
                     "500": {
                         "description": "Internal Server Error"
@@ -1300,16 +1386,6 @@
                                         "format": "float",
                                         "example": 15
                                     },
-                                    "start_timestamps": {
-                                        "type": "string",
-                                        "format": "date-time",
-                                        "example": "2025-10-01 00:00:00"
-                                    },
-                                    "end_timestamps": {
-                                        "type": "string",
-                                        "format": "date-time",
-                                        "example": "2025-10-31 23:59:59"
-                                    },
                                     "status": {
                                         "type": "boolean",
                                         "example": true
@@ -1317,23 +1393,6 @@
                                     "_method": {
                                         "type": "string",
                                         "example": "PATCH"
-                                    },
-                                    "products": {
-                                        "description": "Optional array of products to update. Existing products will be replaced if using sync().",
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "product_variation_id": {
-                                                    "type": "integer",
-                                                    "example": 12
-                                                },
-                                                "quantity": {
-                                                    "type": "integer",
-                                                    "example": 3
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
                                     },
                                     "featured_image": {
                                         "description": "Optional new featured image to replace the existing one.",
@@ -1443,6 +1502,121 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Product removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Package not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/package/{slug}/update-product": {
+            "post": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "update products to a package",
+                "description": "Attach one or more product variations to an existing package. The package is identified by its slug.",
+                "operationId": "1c6f68d66d8fce92000502a514eeafcf",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of the package to which products will be ",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "summer-deal-package"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "products"
+                                ],
+                                "properties": {
+                                    "products": {
+                                        "description": "List of products to attach to the package",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_variation_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_variation_id": {
+                                                    "description": "The ID of the product variation",
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "quantity": {
+                                                    "description": "Quantity of this product in the package",
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Products added to package successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Products added successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

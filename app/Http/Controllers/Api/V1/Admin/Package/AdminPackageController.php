@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Package;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Package\PackageStoreRequest;
 use App\Http\Requests\Admin\Package\PackageUpdateRequest;
+use App\Http\Requests\Admin\Package\StoreProductToPackageRequest;
 use App\Http\Resources\Admin\Package\AdminPackageDetailResource;
 use App\Http\Resources\Admin\Package\AdminPackageResource;
 use App\Models\Package;
@@ -109,11 +110,12 @@ class AdminPackageController extends Controller
         $product = $this->makePaginationResponse($pagination, fn($item) => AdminPackageResource::collection($item))->data;
         return $this->apiSuccess("Admin $msg product list.", $product);
     }
+
     /**
      * @OA\Post(
      *     path="/admin/package",
      *     summary="Create a new package",
-     *     description="Store a new package with its associated products and images.",
+     *     description="Create a new package with name, description, pricing, and optional images.",
      *     tags={"Package"},
      *     security={{"sanctum": {}}},
      *
@@ -122,44 +124,52 @@ class AdminPackageController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"name", "description", "price", "start_timestamps", "end_timestamps", "status", "products", "featured_image"},
-     *
-     *                 @OA\Property(property="name", type="string", example="Summer Deal Package"),
-     *                 @OA\Property(property="description", type="string", example="Includes multiple skincare products at a discounted rate."),
-     *                 @OA\Property(property="price", type="number", format="float", example=4999.99),
-     *                 @OA\Property(property="discount_percent", type="number", format="float", example=10.5),
-     *                 @OA\Property(property="start_timestamps", type="string", format="date-time", example="2025-10-01 00:00:00"),
-     *                 @OA\Property(property="end_timestamps", type="string", format="date-time", example="2025-10-31 23:59:59"),
-     *                 @OA\Property(property="status", type="boolean", example=true),
+     *                 required={"name", "description", "price", "status", "featured_image"},
      *
      *                 @OA\Property(
-     *                     property="products",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="object",
-     *                         required={"product_variation_id", "quantity"},
-     *                         @OA\Property(property="product_variation_id", type="integer", example=12),
-     *                         @OA\Property(property="quantity", type="integer", example=3)
-     *                     )
+     *                     property="name",
+     *                     type="string",
+     *                     example="Summer Deal Package"
      *                 ),
-     *
+     *                 @OA\Property(
+     *                     property="description",
+     *                     type="string",
+     *                     example="A special summer package with discounted products."
+     *                 ),
+     *                 @OA\Property(
+     *                     property="price",
+     *                     type="number",
+     *                     format="float",
+     *                     example=4999.99
+     *                 ),
+     *                 @OA\Property(
+     *                     property="discount_percent",
+     *                     type="number",
+     *                     format="float",
+     *                     nullable=true,
+     *                     example=10.0,
+     *                     description="Optional discount percentage"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="status",
+     *                     type="boolean",
+     *                     example=true,
+     *                     description="Package status (true = active, false = inactive)"
+     *                 ),
      *
      *                 @OA\Property(
      *                     property="featured_image",
      *                     type="string",
      *                     format="binary",
-     *                     description="Single featured image for the package"
+     *                     description="Required featured image of the package"
      *                 ),
-     *
      *
      *                 @OA\Property(
      *                     property="gallery_images",
      *                     type="array",
-     *                     @OA\Items(
-     *                         type="string",
-     *                         format="binary"
-     *                     ),
-     *                     description="Optional multiple gallery images for the package"
+     *                     @OA\Items(type="string", format="binary"),
+     *                     nullable=true,
+     *                     description="Optional array of gallery images"
      *                 )
      *             )
      *         )
@@ -206,23 +216,13 @@ class AdminPackageController extends Controller
                 'description' => $data['description'],
                 'price' => $data['price'],
                 'discount_percent' => $data['discount_percent'] ?? 0,
-                'start_timestamps' => $data['start_timestamps'],
-                'end_timestamps' => $data['end_timestamps'],
                 'status' => $data['status'],
             ]);
-
-            //Attach related products to package
-            $package->products()->attach(
-                collect($data['products'])->mapWithKeys(fn($item) => [
-                    $item['product_variation_id'] => ['quantity' => $item['quantity']]
-                ])
-            );
             // Add featured image
             if ($request->hasFile('featured_image')) {
                 $package->addMedia($request->file('featured_image'))
                     ->toMediaCollection(Package::PACKAGE_FEATURED);
             }
-
             // Add gallery images
             if ($request->hasFile('gallery_images')) {
                 foreach ($request->file('gallery_images') as $image) {
@@ -231,6 +231,86 @@ class AdminPackageController extends Controller
             }
         });
         return $this->apiSuccess('Package added successfully.');
+    }
+    /**
+     * @OA\Post(
+     *     path="/admin/package/{slug}/add-product",
+     *     summary="Add products to a package",
+     *     description="Attach one or more product variations to an existing package. The package is identified by its slug.",
+     *     tags={"Package"},
+     *     security={{"sanctum": {}}},
+     *
+     *     @OA\Parameter(
+     *         name="slug",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of the package to which products will be added",
+     *         @OA\Schema(type="string", example="summer-deal-package")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"products"},
+     *             @OA\Property(
+     *                 property="products",
+     *                 type="array",
+     *                 description="List of products to attach to the package",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     required={"product_variation_id", "quantity"},
+     *                     @OA\Property(
+     *                         property="product_variation_id",
+     *                         type="integer",
+     *                         example=12,
+     *                         description="The ID of the product variation"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="quantity",
+     *                         type="integer",
+     *                         example=3,
+     *                         description="Quantity of this product in the package"
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Products added to package successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Products added successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=404, description="Package not found"),
+     *     @OA\Response(response=500, description="Internal Server Error")
+     * )
+     */
+    function add_product_to_package($slug, StoreProductToPackageRequest $request)
+    {
+        $package = Package::where('slug', $slug)->first();
+        //Attach related products to package
+        $data = $request->validated();
+        $package->products()->attach(
+            collect($data['products'])->mapWithKeys(fn($item) => [
+                $item['product_variation_id'] => ['quantity' => $item['quantity']]
+            ])
+        );
+        return $this->apiSuccess('Product added successfully.');
     }
     /**
      * @OA\Post(
@@ -257,21 +337,8 @@ class AdminPackageController extends Controller
      *                 @OA\Property(property="description", type="string", example="Updated description of the package."),
      *                 @OA\Property(property="price", type="number", format="float", example=5999.99),
      *                 @OA\Property(property="discount_percent", type="number", format="float", example=15.0),
-     *                 @OA\Property(property="start_timestamps", type="string", format="date-time", example="2025-10-01 00:00:00"),
-     *                 @OA\Property(property="end_timestamps", type="string", format="date-time", example="2025-10-31 23:59:59"),
      *                 @OA\Property(property="status", type="boolean", example=true),
      *                 @OA\Property(property="_method", type="string", example="PATCH"),
-     *                 @OA\Property(
-     *                     property="products",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="object",
-     *                         @OA\Property(property="product_variation_id", type="integer", example=12),
-     *                         @OA\Property(property="quantity", type="integer", example=3)
-     *                     ),
-     *                     description="Optional array of products to update. Existing products will be replaced if using sync()."
-     *                 ),
-     *
      *                 @OA\Property(
      *                     property="featured_image",
      *                     type="string",
@@ -335,18 +402,8 @@ class AdminPackageController extends Controller
                 'description' => $data['description'] ?? $package->description,
                 'price' => $data['price'] ?? $package->price,
                 'discount_percent' => $data['discount_percent'] ?? $package->discount_percent,
-                'start_timestamps' => $data['start_timestamps'] ?? $package->start_timestamps,
-                'end_timestamps' => $data['end_timestamps'] ?? $package->end_timestamps,
                 'status' => $data['status'] ?? $package->status,
             ]);
-            if (!empty($data['products'])) {
-                $package->products()->sync(
-                    collect($data['products'])->mapWithKeys(fn($item) => [
-                        $item['product_variation_id'] => ['quantity' => $item['quantity']]
-                    ])
-                );
-            }
-
             // Update featured image (replace if new file uploaded)
             if ($request->hasFile('featured_image')) {
                 $package->clearMediaCollection(Package::PACKAGE_FEATURED);
@@ -364,6 +421,85 @@ class AdminPackageController extends Controller
             }
         });
         return $this->apiSuccess('Package update successfully.');
+    }
+    /**
+     * @OA\Post(
+     *     path="/admin/package/{slug}/update-product",
+     *     summary="update products to a package",
+     *     description="Attach one or more product variations to an existing package. The package is identified by its slug.",
+     *     tags={"Package"},
+     *     security={{"sanctum": {}}},
+     *
+     *     @OA\Parameter(
+     *         name="slug",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of the package to which products will be ",
+     *         @OA\Schema(type="string", example="summer-deal-package")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"products"},
+     *             @OA\Property(
+     *                 property="products",
+     *                 type="array",
+     *                 description="List of products to attach to the package",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     required={"product_variation_id", "quantity"},
+     *                     @OA\Property(
+     *                         property="product_variation_id",
+     *                         type="integer",
+     *                         example=12,
+     *                         description="The ID of the product variation"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="quantity",
+     *                         type="integer",
+     *                         example=3,
+     *                         description="Quantity of this product in the package"
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Products added to package successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Products added successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=404, description="Package not found"),
+     *     @OA\Response(response=500, description="Internal Server Error")
+     * )
+     */
+    function update_package_product($slug, StoreProductToPackageRequest $request)
+    {
+        $data = $request->validated();
+        $package = Package::where('slug', $slug)->first();
+        $package->products()->sync(
+            collect($data['products'])->mapWithKeys(fn($item) => [
+                $item['product_variation_id'] => ['quantity' => $item['quantity']]
+            ])
+        );
+        return $this->apiSuccess('Product update successfully.');
     }
     /**
      * @OA\Delete(
