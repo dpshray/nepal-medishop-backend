@@ -1641,6 +1641,86 @@
                 ]
             }
         },
+        "/admin/package/{package}/products": {
+            "delete": {
+                "tags": [
+                    "Package"
+                ],
+                "summary": "Remove a product from a package",
+                "description": "Detach a single product variation from the specified package.",
+                "operationId": "9d82fe3a9f4772868a7cffd1faf9f621",
+                "parameters": [
+                    {
+                        "name": "package",
+                        "in": "path",
+                        "description": "Slug of the package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "summer-special"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_variation_id"
+                                ],
+                                "properties": {
+                                    "product_variation_id": {
+                                        "type": "integer",
+                                        "example": 12
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product removed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product removed from package successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Package not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/brand": {
             "get": {
                 "tags": [

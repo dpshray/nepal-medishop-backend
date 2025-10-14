@@ -625,4 +625,54 @@ class AdminPackageController extends Controller
         $data = new AdminPackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);
     }
+    /**
+     * @OA\Delete(
+     *     path="/admin/package/{package}/products",
+     *     summary="Remove a product from a package",
+     *     description="Detach a single product variation from the specified package.",
+     *     tags={"Package"},
+     *     security={{"sanctum": {}}},
+     *
+     *     @OA\Parameter(
+     *         name="package",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of the package",
+     *         @OA\Schema(type="string", example="summer-special")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"product_variation_id"},
+     *             @OA\Property(property="product_variation_id", type="integer", example=12)
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product removed successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Product removed from package successfully.")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Package not found"),
+     *     @OA\Response(response=422, description="Validation error"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=500, description="Internal Server Error")
+     * )
+     */
+
+    public function deleteProductFromPackage($slug, Request $request)
+    {
+        $validated = $request->validate([
+            'product_variation_id' => 'required|integer||exists:product_variations,id',
+        ]);
+        $package = Package::where('slug', $slug)->first();
+        $package->products()->detach($validated['product_variation_id']);
+        return $this->apiSuccess('Products removed from package successfully.');
+    }
 }
