@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
  *     title="Medishop",
  *     description="Medishop Project"
  * )
- * 
+ *
  * @OA\Server(
  *     url="https://api.medishop.dworklabs.com/api/v1",
  *     description="Live API Server"
@@ -21,10 +21,14 @@ use Illuminate\Http\Request;
  *     url="http://192.168.100.23:8008/api/v1",
  *     description="Localhost API Server 1"
  * )
- * 
+ *
  * @OA\Server(
  *     url="http://127.0.0.1:8000/api/v1",
  *     description="Localhost API Server 2"
+ * )
+ *  @OA\Server(
+ *     url="http://192.168.100.18:8000/api/v1",
+ *     description="Localhost API Server 3"
  * )
  */
 class VendorController extends Controller

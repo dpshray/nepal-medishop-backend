@@ -69,7 +69,7 @@ class AdminProductController extends Controller
      *         required=false,
      *         description="Page number of list",
      *         @OA\Schema(type="integer", example=1)
-     *     ),     
+     *     ),
      *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
@@ -135,7 +135,7 @@ class AdminProductController extends Controller
                 $msg = 'unpublished';
             }
         }
-        $pagination = Product::with(['brand', 'cheapestVariation', 'productVendorPrices'])
+        $pagination = Product::with(['brand', 'cheapestVariation', 'productVendorPrices','variations'])
             ->when($status != null, fn($qry) => $qry->where('status', $status))
             ->when($search != null, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
             ->latest('id')
@@ -248,7 +248,7 @@ class AdminProductController extends Controller
      */
     /**
      * @OA\Delete(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/admin/product/{uuid}",
      *     operationId="ProductDelete",
      *     tags={"Product"},
@@ -320,7 +320,7 @@ class AdminProductController extends Controller
     function statusToggler(Product $product){
         $current_status = $product->status;
         $product->update(['status' => !$current_status]);
-        $status = $current_status == 1 ? 'Inactive' : 'Active'; 
+        $status = $current_status == 1 ? 'Inactive' : 'Active';
         return $this->apiSuccess("Product status changed to $status");
     }
 
