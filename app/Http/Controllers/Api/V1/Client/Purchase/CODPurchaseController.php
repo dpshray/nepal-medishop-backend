@@ -97,6 +97,10 @@ class CODPurchaseController extends Controller
         // return $request->all();
 
         $products_ordered = [];
+        if (!$request->hasAny(['products', 'packages'])) {
+            return $this->apiError("At least one product or package must be included in the order.", 422);
+        }
+
         if ($request->has('products')) {
             $product_slug = $request->collect('products')->pluck('product_slug');
             $products = Product::select('id', 'slug', 'discount_percent')->with(['variations:id,product_id,platform_price'])->whereIn('slug', $product_slug)->get()->keyBy('slug');
@@ -197,7 +201,7 @@ class CODPurchaseController extends Controller
             $response = [
                 'amount' => (float) $order->price,
                 'order_number' => $order->order_code,
-                'payment_method' => $order->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : 'N/A',
+                'payment_method' => $order->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : $order->payment_method,
                 'date' => $order->created_at->format('Y/m/d'),
                 'ordered_items' => $order_items,
                 'delivery_address' => $order->address
