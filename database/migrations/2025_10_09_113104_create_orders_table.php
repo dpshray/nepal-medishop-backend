@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('payment_status');
             $table->string('status');
+            $table->json('metadata')->nullable();
             $table->timestamp('created_at');
         });
     }
