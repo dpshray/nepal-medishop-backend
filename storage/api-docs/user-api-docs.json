@@ -1371,7 +1371,7 @@
                     "Cart"
                 ],
                 "summary": "Add an item to the cart",
-                "description": "Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.\n     *                 If omitted, the request is treated as adding a **package** to the cart.\n     *                 If provided, the request is treated as adding a **product** to the cart.\n     *                 If both variant_id and quantity are omitted, product of cheapest variant item is added.",
+                "description": "Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.  \n     *                 If omitted, the request is treated as adding a **package** to the cart.  \n     *                 If provided, the request is treated as adding a **product** to the cart.\n     *                 If both variant_id and quantity are omitted, product of cheapest variant item is added.",
                 "operationId": "AddToCart",
                 "requestBody": {
                     "required": true,
@@ -1389,7 +1389,7 @@
                                         "example": "unde-a-maiores-et-omnis"
                                     },
                                     "variant_id": {
-                                        "description": "Variant ID of the product.\n     *                 If omitted, the request is treated as adding a **package** to the cart.\n     *                 If provided, the request is treated as adding a **product** to the cart.",
+                                        "description": "Variant ID of the product.  \n     *                 If omitted, the request is treated as adding a **package** to the cart.  \n     *                 If provided, the request is treated as adding a **product** to the cart.",
                                         "type": "integer",
                                         "example": 2,
                                         "nullable": true
