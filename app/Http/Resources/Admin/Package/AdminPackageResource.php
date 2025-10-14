@@ -18,6 +18,7 @@ class AdminPackageResource extends JsonResource
         return[
             'package_name'=>$this->name,
             'slug'=>$this->slug,
+            'status'=>(bool)$this->status,
             'description'=>$this->description,
             'price'=>$this->price,
             'discount_percent'=>$this->discount_percent,
