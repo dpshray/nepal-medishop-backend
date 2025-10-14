@@ -25,7 +25,7 @@ class CODRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'payment_method' => ['required', Rule::enum(PaymentMethodEnum::class)],
+            'payment_method' => ['required'],
             'address' => 'required',
             'description' => 'nullable',
             'products.*' => 'sometimes|nullable|array',
