@@ -36,13 +36,13 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->expectsJson()) {
                 $message = $e->getMessage();
                 $message = empty($message) ? 'You don’t have permission to access or modify this resource.' : $message;
-                return (new ResponseTraitClass)->apiError($message, 401);
+                return (new ResponseTraitClass)->apiError($message, 403);
             }
         });
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->expectsJson()) {
                 $firstError = collect($e->errors())->first();
-                return (new ResponseTraitClass)->apiError($firstError[0] ?? 'Validation error', 401);
+                return (new ResponseTraitClass)->apiError($firstError[0] ?? 'Validation error', 422);
             }
         });
     })->create();
