@@ -41,4 +41,4 @@ Route::put('user/profile', [ClientProfileController::class, 'update']);
 
 
 /*=====  Purchase Part  ======*/
-Route::post('cash-on-delivery', CODPurchaseController::class);
+Route::post('orders', CODPurchaseController::class);
