@@ -59,7 +59,7 @@ class LikeController extends Controller
     /**
      * @OA\Get(
      *     security={{"sanctum": {}}},
-     *     path="/liked-products",
+     *     path="/liked-items",
      *     summary="List of liked products of a user.",
      *     description="List of liked products of a user.",
      *     operationId="ProductFavoutiteList",
@@ -90,7 +90,7 @@ class LikeController extends Controller
      *     )
      * )
      */
-    function myLikedProducts(Request $request) {
+    function myLikedItems(Request $request) {
         $per_page = $request->query('per_page');
         $pagination = Like::with(['product.cheapestVariation','product.media','product.brand'])
             ->where('user_id', Auth::id())

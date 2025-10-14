@@ -22,7 +22,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::controller(LikeController::class)->group(function(){
         Route::get('favourite/{product:slug}/product', 'toggleProductFavourite');
         Route::get('favourite/{package:slug}/package', 'togglePackageFavourite');
-        Route::get('liked-products', 'myLikedProducts');
+        Route::get('liked-items', 'myLikedItems');
     });
     Route::controller(ClientCartController::class)->group(function(){
         Route::post('add-to-cart', 'storeOnCart');
