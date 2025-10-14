@@ -3485,6 +3485,140 @@
                     }
                 ]
             }
+        },
+        "/admin/user-order": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Get all user orders.",
+                "description": "Get all user orders.\n     *      payment_method: Cash on Delivery | \n     *      payment_status: PENDING, PAID, FAILED |\n     *      status: PENDING, SHIPPED, DELIVERED",
+                "operationId": "UserOrderList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search an order based on name/email/mobile/address",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of orders.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of orders"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "order_uuid": {
+                                                                "type": "string",
+                                                                "example": "e184e023-f7eb-4f46-ac3a-363237e158c0"
+                                                            },
+                                                            "payment_method": {
+                                                                "type": "string",
+                                                                "example": "Cash on Delivery"
+                                                            },
+                                                            "payment_status": {
+                                                                "type": "string",
+                                                                "example": "PAID"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "DELIVERED"
+                                                            },
+                                                            "no_of_ordered_items": {
+                                                                "type": "integer",
+                                                                "example": 4
+                                                            },
+                                                            "order_code": {
+                                                                "type": "string",
+                                                                "example": "dfSde1NOo3J5XR9Hw833"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "James P. Sullivan"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "james.sullivan100@example.com"
+                                                            },
+                                                            "mobile": {
+                                                                "type": "string",
+                                                                "example": "9854112547"
+                                                            },
+                                                            "address": {
+                                                                "type": "string",
+                                                                "example": "Shyambhu, Kathmandu"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
@@ -3511,6 +3645,10 @@
         {
             "name": "Tag",
             "description": "Tag"
+        },
+        {
+            "name": "Order",
+            "description": "Order"
         }
     ],
     "components": {
