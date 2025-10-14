@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CODPurchaseController extends Controller
 {
@@ -146,56 +147,63 @@ class CODPurchaseController extends Controller
             'created_at' => now()
         ]; 
         
-        $user = Auth::user();
-        if ($user) { # Logged user
-            DB::transaction(function () use($user, $request, $order_items, $order_detail){
+        $response = null;
+        DB::transaction(function () use($request, $order_detail, $order_items, &$response){
+            $user = Auth::user();
+            $order_code = Str::random(20);
+            if ($user) { # Logged user
                 $order = array_merge(
-                    $request->only(['address', 'description']), 
-                    $order_detail, 
-                    ['user_type' => OrderUserTypeEnum::USER->value]
+                    $request->only(['address', 'description']),
+                    $order_detail,
+                    ['user_type' => OrderUserTypeEnum::USER->value, 'order_code' => $order_code, 'user_id' => $user]
                 );
                 $user->orders()->create($order)->orderItems()->createMany($order_items);
                 $user->cart()->delete();
-            });
-        }else{ # Guest user
-            DB::transaction(function () use ($request, $order_items, $order_detail) {
+            } else { # Guest user
                 $order = array_merge(
                     $request->only(['name', 'email', 'mobile', 'address', 'description']),
                     $order_detail,
-                    ['user_type' => OrderUserTypeEnum::GUEST->value]
+                    ['user_type' => OrderUserTypeEnum::GUEST->value, 'order_code' => $order_code]
                 );
                 Order::create($order)->OrderItems()->createMany($order_items);
-            });
-        }
-        $user = Auth::user();
-        $order_items = $user->latestOrder->orderItems()->with(['package', 'product.variations'])->get()->map(function($item){
-            if ($item->item_type == Product::class) {
-                return [
-                    'item_name' => $item->product->name,
-                    'variant_name' => $item->product->variations->firstWhere('id', $item->item_variant_id)->name,
-                    'quantity' => (int) $item->quantity,
-                    'price' => (float) $item->price,
-                    'total' => (float) $item->total 
-                ];
-            }elseif ($item->item_type == Package::class) {
-                return [
-                    'item_name' => $item->package->name,
-                    'variant_name' => null,
-                    'quantity' => (int) $item->quantity,
-                    'price' => (float) $item->price,
-                    'total' => (float) $item->total
-                ];
             }
+            $user = Auth::user();
+            $order = Order::where('order_code', $order_code)->firstOrFail();
+            $order_items = $order
+                ->orderItems()
+                ->with(['package', 'product.variations'])
+                ->get()
+                ->map(function ($item) {
+                    if ($item->item_type == Product::class) {
+                        return [
+                            'item_name' => $item->product->name,
+                            'variant_name' => $item->product->variations->firstWhere('id', $item->item_variant_id)->name,
+                            'quantity' => (int) $item->quantity,
+                            'price' => (float) $item->price,
+                            'total' => (float) $item->total
+                        ];
+                    } elseif ($item->item_type == Package::class) {
+                        return [
+                            'item_name' => $item->package->name,
+                            'variant_name' => null,
+                            'quantity' => (int) $item->quantity,
+                            'price' => (float) $item->price,
+                            'total' => (float) $item->total
+                        ];
+                    }
+                });            
+
+                $response = [
+                    'amount' => (float) $order->price,
+                    'order_number' => $order->order_code,
+                    'payment_method' => $order->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : 'N/A',
+                    'date' => $order->created_at->format('Y/m/d'),
+                    'ordered_items' => $order_items,
+                    'delivery_address' => $order->address
+                ];
         });
-        $order = $user->latestOrder;
-        $response = [
-            'amount' => (float) $order->price,
-            'order_number' => $order->order_code,
-            'payment_method' => $order->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : 'N/A',
-            'date' => $order->created_at->format('Y/m/d'),
-            'ordered_items' => $order_items,
-            'delivery_address' => $order->address
-        ];
+
+
         return $this->apiSuccess("Your order has been placed successfully.", $response);
     }
 }

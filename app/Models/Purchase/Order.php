@@ -11,6 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_type',
+        'order_code',
         'name', 
         'email', 
         'mobile', 
@@ -27,13 +28,13 @@ class Order extends Model
         'created_at' => 'datetime',
     ];
 
-    public static function boot()
+    /* public static function boot()
     {
         parent::boot();
         static::creating(function ($item) {
             $item->order_code = Str::random(20);
         });
-    }
+    } */
     
     function orderItems() {
         return $this->hasMany(OrderItem::class);
