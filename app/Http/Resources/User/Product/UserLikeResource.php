@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Http\Resources\User\Product;
+
+use App\Models\Product;
+use App\Traits\HelperTrait;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class UserLikeResource extends JsonResource
+{
+    use HelperTrait;
+
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        $product = $this->product;
+        $item = $product->cheapestVariation;
+
+        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $product->discount_percent);
+
+        return [
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'brand' => $product->brand->name,
+            'rating' => (float) $product->rating,
+            'price' => $price,
+            'previous_price' => $previous_price,
+            'feature_image' => $product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
+            'liked' => $this->whenLoaded('likes', fn() => $product->likes->count() ? true : false)
+        ];
+    }
+}

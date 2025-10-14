@@ -351,6 +351,70 @@
                 ]
             }
         },
+        "/liked-products": {
+            "get": {
+                "tags": [
+                    "Favourite"
+                ],
+                "summary": "List of liked products of a user.",
+                "description": "List of liked products of a user.",
+                "operationId": "ProductFavoutiteList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "description": "Pagination page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful toggle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item added to favourite"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/get-brand-list": {
             "get": {
                 "tags": [

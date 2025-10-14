@@ -11,4 +11,8 @@ class Like extends Model
     protected $fillable = [
         'user_id'
     ];
+
+    function product() {
+        return $this->belongsTo(Product::class, 'likable_id');
+    }
 }
