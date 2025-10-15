@@ -19,11 +19,13 @@ class VendorProductPrice extends Model
 
     public $timestamps = false;
 
-    function ProductVendor(){
+    function ProductVendor()
+    {
         return $this->belongsTo(ProductVendor::class);
     }
 
-    function variation() {
-        return $this->belongsTo(ProductVariation::class,'product_variation_id');
+    function variation()
+    {
+        return $this->belongsTo(ProductVariation::class, 'product_variation_id');
     }
 }
