@@ -157,7 +157,7 @@ class WishlistController extends Controller
     function myWishlist(Request $request)
     {
         $per_page = $request->query('per_page');
-        $pagination = Wishlist::with(['product.cheapestVariation', 'product.media', 'product.brand', 'product.likes','package.media'])
+        $pagination = Wishlist::with(['product.cheapestVariation', 'product.media', 'product.brand', 'product.likes','package.media', 'package.likes'])
             ->where('user_id', Auth::id())
             ->paginate($per_page);
         $data  = $this->makePaginationResponse($pagination, fn($item) => UserWishlistResource::collection($item))->data;

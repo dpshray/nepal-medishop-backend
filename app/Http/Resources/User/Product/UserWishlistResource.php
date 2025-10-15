@@ -50,7 +50,7 @@ class UserWishlistResource extends JsonResource
                 'price' => $price,
                 'previous_price' => $previous_price,
                 'feature_image' => $this->package->getFirstMediaUrl(Package::PACKAGE_FEATURED),
-                'liked' => null
+                'liked' => $package->likes->count() ? true : false
             ];
         }
         return $data;
