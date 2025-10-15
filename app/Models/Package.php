@@ -37,9 +37,9 @@ class Package extends Model implements HasMedia
         return $this->hasMany(PackageProduct::class);
     }
 
-    function likes()
+    function wishlists()
     {
-        return $this->morphMany(Like::class, 'likable')->where('likable_type', __CLASS__);
+        return $this->morphMany(Wishlist::class, 'wishable')->where('wishable_type', __CLASS__);
     }
 
     function reviews()

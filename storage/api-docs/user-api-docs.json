@@ -362,7 +362,7 @@
                 "parameters": [
                     {
                         "name": "page",
-                        "in": "path",
+                        "in": "query",
                         "description": "Pagination page number",
                         "required": false,
                         "schema": {
@@ -372,7 +372,7 @@
                     },
                     {
                         "name": "per_page",
-                        "in": "path",
+                        "in": "query",
                         "description": "Item per page",
                         "required": false,
                         "schema": {
@@ -2583,6 +2583,240 @@
                     }
                 ]
             }
+        },
+        "/wishlist/{slug}/product": {
+            "get": {
+                "tags": [
+                    "Wishlist"
+                ],
+                "summary": "Toggle a wishlist status of a product",
+                "description": "Toggle a wishlist status of a product.",
+                "operationId": "ProductWishlistToggle",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "soluta-cum-reiciendis-dolorum-sunt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful toggle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item added to wishlist"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/wishlist/{slug}/package": {
+            "get": {
+                "tags": [
+                    "Wishlist"
+                ],
+                "summary": "Toggle a wishlist status of a package",
+                "description": "Toggle a wishlist status of a package.",
+                "operationId": "PackageWishlistToggle",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of package",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "soluta-cum-reiciendis-dolorum-sunt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful toggle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Item added to wishlist"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/wishlist-items": {
+            "get": {
+                "tags": [
+                    "Wishlist"
+                ],
+                "summary": "List of wishlist items of a user.",
+                "description": "List of wishlist items of a user.",
+                "operationId": "WishlistList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Pagination page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of wishlist items.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of wishlist items."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "type": {
+                                                                "type": "string",
+                                                                "example": "product"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Debitis debitis autem consectetur saepe."
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "debitis-debitis-autem-consectetur-saepe"
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1.5
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Sanofi",
+                                                                "nullable": true
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 133.44
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 139,
+                                                                "nullable": true
+                                                            },
+                                                            "feature_image": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/91/medi-plaster.png"
+                                                            },
+                                                            "liked": {
+                                                                "type": "boolean",
+                                                                "example": true,
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
@@ -2621,6 +2855,10 @@
         {
             "name": "ProductReview",
             "description": "ProductReview"
+        },
+        {
+            "name": "Wishlist",
+            "description": "Wishlist"
         }
     ],
     "components": {

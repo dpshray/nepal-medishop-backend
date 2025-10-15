@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Client\Purchase\ClientCartController;
 use App\Http\Controllers\Api\V1\Client\Purchase\CODPurchaseController;
 use App\Http\Controllers\Api\V1\Client\Review\PackageReviewController;
 use App\Http\Controllers\Api\V1\Client\Review\ProductReviewController;
+use App\Http\Controllers\Api\V1\Client\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(MasterDataController::class)->group(function(){
@@ -21,8 +22,13 @@ Route::controller(MasterDataController::class)->group(function(){
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::controller(LikeController::class)->group(function(){
         Route::get('favourite/{product:slug}/product', 'toggleProductFavourite');
-        Route::get('favourite/{package:slug}/package', 'togglePackageFavourite');
         Route::get('liked-items', 'myLikedItems');
+    });
+    Route::controller(WishlistController::class)->group(function(){
+        Route::get('wishlist/{product:slug}/product', 'toggleProductWishlist');
+        Route::get('wishlist/{package:slug}/package', 'togglePackageWishlist');
+        Route::get('wishlist-items', 'myWishlist');
+
     });
     Route::controller(ClientCartController::class)->group(function(){
         Route::post('add-to-cart', 'storeOnCart');
