@@ -69,6 +69,11 @@ class Product extends Model implements HasMedia
         return $this->morphMany(Like::class, 'likable')->where('likable_type', __CLASS__);
     }
 
+    function wishlists()
+    {
+        return $this->morphMany(Wishlist::class, 'wishable')->where('wishable_type', __CLASS__);
+    }
+
     function reviews()
     {
         return $this->morphMany(Review::class, 'reviewable')->where('reviewable_type', __CLASS__);

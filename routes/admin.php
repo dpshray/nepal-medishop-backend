@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
+use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
 use App\Http\Controllers\Api\V1\Purchase\AdminCODController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -39,4 +40,5 @@ Route::prefix('admin')
         Route::get('vendorproductlist',[AdminVendorProductController::class,'vendorProductList']);
         Route::patch('vendor-product-prices/{id}/approve', [AdminVendorProductController::class, 'approveVendorProduct']);
         Route::delete('vendor-product-prices/{id}', [AdminVendorProductController::class, 'deleteVendorProduct']);
+        Route::apiResource('user-order', AdminOrderController::class);
 });

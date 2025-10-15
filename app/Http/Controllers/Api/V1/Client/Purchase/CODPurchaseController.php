@@ -93,10 +93,12 @@ class CODPurchaseController extends Controller
      * )
      */
     function __invoke(CODRequest $request)
-    {
-        // return $request->all();
-
+    {        
+        if (!$request->hasAny(['products', 'packages'])) {
+            return $this->apiError("At least one product or package must be included in the order.", 422);
+        }
         $products_ordered = [];
+
         if ($request->has('products')) {
             $product_slug = $request->collect('products')->pluck('product_slug');
             $products = Product::select('id', 'slug', 'discount_percent')->with(['variations:id,product_id,platform_price'])->whereIn('slug', $product_slug)->get()->keyBy('slug');
@@ -159,7 +161,8 @@ class CODPurchaseController extends Controller
                     ['user_type' => OrderUserTypeEnum::USER->value, 'order_code' => $order_code, 'user_id' => $user]
                 );
                 $user->orders()->create($order)->orderItems()->createMany($order_items);
-                $user->cart()->delete();
+                $item_slugs = $request->collect('packages')->pluck('package_slug')->merge($request->collect('products')->pluck('product_slug'));
+                $user->cart()->whereIn('item_slug', $item_slugs)->delete();
             } else { # Guest user
                 $order = array_merge(
                     $request->only(['name', 'email', 'mobile', 'address', 'description']),
@@ -197,7 +200,7 @@ class CODPurchaseController extends Controller
             $response = [
                 'amount' => (float) $order->price,
                 'order_number' => $order->order_code,
-                'payment_method' => $order->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : 'N/A',
+                'payment_method' => $order->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : $order->payment_method,
                 'date' => $order->created_at->format('Y/m/d'),
                 'ordered_items' => $order_items,
                 'delivery_address' => $order->address

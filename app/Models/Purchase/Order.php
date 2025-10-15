@@ -2,11 +2,15 @@
 
 namespace App\Models\Purchase;
 
+use App\Models\Traits\UuidModelTrait;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Order extends Model
 {
+    use UuidModelTrait;
+    
     public $timestamps = false;
 
     protected $fillable = [
@@ -38,5 +42,9 @@ class Order extends Model
     
     function orderItems() {
         return $this->hasMany(OrderItem::class);
+    }
+
+    function user() {
+        return $this->belongsTo(User::class);
     }
 }

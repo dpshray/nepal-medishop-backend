@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Api\V1\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\Product\UserLikeResource;
+use App\Models\Like;
 use App\Models\Package;
 use App\Models\Product;
+use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
-    use ResponseTrait;
+    use ResponseTrait, PaginationTrait;
     /**
      * @OA\Get(
      *     security={{"sanctum": {}}},
@@ -51,5 +54,48 @@ class LikeController extends Controller
             $query->create(['user_id' => Auth::id()]);
         }
         return $this->apiSuccess($msg);
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/liked-items",
+     *     summary="List of liked products of a user.",
+     *     description="List of liked products of a user.",
+     *     operationId="ProductFavoutiteList",
+     *     tags={"Favourite"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Pagination page number",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Item per page",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful toggle",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Item added to favourite"),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function myLikedItems(Request $request) {
+        $per_page = $request->query('per_page');
+        $pagination = Like::with(['product.cheapestVariation','product.media','product.brand'])
+            ->where('user_id', Auth::id())
+            ->paginate($per_page);
+        $data  = $this->makePaginationResponse($pagination, fn($item) => UserLikeResource::collection($item))->data;
+        return $this->apiSuccess('List of liked items.', $data);
     }
 }

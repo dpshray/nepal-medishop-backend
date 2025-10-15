@@ -3486,320 +3486,131 @@
                 ]
             }
         },
-        "/admin/vendorproductlist": {
+        "/admin/user-order": {
             "get": {
                 "tags": [
-                    "Vendor Products list"
+                    "Order"
                 ],
-                "summary": "Get paginated list of vendor products",
-                "description": "Retrieve a paginated list of vendor products including variations and vendor info. Supports optional search by product name.",
-                "operationId": "5c9b335a722024b654f700a46dd7f572",
+                "summary": "Get all user orders.",
+                "description": "Get all user orders.\n     *      payment_method: Cash on Delivery | \n     *      payment_status: PENDING, PAID, FAILED |\n     *      status: PENDING, SHIPPED, DELIVERED",
+                "operationId": "UserOrderList",
                 "parameters": [
                     {
-                        "name": "per_page",
+                        "name": "page",
                         "in": "query",
-                        "description": "Number of items per page",
+                        "description": "Page number of list",
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "example": 10
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
                         }
                     },
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "Search term for product name",
+                        "description": "Search an order based on name/email/mobile/address",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "Soap"
+                            "example": ""
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Vendor products retrieved successfully",
+                        "description": "List of orders.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "message": {
                                             "type": "string",
-                                            "example": "Vendor products retrieved successfully."
+                                            "example": "List of orders"
                                         },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "status": {
-                                                        "type": "boolean",
-                                                        "example": true
-                                                    },
-                                                    "vendor": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
                                                         "properties": {
-                                                            "id": {
+                                                            "order_uuid": {
+                                                                "type": "string",
+                                                                "example": "e184e023-f7eb-4f46-ac3a-363237e158c0"
+                                                            },
+                                                            "payment_method": {
+                                                                "type": "string",
+                                                                "example": "Cash on Delivery"
+                                                            },
+                                                            "payment_status": {
+                                                                "type": "string",
+                                                                "example": "PAID"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "DELIVERED"
+                                                            },
+                                                            "no_of_ordered_items": {
                                                                 "type": "integer",
-                                                                "example": 5
+                                                                "example": 4
+                                                            },
+                                                            "order_code": {
+                                                                "type": "string",
+                                                                "example": "dfSde1NOo3J5XR9Hw833"
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Vendor Name"
+                                                                "example": "James P. Sullivan"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "james.sullivan100@example.com"
+                                                            },
+                                                            "mobile": {
+                                                                "type": "string",
+                                                                "example": "9854112547"
+                                                            },
+                                                            "address": {
+                                                                "type": "string",
+                                                                "example": "Shyambhu, Kathmandu"
                                                             }
                                                         },
                                                         "type": "object"
-                                                    },
-                                                    "product_variation": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 12
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Variation Name"
-                                                            },
-                                                            "product_name": {
-                                                                "type": "string",
-                                                                "example": "Product Name"
-                                                            },
-                                                            "size_value": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 250
-                                                            },
-                                                            "size_unit": {
-                                                                "type": "string",
-                                                                "example": "ml"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    },
-                                                    "price": {
-                                                        "type": "number",
-                                                        "format": "float",
-                                                        "example": 499.99
-                                                    },
-                                                    "units_in_stock": {
-                                                        "type": "integer",
-                                                        "example": 20
                                                     }
                                                 },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "pagination": {
-                                            "properties": {
-                                                "current_page": {
+                                                "page": {
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "per_page": {
+                                                "total_page": {
                                                     "type": "integer",
-                                                    "example": 10
+                                                    "example": 1
                                                 },
-                                                "total": {
+                                                "total_items": {
                                                     "type": "integer",
-                                                    "example": 150
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 15
+                                                    "example": 3
                                                 }
                                             },
                                             "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/admin/vendor-product-prices/{id}/approve": {
-            "patch": {
-                "tags": [
-                    "Vendor Products list"
-                ],
-                "summary": "Approve or disapprove a vendor product",
-                "description": "This endpoint updates the approval status (is_approved) of a vendor product in the VendorProductPrice table.",
-                "operationId": "4a73c601e4810e1003ae6983815e8175",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the vendor product price entry",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 5
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "is_approved"
-                                ],
-                                "properties": {
-                                    "is_approved": {
-                                        "description": "Approval status: true = approved, false = disapproved",
-                                        "type": "boolean",
-                                        "example": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Vendor product approval status updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
+                                        },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Vendor product approved successfully."
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
-                    },
-                    "404": {
-                        "description": "Vendor product not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Vendor product not found."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The is_approved field is required."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/admin/vendor-product-prices/{id}": {
-            "delete": {
-                "tags": [
-                    "Vendor Products list"
-                ],
-                "summary": "Delete a vendor product",
-                "description": "Deletes a vendor product by its ID.",
-                "operationId": "fd388ebf28f4e3a264245e2d6ef5c22c",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the vendor product to delete",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 5
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Vendor product deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Vendor product deleted successfully."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Vendor product not found"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
                     }
                 },
                 "security": [
@@ -3836,8 +3647,8 @@
             "description": "Tag"
         },
         {
-            "name": "Vendor Products list",
-            "description": "Vendor Products list"
+            "name": "Order",
+            "description": "Order"
         }
     ],
     "components": {
