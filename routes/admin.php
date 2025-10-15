@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
+use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
 use App\Http\Controllers\Api\V1\Purchase\AdminCODController;
 use App\Http\Middleware\AdminMiddleware;
@@ -35,5 +36,9 @@ Route::prefix('admin')
         Route::apiResource('package',AdminPackageController::class)->scoped(['package' => 'slug']);
         Route::post('package/{slug}/add-product',[AdminPackageController::class,'add_product_to_package']);
         Route::post('package/{slug}/update-product',[AdminPackageController::class,'update_package_product']);
+        Route::delete('package/{slug}/products',[AdminPackageController::class,'deleteProductFromPackage']);
+        Route::get('vendorproductlist',[AdminVendorProductController::class,'vendorProductList']);
+        Route::patch('vendor-product-prices/{id}/approve', [AdminVendorProductController::class, 'approveVendorProduct']);
+        Route::delete('vendor-product-prices/{id}', [AdminVendorProductController::class, 'deleteVendorProduct']);
         Route::apiResource('user-order', AdminOrderController::class);
 });

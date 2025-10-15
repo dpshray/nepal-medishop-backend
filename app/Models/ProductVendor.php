@@ -16,11 +16,17 @@ class ProductVendor extends Model
 
     public $timestamps = false;
 
-    function vendorPrices(){
+    function vendorPrices()
+    {
         return $this->hasMany(VendorProductPrice::class);
     }
 
-    function product(){
+    function product()
+    {
         return $this->belongsTo(Product::class);
+    }
+    public function vendor()
+    {
+        return $this->belongsTo(User::class, 'vendor_id');
     }
 }

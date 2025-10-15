@@ -669,9 +669,9 @@ class AdminPackageController extends Controller
     public function deleteProductFromPackage($slug, Request $request)
     {
         $validated = $request->validate([
-            'product_variation_id' => 'required|integer||exists:product_variations,id',
+            'product_variation_id' => 'required|integer|exists:product_variations,id',
         ]);
-        $package = Package::where('slug', $slug)->first();
+        $package = Package::where('slug', $slug)->firstorfail();
         $package->products()->detach($validated['product_variation_id']);
         return $this->apiSuccess('Products removed from package successfully.');
     }
