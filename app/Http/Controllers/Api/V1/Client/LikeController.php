@@ -66,14 +66,14 @@ class LikeController extends Controller
      *     tags={"Favourite"},
      *     @OA\Parameter(
      *         name="page",
-     *         in="path",
+     *         in="query",
      *         required=false,
      *         description="Pagination page number",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Parameter(
      *         name="per_page",
-     *         in="path",
+     *         in="query",
      *         required=false,
      *         description="Item per page",
      *         @OA\Schema(type="integer", example=1)
