@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
+use App\Http\Controllers\Api\V1\Admin\User\AdminUserController;
 use App\Http\Controllers\Api\V1\Purchase\AdminCODController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -40,5 +41,7 @@ Route::prefix('admin')
         Route::get('vendorproductlist',[AdminVendorProductController::class,'vendorProductList']);
         Route::patch('vendor-product-prices/{id}/approve', [AdminVendorProductController::class, 'approveVendorProduct']);
         Route::delete('vendor-product-prices/{id}', [AdminVendorProductController::class, 'deleteVendorProduct']);
+        Route::get('vendor-product-prices-detail/{id}', [AdminVendorProductController::class, 'detail']);
         Route::apiResource('user-order', AdminOrderController::class);
+        Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
 });

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('vendor_product_prices', function (Blueprint $table) {
             $table->id();
-            $table->boolean('status')->default(0);
+            $table->boolean('status')->nullable();
             $table->unsignedBigInteger('product_vendor_id');
             $table->foreign('product_vendor_id')->references('id')->on('product_vendors')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('product_variation_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();

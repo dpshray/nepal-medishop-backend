@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\UserTypeEnum;
 use App\Models\Purchase\Cart;
 use App\Models\Purchase\Order;
+use App\Models\Purchase\OrderItem;
 use App\Models\Traits\UuidModelTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -94,11 +95,13 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         return $this->morphMany(Like::class, 'likable');
     }
 
-    function cart() {
+    function cart()
+    {
         return $this->hasMany(Cart::class);
     }
 
-    function orders() {
+    function orders()
+    {
         return $this->hasMany(Order::class);
     }
 
@@ -106,7 +109,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     {
         return $this->hasOne(Order::class)->latest();
     }
-    
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::USER_PROFILE)
