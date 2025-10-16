@@ -209,7 +209,7 @@ class CODPurchaseController extends Controller
             $response = [
                 'amount' => (float) $order->price,
                 'order_number' => $order->order_code,
-                'payment_method' => $order->payment_method == $order->payment_method,
+                'payment_method' => $order->payment_method,
                 'date' => $order->created_at->format('Y/m/d'),
                 'ordered_items' => $order_items,
                 'delivery_address' => $order->address
