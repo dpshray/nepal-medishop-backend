@@ -7,5 +7,6 @@ enum PaymentStatusEnum: string
     case INITIATED = 'INITIATED'; 
     case PENDING = 'PENDING'; 
     case PAID = 'PAID';  
+    case UNPAID = 'UNPAID'; 
     case FAILED = 'FAILED'; 
 }

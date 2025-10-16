@@ -20,7 +20,7 @@ class OrderListResource extends JsonResource
         // return parent::toArray($request);
         $data = [
             'order_uuid' => $this->uuid,
-            "payment_method" => $this->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : $this->payment_method,
+            "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
             "status" => $this->status,
             'no_of_ordered_items' => $this->whenCounted('orderItems')
