@@ -24,7 +24,7 @@ class UserOrderDetailResource extends JsonResource
             "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
             "status" => $this->status,
-            "created_at" => $this->created_at,
+            "created_at" => $this->created_at->format('Y/m/d'),
             'ordered_items' => $this->orderItems->map(function($item){
                 $data = [
                     'item_name' => $item->item_name,
