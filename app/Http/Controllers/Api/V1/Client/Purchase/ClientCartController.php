@@ -89,7 +89,7 @@ class ClientCartController extends Controller
                 'item_name' => $product_w_variant->name,
                 'item_slug' => $product_w_variant->slug,
                 'brand_name' => $product_w_variant->brand->name,
-                'variant_name' => ((float) $product_variation->size_value).' '. $product_variation->size_unit,
+                'variant_name' => $product_variation->name,
                 'quantity' => $request->quantity,
                 'price' => $price,
                 'subtotal' => $price * $request->quantity,
