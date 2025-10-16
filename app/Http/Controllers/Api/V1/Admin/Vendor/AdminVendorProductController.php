@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin\Vendor;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\Vendor\VendorProductPriceDetailResource;
 use App\Http\Resources\Admin\Vendor\VendorProductPriceListResource;
 use App\Models\ProductVendor;
 use App\Models\VendorProductPrice;
@@ -226,5 +227,59 @@ class AdminVendorProductController extends Controller
         $vendorProduct = VendorProductPrice::findOrFail($id);
         $vendorProduct->delete();
         return $this->apiSuccess('Vendor product deleted successfully.');
+    }
+    /**
+     * @OA\Get(
+     *     path="/admin/vendor-product-prices-detail/{id}",
+     *     summary="Get vendor product detail",
+     *     description="Retrieve detailed information about a specific vendor product, including variation and vendor details.",
+     *     tags={"Vendor Products list"},
+     *     security={{"sanctum": {}}},
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the vendor product",
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vendor product detail retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Vendor product detail retrieved successfully."),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="status", type="boolean", example=true),
+     *                 @OA\Property(property="is_approved", type="boolean", example=true),
+     *                 @OA\Property(property="price", type="number", format="float", example=1200.50),
+     *                 @OA\Property(property="units_in_stock", type="integer", example=25),
+     *                 @OA\Property(property="vendor", type="object",
+     *                     @OA\Property(property="id", type="integer", example=3),
+     *                     @OA\Property(property="name", type="string", example="ABC Traders")
+     *                 ),
+     *                 @OA\Property(property="product_variation", type="object",
+     *                     @OA\Property(property="id", type="integer", example=5),
+     *                     @OA\Property(property="name", type="string", example="500ml Bottle"),
+     *                     @OA\Property(property="product_name", type="string", example="Mineral Water"),
+     *                     @OA\Property(property="size_value", type="number", example=500),
+     *                     @OA\Property(property="size_unit", type="string", example="ml")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Vendor product not found"),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=500, description="Internal Server Error")
+     * )
+     */
+    public function detail($id)
+    {
+        $vendorProduct = VendorProductPrice::with(['variation.product', 'ProductVendor'])->findOrFail($id);
+        $data = new VendorProductPriceDetailResource($vendorProduct);
+        return $this->apiSuccess('Vendor product detail retrieved successfully.', $data);
     }
 }
