@@ -383,19 +383,104 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful toggle",
+                        "description": "List of liked items.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Item added to favourite"
+                                            "example": "List of liked items."
                                         },
                                         "data": {
-                                            "type": "string",
-                                            "example": null,
-                                            "nullable": true
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Debitis debitis autem consectetur saepe."
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "debitis-debitis-autem-consectetur-saepe"
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Sanofi"
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 133.44
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 139
+                                                            },
+                                                            "feature_image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/91/medi-plaster.png"
+                                                            },
+                                                            "variations": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "variation_id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-1"
+                                                                        },
+                                                                        "size_value": {
+                                                                            "type": "number",
+                                                                            "example": 100
+                                                                        },
+                                                                        "size_unit": {
+                                                                            "type": "string",
+                                                                            "example": "patch"
+                                                                        },
+                                                                        "price": {
+                                                                            "type": "number",
+                                                                            "example": 139
+                                                                        },
+                                                                        "previous_price": {
+                                                                            "type": "number",
+                                                                            "example": null,
+                                                                            "nullable": true
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "success": {
                                             "type": "boolean",
@@ -580,7 +665,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "All product lists",
+                        "description": "All product lists.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -597,39 +682,75 @@
                                                         "properties": {
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Consequuntur sunt suscipit dolorem maxime ut."
+                                                                "example": "Ratione vero commodi recusandae repellendus."
                                                             },
                                                             "slug": {
                                                                 "type": "string",
-                                                                "example": "consequuntur-sunt-suscipit-dolorem-maxime-ut"
+                                                                "example": "ratione-vero-commodi-recusandae-repellendus"
                                                             },
                                                             "brand": {
                                                                 "type": "string",
-                                                                "example": "AstraZeneca"
+                                                                "example": "Roche"
                                                             },
                                                             "rating": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 3.7
+                                                                "example": 3.6
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 2016.7
+                                                                "example": 160.32
                                                             },
                                                             "previous_price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 2345,
+                                                                "example": 167,
                                                                 "nullable": true
                                                             },
                                                             "feature_image": {
                                                                 "type": "string",
-                                                                "example": "http://192.168.100.23:8008/storage/576/visc-inhaler.jpg"
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/626/tablets.jpg"
                                                             },
                                                             "liked": {
                                                                 "type": "boolean",
                                                                 "example": false
+                                                            },
+                                                            "variations": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "variation_id": {
+                                                                            "type": "integer",
+                                                                            "example": 312
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-1"
+                                                                        },
+                                                                        "size_value": {
+                                                                            "type": "number",
+                                                                            "example": 100
+                                                                        },
+                                                                        "size_unit": {
+                                                                            "type": "string",
+                                                                            "example": "mcg"
+                                                                        },
+                                                                        "price": {
+                                                                            "type": "number",
+                                                                            "format": "float",
+                                                                            "example": 160.32
+                                                                        },
+                                                                        "previous_price": {
+                                                                            "type": "number",
+                                                                            "format": "float",
+                                                                            "example": 167,
+                                                                            "nullable": true
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
                                                             }
                                                         },
                                                         "type": "object"
@@ -641,11 +762,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 30
+                                                    "example": 50
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 300
+                                                    "example": 500
                                                 }
                                             },
                                             "type": "object"
