@@ -66,12 +66,19 @@ class Package extends Model implements HasMedia
     {
         $price = (float) $this->price;
         $previous_price = null;
-        if (!empty($this->discount_percent)) {
+
+        // Apply discount only if discount_percent exists and is greater than 0
+        if (!is_null($this->discount_percent) && $this->discount_percent > 0) {
             $previous_price = $price;
             $price = (float) ($price - (($this->discount_percent * $price) / 100));
         }
-        return ['price' => $price, 'previous_price' => $previous_price];
+
+        return [
+            'price' => $price,
+            'previous_price' => $previous_price,
+        ];
     }
+
 
     public function products()
     {
