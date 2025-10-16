@@ -24,7 +24,7 @@ class ProductVariation extends Model
     }
 
 
-    function getOriginalPriceAttribute()
+    function getOriginalPriceAttribute(): array
     {
         $product = $this->product;
         $price = (float) $this->platform_price;
