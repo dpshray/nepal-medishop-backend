@@ -31,7 +31,20 @@ class UserLikeResource extends JsonResource
             'price' => $price,
             'previous_price' => $previous_price,
             'feature_image' => $product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
-            'liked' => $this->whenLoaded('likes', fn() => $product->likes->count() ? true : false)
+            'liked' => $this->whenLoaded('likes', fn() => $product->likes->count() ? true : false),
+            'variations' => $product->variations->map(
+                function ($item) use($product) {
+                    ['price' => $v_price, 'previous_price' => $v_previous_price] = $this->calculateDiscountPrice($item->platform_price, $product->discount_percent);
+                    return [
+                        'variation_id' => $item->id,
+                        'name' => $item->name,
+                        'size_value' => (float)$item->size_value,
+                        'size_unit' => $item->size_unit,
+                        'price' => $v_price,
+                        'previous_price' => $v_previous_price
+                    ];
+                }
+            )
         ];
     }
 }

@@ -383,19 +383,104 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful toggle",
+                        "description": "List of liked items.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Item added to favourite"
+                                            "example": "List of liked items."
                                         },
                                         "data": {
-                                            "type": "string",
-                                            "example": null,
-                                            "nullable": true
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Debitis debitis autem consectetur saepe."
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "debitis-debitis-autem-consectetur-saepe"
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Sanofi"
+                                                            },
+                                                            "rating": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 133.44
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 139
+                                                            },
+                                                            "feature_image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/91/medi-plaster.png"
+                                                            },
+                                                            "variations": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "variation_id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-1"
+                                                                        },
+                                                                        "size_value": {
+                                                                            "type": "number",
+                                                                            "example": 100
+                                                                        },
+                                                                        "size_unit": {
+                                                                            "type": "string",
+                                                                            "example": "patch"
+                                                                        },
+                                                                        "price": {
+                                                                            "type": "number",
+                                                                            "example": 139
+                                                                        },
+                                                                        "previous_price": {
+                                                                            "type": "number",
+                                                                            "example": null,
+                                                                            "nullable": true
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "success": {
                                             "type": "boolean",
@@ -580,7 +665,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "All product lists",
+                        "description": "All product lists.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -597,39 +682,75 @@
                                                         "properties": {
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Consequuntur sunt suscipit dolorem maxime ut."
+                                                                "example": "Ratione vero commodi recusandae repellendus."
                                                             },
                                                             "slug": {
                                                                 "type": "string",
-                                                                "example": "consequuntur-sunt-suscipit-dolorem-maxime-ut"
+                                                                "example": "ratione-vero-commodi-recusandae-repellendus"
                                                             },
                                                             "brand": {
                                                                 "type": "string",
-                                                                "example": "AstraZeneca"
+                                                                "example": "Roche"
                                                             },
                                                             "rating": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 3.7
+                                                                "example": 3.6
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 2016.7
+                                                                "example": 160.32
                                                             },
                                                             "previous_price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 2345,
+                                                                "example": 167,
                                                                 "nullable": true
                                                             },
                                                             "feature_image": {
                                                                 "type": "string",
-                                                                "example": "http://192.168.100.23:8008/storage/576/visc-inhaler.jpg"
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/626/tablets.jpg"
                                                             },
                                                             "liked": {
                                                                 "type": "boolean",
                                                                 "example": false
+                                                            },
+                                                            "variations": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "variation_id": {
+                                                                            "type": "integer",
+                                                                            "example": 312
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-1"
+                                                                        },
+                                                                        "size_value": {
+                                                                            "type": "number",
+                                                                            "example": 100
+                                                                        },
+                                                                        "size_unit": {
+                                                                            "type": "string",
+                                                                            "example": "mcg"
+                                                                        },
+                                                                        "price": {
+                                                                            "type": "number",
+                                                                            "format": "float",
+                                                                            "example": 160.32
+                                                                        },
+                                                                        "previous_price": {
+                                                                            "type": "number",
+                                                                            "format": "float",
+                                                                            "example": 167,
+                                                                            "nullable": true
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
                                                             }
                                                         },
                                                         "type": "object"
@@ -641,11 +762,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 30
+                                                    "example": 50
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 300
+                                                    "example": 500
                                                 }
                                             },
                                             "type": "object"
@@ -1269,7 +1390,7 @@
                                 "properties": {
                                     "payment_method": {
                                         "type": "string",
-                                        "example": "COD"
+                                        "example": "Cash on Delivery"
                                     },
                                     "name": {
                                         "type": "string",
@@ -1729,6 +1850,238 @@
                                         },
                                         "success": {
                                             "description": "Indicates if the operation was successful",
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/my-orders": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Fetch orders of a logged in user.",
+                "description": "Fetch orders of a logged in user.NOTE: \n     *      payment_status values can be: PENDING, PAID, UNPAID, FAILED | \n     *      order_status values can be : PENDING, SHIPPED, DELIVERED",
+                "operationId": "MyOrders",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "query",
+                        "description": "UUID of an order",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Pagination page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of orders.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of orders."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "1961ab8b-dcd4-4d6b-b775-bbc524bf1e4f"
+                                                            },
+                                                            "order_code": {
+                                                                "type": "string",
+                                                                "example": "ZoNPT9RzFSkz1WPPjsWB"
+                                                            },
+                                                            "address": {
+                                                                "type": "string",
+                                                                "example": "Sitapaila, Kathmandu"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "some description of this order COD"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 31390.29
+                                                            },
+                                                            "payment_method": {
+                                                                "type": "string",
+                                                                "example": "Cash on Delivery"
+                                                            },
+                                                            "payment_status": {
+                                                                "type": "string",
+                                                                "example": "UNPAID"
+                                                            },
+                                                            "order_status": {
+                                                                "type": "string",
+                                                                "example": "PENDING"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2025/10/14"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Order detail retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order Detail."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "order_code": {
+                                                    "type": "string",
+                                                    "example": "iApEu2O1fs479ftWP7GA"
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "Shyambhu, Kathmandu"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "some description of this order COD"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 31390.29
+                                                },
+                                                "payment_method": {
+                                                    "type": "string",
+                                                    "example": "Cash on Delivery"
+                                                },
+                                                "payment_status": {
+                                                    "type": "string",
+                                                    "example": "UNPAID"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "PENDING"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-16T09:38:05.000000Z"
+                                                },
+                                                "ordered_items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "type": {
+                                                                "type": "string",
+                                                                "example": "product"
+                                                            },
+                                                            "item_name": {
+                                                                "type": "string",
+                                                                "example": "Debitis debitis autem consectetur saepe."
+                                                            },
+                                                            "variant_name": {
+                                                                "type": "string",
+                                                                "example": "Variant-2",
+                                                                "nullable": true
+                                                            },
+                                                            "variant_size": {
+                                                                "type": "string",
+                                                                "example": "200.00 patch",
+                                                                "nullable": true
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1385.28
+                                                            },
+                                                            "subtotal": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2770.56
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
                                             "type": "boolean",
                                             "example": true
                                         }

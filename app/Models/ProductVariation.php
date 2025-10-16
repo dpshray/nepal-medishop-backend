@@ -16,10 +16,27 @@ class ProductVariation extends Model
         'size_value',
         'size_unit',
         'platform_price',
-        'platform_discount_price',
+        'platform_discount_price'
     ];
     
     function product(){
         return $this->belongsTo(Product::class);
+    }
+
+
+    function getOriginalPriceAttribute()
+    {
+        $product = $this->product;
+        $price = (float) $this->platform_price;
+        $previous_price = null;
+        if (!empty($product->discount_percent)) {
+            $previous_price = $price;
+            $price = (float) ($price - (($product->discount_percent * $price) / 100));
+        }elseif ($product->categories->firstWhere('discount_percent','!=',null)) {
+            $discount_percent = $product->categories->firstWhere('discount_percent', '!=', null)->discount_percent;
+            $previous_price = $price;
+            $price = (float) ($price - (($discount_percent * $price) / 100));
+        }
+        return ['price' => $price, 'previous_price' => $previous_price];
     }
 }

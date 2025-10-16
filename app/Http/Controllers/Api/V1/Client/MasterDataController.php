@@ -137,7 +137,7 @@ class MasterDataController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="All product lists",
+     *         description="All product lists.",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="All product lists."),
      *             @OA\Property(
@@ -147,24 +147,35 @@ class MasterDataController extends Controller
      *                     property="items",
      *                     type="array",
      *                     @OA\Items(
-     *                         type="object",
-     *                         @OA\Property(property="name", type="string", example="Consequuntur sunt suscipit dolorem maxime ut."),
-     *                         @OA\Property(property="slug", type="string", example="consequuntur-sunt-suscipit-dolorem-maxime-ut"),
-     *                         @OA\Property(property="brand", type="string", example="AstraZeneca"),
-     *                         @OA\Property(property="rating", type="number", format="float", example=3.7),
-     *                         @OA\Property(property="price", type="number", format="float", example=2016.7),
-     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=2345),
-     *                         @OA\Property(property="feature_image", type="string", example="http://192.168.100.23:8008/storage/576/visc-inhaler.jpg"),
-     *                         @OA\Property(property="liked", type="boolean", example=false)
+     *                         @OA\Property(property="name", type="string", example="Ratione vero commodi recusandae repellendus."),
+     *                         @OA\Property(property="slug", type="string", example="ratione-vero-commodi-recusandae-repellendus"),
+     *                         @OA\Property(property="brand", type="string", example="Roche"),
+     *                         @OA\Property(property="rating", type="number", format="float", example=3.6),
+     *                         @OA\Property(property="price", type="number", format="float", example=160.32),
+     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=167),
+     *                         @OA\Property(property="feature_image", type="string", format="url", example="http://192.168.100.23:8008/storage/626/tablets.jpg"),
+     *                         @OA\Property(property="liked", type="boolean", example=false),
+     *                         @OA\Property(
+     *                             property="variations",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 @OA\Property(property="variation_id", type="integer", example=312),
+     *                                 @OA\Property(property="name", type="string", example="Variant-1"),
+     *                                 @OA\Property(property="size_value", type="number", example=100),
+     *                                 @OA\Property(property="size_unit", type="string", example="mcg"),
+     *                                 @OA\Property(property="price", type="number", format="float", example=160.32),
+     *                                 @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=167)
+     *                             )
+     *                         )
      *                     )
      *                 ),
      *                 @OA\Property(property="page_no", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=30),
-     *                 @OA\Property(property="total_items", type="integer", example=300)
+     *                 @OA\Property(property="total_page", type="integer", example=50),
+     *                 @OA\Property(property="total_items", type="integer", example=500)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
-     *     )
+     *     ),
      * )
      */
     function fetchProducts(Request $request){

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
 use App\Http\Controllers\Api\V1\Client\Profile\ClientProfileController;
 use App\Http\Controllers\Api\V1\Client\Purchase\ClientCartController;
+use App\Http\Controllers\Api\V1\Client\Purchase\ClientOrderController;
 use App\Http\Controllers\Api\V1\Client\Purchase\CODPurchaseController;
 use App\Http\Controllers\Api\V1\Client\Review\PackageReviewController;
 use App\Http\Controllers\Api\V1\Client\Review\ProductReviewController;
@@ -49,3 +50,7 @@ Route::put('user/profile', [ClientProfileController::class, 'update']);
 
 /*=====  Purchase Part  ======*/
 Route::post('orders', CODPurchaseController::class);
+Route::controller(ClientOrderController::class)->group(function(){
+    Route::get('my-orders', 'index');
+    Route::get('my-orders/{order:uuid}', 'show');
+});

@@ -34,7 +34,7 @@ class CODPurchaseController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"payment_method","name","email","mobile","address","products"},
-     *             @OA\Property(property="payment_method", type="string", example="COD"),
+     *             @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *             @OA\Property(property="name", type="string", example="James P. Sullivan"),
      *             @OA\Property(property="email", type="string", format="email", example="james.sullivan100@example.com"),
      *             @OA\Property(property="mobile", type="string", example="9854112547"),
@@ -101,18 +101,24 @@ class CODPurchaseController extends Controller
 
         if ($request->has('products')) {
             $product_slug = $request->collect('products')->pluck('product_slug');
-            $products = Product::select('id', 'slug', 'discount_percent')->with(['variations:id,product_id,platform_price'])->whereIn('slug', $product_slug)->get()->keyBy('slug');
+            $products = Product::select('id', 'slug', 'discount_percent','name','slug')->with(['variations'])->whereIn('slug', $product_slug)->get()->keyBy('slug');
 
             $products_ordered = $request->collect('products')->map(function ($item) use ($products) {
                 $product = $products[$item['product_slug']];
-                $product_variant_price = collect($product['variations'])->firstWhere('id', $item['variant_id'])->platform_price;
+                $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
+                // Log::info($product_variant);
+                $product_variant_price = $product_variant->platform_price;
                 $product_discount_percent = $product['discount_percent'];
                 $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
                 $quantity = $item['quantity'];
                 return [
                     'item_type' => Product::class,
                     'item_id' => $products[$item['product_slug']]->id,
+                    'item_name' => $products[$item['product_slug']]->name,
+                    'item_slug' => $item['product_slug'],
                     'item_variant_id' => $item['variant_id'],
+                    'variant_name' => $product_variant->name,
+                    'variant_size' => $product_variant->size_value.' '. $product_variant->size_unit,
                     'quantity' => $quantity,
                     'price' => $price,
                     'total' => $price * $quantity
@@ -123,7 +129,7 @@ class CODPurchaseController extends Controller
         $packages_ordered = [];
         if ($request->has('packages')) {
             $product_slug = $request->collect('packages')->pluck('package_slug');
-            $packages = Package::select('id', 'slug', 'price', 'discount_percent')->whereIn('slug', $product_slug)->get()->keyBy('slug');
+            $packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')->whereIn('slug', $product_slug)->get()->keyBy('slug');
 
             $packages_ordered = $request->collect('packages')->map(function ($item) use ($packages) {
                 $package = $packages[$item['package_slug']];
@@ -134,6 +140,8 @@ class CODPurchaseController extends Controller
 
                 return [
                     'item_type' => Package::class,
+                    'item_name' => $packages[$item['package_slug']]->name,
+                    'item_slug' => $item['package_slug'],
                     'item_id' => $packages[$item['package_slug']]->id,
                     'quantity' => $package_quantity,
                     'price' => $package_price,
@@ -142,10 +150,11 @@ class CODPurchaseController extends Controller
             });
         }
         $order_items = [...$products_ordered, ...$packages_ordered];
+        // Log::info($order_items);
         $order_detail = [
             'price' => collect($order_items)->sum('total'),
             'payment_method' => $request->payment_method,
-            'payment_status' => PaymentStatusEnum::PENDING->value,
+            'payment_status' => PaymentStatusEnum::UNPAID->value,
             'status' => OrderStatusEnum::PENDING->value,
             'created_at' => now()
         ];
@@ -200,7 +209,7 @@ class CODPurchaseController extends Controller
             $response = [
                 'amount' => (float) $order->price,
                 'order_number' => $order->order_code,
-                'payment_method' => $order->payment_method == PaymentMethodEnum::COD->value ? 'Cash on Delivery' : $order->payment_method,
+                'payment_method' => $order->payment_method == $order->payment_method,
                 'date' => $order->created_at->format('Y/m/d'),
                 'ordered_items' => $order_items,
                 'delivery_address' => $order->address

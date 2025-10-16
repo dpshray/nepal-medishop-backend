@@ -17,7 +17,11 @@ return new class extends Migration
             $table->foreignIdFor(Order::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('item_type');
             $table->string('item_id');
+            $table->string('item_name')->nullable();
+            $table->string('item_slug')->nullable();
             $table->string('item_variant_id')->nullable();
+            $table->string('variant_name')->nullable();
+            $table->string('variant_size')->nullable();
             $table->unsignedTinyInteger('quantity');
             $table->decimal('price', 10, 2);
             $table->decimal('total', 10, 2);

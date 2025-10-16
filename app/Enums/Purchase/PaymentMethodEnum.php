@@ -4,6 +4,6 @@ namespace App\Enums\Purchase;
 
 enum PaymentMethodEnum: string
 {
-    case COD = 'COD';
+    case CASH_ON_DELIVERY = 'Cash on Delivery';
     // payment_method	cod / stripe / esewa	
 }

@@ -80,11 +80,41 @@ class LikeController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful toggle",
+     *         description="List of liked items.",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Item added to favourite"),
-     *             @OA\Property(property="data", type="string", nullable=true, example=null),
+     *             @OA\Property(property="message", type="string", example="List of liked items."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="name", type="string", example="Debitis debitis autem consectetur saepe."),
+     *                         @OA\Property(property="slug", type="string", example="debitis-debitis-autem-consectetur-saepe"),
+     *                         @OA\Property(property="brand", type="string", example="Sanofi"),
+     *                         @OA\Property(property="rating", type="number", format="float", example=1),
+     *                         @OA\Property(property="price", type="number", format="float", example=133.44),
+     *                         @OA\Property(property="previous_price", type="number", format="float", example=139),
+     *                         @OA\Property(property="feature_image", type="string", format="url", example="http://192.168.100.23:8008/storage/91/medi-plaster.png"),
+     *                         @OA\Property(
+     *                             property="variations",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 @OA\Property(property="variation_id", type="integer", example=1),
+     *                                 @OA\Property(property="name", type="string", example="Variant-1"),
+     *                                 @OA\Property(property="size_value", type="number", example=100),
+     *                                 @OA\Property(property="size_unit", type="string", example="patch"),
+     *                                 @OA\Property(property="price", type="number", example=139),
+     *                                 @OA\Property(property="previous_price", type="number", nullable=true, example=null)
+     *                             )
+     *                         )
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=5),
+     *                 @OA\Property(property="total_items", type="integer", example=5)
+     *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
@@ -92,7 +122,7 @@ class LikeController extends Controller
      */
     function myLikedItems(Request $request) {
         $per_page = $request->query('per_page');
-        $pagination = Like::with(['product.cheapestVariation','product.media','product.brand'])
+        $pagination = Like::with(['product.cheapestVariation','product.media','product.brand', 'product.variations'])
             ->where('user_id', Auth::id())
             ->paginate($per_page);
         $data  = $this->makePaginationResponse($pagination, fn($item) => UserLikeResource::collection($item))->data;
