@@ -175,7 +175,8 @@ class MasterDataController extends Controller
             'media',
             'brand', 
             'cheapestVariation', 
-            'likes' => fn($qry) => $qry->where('user_id', Auth::id())
+            'likes' => fn($qry) => $qry->where('user_id', Auth::id()),
+            'variations'
             ])
             ->active()
             ->when($search, fn($qry,$search) => $qry->whereLike('name', "%$search%"))
