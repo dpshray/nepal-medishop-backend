@@ -50,7 +50,7 @@ Route::put('user/profile', [ClientProfileController::class, 'update']);
 
 /*=====  Purchase Part  ======*/
 Route::post('orders', CODPurchaseController::class);
-Route::controller(ClientOrderController::class)->group(function(){
+Route::middleware(['auth:sanctum'])->controller(ClientOrderController::class)->group(function(){
     Route::get('my-orders', 'index');
     Route::get('my-orders/{order:uuid}', 'show');
 });
