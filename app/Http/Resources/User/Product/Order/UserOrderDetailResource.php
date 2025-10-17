@@ -30,7 +30,7 @@ class UserOrderDetailResource extends JsonResource
                     'item_name' => $item->item_name,
                     'variant_name' => $item->variant_name,
                     'variant_size' => $item->variant_size,
-                    'quantity' =>  $item->quantity,
+                    'quantity' =>  (int) $item->quantity,
                     'price' => (float) $item->price,
                     'subtotal' => (float) $item->total
                 ];
