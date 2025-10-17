@@ -29,13 +29,6 @@ class ClientOrderController extends Controller
      *     operationId="MyOrders",
      *     tags={"Order"},
      *     @OA\Parameter(
-     *         name="uuid",
-     *         in="query",
-     *         required=false,
-     *         description="UUID of an order",
-     *         @OA\Schema(type="string", example="")
-     *     ),
-     *     @OA\Parameter(
      *         name="page",
      *         in="query",
      *         required=false,
@@ -78,9 +71,34 @@ class ClientOrderController extends Controller
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
+     *     )
+     * )
+     */
+    public function index(Request $request)
+    {
+        $per_page = $request->query('per_page');       
+        $pagination = Auth::user()->orders()->latest()->paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($item) => UserOrderListResource::collection($item))->data;
+        return $this->apiSuccess('List of orders.', $data);
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/my-order-detail/{uuid}",
+     *     summary="Fetch order detail of a logged in user.",
+     *     description="Fetch order detail of a logged in user",
+     *     operationId="MyOrderDetail",
+     *     tags={"Order"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=false,
+     *         description="UUID of an order",
+     *         @OA\Schema(type="string", example="")
      *     ),
      *     @OA\Response(
-     *         response=201,
+     *         response=200,
      *         description="Order detail retrieved successfully.",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Order Detail."),
@@ -94,7 +112,7 @@ class ClientOrderController extends Controller
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
      *                 @OA\Property(property="status", type="string", example="PENDING"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-10-16T09:38:05.000000Z"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025/10/17"),
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
@@ -114,17 +132,8 @@ class ClientOrderController extends Controller
      *     ),
      * )
      */
-    public function index(Request $request)
-    {
-        $per_page = $request->query('per_page');
-        $order_uuid = $request->query('uuid');
-        if ($order_uuid) {
-            $order = Order::where('uuid', $order_uuid)->firstOrFail();
-            $order = new UserOrderDetailResource($order);
-            return $this->apiSuccess('Order Detail.', $order);
-        }        
-        $pagination = Auth::user()->orders()->latest()->paginate($per_page);
-        $data = $this->makePaginationResponse($pagination, fn($item) => UserOrderListResource::collection($item))->data;
-        return $this->apiSuccess('List of orders.', $data);
+    function orderDetail(Request $request, Order $order) {
+        $order = new UserOrderDetailResource($order);
+        return $this->apiSuccess('Order Detail.', $order);
     }
 }

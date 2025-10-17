@@ -1877,16 +1877,6 @@
                 "operationId": "MyOrders",
                 "parameters": [
                     {
-                        "name": "uuid",
-                        "in": "query",
-                        "description": "UUID of an order",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": ""
-                        }
-                    },
-                    {
                         "name": "page",
                         "in": "query",
                         "description": "Pagination page number",
@@ -1991,8 +1981,37 @@
                                 }
                             }
                         }
-                    },
-                    "201": {
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/my-order-detail/{uuid}": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Fetch order detail of a logged in user.",
+                "description": "Fetch order detail of a logged in user",
+                "operationId": "MyOrderDetail",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of an order",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
                         "description": "Order detail retrieved successfully.",
                         "content": {
                             "application/json": {
@@ -2036,7 +2055,7 @@
                                                 "created_at": {
                                                     "type": "string",
                                                     "format": "date-time",
-                                                    "example": "2025-10-16T09:38:05.000000Z"
+                                                    "example": "2025/10/17"
                                                 },
                                                 "ordered_items": {
                                                     "type": "array",
