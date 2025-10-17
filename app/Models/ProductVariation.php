@@ -24,19 +24,21 @@ class ProductVariation extends Model
     }
 
 
-    function getOriginalPriceAttribute()
+    function getOriginalPriceAttribute(): array
     {
         $product = $this->product;
         $price = (float) $this->platform_price;
         $previous_price = null;
-        if (!empty($product->discount_percent)) {
+
+        if ($product->discount_percent > 0) {
             $previous_price = $price;
             $price = (float) ($price - (($product->discount_percent * $price) / 100));
-        }elseif ($product->categories->firstWhere('discount_percent','!=',null)) {
-            $discount_percent = $product->categories->firstWhere('discount_percent', '!=', null)->discount_percent;
+        } elseif ($product->categories->firstWhere('discount_percent', '>', 0)) {
+            $discount_percent = $product->categories->firstWhere('discount_percent', '>', 0)->discount_percent;
             $previous_price = $price;
             $price = (float) ($price - (($discount_percent * $price) / 100));
         }
+
         return ['price' => $price, 'previous_price' => $previous_price];
     }
 }

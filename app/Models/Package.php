@@ -62,6 +62,24 @@ class Package extends Model implements HasMedia
         return $this->hasMany(OrderItem::class, 'item_id')->where('item_type', Package::class);
     }
 
+    function getOriginalPriceAttribute(): array
+    {
+        $price = (float) $this->price;
+        $previous_price = null;
+
+        // Apply discount only if discount_percent exists and is greater than 0
+        if (!is_null($this->discount_percent) && $this->discount_percent > 0) {
+            $previous_price = $price;
+            $price = (float) ($price - (($this->discount_percent * $price) / 100));
+        }
+
+        return [
+            'price' => $price,
+            'previous_price' => $previous_price,
+        ];
+    }
+
+
     public function products()
     {
         return $this->belongsToMany(ProductVariation::class, 'package_products')

@@ -95,8 +95,8 @@ class AdminCategoryController extends Controller
      * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/admin/category/{slug}",
-     *     summary="Show an active category",
-     *     description="Show an active category.",
+     *     summary="Show category",
+     *     description="Show category.",
      *     operationId="CategoryShow",
      *     tags={"Category"},
      *     @OA\Parameter(
@@ -154,6 +154,7 @@ class AdminCategoryController extends Controller
      *             @OA\Schema(
      *                 required={"name", "image"},
      *                 @OA\Property(property="name", type="string", example="Merck"),
+     *                 @OA\Property(property="discount_percent", type="string", example="0"),
      *                 @OA\Property(
      *                     property="image",
      *                     type="file",
@@ -207,6 +208,7 @@ class AdminCategoryController extends Controller
      *             @OA\Schema(
      *                 required={"name","_method"},
      *                 @OA\Property(property="name", type="string", example="Merck"),
+     *                 @OA\Property(property="discount_percent", type="string", example="0"),
      *                 @OA\Property(property="_method", type="string", example="patch"),
      *                 @OA\Property(
      *                     property="image",
