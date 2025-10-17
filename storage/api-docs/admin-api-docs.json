@@ -3746,6 +3746,93 @@
                 ]
             }
         },
+        "/admin/users/{user}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get full user detail including all orders and order items",
+                "description": "Retrieve user profile with all related orders and order item details.",
+                "operationId": "120117abc3a4baa6ec5414763c6f38ce",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "uuid of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "86d5804e-da22-4a54-ba98-17446f0300f6"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User detail retrieved successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "name": "John Doe",
+                                                "email": "john@example.com",
+                                                "mobile_number": "9800000000",
+                                                "status": true,
+                                                "email_verified": "Verified",
+                                                "orders": [
+                                                    {
+                                                        "order_id": 12,
+                                                        "order_code": "ORD-10012",
+                                                        "price": 2999.99,
+                                                        "payment_method": "COD",
+                                                        "payment_status": "paid",
+                                                        "status": "delivered",
+                                                        "created_at": "2025-10-15 14:20:00",
+                                                        "items": [
+                                                            {
+                                                                "item_type": "Product",
+                                                                "quantity": 2,
+                                                                "price": 1499.99,
+                                                                "total": 2999.98,
+                                                                "product_name": "Shampoo",
+                                                                "variant_name": "500ml"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/vendorproductlist": {
             "get": {
                 "tags": [

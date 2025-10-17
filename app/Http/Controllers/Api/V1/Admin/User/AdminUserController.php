@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\User\AdminUserDetailResource;
 use App\Http\Resources\Admin\User\AdminUserListResource;
 use App\Models\User;
 use App\Traits\PaginationTrait;
@@ -78,7 +79,7 @@ class AdminUserController extends Controller
     {
         $perPage = $request->get('per_page', 10);
         $search = $request->query('search', null);
-        $query = User::with(['orders.orderItems'])->where('user_type',3);
+        $query = User::with(['orders.orderItems'])->where('user_type', 3);
 
         // Search by name, email, or mobile_number
         if ($search) {
@@ -96,6 +97,7 @@ class AdminUserController extends Controller
 
             return [
                 'id' => $user->id,
+                'uuid'=>$user->uuid,
                 'name' => $user->name,
                 'email' => $user->email,
                 'mobile_number' => $user->mobile_number,
@@ -108,8 +110,75 @@ class AdminUserController extends Controller
         $result = $this->makePaginationResponse($paginated, fn() => $data)->data;
         return $this->apiSuccess('User retrieved successfully.', $result);
     }
+    /**
+     * @OA\Get(
+     *     path="/admin/users/{user}",
+     *     summary="Get full user detail including all orders and order items",
+     *     description="Retrieve user profile with all related orders and order item details.",
+     *     tags={"User"},
+     *     security={{"sanctum": {}}},
+     *
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         required=true,
+     *         description="uuid of the user",
+     *         @OA\Schema(type="string", example="86d5804e-da22-4a54-ba98-17446f0300f6")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="User details retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="User detail retrieved successfully."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 example={
+     *                     "id": 1,
+     *                     "name": "John Doe",
+     *                     "email": "john@example.com",
+     *                     "mobile_number": "9800000000",
+     *                     "status": true,
+     *                     "email_verified": "Verified",
+     *                     "orders": {
+     *                         {
+     *                             "order_id": 12,
+     *                             "order_code": "ORD-10012",
+     *                             "price": 2999.99,
+     *                             "payment_method": "COD",
+     *                             "payment_status": "paid",
+     *                             "status": "delivered",
+     *                             "created_at": "2025-10-15 14:20:00",
+     *                             "items": {
+     *                                 {
+     *                                     "item_type": "Product",
+     *                                     "quantity": 2,
+     *                                     "price": 1499.99,
+     *                                     "total": 2999.98,
+     *                                     "product_name": "Shampoo",
+     *                                     "variant_name": "500ml"
+     *                                 }
+     *                             }
+     *                         }
+     *                     }
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="User not found"),
+     *     @OA\Response(response=401, description="Unauthenticated")
+     * )
+     */
     function show(User $user)
     {
-
+        $user->load([
+            'orders.orderItems.product',
+            'orders.orderItems.productVariant'
+        ]);
+        $data = new AdminUserDetailResource($user);
+        return $this->apiSuccess('User detail retrieved successfully.', $data);
     }
 }
