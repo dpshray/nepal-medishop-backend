@@ -252,8 +252,14 @@ class ProductReviewController extends ClientController
      */
     function update(ClientProductReviewRequest $request, Product $product, Review $review) {
         throw_if($review->user->isNot(Auth::user()), UnauthorizedException::class);
-        $data = $request->safe()->merge(['user_id' => Auth::id()])->all();
-        $product->reviews()->firstWhere('uuid', $review->uuid)->update($data);
+
+        DB::transaction(function () use ($request, $product, $review) {
+            $data = $request->safe()->merge(['user_id' => Auth::id()])->all();
+            $product->reviews()->firstWhere('uuid', $review->uuid)->update($data);
+            $avg_rating = $product->reviews()->avg('rating');
+            $product->update(['rating' => $avg_rating]);
+        });
+
         return $this->apiSuccess('Review has been updated.');
     }
 
@@ -294,7 +300,13 @@ class ProductReviewController extends ClientController
      */
     function destroy(Product $product, Review $review) {
         throw_if($review->user->isNot(Auth::user()), UnauthorizedException::class);
-        $product->reviews()->firstWhere('uuid', $review->uuid)->delete();
+
+        DB::transaction(function () use ($product, $review) {
+            $product->reviews()->firstWhere('uuid', $review->uuid)->delete();
+            $avg_rating = $product->reviews()->avg('rating');
+            $product->update(['rating' => $avg_rating]);
+        });
+
         return $this->apiSuccess('Review has been removed.');
     }
 }
