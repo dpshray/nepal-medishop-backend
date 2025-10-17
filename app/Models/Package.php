@@ -23,6 +23,7 @@ class Package extends Model implements HasMedia
         'discount_percent',
         'start_timestamps',
         'end_timestamps',
+        'rating',
         'status',
     ];
 
