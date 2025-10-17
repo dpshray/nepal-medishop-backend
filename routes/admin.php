@@ -42,6 +42,6 @@ Route::prefix('admin')
         Route::patch('vendor-product-prices/{id}/approve', [AdminVendorProductController::class, 'approveVendorProduct']);
         Route::delete('vendor-product-prices/{id}', [AdminVendorProductController::class, 'deleteVendorProduct']);
         Route::get('vendor-product-prices-detail/{id}', [AdminVendorProductController::class, 'detail']);
-        Route::apiResource('user-order', AdminOrderController::class);
+        Route::apiResource('user-order', AdminOrderController::class)->parameters(['user-order' => 'order'])->scoped(['order' => 'uuid'])->except(['store']);
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
 });

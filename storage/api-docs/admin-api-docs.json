@@ -2314,6 +2314,10 @@
                                         "type": "string",
                                         "example": "Merck"
                                     },
+                                    "discount_percent": {
+                                        "type": "string",
+                                        "example": "0"
+                                    },
                                     "image": {
                                         "description": "Category image",
                                         "type": "file",
@@ -2364,8 +2368,8 @@
                 "tags": [
                     "Category"
                 ],
-                "summary": "Show an active category",
-                "description": "Show an active category.",
+                "summary": "Show category",
+                "description": "Show category.",
                 "operationId": "CategoryShow",
                 "parameters": [
                     {
@@ -2463,6 +2467,10 @@
                                     "name": {
                                         "type": "string",
                                         "example": "Merck"
+                                    },
+                                    "discount_percent": {
+                                        "type": "string",
+                                        "example": "0"
                                     },
                                     "_method": {
                                         "type": "string",
@@ -3601,6 +3609,170 @@
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/user-order/{uuid}": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Get user order details.",
+                "description": "Get user orders details.",
+                "operationId": "UserOrderDetail",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of product details",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "5cc40466-e88d-4ab3-80d8-6274a4ecf4a3"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of orders.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of orders"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "order_uuid": {
+                                                                "type": "string",
+                                                                "example": "e184e023-f7eb-4f46-ac3a-363237e158c0"
+                                                            },
+                                                            "payment_method": {
+                                                                "type": "string",
+                                                                "example": "Cash on Delivery"
+                                                            },
+                                                            "payment_status": {
+                                                                "type": "string",
+                                                                "example": "PAID"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "DELIVERED"
+                                                            },
+                                                            "no_of_ordered_items": {
+                                                                "type": "integer",
+                                                                "example": 4
+                                                            },
+                                                            "order_code": {
+                                                                "type": "string",
+                                                                "example": "dfSde1NOo3J5XR9Hw833"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "James P. Sullivan"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "james.sullivan100@example.com"
+                                                            },
+                                                            "mobile": {
+                                                                "type": "string",
+                                                                "example": "9854112547"
+                                                            },
+                                                            "address": {
+                                                                "type": "string",
+                                                                "example": "Shyambhu, Kathmandu"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Delete Order",
+                "description": "Delete an order by UUID.",
+                "operationId": "DeleteOrder",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of an order",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order has been deleted.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order has been deleted."
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
                                         },
                                         "success": {
                                             "type": "boolean",
