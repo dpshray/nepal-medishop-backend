@@ -49,29 +49,31 @@ class AdminBannerController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Active brand lists",
+     *         description="List of banners.",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Active brand lists"),
+     *             @OA\Property(property="message", type="string", example="List of banners."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(
-     *                     property="items",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="slug", type="string", example="pfizer"),
-     *                         @OA\Property(property="name", type="string", example="Pfizer"),
-     *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/assets/img/default-brand-category.png"),
-     *                         @OA\Property(property="is_featured", type="boolean", example=false),
-     *                         @OA\Property(property="is_popular", type="boolean", example=true)
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=26),
-     *                 @OA\Property(property="total_items", type="integer", example=26)
+     *                     property="data",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="items",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="uuid", type="string", example="8fb81300-fe6b-43b6-9ecb-d20e76290043"),
+     *                             @OA\Property(property="display_status", type="boolean", example=true),
+     *                             @OA\Property(property="order", type="integer", example=1),
+     *                             @OA\Property(property="title", type="string", nullable=true, example="Look, a banner!"),
+     *                             @OA\Property(property="url", type="string", nullable=true, example="https://inboxes.com/"),
+     *                             @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/storage/2643/sunset-7007680_1920.jpg")
+     *                         )
+     *                     ),
+     *                     @OA\Property(property="page", type="integer", example=1),
+     *                     @OA\Property(property="total_page", type="integer", example=1),
+     *                     @OA\Property(property="total_items", type="integer", example=3)
+     *                 )
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -128,32 +130,14 @@ class AdminBannerController extends Controller
      *             )
      *         )
      *     ),
-     *
      *     @OA\Response(
-     *         response=201,
-     *         description="Package created successfully",
+     *         response=200,
+     *         description="Banner added successfully.",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Package added successfully.")
+     *             @OA\Property(property="message", type="string", example="banner added successfully"),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal Server Error"
      *     )
      * )
      */
@@ -179,9 +163,88 @@ class AdminBannerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Banner $banner)
+    /**
+     * @OA\Post(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/banner/{uuid}",
+     *     summary="Update banner based on UUID",
+     *     description="Update a banner by its UUID.",
+     *     operationId="BannerUpdate",
+     *     tags={"Banner"},
+     *
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of the banner to update",
+     *         @OA\Schema(type="string", example="8fb81300-fe6b-43b6-9ecb-d20e76290043")
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"_method"},
+     *                 @OA\Property(
+     *                     property="_method",
+     *                     type="string",
+     *                     example="PATCH",
+     *                     description="Used when the route expects PATCH method but form submits as POST."
+     *                 ),
+     *                 @OA\Property(
+     *                     property="order",
+     *                     type="integer",
+     *                     example=1,
+     *                     description="Display order of the banner."
+     *                 ),
+     *                 @OA\Property(
+     *                     property="title",
+     *                     type="string",
+     *                     example="Updated banner title.",
+     *                     description="Title of the banner."
+     *                 ),
+     *                 @OA\Property(
+     *                     property="url",
+     *                     type="string",
+     *                     example="https://www.youtube.com/",
+     *                     description="Clickable URL of the banner."
+     *                 ),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Image file for the banner."
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Banner updated successfully.",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Banner updated successfully."),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+
+    public function update(AdminBannerRequest $request, Banner $banner)
     {
-        //
+        // return $request->validated();
+        DB::transaction(function () use($request, $banner) {
+            $data = $request->validated();
+            $banner->update($data);
+            if ($request->hasFile('image')) {                
+                $banner->addMedia($request->image)
+                    ->toMediaCollection(Banner::BANNER_MEDIA);
+            }
+        });
+        return $this->apiSuccess('Banner has been updated successfully.');
     }
 
     /**
@@ -190,32 +253,73 @@ class AdminBannerController extends Controller
     /**
      * @OA\Delete(
      *     security={{"sanctum": {}}}, 
-     *     path="/admin/banner/{banner}",
+     *     path="/admin/banner/{uuid}",
      *     operationId="BannerDelete",
      *     tags={"Banner"},
      *     summary="Delete a banner.",
      *     description="Delete a banner.",
      *     @OA\Parameter(
-     *         name="brand",
+     *         name="uuid",
      *         in="path",
      *         required=true,
      *         description="UUID of the banner to delete",
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Brand successfully deleted",
+     *         description="Banner has been deleted.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="data", type="null", example=null),
-     *             @OA\Property(property="message", type="string", example="Brand removed successfully.")
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Banner has been deleted."),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
-    */
+     */
     public function destroy(Banner $banner)
     {
         $banner->delete();
         return $this->apiSuccess('Banner has been deleted.');
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/toggle-banner-status/{uuid}",
+     *     summary="Toggle banner visibility status",
+     *     description="Toggle banner visibility status.",
+     *     operationId="BannerVisibilityToggle",
+     *     tags={"Banner"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of banner",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Brand status changed successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Banner status changed to ACTIVE"),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function visibilityToggler(Banner $banner)
+    {
+        $current_status = (int)$banner->display_status;
+        $message = 'Banner status changed to ACTIVE';
+        if ($current_status == 1) {
+            $message = 'Banner status changed to INACTIVE';
+        }
+        $banner->update([
+            'display_status' => !$current_status
+        ]);
+        return $this->apiSuccess($message);
     }
 }

@@ -17,6 +17,7 @@ class Banner extends Model implements HasMedia
     
     public $timestamps = false;
     protected $fillable=[
+        'display_status',
         'order',
         'title',
         'url',

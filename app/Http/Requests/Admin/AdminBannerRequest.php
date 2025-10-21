@@ -21,12 +21,29 @@ class AdminBannerRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules =  [
             'order' => 'sometimes|nullable|integer',
             'title' => 'sometimes|nullable|max:255',
             'description' => 'sometimes|nullable',
             'url' => 'sometimes|nullable|max:255',
+        ];
+
+        $create = [
             'image' => 'required|image'
         ];
+        
+        $update = [
+            'image' => 'sometimes|nullable|image'
+        ];
+        return $this->banner ? [...$rules, ...$update] : [...$rules, ...$create];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if (empty($this->banner) && empty($this->order)) { # if create request and no order present
+            $this->merge([
+                'order' => 1,
+            ]);
+        }
     }
 }

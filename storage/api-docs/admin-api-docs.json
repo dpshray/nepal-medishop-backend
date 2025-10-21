@@ -885,61 +885,68 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Active brand lists",
+                        "description": "List of banners.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Active brand lists"
+                                            "example": "List of banners."
                                         },
                                         "data": {
                                             "properties": {
-                                                "items": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "slug": {
-                                                                "type": "string",
-                                                                "example": "pfizer"
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Pfizer"
-                                                            },
-                                                            "image": {
-                                                                "type": "string",
-                                                                "format": "url",
-                                                                "example": "http://192.168.100.23:8008/assets/img/default-brand-category.png"
-                                                            },
-                                                            "is_featured": {
-                                                                "type": "boolean",
-                                                                "example": false
-                                                            },
-                                                            "is_popular": {
-                                                                "type": "boolean",
-                                                                "example": true
+                                                "data": {
+                                                    "properties": {
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "uuid": {
+                                                                        "type": "string",
+                                                                        "example": "8fb81300-fe6b-43b6-9ecb-d20e76290043"
+                                                                    },
+                                                                    "display_status": {
+                                                                        "type": "boolean",
+                                                                        "example": true
+                                                                    },
+                                                                    "order": {
+                                                                        "type": "integer",
+                                                                        "example": 1
+                                                                    },
+                                                                    "title": {
+                                                                        "type": "string",
+                                                                        "example": "Look, a banner!",
+                                                                        "nullable": true
+                                                                    },
+                                                                    "url": {
+                                                                        "type": "string",
+                                                                        "example": "https://inboxes.com/",
+                                                                        "nullable": true
+                                                                    },
+                                                                    "image": {
+                                                                        "type": "string",
+                                                                        "format": "url",
+                                                                        "example": "http://192.168.100.23:8008/storage/2643/sunset-7007680_1920.jpg"
+                                                                    }
+                                                                },
+                                                                "type": "object"
                                                             }
                                                         },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_page": {
-                                                    "type": "integer",
-                                                    "example": 26
-                                                },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 26
+                                                        "page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "total_page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "total_items": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
@@ -1001,50 +1008,30 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Package created successfully",
+                    "200": {
+                        "description": "Banner added successfully.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "banner added successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Package added successfully."
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
                     }
                 },
                 "security": [
@@ -1054,7 +1041,99 @@
                 ]
             }
         },
-        "/admin/banner/{banner}": {
+        "/admin/banner/{uuid}": {
+            "post": {
+                "tags": [
+                    "Banner"
+                ],
+                "summary": "Update banner based on UUID",
+                "description": "Update a banner by its UUID.",
+                "operationId": "BannerUpdate",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of the banner to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "8fb81300-fe6b-43b6-9ecb-d20e76290043"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "_method"
+                                ],
+                                "properties": {
+                                    "_method": {
+                                        "description": "Used when the route expects PATCH method but form submits as POST.",
+                                        "type": "string",
+                                        "example": "PATCH"
+                                    },
+                                    "order": {
+                                        "description": "Display order of the banner.",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "title": {
+                                        "description": "Title of the banner.",
+                                        "type": "string",
+                                        "example": "Updated banner title."
+                                    },
+                                    "url": {
+                                        "description": "Clickable URL of the banner.",
+                                        "type": "string",
+                                        "example": "https://www.youtube.com/"
+                                    },
+                                    "image": {
+                                        "description": "Image file for the banner.",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Banner updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Banner updated successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "delete": {
                 "tags": [
                     "Banner"
@@ -1064,33 +1143,87 @@
                 "operationId": "BannerDelete",
                 "parameters": [
                     {
-                        "name": "brand",
+                        "name": "uuid",
                         "in": "path",
                         "description": "UUID of the banner to delete",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Brand successfully deleted",
+                        "description": "Banner has been deleted.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "null",
-                                            "example": null
-                                        },
                                         "message": {
                                             "type": "string",
-                                            "example": "Brand removed successfully."
+                                            "example": "Banner has been deleted."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/toggle-banner-status/{uuid}": {
+            "get": {
+                "tags": [
+                    "Banner"
+                ],
+                "summary": "Toggle banner visibility status",
+                "description": "Toggle banner visibility status.",
+                "operationId": "BannerVisibilityToggle",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of banner",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Brand status changed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Banner status changed to ACTIVE"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
