@@ -297,6 +297,61 @@
                 }
             }
         },
+        "/banner": {
+            "get": {
+                "tags": [
+                    "Banner"
+                ],
+                "summary": "Get all banners",
+                "description": "Get all banners.",
+                "operationId": "ClientBannerList",
+                "responses": {
+                    "200": {
+                        "description": "List of banners.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of banners."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "Look ma, a banner!",
+                                                        "nullable": true
+                                                    },
+                                                    "url": {
+                                                        "type": "string",
+                                                        "example": "https://inboxes.com/",
+                                                        "nullable": true
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "format": "url",
+                                                        "example": "http://192.168.100.23:8008/storage/2643/sunset-7007680_1920.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/favourite/{slug}/product": {
             "get": {
                 "tags": [
@@ -3195,6 +3250,10 @@
         {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Banner",
+            "description": "Banner"
         },
         {
             "name": "Favourite",

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\ItemTypeEnum;
+use App\Http\Controllers\Api\V1\Client\ClientBannerController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
 use App\Http\Controllers\Api\V1\Client\Profile\ClientProfileController;
@@ -45,6 +46,7 @@ Route::get('fetch-package-ratings/{package:slug}', [PackageReviewController::cla
 // Route::apiResource('profile', ClientProfileController::class)->except(['show']);
 Route::get('user/profile', [ClientProfileController::class, 'index']);
 Route::put('user/profile', [ClientProfileController::class, 'update']);
+Route::get('banner', ClientBannerController::class);
 
 
 

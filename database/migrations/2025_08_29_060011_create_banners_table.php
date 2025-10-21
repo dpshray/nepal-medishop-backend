@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->string('title');
-            $table->string('description');
-            $table->string('url');
-            $table->timestamps();
+            $table->boolean('display_status')->default(1);
+            $table->unsignedTinyInteger('order')->default(1);
+            $table->string('title')->nullable();
+            $table->string('description')->nullable();
+            $table->string('url')->nullable();
         });
     }
 

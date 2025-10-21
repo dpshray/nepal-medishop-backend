@@ -4,6 +4,7 @@ use App\Enums\AdminUrlParamEnum;
 use App\Enums\RouteParamEnum;
 use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
+use App\Http\Controllers\Api\V1\Admin\Banner\AdminBannerController;
 use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\User\AdminUserController;
 use App\Http\Controllers\Api\V1\Purchase\AdminCODController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Resources\Admin\AdminBannerResource;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')
@@ -44,4 +46,5 @@ Route::prefix('admin')
         Route::get('vendor-product-prices-detail/{id}', [AdminVendorProductController::class, 'detail']);
         Route::apiResource('user-order', AdminOrderController::class)->parameters(['user-order' => 'order'])->scoped(['order' => 'uuid'])->except(['store']);
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
+        Route::apiResource('banner', AdminBannerController::class);
 });
