@@ -17,20 +17,13 @@ class PackageSingleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
-        /* $price = $this->price;
-        $previous_price = null;
-        if ($this->discount_price) {
-            $previous_price = (float) $price;
-            $price = (float) $this->discount_price;
-        } */
-        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($this->price, $this->discount_percent);
-
+        ['price' => $price, 'previous_price' => $previous_price] = $this->original_price;
+        
         return [
             'name' => $this->name,
             'slug' => $this->slug,
-            'price' => round($price, 2),
-            'previous_price' => round($previous_price, 2),
+            'price' => $price,
+            'previous_price' => $previous_price,
             'rating' => (float) $this->rating,
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Package::PACKAGE_FEATURED)),
             'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false)

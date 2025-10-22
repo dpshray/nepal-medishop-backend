@@ -357,7 +357,7 @@ class MasterDataController extends Controller
      *                 @OA\Property(property="slug", type="string", example="super-offer"),
      *                 @OA\Property(property="description", type="string", example="<p>Package details...</p>"),
      *                 @OA\Property(property="price", type="number", format="float", example=9000),
-     *                 @OA\Property(property="discount_price", type="number", format="float", example=0),
+     *                 @OA\Property(property="discount_price", type="number", format="float", example=8910),
      *                 @OA\Property(property="rating", type="number", format="float", example=2.8),
      *                 @OA\Property(property="featured_image", type="string", example="http://192.168.100.23:8008/storage/2636/package-1.jpg"),
      *                 @OA\Property(

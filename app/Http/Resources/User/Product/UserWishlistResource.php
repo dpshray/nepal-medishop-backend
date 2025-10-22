@@ -24,7 +24,7 @@ class UserWishlistResource extends JsonResource
             $product = $this->product;
             $item = $product->cheapestVariation;
     
-            ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $product->discount_percent);
+            ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
     
             $data = [
                 'type' => strtolower(class_basename($this->wishable_type)),
@@ -39,7 +39,7 @@ class UserWishlistResource extends JsonResource
             ];
         }else{
             $package = $this->package;
-            ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($package->price, $package->discount_percent);
+            ['price' => $price, 'previous_price' => $previous_price] = $package->original_price;
 
             $data = [
                 'type' => strtolower(class_basename($this->wishable_type)),
