@@ -84,6 +84,8 @@ class AdminBannerController extends Controller
     {
         $per_page = $request->query('per_page');
         $pagination = Banner::with('media')
+            ->orderBy('order', 'ASC')
+            ->orderBy('id', 'ASC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminBannerResource::collection($item));
         return $this->apiSuccess('List of banners.', $data);
