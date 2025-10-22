@@ -176,7 +176,9 @@ class AdminUserController extends Controller
     {
         $user->load([
             'orders.orderItems.product',
-            'orders.orderItems.productVariant'
+            'orders.orderItems.productVariant',
+            'cart',
+            'userlikes.likable',
         ]);
         $data = new AdminUserDetailResource($user);
         return $this->apiSuccess('User detail retrieved successfully.', $data);
