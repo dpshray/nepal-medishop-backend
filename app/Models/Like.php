@@ -15,4 +15,12 @@ class Like extends Model
     function product() {
         return $this->belongsTo(Product::class, 'likable_id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function likable()
+    {
+        return $this->morphTo();
+    }
 }

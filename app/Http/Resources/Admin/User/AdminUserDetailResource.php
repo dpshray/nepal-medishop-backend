@@ -36,7 +36,7 @@ class AdminUserDetailResource extends JsonResource
                         'order_address' => $order->address,
                         'status' => $order->status,
                         'created_at' => $order->created_at->format('Y-m-d H:i:s'),
-                        'items' => $order->orderItems->map(function ($item) {
+                        'order_items_detail' => $order->orderItems->map(function ($item) {
                             return [
                                 // 'item_type' => $item->item_type,
                                 'product_name' => $item->product?->name,
@@ -46,13 +46,39 @@ class AdminUserDetailResource extends JsonResource
                                 'total' => (float) $item->total,
                                 'featured_image' => $item->product?->getFirstMediaUrl(Product::PRODUCT_FEATURE),
                                 'gallery_images' => $item->product?->getFirstMediaUrl(Product::PRODUCT_GALLERY)
-                                // ->map(fn($media) => $media->getUrl())
-
                             ];
                         }),
                     ];
                 });
             }),
+
+            'user_likes' => $this->whenLoaded('userlikes', function () {
+                return $this->userlikes->map(function ($like) {
+                    $item = $like->likable;
+                    return [
+                        'type' => class_basename($like->likable_type), // Product or Package
+                        'id' => $like->likable_id,
+                        'name' => $item?->name,
+                        'featured_image' => $item?->getFirstMediaUrl(Product::PRODUCT_FEATURE),
+                    ];
+                });
+            }),
+
+            'cart' => $this->whenLoaded('cart', function () {
+                return $this->cart->map(function ($cartItem) {
+                    return [
+                        'cart_id' => $cartItem->id,
+                        'item_name' => $cartItem->item_name,
+                        'item_slug' => $cartItem->item_slug,
+                        'brand_name' => $cartItem->brand_name,
+                        'variant_name' => $cartItem->variant_name,
+                        'image' => $cartItem->image,
+                        'quantity' => (int) $cartItem->quantity,
+                        'price' => (float) $cartItem->price,
+                        'subtotal' => (float) $cartItem->subtotal,
+                    ];
+                });
+            })
         ];
     }
 }

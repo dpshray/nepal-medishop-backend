@@ -118,4 +118,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
                 $this->addMediaConversion('image')->nonQueued();
             });
     }
+    public function userlikes()
+    {
+        return $this->hasMany(Like::class, 'user_id');
+    }
 }
