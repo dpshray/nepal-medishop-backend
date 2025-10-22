@@ -19,7 +19,8 @@ class Category extends Model implements HasMedia
     protected $fillable=[
         'name',
         'slug',
-        'status'
+        'status',
+        'discount_percent'
     ];
 
     public function scopeActive($qry)
