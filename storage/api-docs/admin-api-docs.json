@@ -1042,6 +1042,82 @@
             }
         },
         "/admin/banner/{uuid}": {
+            "get": {
+                "tags": [
+                    "Banner"
+                ],
+                "summary": "Get a banner",
+                "description": "Get a banner.",
+                "operationId": "BannerShow",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a banner",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched banner successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "fetched banner successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "uuid": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "cdc7d89e-2210-4e7e-9b69-0e536bea7b1a"
+                                                },
+                                                "display_status": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "order": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Look a banner!"
+                                                },
+                                                "url": {
+                                                    "type": "string",
+                                                    "example": "https://inboxes.com/"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://192.168.100.23:8008/storage/2643/sunset-7007680_1920.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Banner"

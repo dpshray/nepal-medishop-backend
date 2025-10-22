@@ -157,9 +157,45 @@ class AdminBannerController extends Controller
     /**
      * Display the specified resource.
      */
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/banner/{uuid}",
+     *     summary="Get a banner",
+     *     description="Get a banner.",
+     *     operationId="BannerShow",
+     *     tags={"Banner"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of a banner",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Fetched banner successfully.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="fetched banner successfully."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="uuid", type="string", format="uuid", example="cdc7d89e-2210-4e7e-9b69-0e536bea7b1a"),
+     *                 @OA\Property(property="display_status", type="boolean", example=false),
+     *                 @OA\Property(property="order", type="integer", example=1),
+     *                 @OA\Property(property="title", type="string", example="Look a banner!"),
+     *                 @OA\Property(property="url", type="string", example="https://inboxes.com/"),
+     *                 @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/2643/sunset-7007680_1920.jpg")
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     ),
+     * )
+     */
     public function show(Banner $banner)
     {
-        //
+        $data = new AdminBannerResource($banner);
+        return $this->apiSuccess('fetched banner successfully.', $data);
     }
 
     /**
