@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1\Admin\Vendor\OrderAssign;
 
 use App\Http\Controllers\Controller;
+use App\Models\Package;
 use App\Models\Purchase\Order;
 use App\Models\User;
+use App\Models\VendorProductPrice;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 
@@ -13,7 +15,7 @@ class AdminOrderAssignController extends Controller
     //
     use ResponseTrait;
     /**
-     * @OA\Post(
+     * @OA\get(
      *     path="/admin/orders/{order_uuid}/assign/{user_uuid}",
      *     summary="Assign an order to a vendor using UUIDs",
      *     tags={"Order Assign"},
@@ -72,13 +74,42 @@ class AdminOrderAssignController extends Controller
      *     )
      * )
      */
-    function AssignOrder($order_uuid, $user_uuid)
+    public function AssignOrder($order_uuid, $user_uuid)
     {
-        $order = Order::where('uuid', $order_uuid)->firstorfail();
-        $user = User::where('uuid', $user_uuid)->firstorfail();
+        $order = Order::where('uuid', $order_uuid)
+            ->with('orderItems') // load order items
+            ->firstOrFail();
+
+        $user = User::where('uuid', $user_uuid)->firstOrFail();
+
+        // Loop
+        foreach ($order->orderItems as $item) {
+            // Skip check for packages
+            if ($item->item_type === Package::class) {
+                continue;
+            }
+
+            // For product, check vendor's stock
+            $vendorProduct =VendorProductPrice::where([
+                'product_vendor_id' => $user->id,
+                'product_variation_id' => $item->item_variant_id,
+                'status' => 1, // approved by admin
+            ])->first();
+
+            if (!$vendorProduct) {
+                return $this->apiError("Vendor does not have the product variation (ID: {$item->item_variant_id}) approved for sale.");
+            }
+
+            if ($vendorProduct->units_in_stock < $item->quantity) {
+                return $this->apiError("Vendor does not have enough stock for product variation (ID: {$item->item_variant_id}).");
+            }
+        }
+
         $order->update(['assigned_vendor_id' => $user->id]);
-        return $this->apiSuccess('order has been assign');
+
+        return $this->apiSuccess("Order has been assigned to {$user->name}");
     }
+
     /**
      * @OA\Post(
      *     path="/admin/order/{order_uuid}/cancel-assign",
