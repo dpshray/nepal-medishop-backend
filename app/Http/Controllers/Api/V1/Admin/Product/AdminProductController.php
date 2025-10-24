@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AdminProductController extends Controller
 {
@@ -229,7 +230,15 @@ class AdminProductController extends Controller
             $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->all();
             $product->variations()->whereNotIn('id', $variation_to_avoid)->delete();
             foreach ($request->variations as $variation) {
-                $product->variations()->firstWhere('id', $variation['variation_id'])->update($variation);
+                if (array_key_exists('variation_id', $variation)) {
+                    $product_variation = $product->variations()->firstWhere('id', $variation['variation_id']);
+                    if (empty($product_variation)) {
+                        throw new NotFoundHttpException("Variant could not be found");
+                    }
+                    $product_variation->update($variation);
+                }else{
+                    $product->variations()->create($variation);
+                }
             }
             if ($request->hasFile('featured_image')) {
                 $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);

@@ -1163,7 +1163,7 @@
                                                 "discount_price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 0
+                                                    "example": 8910
                                                 },
                                                 "rating": {
                                                     "type": "number",

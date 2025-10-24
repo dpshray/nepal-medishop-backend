@@ -48,6 +48,15 @@ class ClientBannerController extends Controller
             ->orderBy('id','ASC')
             ->get();
         $data = ClientBannerListResource::collection($banners);
+        if ($banners->isEmpty()) { #default banner data
+            $data = [
+                [
+                    'title' => null,
+                    'url' => null,
+                    'image' => asset('assets/img/default-banner.jpg')
+                ]
+            ];
+        }
         return $this->apiSuccess('List of banners.', $data);
     }
 }

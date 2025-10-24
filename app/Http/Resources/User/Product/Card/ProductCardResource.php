@@ -19,13 +19,7 @@ class ProductCardResource extends JsonResource
     {
         // return parent::toArray($request);
         $item = $this->cheapestVariation;
-        /* $platform_price = $item->platform_price;
-        $previous_price = null;
-        if ($item->platform_discount_price) {
-            $previous_price = (float) $platform_price;
-            $platform_price = $item->platform_discount_price;
-        } */
-        ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $this->discount_percent);
+        ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
 
         return [
             'name' => $this->name,
@@ -37,7 +31,7 @@ class ProductCardResource extends JsonResource
             'feature_image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)),
             'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false),
             'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(function ($item) {
-                ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $this->discount_percent);
+                ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
 
                 return [
                     'variation_id' => $item->id,

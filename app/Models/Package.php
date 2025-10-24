@@ -65,17 +65,17 @@ class Package extends Model implements HasMedia
 
     function getOriginalPriceAttribute(): array
     {
-        $price = (float) $this->price;
+        $price = $this->price;
         $previous_price = null;
 
         // Apply discount only if discount_percent exists and is greater than 0
         if (!is_null($this->discount_percent) && $this->discount_percent > 0) {
-            $previous_price = $price;
-            $price = (float) ($price - (($this->discount_percent * $price) / 100));
+            $previous_price = (float) round($price, 2);
+            $price = ($price - (($this->discount_percent * $price) / 100));
         }
 
         return [
-            'price' => $price,
+            'price' => (float) round($price, 2),
             'previous_price' => $previous_price,
         ];
     }

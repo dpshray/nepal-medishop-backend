@@ -48,5 +48,7 @@ Route::prefix('admin')
         Route::apiResource('user-order', AdminOrderController::class)->parameters(['user-order' => 'order'])->scoped(['order' => 'uuid'])->except(['store']);
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
         Route::apiResource('banner', AdminBannerController::class);
-        Route::post('order/{order_uuid}/assign/{user_uuid}', [AdminOrderAssignController::class, 'AssignOrder']);
+        Route::get('order/{order_uuid}/assign/{user_uuid}', [AdminOrderAssignController::class, 'AssignOrder']);
+        Route::apiResource('banner', AdminBannerController::class)->scoped(['banner' => 'uuid']);
+        Route::get('toggle-banner-status/{banner:uuid}', [AdminBannerController::class, 'visibilityToggler']);
 });

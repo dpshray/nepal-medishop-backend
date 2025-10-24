@@ -30,13 +30,7 @@ class ProductDetailResource extends JsonResource
             'categories' => $this->whenLoaded('categories', fn() => $this->categories->pluck('name')),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->pluck('name')),
             'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(function($item){
-                /* $price = $item->platform_price;
-                $previous_price = null;
-                if ($item->platform_discount_price) {
-                    $previous_price = (float) $price;
-                    $price = $item->platform_discount_price;
-                } */
-                ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($item->platform_price, $this->discount_percent);
+                ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
 
                 return [
                     'variation_id' => $item->id,
