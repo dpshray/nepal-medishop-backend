@@ -19,7 +19,7 @@ class AdminOrderAssignController extends Controller
      *     tags={"Order Assign"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
-     *         name="order",
+     *         name="order_uuid",
      *         in="path",
      *         required=true,
      *         description="Order UUID",
@@ -30,7 +30,7 @@ class AdminOrderAssignController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
-     *         name="user",
+     *         name="user_uuid",
      *         in="path",
      *         required=true,
      *         description="Vendor User UUID",
@@ -77,6 +77,51 @@ class AdminOrderAssignController extends Controller
         $order = Order::where('uuid', $order_uuid)->firstorfail();
         $user = User::where('uuid', $user_uuid)->firstorfail();
         $order->update(['assigned_vendor_id' => $user->id]);
-        return $this->apiSuccess('order has been assign to {$user->name}');
+        return $this->apiSuccess('order has been assign');
+    }
+    /**
+     * @OA\Post(
+     *     path="/admin/order/{order_uuid}/cancel-assign",
+     *     summary="Cancel the assignment of an order to a vendor",
+     *     tags={"Order Assign"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="order_uuid",
+     *         in="path",
+     *         required=true,
+     *         description="Order UUID",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="55c9af7b-e7fb-4798-b3f6-3e76edc5cf2f"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order assignment canceled successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Order assignment canceled successfully"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Order not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Order not found"),
+     *             @OA\Property(property="data", type="object", nullable=true)
+     *         )
+     *     )
+     * )
+     */
+    public function CancelAssignOrder($order_uuid)
+    {
+        $order = Order::where('uuid', $order_uuid)->firstOrFail();
+        $order->update(['assigned_vendor_id' => null]);
+        return $this->apiSuccess('Order assignment canceled successfully');
     }
 }

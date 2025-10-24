@@ -4931,7 +4931,7 @@
                 "operationId": "a4a238555899e2cf5caae34df689f674",
                 "parameters": [
                     {
-                        "name": "order",
+                        "name": "order_uuid",
                         "in": "path",
                         "description": "Order UUID",
                         "required": true,
@@ -4942,7 +4942,7 @@
                         }
                     },
                     {
-                        "name": "user",
+                        "name": "user_uuid",
                         "in": "path",
                         "description": "Vendor User UUID",
                         "required": true,
@@ -5015,6 +5015,83 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Internal server error"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/orders/{order_uuid}/cancel-assign": {
+            "post": {
+                "tags": [
+                    "Order Assign"
+                ],
+                "summary": "Cancel the assignment of an order to a vendor",
+                "operationId": "ddec61d19a9d8ba68910c0836cd851fa",
+                "parameters": [
+                    {
+                        "name": "order_uuid",
+                        "in": "path",
+                        "description": "Order UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "55c9af7b-e7fb-4798-b3f6-3e76edc5cf2f"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order assignment canceled successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order assignment canceled successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order not found"
                                         },
                                         "data": {
                                             "type": "object",
