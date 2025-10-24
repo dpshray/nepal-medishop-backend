@@ -40,13 +40,24 @@ class AdminUserDetailResource extends JsonResource
                         'order_items_detail' => $order->orderItems->map(function ($item) {
                             return [
                                 'item_type' => class_basename($item->item_type),
-                                'product_name' => $item->product?->name,
-                                'variant_name' => $item->productVariant?->name,
+                                'name' => $item->item_name,
+                                'slug' => $item->item_slug,
+                                'variant_name' => $item->variant_name ?? null,
+                                'variant_size' => $item->variant_size ?? null,
                                 'quantity' => (int) $item->quantity,
                                 'price' => (float) $item->price,
                                 'total' => (float) $item->total,
-                                'featured_image' => $item->product?->getFirstMediaUrl(Product::PRODUCT_FEATURE),
-                                'gallery_images' => $item->product?->getFirstMediaUrl(Product::PRODUCT_GALLERY)
+                                'featured_image' => $item->product
+                                    ? $item->product->getFirstMediaUrl(Product::PRODUCT_FEATURE)
+                                    : ($item->package
+                                        ? $item->package->getFirstMediaUrl(Package::PACKAGE_FEATURED)
+                                        : null),
+
+                                'gallery_images' => $item->product
+                                    ? $item->product->getMedia(Product::PRODUCT_GALLERY)->map->getUrl()
+                                    : ($item->package
+                                        ? $item->package->getMedia(Package::PACKAGE_GALLERY)->map->getUrl()
+                                        : []),
                             ];
                         }),
                     ];
@@ -60,8 +71,8 @@ class AdminUserDetailResource extends JsonResource
                         'type' => class_basename($like->likable_type), // Product or Package
                         'id' => $like->likable_id,
                         'name' => $item?->name,
-                        'slug'=>$item?->slug,
-                        'description'=>$item?->description,
+                        'slug' => $item?->slug,
+                        'description' => $item?->description,
                         'featured_image' => $item instanceof Product
                             ? $item->getFirstMediaUrl(Product::PRODUCT_FEATURE)
                             : ($item instanceof Package
@@ -78,8 +89,8 @@ class AdminUserDetailResource extends JsonResource
                         'type' => class_basename($wish->wishable_type), // Product or Package
                         'id' => $wish->wishable_id,
                         'name' => $item?->name,
-                        'slug'=>$item?->slug,
-                        'description'=>$item?->description,
+                        'slug' => $item?->slug,
+                        'description' => $item?->description,
                         'featured_image' => $item instanceof Product
                             ? $item->getFirstMediaUrl(Product::PRODUCT_FEATURE)
                             : ($item instanceof Package
