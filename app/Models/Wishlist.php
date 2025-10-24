@@ -21,4 +21,12 @@ class Wishlist extends Model
     {
         return $this->belongsTo(Package::class, 'wishable_id');
     }
+    public function wishable()
+    {
+        return $this->morphTo();
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\User;
 
+use App\Models\Package;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -38,33 +39,67 @@ class AdminUserDetailResource extends JsonResource
                         'created_at' => $order->created_at->format('Y-m-d H:i:s'),
                         'order_items_detail' => $order->orderItems->map(function ($item) {
                             return [
-                                // 'item_type' => $item->item_type,
-                                'product_name' => $item->product?->name,
-                                'variant_name' => $item->productVariant?->name,
+                                'item_type' => class_basename($item->item_type),
+                                'name' => $item->item_name,
+                                'slug' => $item->item_slug,
+                                'variant_name' => $item->variant_name ?? null,
+                                'variant_size' => $item->variant_size ?? null,
                                 'quantity' => (int) $item->quantity,
                                 'price' => (float) $item->price,
                                 'total' => (float) $item->total,
-                                'featured_image' => $item->product?->getFirstMediaUrl(Product::PRODUCT_FEATURE),
-                                'gallery_images' => $item->product?->getFirstMediaUrl(Product::PRODUCT_GALLERY)
+                                'featured_image' => $item->product
+                                    ? $item->product->getFirstMediaUrl(Product::PRODUCT_FEATURE)
+                                    : ($item->package
+                                        ? $item->package->getFirstMediaUrl(Package::PACKAGE_FEATURED)
+                                        : null),
+
+                                'gallery_images' => $item->product
+                                    ? $item->product->getMedia(Product::PRODUCT_GALLERY)->map->getUrl()
+                                    : ($item->package
+                                        ? $item->package->getMedia(Package::PACKAGE_GALLERY)->map->getUrl()
+                                        : []),
                             ];
                         }),
                     ];
                 });
             }),
 
-            'user_likes' => $this->whenLoaded('userlikes', function () {
+            'user_favourite' => $this->whenLoaded('userlikes', function () {
                 return $this->userlikes->map(function ($like) {
                     $item = $like->likable;
                     return [
                         'type' => class_basename($like->likable_type), // Product or Package
                         'id' => $like->likable_id,
                         'name' => $item?->name,
-                        'featured_image' => $item?->getFirstMediaUrl(Product::PRODUCT_FEATURE),
+                        'slug' => $item?->slug,
+                        'description' => $item?->description,
+                        'featured_image' => $item instanceof Product
+                            ? $item->getFirstMediaUrl(Product::PRODUCT_FEATURE)
+                            : ($item instanceof Package
+                                ? $item->getFirstMediaUrl(Package::PACKAGE_FEATURED)
+                                : null),
                     ];
                 });
             }),
 
-            'cart' => $this->whenLoaded('cart', function () {
+            'user_wishlist' => $this->whenLoaded('wishlist', function () {
+                return $this->wishlist->map(function ($wish) {
+                    $item = $wish->wishable;
+                    return [
+                        'type' => class_basename($wish->wishable_type), // Product or Package
+                        'id' => $wish->wishable_id,
+                        'name' => $item?->name,
+                        'slug' => $item?->slug,
+                        'description' => $item?->description,
+                        'featured_image' => $item instanceof Product
+                            ? $item->getFirstMediaUrl(Product::PRODUCT_FEATURE)
+                            : ($item instanceof Package
+                                ? $item->getFirstMediaUrl(Package::PACKAGE_FEATURED)
+                                : null),
+                    ];
+                });
+            }),
+            'User_cart' => $this->whenLoaded('cart', function () {
                 return $this->cart->map(function ($cartItem) {
                     return [
                         'cart_id' => $cartItem->id,

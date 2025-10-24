@@ -122,4 +122,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     {
         return $this->hasMany(Like::class, 'user_id');
     }
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class, 'user_id');
+    }
 }
