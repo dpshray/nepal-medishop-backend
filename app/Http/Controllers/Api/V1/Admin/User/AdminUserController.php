@@ -179,6 +179,7 @@ class AdminUserController extends Controller
             'orders.orderItems.productVariant',
             'cart',
             'userlikes.likable',
+            'wishlist.wishable',
         ]);
         $data = new AdminUserDetailResource($user);
         return $this->apiSuccess('User detail retrieved successfully.', $data);
