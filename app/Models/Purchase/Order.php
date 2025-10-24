@@ -10,21 +10,22 @@ use Illuminate\Support\Str;
 class Order extends Model
 {
     use UuidModelTrait;
-    
+
     public $timestamps = false;
 
     protected $fillable = [
         'user_type',
         'order_code',
-        'name', 
-        'email', 
-        'mobile', 
-        'address', 
+        'name',
+        'email',
+        'mobile',
+        'address',
         'description',
         'price',
         'payment_method',
         'payment_status',
         'status',
+        'assigned_vendor_id',
         'created_at'
     ];
 
@@ -39,7 +40,7 @@ class Order extends Model
             $item->order_code = Str::random(20);
         });
     } */
-    
+
     function orderItems() {
         return $this->hasMany(OrderItem::class);
     }

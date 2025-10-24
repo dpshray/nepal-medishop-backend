@@ -4712,6 +4712,118 @@
                     }
                 ]
             }
+        },
+        "/admin/orders/{order_uuid}/assign/{user_uuid}": {
+            "post": {
+                "tags": [
+                    "Order Assign"
+                ],
+                "summary": "Assign an order to a vendor using UUIDs",
+                "operationId": "a4a238555899e2cf5caae34df689f674",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "Order UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "55c9af7b-e7fb-4798-b3f6-3e76edc5cf2f"
+                        }
+                    },
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "Vendor User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "aa566e85-ce2f-4756-8a8f-d4f58a500ace"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order has been assigned successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order has been assigned to John Doe"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order or User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order or User not found"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
@@ -4754,6 +4866,10 @@
         {
             "name": "Vendor Products list",
             "description": "Vendor Products list"
+        },
+        {
+            "name": "Order Assign",
+            "description": "Order Assign"
         }
     ],
     "components": {
