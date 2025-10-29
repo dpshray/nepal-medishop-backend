@@ -109,43 +109,44 @@ class AdminOrderAssignController extends Controller
         $order->load('orderItems');
         $order_uuid = $order->uuid;
         $search = $request->query('search');
-        $per_page = $request->query('per_page', 10);
+        $per_page = (int) $request->query('per_page', 10);
+        $page = (int) $request->query('page', 1);
 
         $user_order = DB::select("
+        SELECT 
+            u.item_variant_id,
+            SUM(u.quantity) AS total_quantity,
+            o.id AS order_id
+        FROM (
             SELECT 
-                u.item_variant_id,
-                SUM(u.quantity) AS total_quantity,
-                o.id AS order_id
-            FROM (
-                SELECT 
-                    oi.order_id,
-                    oi.item_type,
-                    oi.item_variant_id,
-                    oi.quantity
-                FROM order_items AS oi
-                WHERE oi.item_type != 'App\\\\Models\\\\Package'
+                oi.order_id,
+                oi.item_type,
+                oi.item_variant_id,
+                oi.quantity
+            FROM order_items AS oi
+            WHERE oi.item_type != 'App\\\\Models\\\\Package'
 
-                UNION ALL
+            UNION ALL
 
-                SELECT  
-                    oi.order_id,
-                    oi.item_type,
-                    pp.product_variation_id AS item_variant_id,
-                    (oi.quantity * pp.quantity) AS quantity
-                FROM order_items AS oi
-                JOIN packages AS p 
-                    ON oi.item_slug = p.slug
-                JOIN package_products AS pp 
-                    ON p.id = pp.package_id
-                WHERE oi.item_type = 'App\\\\Models\\\\Package'
-            ) AS u
-            JOIN orders AS o
-                ON u.order_id = o.id
-            WHERE o.uuid = ?
-            GROUP BY u.item_variant_id, o.id", [$order_uuid]);
+            SELECT  
+                oi.order_id,
+                oi.item_type,
+                pp.product_variation_id AS item_variant_id,
+                (oi.quantity * pp.quantity) AS quantity
+            FROM order_items AS oi
+            JOIN packages AS p 
+                ON oi.item_slug = p.slug
+            JOIN package_products AS pp 
+                ON p.id = pp.package_id
+            WHERE oi.item_type = 'App\\\\Models\\\\Package'
+        ) AS u
+        JOIN orders AS o
+            ON u.order_id = o.id
+        WHERE o.uuid = ?
+        GROUP BY u.item_variant_id, o.id", [$order_uuid]);
         $user_order = collect($user_order)->keyBy('item_variant_id')->toArray();
 
-        $pagination = Vendor::VerifiedAndActive()
+        $vendors = Vendor::VerifiedAndActive()
             ->select('id', 'user_id', 'store_name')->with([
                 'user',
                 'vendorProducts' =>
@@ -165,35 +166,38 @@ class AdminOrderAssignController extends Controller
                         });
                 });
             })
-            ->paginate($per_page);
+            ->get();
 
-        // Log::info($user_order);
-        // Log::info($pagination->items());
-        $items = array_map(function ($item) use ($user_order) {
+        $assignable_vendors = $vendors->filter(function ($vendor) use ($user_order) {
             $is_assignable = true;
-            if ($item->vendorProducts) {
+            if ($vendor->vendorProducts) {
                 foreach ($user_order as $key => $value) {
-                    // ($item->vendorProducts)->where('vendor_prices.product_variation_id', $key);
-                    $is_all_variants_doesnt_exists = $item->vendorProducts->filter(function ($product) use ($key) {
-                        return $product->vendorPrices->contains('product_variation_id', $key);
-                    })->isEmpty();
-                    // Log::info(['vendor_prices.product_variation_id', $res]);
-                    if ($is_all_variants_doesnt_exists) {
+                    $has_variant_with_stock = $vendor->vendorProducts->contains(function ($product) use ($key, $value) {
+                        $prices = $product->vendorPrices->where('product_variation_id', $key);
+                        return $prices->isNotEmpty() && $prices->first()->units_in_stock > $value->total_quantity;
+                    });
+                    if (!$has_variant_with_stock) {
                         $is_assignable = false;
                         break;
                     }
                 }
+            } else {
+                $is_assignable = false;
             }
+            return $is_assignable;
+        });
+
+        $paginated = $assignable_vendors->forPage($page, $per_page);
+        $items = $paginated->map(function ($item) {
             return [
                 'user_name' => $item->user->name,
                 'store_name' => $item->store_name,
-                'is_assignable' => $is_assignable
+                'is_assignable' => true
             ];
-        }, $pagination->items());
+        })->values()->toArray();
 
-        $page = $pagination->currentPage();
-        $total_page = $pagination->lastPage();
-        $total_items = $pagination->total();
+        $total_items = $assignable_vendors->count();
+        $total_page = ceil($total_items / $per_page);
         $data = compact('items', 'page', 'total_page', 'total_items');
 
         return $this->apiSuccess('List of vendors with order assignability status', $data);
