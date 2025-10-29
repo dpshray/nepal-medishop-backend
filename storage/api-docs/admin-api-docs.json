@@ -4922,6 +4922,127 @@
                 ]
             }
         },
+        "/admin/orders/{order_uuid}/vendors": {
+            "get": {
+                "tags": [
+                    "Order Assign"
+                ],
+                "summary": "Get list of vendors with assignability status for a specific order",
+                "description": "Returns a list of vendors along with a boolean property `is_assignable` indicating whether the order can be assigned to that vendor.",
+                "operationId": "6bb1d18b93ee4698ac894e2cde5fa5d5",
+                "parameters": [
+                    {
+                        "name": "order_uuid",
+                        "in": "path",
+                        "description": "UUID of the order to check assignable vendors for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "55c9af7b-e7fb-4798-b3f6-3e76edc5cf2f"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search vendor based on username and store name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of vendors with assignability status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of vendors with order assignability status"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "data": {
+                                                    "properties": {
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "user_name": {
+                                                                        "type": "string",
+                                                                        "example": "vendor2214"
+                                                                    },
+                                                                    "store_name": {
+                                                                        "type": "string",
+                                                                        "example": "Green-Hettinger"
+                                                                    },
+                                                                    "is_assignable": {
+                                                                        "type": "boolean",
+                                                                        "example": false
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "total_page": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "total_items": {
+                                                            "type": "integer",
+                                                            "example": 14
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/order/{order_uuid}/assign/{user_uuid}": {
             "get": {
                 "tags": [
