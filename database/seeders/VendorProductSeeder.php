@@ -36,6 +36,7 @@ class VendorProductSeeder extends Seeder
                     foreach ($variations as $variation) {
                         $price = rand(1000, 5000);
                         $temp[] = [
+                            'status' => true,
                             'product_variation_id' => $variation->id,
                             'price' => $price,
                             'units_in_stock' => rand(50, 200)
