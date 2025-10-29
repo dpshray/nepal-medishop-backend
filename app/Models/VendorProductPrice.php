@@ -28,4 +28,8 @@ class VendorProductPrice extends Model
     {
         return $this->belongsTo(ProductVariation::class, 'product_variation_id');
     }
+
+    function scopeActive($qry) {
+        return $qry->where('status',1);
+    }
 }

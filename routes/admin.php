@@ -48,6 +48,7 @@ Route::prefix('admin')
         Route::apiResource('user-order', AdminOrderController::class)->parameters(['user-order' => 'order'])->scoped(['order' => 'uuid'])->except(['store']);
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
         Route::apiResource('banner', AdminBannerController::class);
+        Route::get('orders/{order:uuid}/vendors', [AdminOrderAssignController::class, 'getVendorsWithAssignability']);
         Route::get('order/{order_uuid}/assign/{user_uuid}', [AdminOrderAssignController::class, 'AssignOrder']);
         Route::post('order/{order_uuid}/cancel-assign', [AdminOrderAssignController::class, 'CancelAssignOrder']);
         Route::apiResource('banner', AdminBannerController::class)->scoped(['banner' => 'uuid']);
