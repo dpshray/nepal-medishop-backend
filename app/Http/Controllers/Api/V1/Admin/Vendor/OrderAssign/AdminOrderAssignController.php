@@ -16,7 +16,7 @@ class AdminOrderAssignController extends Controller
     use ResponseTrait;
     /**
      * @OA\get(
-     *     path="/admin/orders/{order_uuid}/assign/{user_uuid}",
+     *     path="/admin/order/{order_uuid}/assign/{user_uuid}",
      *     summary="Assign an order to a vendor using UUIDs",
      *     tags={"Order Assign"},
      *     security={{"sanctum":{}}},
@@ -90,7 +90,7 @@ class AdminOrderAssignController extends Controller
             }
 
             // For product, check vendor's stock
-            $vendorProduct =VendorProductPrice::where([
+            $vendorProduct = VendorProductPrice::where([
                 'product_vendor_id' => $user->id,
                 'product_variation_id' => $item->item_variant_id,
                 'status' => 1, // approved by admin
@@ -103,10 +103,10 @@ class AdminOrderAssignController extends Controller
             if ($vendorProduct->units_in_stock < $item->quantity) {
                 return $this->apiError("Vendor does not have enough stock for product variation (ID: {$item->item_variant_id}).");
             }
+            $total_stock = $vendorProduct->units_in_stock - $item->quantity;
+            $vendorProduct->update(['units_in_stock' => $total_stock]);
         }
-
         $order->update(['assigned_vendor_id' => $user->id]);
-
         return $this->apiSuccess("Order has been assigned to {$user->name}");
     }
 
@@ -151,7 +151,19 @@ class AdminOrderAssignController extends Controller
      */
     public function CancelAssignOrder($order_uuid)
     {
-        $order = Order::where('uuid', $order_uuid)->firstOrFail();
+        $order = Order::where('uuid', $order_uuid)->with('orderItems')->firstOrFail();
+        foreach ($order->orderItems as $item) {
+            if ($item->item_type === Package::class) {
+                continue;
+            }
+            $vendorProduct = VendorProductPrice::where([
+                'product_vendor_id' => $order->assigned_vendor_id,
+                'product_variation_id' => $item->item_variant_id,
+                'status' => 1, // approved by admin
+            ])->first();
+            $total_stock = $vendorProduct->units_in_stock + $item->quantity;
+            $vendorProduct->update(['units_in_stock' => $total_stock]);
+        }
         $order->update(['assigned_vendor_id' => null]);
         return $this->apiSuccess('Order assignment canceled successfully');
     }
