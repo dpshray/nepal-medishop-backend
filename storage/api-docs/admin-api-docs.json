@@ -4922,13 +4922,13 @@
                 ]
             }
         },
-        "/admin/orders/{order_uuid}/assign/{user_uuid}": {
-            "post": {
+        "/admin/order/{order_uuid}/assign/{user_uuid}": {
+            "get": {
                 "tags": [
                     "Order Assign"
                 ],
                 "summary": "Assign an order to a vendor using UUIDs",
-                "operationId": "a4a238555899e2cf5caae34df689f674",
+                "operationId": "964051e153340c6abaa2284ea87b802b",
                 "parameters": [
                     {
                         "name": "order_uuid",
@@ -5034,13 +5034,13 @@
                 ]
             }
         },
-        "/admin/orders/{order_uuid}/cancel-assign": {
+        "/admin/order/{order_uuid}/cancel-assign": {
             "post": {
                 "tags": [
                     "Order Assign"
                 ],
                 "summary": "Cancel the assignment of an order to a vendor",
-                "operationId": "ddec61d19a9d8ba68910c0836cd851fa",
+                "operationId": "c0352e03de3d27692d69cc6bec4d2b47",
                 "parameters": [
                     {
                         "name": "order_uuid",
