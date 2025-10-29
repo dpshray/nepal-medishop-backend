@@ -99,6 +99,13 @@ class AdminOrderAssignController extends Controller
      */
     function getVendorsWithAssignability(Request $request, Order $order)
     {
+        /**
+         * Conditions of assignability:
+         * vendor must be verified and user must be verified and active
+         * vendor_products status: 1
+         * vendor_product_prices status: 1
+         * units_in_stock must be greater than order quantity
+         */
         $order->load('orderItems');
         $order_uuid = $order->uuid;
         $search = $request->query('search');
