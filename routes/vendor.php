@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
+use App\Http\Controllers\Api\V1\Vendor\Order\VendorOrderAssignController;
 use App\Http\Controllers\Api\V1\Vendor\VendorAuthController;
 use App\Http\Controllers\Api\V1\Vendor\VendorProductController;
 use App\Http\Middleware\AdminMiddleware;
@@ -15,6 +16,7 @@ Route::prefix('vendor')
                 Route::get('product-variants/{product:uuid}', 'productVariants');
                 Route::post('product/{uuid?}', 'store');
             });
+            Route::apiResource('orders',VendorOrderAssignController::class)->except(['destroy','store'])->scoped(['order' => 'uuid']);
         });
         Route::post('registration', [VendorAuthController::class, 'registerVendor']);
     });

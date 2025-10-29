@@ -5043,13 +5043,13 @@
                 ]
             }
         },
-        "/admin/orders/{order_uuid}/assign/{user_uuid}": {
+        "/admin/order/{order_uuid}/assign/{user_uuid}": {
             "get": {
                 "tags": [
                     "Order Assign"
                 ],
                 "summary": "Assign an order to a vendor using UUIDs",
-                "operationId": "3f19d0d980f3f9b29c288638d379d76f",
+                "operationId": "964051e153340c6abaa2284ea87b802b",
                 "parameters": [
                     {
                         "name": "order_uuid",
