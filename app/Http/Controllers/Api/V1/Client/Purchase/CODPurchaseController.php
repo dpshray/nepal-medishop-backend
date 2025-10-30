@@ -40,6 +40,8 @@ class CODPurchaseController extends Controller
      *             @OA\Property(property="mobile", type="string", example="9854112547"),
      *             @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
      *             @OA\Property(property="description", type="string", example="some description of this order COD"),
+     *             @OA\Property(property="gift_wrap", type="boolean", example=true),
+     *             @OA\Property(property="gift_wrap_remarks", type="boolean", example="gift wrap must be in silver paper."),
      *             @OA\Property(
      *                 property="products",
      *                 type="array",
@@ -66,34 +68,36 @@ class CODPurchaseController extends Controller
      *         description="Your order has been placed successfully.",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Your order has been placed successfully."),
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="amount", type="number", format="float", example=27869.54),
-     *                 @OA\Property(property="order_number", type="string", example="UJUdS1lXDpl2OpSwyQJS"),
+     *                 @OA\Property(property="amount", type="number", format="float", example=2248.46),
+     *                 @OA\Property(property="order_number", type="string", example="7gnhQMRGxGZORSC8OuNb"),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
-     *                 @OA\Property(property="date", type="string", example="2025/10/13"),
+     *                 @OA\Property(property="date", type="string", example="2025/10/30"),
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="item_name", type="string", example="Debitis debitis autem consectetur saepe."),
-     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-2"),
-     *                         @OA\Property(property="quantity", type="integer", example=1),
-     *                         @OA\Property(property="price", type="number", format="float", example=1385.28),
-     *                         @OA\Property(property="total", type="number", format="float", example=1385.28)
+     *                         @OA\Property(property="item_name", type="string", example="Quo voluptas quam dolorum voluptas."),
+     *                         @OA\Property(property="variant_name", type="string", example="Variant-2"),
+     *                         @OA\Property(property="quantity", type="integer", example=2),
+     *                         @OA\Property(property="price", type="number", format="float", example=1124.23),
+     *                         @OA\Property(property="total", type="number", format="float", example=2248.46)
      *                     )
      *                 ),
-     *                 @OA\Property(property="delivery_address", type="string", example="Shyambhu, Kathmandu")
-     *             )
+     *                 @OA\Property(property="delivery_address", type="string", example="Boudha, Kathmandu"),
+     *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
+     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper with golden ribbon")
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
      */
     function __invoke(CODRequest $request)
-    {        
+    {       
         if (!$request->hasAny(['products', 'packages'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }
@@ -156,6 +160,8 @@ class CODPurchaseController extends Controller
             'payment_method' => $request->payment_method,
             'payment_status' => PaymentStatusEnum::UNPAID->value,
             'status' => OrderStatusEnum::PENDING->value,
+            'gift_wrap' => $request->gift_wrap,
+            'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
             'created_at' => now()
         ];
 
@@ -212,7 +218,9 @@ class CODPurchaseController extends Controller
                 'payment_method' => $order->payment_method,
                 'date' => $order->created_at->format('Y/m/d'),
                 'ordered_items' => $order_items,
-                'delivery_address' => $order->address
+                'delivery_address' => $order->address,
+                'gift_wrap' => $request->gift_wrap,
+                'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
             ];
         });
 

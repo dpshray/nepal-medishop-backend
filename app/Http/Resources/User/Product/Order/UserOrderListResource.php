@@ -21,6 +21,7 @@ class UserOrderListResource extends JsonResource
             "address" => $this->address,
             "description" => $this->description,
             "price" => (float) $this->price,
+            "gift_wrap" => (boolean) $this->gift_wrap,
             "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
             "order_status" => $this->status,

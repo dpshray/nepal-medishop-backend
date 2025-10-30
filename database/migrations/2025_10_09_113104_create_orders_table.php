@@ -26,6 +26,8 @@ return new class extends Migration
             $table->string('address');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
+            $table->boolean('gift_wrap')->default(0);
+            $table->text('gift_wrap_remarks')->nullable();
             $table->string('payment_method');
             $table->string('payment_status');
             $table->string('status');

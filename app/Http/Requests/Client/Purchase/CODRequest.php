@@ -35,6 +35,8 @@ class CODRequest extends FormRequest
             'packages.*' => 'sometimes|nullable|array',
             'packages.*.package_slug' => 'required|exists:packages,slug',
             'packages.*.quantity' => 'required|numeric',
+            'gift_wrap' => 'required|boolean',
+            'gift_wrap_remarks' => 'nullable',
         ];
         if (!Auth::user()) {
             $rules = [...$rules, ...[

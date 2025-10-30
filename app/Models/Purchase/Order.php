@@ -25,6 +25,8 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'status',
+        'gift_wrap',
+        'gift_wrap_remarks',
         'assigned_vendor_id',
         'created_at'
     ];
