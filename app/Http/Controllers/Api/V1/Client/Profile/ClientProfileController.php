@@ -53,6 +53,10 @@ class ClientProfileController extends Controller
     function index()
     {
         $user = Auth::user();
+        if (!$user)
+        {
+            return $this->apiError('login first');
+        }
         return $this->apiSuccess('user detail', new UserProfileResource($user));
     }
     /**

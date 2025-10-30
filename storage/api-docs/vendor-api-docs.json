@@ -24,6 +24,72 @@
         }
     ],
     "paths": {
+        "/vendor/dashboard": {
+            "get": {
+                "tags": [
+                    "Vendor Dashboard"
+                ],
+                "summary": "Get vendor dashboard statistics",
+                "description": "Retrieve vendor statistics including total uploaded products, assigned orders, delivered orders, and total earnings.",
+                "operationId": "c2a74bca3ca6a2cbce8417b24227aca1",
+                "responses": {
+                    "200": {
+                        "description": "Vendor dashboard statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor dashboard statistics retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_uploaded_products_count": {
+                                                    "description": "Total products uploaded and accepted by admin",
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "total_assigned_orders_count": {
+                                                    "description": "Total number of orders assigned to the vendor",
+                                                    "type": "integer",
+                                                    "example": 8
+                                                },
+                                                "total_delivered_orders_count": {
+                                                    "description": "Total number of delivered orders",
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_vendor_earning": {
+                                                    "description": "Total vendor earnings from delivered orders",
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 15750.5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/vendor/orders": {
             "get": {
                 "tags": [
@@ -791,6 +857,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Vendor Dashboard",
+            "description": "Vendor Dashboard"
+        },
         {
             "name": "Vendor Orders",
             "description": "Vendor Orders"
