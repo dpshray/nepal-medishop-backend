@@ -42,20 +42,6 @@ class AdminOrderAssignController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         required=false,
-     *         description="Page number of list",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),     
-     *     @OA\Parameter(
-     *         name="per_page",
-     *         in="query",
-     *         required=false,
-     *         description="Items on each page",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Parameter(
      *         name="search",
      *         in="query",
      *         required=false,
@@ -67,51 +53,45 @@ class AdminOrderAssignController extends Controller
      *
      *     @OA\Response(
      *         response=200,
-     *         description="List of vendors with assignability status",
+     *         description="List of vendors with order assignability status.",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="List of vendors with order assignability status"),
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(
-     *                     property="data",
-     *                     type="object",
-     *                     @OA\Property(
-     *                         property="items",
-     *                         type="array",
-     *                         @OA\Items(
-     *                             type="object",
-     *                             @OA\Property(property="user_name", type="string", example="vendor2214"),
-     *                             @OA\Property(property="store_name", type="string", example="Green-Hettinger"),
-     *                             @OA\Property(property="is_assignable", type="boolean", example=false)
-     *                         )
-     *                     ),
-     *                     @OA\Property(property="page", type="integer", example=1),
-     *                     @OA\Property(property="total_page", type="integer", example=2),
-     *                     @OA\Property(property="total_items", type="integer", example=14)
-     *                 )
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="user_name", type="string", example="vendor00"),
+     *                         @OA\Property(property="store_name", type="string", example="Schumm Ltd"),
+     *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="7fdd51b5-795c-4f01-8484-709eea4e2e77"),
+     *                         @OA\Property(property="is_assignable", type="boolean", example=true)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="total_items", type="integer", example=1)
      *             )
      *         )
      *     )
      * )
      */
-    function getVendorsWithAssignability(Request $request, Order $order)
+    public function getVendorsWithAssignability(Request $request, Order $order)
     {
         /**
          * Conditions of assignability:
-         * vendor must be verified and user must be verified and active
-         * vendor_products status: 1
-         * vendor_product_prices status: 1
-         * units_in_stock must be greater than order quantity
+         * - Vendor must be verified and user must be verified and active
+         * - vendor_products status: 1
+         * - vendor_product_prices status: 1
+         * - units_in_stock must be greater than order quantity
          */
+
         $order->load('orderItems');
         $order_uuid = $order->uuid;
         $search = $request->query('search');
-        $per_page = (int) $request->query('per_page', 10);
-        $page = (int) $request->query('page', 1);
 
+        // 1️⃣ Collect order items and total quantities (including packages)
         $user_order = DB::select("
         SELECT 
             u.item_variant_id,
@@ -143,16 +123,21 @@ class AdminOrderAssignController extends Controller
         JOIN orders AS o
             ON u.order_id = o.id
         WHERE o.uuid = ?
-        GROUP BY u.item_variant_id, o.id", [$order_uuid]);
-        $user_order = collect($user_order)->keyBy('item_variant_id')->toArray();
+        GROUP BY u.item_variant_id, o.id
+    ", [$order_uuid]);
 
+        $user_order = collect($user_order)->keyBy('item_variant_id');
+
+        // 2️⃣ Load vendors with related user, products, and prices
         $vendors = Vendor::VerifiedAndActive()
-            ->select('id', 'user_id', 'store_name')->with([
+            ->select('id', 'uuid', 'user_id', 'store_name')
+            ->with([
                 'user',
-                'vendorProducts' =>
-                fn($qry) => $qry->select('id', 'status', 'is_approved', 'vendor_id')
+                'vendorProducts' => fn($qry) => $qry
+                    ->select('id', 'status', 'is_approved', 'vendor_id')
                     ->with([
-                        'vendorPrices' => fn($q) => $q->select('status', 'product_vendor_id', 'product_variation_id', 'units_in_stock')
+                        'vendorPrices' => fn($q) => $q
+                            ->select('status', 'product_vendor_id', 'product_variation_id', 'units_in_stock')
                             ->active()
                     ])
                     ->active()
@@ -168,40 +153,40 @@ class AdminOrderAssignController extends Controller
             })
             ->get();
 
+        // 3️⃣ Filter only assignable vendors
         $assignable_vendors = $vendors->filter(function ($vendor) use ($user_order) {
-            $is_assignable = true;
-            if ($vendor->vendorProducts) {
-                foreach ($user_order as $key => $value) {
-                    $has_variant_with_stock = $vendor->vendorProducts->contains(function ($product) use ($key, $value) {
-                        $prices = $product->vendorPrices->where('product_variation_id', $key);
-                        return $prices->isNotEmpty() && $prices->first()->units_in_stock > $value->total_quantity;
-                    });
-                    if (!$has_variant_with_stock) {
-                        $is_assignable = false;
-                        break;
-                    }
+            foreach ($user_order as $variant_id => $order_item) {
+                $has_variant = $vendor->vendorProducts->contains(function ($product) use ($variant_id, $order_item) {
+                    $prices = $product->vendorPrices->where('product_variation_id', $variant_id);
+                    return $prices->isNotEmpty() && $prices->first()->units_in_stock > $order_item->total_quantity;
+                });
+
+                if (!$has_variant) {
+                    return false; // If any variant not available, vendor is not assignable
                 }
-            } else {
-                $is_assignable = false;
             }
-            return $is_assignable;
+
+            return true;
         });
 
-        $paginated = $assignable_vendors->forPage($page, $per_page);
-        $items = $paginated->map(function ($item) {
+        // 4️⃣ Format data — return all (no pagination)
+        $items = $assignable_vendors->map(function ($vendor) {
             return [
-                'user_name' => $item->user->name,
-                'store_name' => $item->store_name,
-                'is_assignable' => true
+                'user_name' => $vendor->user->name,
+                'store_name' => $vendor->store_name,
+                'vendor_uuid' => $vendor->uuid,
+                'is_assignable' => true,
             ];
-        })->values()->toArray();
+        })->values();
 
-        $total_items = $assignable_vendors->count();
-        $total_page = ceil($total_items / $per_page);
-        $data = compact('items', 'page', 'total_page', 'total_items');
+        $data = [
+            'items' => $items,
+            'total_items' => $items->count(),
+        ];
 
         return $this->apiSuccess('List of vendors with order assignability status', $data);
     }
+
 
     /**
      * @OA\get(
