@@ -113,6 +113,7 @@ class ClientOrderController extends Controller
      *                 @OA\Property(property="price", type="number", format="float", example=4712.54),
      *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
      *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver colour"),
+     *                 @OA\Property(property="gift_wrap_charge", type="integer", example=300),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
      *                 @OA\Property(property="status", type="string", example="PENDING"),

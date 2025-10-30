@@ -27,6 +27,7 @@ class Order extends Model
         'status',
         'gift_wrap',
         'gift_wrap_remarks',
+        'gift_wrap_charge',
         'assigned_vendor_id',
         'created_at'
     ];

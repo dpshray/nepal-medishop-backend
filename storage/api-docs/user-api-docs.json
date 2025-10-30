@@ -1598,6 +1598,10 @@
                                                 "gift_wrap_remarks": {
                                                     "type": "string",
                                                     "example": "gift wrap must be in silver paper with golden ribbon"
+                                                },
+                                                "gift_wrap_charge": {
+                                                    "type": "integer",
+                                                    "example": 300
                                                 }
                                             },
                                             "type": "object"
@@ -2120,6 +2124,10 @@
                                                 "gift_wrap_remarks": {
                                                     "type": "string",
                                                     "example": "gift wrap must be in silver colour"
+                                                },
+                                                "gift_wrap_charge": {
+                                                    "type": "integer",
+                                                    "example": 300
                                                 },
                                                 "payment_method": {
                                                     "type": "string",

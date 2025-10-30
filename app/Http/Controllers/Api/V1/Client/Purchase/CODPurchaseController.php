@@ -6,11 +6,13 @@ use App\Enums\OrderUserTypeEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\PaymentMethodEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
+use App\Enums\SettingEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Purchase\CODRequest;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\Purchase\Order;
+use App\Models\Setting;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -89,7 +91,8 @@ class CODPurchaseController extends Controller
      *                 ),
      *                 @OA\Property(property="delivery_address", type="string", example="Boudha, Kathmandu"),
      *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
-     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper with golden ribbon")
+     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper with golden ribbon"),
+     *                 @OA\Property(property="gift_wrap_charge", type="integer", example=300)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -155,18 +158,32 @@ class CODPurchaseController extends Controller
         }
         $order_items = [...$products_ordered, ...$packages_ordered];
         // Log::info($order_items);
+        $price = collect($order_items)->sum('total');
+        
+        $gift_wrap_status = $request->gift_wrap;
+        $gift_wrap_charge = 0;
+
+        if ($gift_wrap_status) {
+            $gift_wrap_charge = Setting::firstWhere('key', SettingEnum::GIFT_WRAP_CHARGE->value);
+            if ($gift_wrap_charge) {
+                $gift_wrap_charge = $gift_wrap_charge->value;
+                $price += $gift_wrap_charge;
+            }
+        }
+
         $order_detail = [
-            'price' => collect($order_items)->sum('total'),
+            'price' => $price,
             'payment_method' => $request->payment_method,
             'payment_status' => PaymentStatusEnum::UNPAID->value,
             'status' => OrderStatusEnum::PENDING->value,
             'gift_wrap' => $request->gift_wrap,
             'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
+            'gift_wrap_charge' => $gift_wrap_charge,
             'created_at' => now()
         ];
 
         $response = null;
-        DB::transaction(function () use ($request, $order_detail, $order_items, &$response) {
+        DB::transaction(function () use ($request, $order_detail, $order_items, &$response, $gift_wrap_charge) {
             $user = Auth::user();
             $order_code = Str::random(20);
             if ($user) { # Logged user
@@ -221,6 +238,7 @@ class CODPurchaseController extends Controller
                 'delivery_address' => $order->address,
                 'gift_wrap' => $request->gift_wrap,
                 'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
+                'gift_wrap_charge' => (float) $gift_wrap_charge
             ];
         });
 
