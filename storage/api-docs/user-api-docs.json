@@ -1259,6 +1259,54 @@
                 ]
             }
         },
+        "/settings": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Get list of settings.",
+                "description": "Retrieve the list of application settings with related data.",
+                "operationId": "SettingList",
+                "responses": {
+                    "200": {
+                        "description": "App settings fetched successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "app settings fetched successfully"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "GIFT_WRAP_CHARGE"
+                                                    },
+                                                    "value": {
+                                                        "type": "number",
+                                                        "example": 300
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/user/profile": {
             "get": {
                 "tags": [
@@ -3297,6 +3345,10 @@
         {
             "name": "Package",
             "description": "Package"
+        },
+        {
+            "name": "Setting",
+            "description": "Setting"
         },
         {
             "name": "User",

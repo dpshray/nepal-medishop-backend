@@ -20,6 +20,7 @@ Route::controller(MasterDataController::class)->group(function(){
     Route::get('product/{product:slug}', 'fetchProductDetail');
     Route::get('packages', 'fetchPackages');
     Route::get('package/{package:slug}', 'fetchPackageDetail');
+    Route::get('settings', 'fetchSettings');
 });
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::controller(LikeController::class)->group(function(){

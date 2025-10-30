@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Client;
 
+use App\Enums\SettingEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\Package\PackageDetailResource;
 use App\Http\Resources\User\Package\PackageSingleResource;
@@ -404,5 +405,43 @@ class MasterDataController extends Controller
             'likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
         $data = new PackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/settings",
+     *     summary="Get list of settings.",
+     *     description="Retrieve the list of application settings with related data.",
+     *     operationId="SettingList",
+     *     tags={"Setting"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="App settings fetched successfully.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="app settings fetched successfully"),
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="name", type="string", example="GIFT_WRAP_CHARGE"),
+     *                     @OA\Property(property="value", type="number", example=300)
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    function fetchSettings() {
+        $settings = DB::table('settings')->select('key','value')->get()->map(function($item){
+            if ($item->key == SettingEnum::GIFT_WRAP_CHARGE->value) {
+                return [
+                    'name' => $item->key,
+                    'value' => (float) $item->value
+                ];
+            }
+        });
+        return $this->apiSuccess('app settings fetched successfully', $settings);
     }
 }

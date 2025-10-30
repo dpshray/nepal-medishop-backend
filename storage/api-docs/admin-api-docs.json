@@ -4943,26 +4943,6 @@
                         }
                     },
                     {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page number of list",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Items on each page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
                         "name": "search",
                         "in": "query",
                         "description": "search vendor based on username and store name",
@@ -4974,57 +4954,49 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of vendors with assignability status",
+                        "description": "List of vendors with order assignability status.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "List of vendors with order assignability status"
                                         },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "data": {
                                             "properties": {
-                                                "data": {
-                                                    "properties": {
-                                                        "items": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "properties": {
-                                                                    "user_name": {
-                                                                        "type": "string",
-                                                                        "example": "vendor2214"
-                                                                    },
-                                                                    "store_name": {
-                                                                        "type": "string",
-                                                                        "example": "Green-Hettinger"
-                                                                    },
-                                                                    "is_assignable": {
-                                                                        "type": "boolean",
-                                                                        "example": false
-                                                                    }
-                                                                },
-                                                                "type": "object"
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "user_name": {
+                                                                "type": "string",
+                                                                "example": "vendor00"
+                                                            },
+                                                            "store_name": {
+                                                                "type": "string",
+                                                                "example": "Schumm Ltd"
+                                                            },
+                                                            "vendor_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "7fdd51b5-795c-4f01-8484-709eea4e2e77"
+                                                            },
+                                                            "is_assignable": {
+                                                                "type": "boolean",
+                                                                "example": true
                                                             }
                                                         },
-                                                        "page": {
-                                                            "type": "integer",
-                                                            "example": 1
-                                                        },
-                                                        "total_page": {
-                                                            "type": "integer",
-                                                            "example": 2
-                                                        },
-                                                        "total_items": {
-                                                            "type": "integer",
-                                                            "example": 14
-                                                        }
-                                                    },
-                                                    "type": "object"
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
                                                 }
                                             },
                                             "type": "object"
