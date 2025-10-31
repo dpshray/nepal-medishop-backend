@@ -2169,26 +2169,38 @@
                 ]
             }
         },
-        "/remove-cart-item/{uuid}": {
-            "get": {
+        "/remove-cart-item": {
+            "delete": {
                 "tags": [
                     "Cart"
                 ],
-                "summary": "Remove a cart item of a logged in user.NOTE: slug value can be: package or product.",
+                "summary": "Remove a cart item of a logged in user.",
                 "description": "Remove a cart item of a logged in user.",
                 "operationId": "MyCartItemRemover",
-                "parameters": [
-                    {
-                        "name": "uuid",
-                        "in": "path",
-                        "description": "Item uuid of an item(product/package)",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "c3f6d58b-90f3-47ad-82ed-e1385df0ea2a"
+                "requestBody": {
+                    "description": "List of cart item UUIDs to delete in bulk",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "item_uuids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "example": [
+                                            "e3aacd84-eaf0-4c43-b597-5f8a35329057",
+                                            "e39e59bc-4651-413b-9e85-71771dd1de40"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "Item removed from cart successfully",

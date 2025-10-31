@@ -37,7 +37,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::controller(ClientCartController::class)->group(function(){
         Route::post('add-to-cart', 'storeOnCart');
         Route::get('my-cart', 'fetchMyCart');
-        Route::get('remove-cart-item/{cart:uuid}', 'cartItemRemover');
+        Route::delete('remove-cart-item', 'cartItemRemover');
         Route::post('update-cart-item/{cart:uuid}', 'cartItemUpdater');
     });
     Route::apiResource('kitbag', ClientKitbagController::class)->except(['show','update','destroy'])->scoped(['kitbag' => 'uuid']);

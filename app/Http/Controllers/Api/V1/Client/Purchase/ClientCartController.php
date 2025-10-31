@@ -326,19 +326,28 @@ class ClientCartController extends Controller
     }
 
     /**
-     * @OA\Get(
+     * @OA\Delete(
      *     security={{"sanctum": {}}},
-     *     path="/remove-cart-item/{uuid}",
-     *     summary="Remove a cart item of a logged in user.NOTE: slug value can be: package or product.",
+     *     path="/remove-cart-item",
+     *     summary="Remove a cart item of a logged in user.",
      *     description="Remove a cart item of a logged in user.",
      *     operationId="MyCartItemRemover",
      *     tags={"Cart"},
-     *     @OA\Parameter(
-     *         name="uuid",
-     *         in="path",
-     *         required=true,
-     *         description="Item uuid of an item(product/package)",
-     *         @OA\Schema(type="string", example="c3f6d58b-90f3-47ad-82ed-e1385df0ea2a")
+     *     @OA\RequestBody(
+     *         required=false,
+     *         description="List of cart item UUIDs to delete in bulk",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="item_uuids",
+     *                 type="array",
+     *                 @OA\Items(type="string", format="uuid"),
+     *                 example={
+     *                     "e3aacd84-eaf0-4c43-b597-5f8a35329057",
+     *                     "e39e59bc-4651-413b-9e85-71771dd1de40"
+     *                 }
+     *             )
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -352,13 +361,16 @@ class ClientCartController extends Controller
      *     )
      * )
      */
-    function cartItemRemover(Request $request, Cart $cart) {
-        $user = Auth::user();
-        throw_if($cart->user->isNot($user), UnauthorizedException::class);
-        $user->cart()->where([
-            ['item_type', $cart->item_type],
-            ['item_id', $cart->item_id]
-        ])->delete();
+    function cartItemRemover(Request $request) {
+        $data = $request->validate([
+            'item_uuids' => 'required|array',
+            'item_uuids.*' => 'required|exists:carts,uuid'
+        ], [
+            'item_uuids.*.exists' => 'One or more selected items do not exist.'
+        ]);
+        Auth::user()->cart()
+            ->whereIn('uuid', $data['item_uuids'])
+            ->delete();
         return $this->apiSuccess('Item has been removed from cart.');
     }
 }
