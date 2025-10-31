@@ -145,33 +145,47 @@ class ClientKitbagController extends Controller
     /**
      * @OA\Delete(
      *     security={{"sanctum": {}}}, 
-     *     path="/kitbag/{uuid}",
+     *     path="/kitbag",
      *     operationId="KitbagDelete",
      *     tags={"Kitbag"},
      *     summary="Delete a kitbag item.",
      *     description="Delete a kitbag item.",
-     *     @OA\Parameter(
-     *         name="uuid",
-     *         in="path",
-     *         required=true,
-     *         description="UUID of a kitbag to delete",
-     *         @OA\Schema(type="string")
+     *     @OA\RequestBody(
+     *         required=false,
+     *         description="List of kitbag item UUIDs to delete in bulk",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="item_uuids",
+     *                 type="array",
+     *                 @OA\Items(type="string", format="uuid"),
+     *                 example={
+     *                     "e3aacd84-eaf0-4c43-b597-5f8a35329057",
+     *                     "e39e59bc-4651-413b-9e85-71771dd1de40"
+     *                 }
+     *             )
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Kitbag item removed successfully",
+     *         description="Kitbag item removed successfully.",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Kitbag item removed succesfully."),
+     *             @OA\Property(property="message", type="string", example="Kitbag item removed successfully."),
      *             @OA\Property(property="data", type="string", nullable=true, example=null),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     ),
      * )
      */
-    public function destroy(Kitbag $kitbag)
+    public function destroy(Request $request)
     {
-        $kitbag->delete();
+        $data = $request->validate([
+            'item_uuids' => 'required|array',
+            'item_uuids.*' => 'required|exists:kitbags,uuid' 
+        ],[
+            'item_uuids.*.exists' => 'One or more selected items do not exist.'
+        ]);
+        Auth::user()->kitbags()->whereIn('uuid', $data['item_uuids'])->delete();
         return $this->apiSuccess('Kitbag item removed succesfully.');
     }
 }

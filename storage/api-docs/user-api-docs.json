@@ -523,9 +523,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/kitbag/{uuid}": {
+            },
             "delete": {
                 "tags": [
                     "Kitbag"
@@ -533,27 +531,40 @@
                 "summary": "Delete a kitbag item.",
                 "description": "Delete a kitbag item.",
                 "operationId": "KitbagDelete",
-                "parameters": [
-                    {
-                        "name": "uuid",
-                        "in": "path",
-                        "description": "UUID of a kitbag to delete",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "description": "List of kitbag item UUIDs to delete in bulk",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "item_uuids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "example": [
+                                            "e3aacd84-eaf0-4c43-b597-5f8a35329057",
+                                            "e39e59bc-4651-413b-9e85-71771dd1de40"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
-                        "description": "Kitbag item removed successfully",
+                        "description": "Kitbag item removed successfully.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Kitbag item removed succesfully."
+                                            "example": "Kitbag item removed successfully."
                                         },
                                         "data": {
                                             "type": "string",

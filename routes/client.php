@@ -40,7 +40,8 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::get('remove-cart-item/{cart:uuid}', 'cartItemRemover');
         Route::post('update-cart-item/{cart:uuid}', 'cartItemUpdater');
     });
-    Route::apiResource('kitbag', ClientKitbagController::class)->except(['show','update'])->scoped(['kitbag' => 'uuid']);
+    Route::apiResource('kitbag', ClientKitbagController::class)->except(['show','update','destroy'])->scoped(['kitbag' => 'uuid']);
+    Route::delete('kitbag', [ClientKitbagController::class, 'destroy']);
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);
 Route::get('fetch-product-ratings/{product:slug}', [ProductReviewController::class, 'getProductRatingsByAllUser']);
