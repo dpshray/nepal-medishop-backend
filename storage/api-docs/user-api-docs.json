@@ -352,6 +352,232 @@
                 }
             }
         },
+        "/kitbag": {
+            "get": {
+                "tags": [
+                    "Kitbag"
+                ],
+                "summary": "Get user kitbag items.",
+                "description": "Get user kitbag items.",
+                "operationId": "KitbagItemList",
+                "responses": {
+                    "200": {
+                        "description": "List of kitbag items retrieved successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of kitbag items"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "item_uuid": {
+                                                                "type": "string",
+                                                                "example": "157cfda6-5bdc-4856-bf42-b82d951ae2c3"
+                                                            },
+                                                            "item_name": {
+                                                                "type": "string",
+                                                                "example": "Similique natus a quidem deserunt."
+                                                            },
+                                                            "item_slug": {
+                                                                "type": "string",
+                                                                "example": "similique-natus-a-quidem-deserunt"
+                                                            },
+                                                            "brand_name": {
+                                                                "type": "string",
+                                                                "example": "GlaxoSmithKline"
+                                                            },
+                                                            "variant_name": {
+                                                                "type": "string",
+                                                                "example": "Variant-2"
+                                                            },
+                                                            "variant_id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/91/visc-inhaler.jpg"
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1309
+                                                            },
+                                                            "subtotal": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1309
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                },
+                                                "total_amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 6811
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Kitbag"
+                ],
+                "summary": "Add item to kitbag",
+                "description": "Add a product variant to the user's kitbag with a specified quantity.",
+                "operationId": "AddToKitbag",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_variation_id",
+                                    "product_slug",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "product_variation_id": {
+                                        "description": "ID of the product variant to be added",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "product_slug": {
+                                        "description": "Slug of the product",
+                                        "type": "string",
+                                        "example": "similique-natus-a-quidem-deserunt"
+                                    },
+                                    "quantity": {
+                                        "description": "Quantity of the product to add",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Item successfully added to kitbag.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "item added to kitbag."
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/kitbag/{uuid}": {
+            "delete": {
+                "tags": [
+                    "Kitbag"
+                ],
+                "summary": "Delete a kitbag item.",
+                "description": "Delete a kitbag item.",
+                "operationId": "KitbagDelete",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a kitbag to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Kitbag item removed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kitbag item removed succesfully."
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/favourite/{slug}/product": {
             "get": {
                 "tags": [
@@ -3333,6 +3559,10 @@
         {
             "name": "Banner",
             "description": "Banner"
+        },
+        {
+            "name": "Kitbag",
+            "description": "Kitbag"
         },
         {
             "name": "Favourite",

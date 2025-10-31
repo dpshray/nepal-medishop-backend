@@ -2,6 +2,7 @@
 
 use App\Enums\ItemTypeEnum;
 use App\Http\Controllers\Api\V1\Client\ClientBannerController;
+use App\Http\Controllers\Api\V1\Client\ClientKitbagController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
 use App\Http\Controllers\Api\V1\Client\Profile\ClientProfileController;
@@ -39,6 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::get('remove-cart-item/{cart:uuid}', 'cartItemRemover');
         Route::post('update-cart-item/{cart:uuid}', 'cartItemUpdater');
     });
+    Route::apiResource('kitbag', ClientKitbagController::class)->except(['show','update'])->scoped(['kitbag' => 'uuid']);
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);
 Route::get('fetch-product-ratings/{product:slug}', [ProductReviewController::class, 'getProductRatingsByAllUser']);
