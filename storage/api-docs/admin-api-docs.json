@@ -5015,13 +5015,13 @@
                 ]
             }
         },
-        "/admin/order/{order_uuid}/assign/{user_uuid}": {
+        "/admin/order/{order_uuid}/assign/{vendor_uuid}": {
             "get": {
                 "tags": [
                     "Order Assign"
                 ],
                 "summary": "Assign an order to a vendor using UUIDs",
-                "operationId": "964051e153340c6abaa2284ea87b802b",
+                "operationId": "20d9ce3ef20d94acb1ab736c1b59b7e0",
                 "parameters": [
                     {
                         "name": "order_uuid",
@@ -5035,7 +5035,7 @@
                         }
                     },
                     {
-                        "name": "user_uuid",
+                        "name": "vendor_uuid",
                         "in": "path",
                         "description": "Vendor User UUID",
                         "required": true,

@@ -39,6 +39,10 @@ class Vendor extends Model implements HasMedia
         return $this->hasMany(ProductVendor::class);
     }
 
+    function vendorProductPrices() {
+        return $this->hasManyThrough(VendorProductPrice::class, ProductVendor::class);
+    }
+
     function scopeVerifiedAndActive($query) {
         return $query->whereNotNull('verified_at')->whereRelation('user','email_verified_at','<>',null)->whereRelation('user','status',1);
     }
