@@ -55,7 +55,10 @@ Route::get('banner', ClientBannerController::class);
 
 
 /*=====  Purchase Part  ======*/
-Route::post('orders', CODPurchaseController::class);
+Route::controller(CODPurchaseController::class)->group(function(){
+    Route::post('orders', 'regularOrder');
+    Route::post('kitbag-orders', 'kitbagOrder');
+});
 Route::middleware(['auth:sanctum'])->controller(ClientOrderController::class)->group(function(){
     Route::get('my-orders', 'index');
     Route::get('my-order-detail/{order:uuid}', 'orderDetail');

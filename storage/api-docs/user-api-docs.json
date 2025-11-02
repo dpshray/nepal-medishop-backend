@@ -1711,9 +1711,212 @@
                 "tags": [
                     "Order"
                 ],
-                "summary": "Submit an order.",
+                "summary": "Submit an order(Regular).",
                 "description": "Submit an order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
                 "operationId": "CODOrder",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "payment_method",
+                                    "name",
+                                    "email",
+                                    "mobile",
+                                    "address",
+                                    "products"
+                                ],
+                                "properties": {
+                                    "payment_method": {
+                                        "type": "string",
+                                        "example": "Cash on Delivery"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "James P. Sullivan"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "james.sullivan100@example.com"
+                                    },
+                                    "mobile": {
+                                        "type": "string",
+                                        "example": "9854112547"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Shyambhu, Kathmandu"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "some description of this order COD"
+                                    },
+                                    "gift_wrap": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "gift_wrap_remarks": {
+                                        "type": "boolean",
+                                        "example": "gift wrap must be in silver paper."
+                                    },
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_slug",
+                                                "variant_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_slug": {
+                                                    "type": "string",
+                                                    "example": "unde-a-maiores-et-omnis"
+                                                },
+                                                "variant_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "packages": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "package_slug",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "package_slug": {
+                                                    "type": "string",
+                                                    "example": "deluxe-box"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Your order has been placed successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Your order has been placed successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 2248.46
+                                                },
+                                                "order_number": {
+                                                    "type": "string",
+                                                    "example": "7gnhQMRGxGZORSC8OuNb"
+                                                },
+                                                "payment_method": {
+                                                    "type": "string",
+                                                    "example": "Cash on Delivery"
+                                                },
+                                                "date": {
+                                                    "type": "string",
+                                                    "example": "2025/10/30"
+                                                },
+                                                "ordered_items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "item_name": {
+                                                                "type": "string",
+                                                                "example": "Quo voluptas quam dolorum voluptas."
+                                                            },
+                                                            "variant_name": {
+                                                                "type": "string",
+                                                                "example": "Variant-2"
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1124.23
+                                                            },
+                                                            "total": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2248.46
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "delivery_address": {
+                                                    "type": "string",
+                                                    "example": "Boudha, Kathmandu"
+                                                },
+                                                "gift_wrap": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "gift_wrap_remarks": {
+                                                    "type": "string",
+                                                    "example": "gift wrap must be in silver paper with golden ribbon"
+                                                },
+                                                "gift_wrap_charge": {
+                                                    "type": "integer",
+                                                    "example": 300
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/kitbag-orders": {
+            "post": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Submit an order(Kitbag).",
+                "description": "Submit an order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
+                "operationId": "CODKitbagOrder",
                 "requestBody": {
                     "required": true,
                     "content": {
