@@ -33,6 +33,13 @@ class MasterDataController extends Controller
      *     description="Get all active brand.",
      *     operationId="ClientBrandList",
      *     tags={"Product"},
+     *     @OA\Parameter(
+     *         name="brand",
+     *         in="query",
+     *         required=false,
+     *         description="name of a brand to search.('empty' to fetch all data)",
+     *         @OA\Schema(type="string", example="pfizer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="List of active brands",
@@ -57,8 +64,12 @@ class MasterDataController extends Controller
      *  )
      * )
      */
-    function fetchAllActiveBrand(){
-        $brands = Brand::with('media')->active()->get();
+    function fetchAllActiveBrand(Request $request){
+        $brand_name = $request->query('brand');
+        $brands = Brand::with('media')
+            ->active()
+            ->when($brand_name, fn($qry) => $qry->whereLike('name', '%'.$brand_name.'%'))
+            ->get();
         $brands = ClientBrandResource::collection($brands);
         return $this->apiSuccess('List of active brands', $brands);
     }
@@ -109,6 +120,13 @@ class MasterDataController extends Controller
      *     description="Get all active health conditions.",
      *     operationId="ClientHealthConsitionList",
      *     tags={"Product"},
+     *     @OA\Parameter(
+     *         name="health_condition",
+     *         in="query",
+     *         required=false,
+     *         description="name of a health condition to search.('empty' to fetch all data)",
+     *         @OA\Schema(type="string", example="immunity boosters")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="List of health conditions.",
@@ -129,8 +147,11 @@ class MasterDataController extends Controller
      *     ),
      * )
      */
-    function fetchAllHealthCondition() {
-        $health_conditions = HealthCondition::with('media')->get();
+    function fetchAllHealthCondition(Request $request) {
+        $query_health_condition = $request->query('health_condition');
+        $health_conditions = HealthCondition::with('media')
+            ->when($query_health_condition, fn($qry) => $qry->whereLike('name', '%'. $query_health_condition.'%'))
+            ->get();
         $health_conditions = ClientHealthConditionListResource::collection($health_conditions);
         return $this->apiSuccess('List of health conditions.', $health_conditions);
     }

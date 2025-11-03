@@ -805,6 +805,18 @@
                 "summary": "Get all active brand",
                 "description": "Get all active brand.",
                 "operationId": "ClientBrandList",
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "name of a brand to search.('empty' to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pfizer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of active brands",
@@ -918,6 +930,18 @@
                 "summary": "Get all active health conditions",
                 "description": "Get all active health conditions.",
                 "operationId": "ClientHealthConsitionList",
+                "parameters": [
+                    {
+                        "name": "health_condition",
+                        "in": "query",
+                        "description": "name of a health condition to search.('empty' to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "immunity boosters"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "List of health conditions.",
