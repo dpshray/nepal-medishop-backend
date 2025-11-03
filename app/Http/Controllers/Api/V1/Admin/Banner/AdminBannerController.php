@@ -47,6 +47,13 @@ class AdminBannerController extends Controller
      *         description="Toggle active/inactive brands(values: 0 and 1)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Search banner based on title.",
+     *         @OA\Schema(type="string", example="banner title")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="List of banners.",
@@ -83,7 +90,9 @@ class AdminBannerController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->query('per_page');
+        $search = $request->query('search');
         $pagination = Banner::with('media')
+            ->when($search, fn($qry) => $qry->whereLike('title', '%'.$search.'%'))
             ->orderBy('order', 'ASC')
             ->orderBy('id', 'ASC')
             ->paginate($per_page);

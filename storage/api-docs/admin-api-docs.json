@@ -881,6 +881,16 @@
                             "type": "integer",
                             "example": 1
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search banner based on title.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "banner title"
+                        }
                     }
                 ],
                 "responses": {
