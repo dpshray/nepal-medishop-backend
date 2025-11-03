@@ -930,13 +930,30 @@
                         }
                     },
                     {
-                        "name": "category_slug",
+                        "name": "brand_slug",
                         "in": "query",
-                        "description": "slug of a category('all' to fetch all random products)",
+                        "description": "slug of a brand",
                         "required": false,
                         "schema": {
-                            "type": "string",
-                            "example": "all"
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category_slug",
+                        "in": "query",
+                        "description": "slug of a category",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "list_type",
+                        "in": "query",
+                        "description": "Fetch item list based on type(default fetches latest products).(Types values are: random)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     {

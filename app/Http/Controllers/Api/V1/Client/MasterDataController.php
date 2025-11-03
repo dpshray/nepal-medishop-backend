@@ -116,11 +116,25 @@ class MasterDataController extends Controller
      *         @OA\Schema(type="string", example="")
      *     ),
      *     @OA\Parameter(
+     *         name="brand_slug",
+     *         in="query",
+     *         required=false,
+     *         description="slug of a brand",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
      *         name="category_slug",
      *         in="query",
      *         required=false,
-     *         description="slug of a category('all' to fetch all random products)",
-     *         @OA\Schema(type="string", example="all")
+     *         description="slug of a category",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="list_type",
+     *         in="query",
+     *         required=false,
+     *         description="Fetch item list based on type(default fetches latest products).(Types values are: random)",
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Parameter(
      *         name="per_page",
@@ -185,8 +199,10 @@ class MasterDataController extends Controller
     function fetchProducts(Request $request){
         $per_page = $request->query('per_page', 10);
         $category_slug = $request->query('category_slug');
-        $category_slug = $request->query('category_slug');
+        $brand_slug = $request->query('brand_slug');
+        $list_type = $request->query('list_type');
         $search = $request->query('search');
+        
         $query = Product::with([
             'media',
             'brand', 
@@ -196,7 +212,13 @@ class MasterDataController extends Controller
             ])
             ->active()
             ->when($search, fn($qry,$search) => $qry->whereLike('name', "%$search%"))
-            ->when($category_slug == 'all', fn($qry) => $qry->inRandomOrder(), fn($qry) => $qry->whereRelation('categories', 'slug', $category_slug)->latest('id'));
+            ->when($category_slug, fn($qry) => $qry->whereRelation('categories', 'slug', $category_slug)->latest('id'))
+            ->when($brand_slug, fn($qry) => $qry->whereRelation('brand','slug', $brand_slug))
+            ->when($list_type, function($qry,$value){
+                if ($value == 'random') {
+                    $qry->inRandomOrder(); 
+                }
+            },fn($qry) => $qry->latest());
 
         $pagination = $query->paginate($per_page);
         $data = $this->setDataKey(['page' => 'page_no'])->makePaginationResponse($pagination, fn($item) => ProductCardResource::collection($item))->data;
