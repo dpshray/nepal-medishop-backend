@@ -278,6 +278,7 @@ class MasterDataController extends Controller
             ->when($search, fn($qry,$search) => $qry->whereLike('name', "%$search%"))
             ->when($category_slug, fn($qry) => $qry->whereRelation('categories', 'slug', $category_slug)->latest('id'))
             ->when($brand_slug, fn($qry) => $qry->whereRelation('brand','slug', $brand_slug))
+            ->when($health_condition_slug, fn($qry) => $qry->whereRelation('healthConditions','slug', $health_condition_slug))
             ->when($list_type, function($qry,$value){
                 if ($value == 'random') {
                     $qry->inRandomOrder(); 
