@@ -36,7 +36,7 @@ class ProductSeeder extends Seeder
                     'created_at' => fake()->dateTimeInInterval('now','-7 days')
                 ];
 
-                $categories = range(1, 15);
+                $categories = range(1, 15);#this is used same for health condition
                 $count = rand(1, 3);
                 $randomKeys = array_rand($categories, $count);
                 $random_categories = is_array($randomKeys)
@@ -105,6 +105,7 @@ class ProductSeeder extends Seeder
                 $product->categories()->attach($random_categories);
                 $product->tags()->attach($random_tags);
                 $product->variations()->createMany($random_variations);
+                $product->healthConditions()->attach($random_categories);
 
                 $capsule = public_path('assets/img/tablets.jpg');
                 $cream   = public_path('assets/img/cream.jpg');

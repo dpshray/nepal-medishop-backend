@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UserSeeder::class,
+            HealthConditionSeeder::class,
             ProductSeeder::class,
             VendorProductSeeder::class,
             ProductReviewSeeder::class,
@@ -44,7 +45,7 @@ class DatabaseSeeder extends Seeder
             FlashSaleSeeder::class,
             FlashSaleSeeder::class,
             FlashSaleSeeder::class,
-            SettingSeeder::class
+            SettingSeeder::class,
         ]);
     }
 
