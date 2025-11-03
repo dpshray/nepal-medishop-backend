@@ -19,7 +19,7 @@ class ProductCardResource extends JsonResource
     {
         // return parent::toArray($request);
         $item = $this->cheapestVariation;
-        ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
+        ['price' => $price, 'previous_price' => $previous_price, 'discount_percent' => $discount_percent] = $item->original_price;
 
         return [
             'name' => $this->name,
@@ -30,6 +30,7 @@ class ProductCardResource extends JsonResource
             'previous_price' => $previous_price,
             'feature_image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)),
             'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false),
+            'discount_percent' => (float) $discount_percent,
             'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(function ($item) {
                 ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
 
@@ -39,7 +40,7 @@ class ProductCardResource extends JsonResource
                     'size_value' => (float)$item->size_value,
                     'size_unit' => $item->size_unit,
                     'price' => $price,
-                    'previous_price' => $previous_price
+                    'previous_price' => $previous_price,
                 ];
             }))
         ];

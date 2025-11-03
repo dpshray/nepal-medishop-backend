@@ -17,13 +17,14 @@ class PackageSingleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        ['price' => $price, 'previous_price' => $previous_price] = $this->original_price;
+        ['price' => $price, 'previous_price' => $previous_price, 'discount_percent' => $discount_percent] = $this->original_price;
         
         return [
             'name' => $this->name,
             'slug' => $this->slug,
             'price' => $price,
             'previous_price' => $previous_price,
+            'discount_percent' => $discount_percent,
             'rating' => (float) $this->rating,
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Package::PACKAGE_FEATURED)),
             'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false)

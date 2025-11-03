@@ -18,6 +18,8 @@ class ProductDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
+        $item = $this->cheapestVariation;
+        ['price' => $price, 'previous_price' => $previous_price, 'discount_percent' => $discount_percent] = $item->original_price;
 
         return [
             'name' => $this->name,
@@ -29,9 +31,10 @@ class ProductDetailResource extends JsonResource
             'no_of_vendors' => $this->whenCounted('productVendors', fn() => $this->product_vendors_count),
             'categories' => $this->whenLoaded('categories', fn() => $this->categories->pluck('name')),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->pluck('name')),
-            'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(function($item){
-                ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
-
+            'discount_percent' => $discount_percent,
+            'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(function($item) use(&$discount_percent_copy){
+                ['price' => $price, 'previous_price' => $previous_price, 'discount_percent' => $discount_percent] = $item->original_price;
+                $discount_percent_copy = $discount_percent;
                 return [
                     'variation_id' => $item->id,
                     'name' => $item->name,

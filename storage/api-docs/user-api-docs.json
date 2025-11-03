@@ -717,6 +717,11 @@
                                                                 "format": "float",
                                                                 "example": 139
                                                             },
+                                                            "discount_percent": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 4
+                                                            },
                                                             "feature_image": {
                                                                 "type": "string",
                                                                 "format": "url",
@@ -957,7 +962,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "All product lists.",
+                        "description": "Successful response",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -974,11 +979,11 @@
                                                         "properties": {
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Ratione vero commodi recusandae repellendus."
+                                                                "example": "Sit quas consequatur dignissimos voluptatem."
                                                             },
                                                             "slug": {
                                                                 "type": "string",
-                                                                "example": "ratione-vero-commodi-recusandae-repellendus"
+                                                                "example": "sit-quas-consequatur-dignissimos-voluptatem"
                                                             },
                                                             "brand": {
                                                                 "type": "string",
@@ -987,27 +992,31 @@
                                                             "rating": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 3.6
+                                                                "example": 3.5
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 160.32
+                                                                "example": 137
                                                             },
                                                             "previous_price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 167,
+                                                                "example": null,
                                                                 "nullable": true
                                                             },
                                                             "feature_image": {
                                                                 "type": "string",
-                                                                "format": "url",
-                                                                "example": "http://192.168.100.23:8008/storage/626/tablets.jpg"
+                                                                "example": "http://192.168.100.23:8008/storage/2061/tablets.jpg"
                                                             },
                                                             "liked": {
                                                                 "type": "boolean",
                                                                 "example": false
+                                                            },
+                                                            "discount_percent": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 5
                                                             },
                                                             "variations": {
                                                                 "type": "array",
@@ -1015,29 +1024,29 @@
                                                                     "properties": {
                                                                         "variation_id": {
                                                                             "type": "integer",
-                                                                            "example": 312
+                                                                            "example": 1154
                                                                         },
                                                                         "name": {
                                                                             "type": "string",
                                                                             "example": "Variant-1"
                                                                         },
                                                                         "size_value": {
-                                                                            "type": "number",
+                                                                            "type": "integer",
                                                                             "example": 100
                                                                         },
                                                                         "size_unit": {
                                                                             "type": "string",
-                                                                            "example": "mcg"
+                                                                            "example": "patch"
                                                                         },
                                                                         "price": {
                                                                             "type": "number",
                                                                             "format": "float",
-                                                                            "example": 160.32
+                                                                            "example": 137
                                                                         },
                                                                         "previous_price": {
                                                                             "type": "number",
                                                                             "format": "float",
-                                                                            "example": 167,
+                                                                            "example": null,
                                                                             "nullable": true
                                                                         }
                                                                     },
@@ -1054,11 +1063,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 50
+                                                    "example": 51
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 500
+                                                    "example": 501
                                                 }
                                             },
                                             "type": "object"
@@ -1293,6 +1302,11 @@
                                                                 "example": 7000,
                                                                 "nullable": true
                                                             },
+                                                            "discount_percent": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3
+                                                            },
                                                             "rating": {
                                                                 "type": "number",
                                                                 "format": "float",
@@ -1401,6 +1415,11 @@
                                                     "type": "number",
                                                     "format": "float",
                                                     "example": 8910
+                                                },
+                                                "discount_percent": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 3
                                                 },
                                                 "rating": {
                                                     "type": "number",

@@ -21,7 +21,7 @@ class UserLikeResource extends JsonResource
         $product = $this->product;
         $item = $product->cheapestVariation;
 
-        ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
+        ['price' => $price, 'previous_price' => $previous_price, 'discount_percent' => $discount_percent] = $item->original_price;
 
         return [
             'name' => $product->name,
@@ -30,6 +30,7 @@ class UserLikeResource extends JsonResource
             'rating' => (float) $product->rating,
             'price' => $price,
             'previous_price' => $previous_price,
+            'discount_percent' => $discount_percent, 
             'feature_image' => $product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
             'liked' => $this->whenLoaded('likes', fn() => $product->likes->count() ? true : false),
             'variations' => $product->variations->map(

@@ -138,7 +138,7 @@ class MasterDataController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="All product lists.",
+     *         description="Successful response",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="All product lists."),
      *             @OA\Property(
@@ -148,31 +148,34 @@ class MasterDataController extends Controller
      *                     property="items",
      *                     type="array",
      *                     @OA\Items(
-     *                         @OA\Property(property="name", type="string", example="Ratione vero commodi recusandae repellendus."),
-     *                         @OA\Property(property="slug", type="string", example="ratione-vero-commodi-recusandae-repellendus"),
+     *                         type="object",
+     *                         @OA\Property(property="name", type="string", example="Sit quas consequatur dignissimos voluptatem."),
+     *                         @OA\Property(property="slug", type="string", example="sit-quas-consequatur-dignissimos-voluptatem"),
      *                         @OA\Property(property="brand", type="string", example="Roche"),
-     *                         @OA\Property(property="rating", type="number", format="float", example=3.6),
-     *                         @OA\Property(property="price", type="number", format="float", example=160.32),
-     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=167),
-     *                         @OA\Property(property="feature_image", type="string", format="url", example="http://192.168.100.23:8008/storage/626/tablets.jpg"),
+     *                         @OA\Property(property="rating", type="number", format="float", example=3.5),
+     *                         @OA\Property(property="price", type="number", format="float", example=137),
+     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=null),
+     *                         @OA\Property(property="feature_image", type="string", example="http://192.168.100.23:8008/storage/2061/tablets.jpg"),
      *                         @OA\Property(property="liked", type="boolean", example=false),
+     *                         @OA\Property(property="discount_percent", type="number", format="float", example=5),
      *                         @OA\Property(
      *                             property="variations",
      *                             type="array",
      *                             @OA\Items(
-     *                                 @OA\Property(property="variation_id", type="integer", example=312),
+     *                                 type="object",
+     *                                 @OA\Property(property="variation_id", type="integer", example=1154),
      *                                 @OA\Property(property="name", type="string", example="Variant-1"),
-     *                                 @OA\Property(property="size_value", type="number", example=100),
-     *                                 @OA\Property(property="size_unit", type="string", example="mcg"),
-     *                                 @OA\Property(property="price", type="number", format="float", example=160.32),
-     *                                 @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=167)
+     *                                 @OA\Property(property="size_value", type="integer", example=100),
+     *                                 @OA\Property(property="size_unit", type="string", example="patch"),
+     *                                 @OA\Property(property="price", type="number", format="float", example=137),
+     *                                 @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=null)
      *                             )
      *                         )
      *                     )
      *                 ),
      *                 @OA\Property(property="page_no", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=50),
-     *                 @OA\Property(property="total_items", type="integer", example=500)
+     *                 @OA\Property(property="total_page", type="integer", example=51),
+     *                 @OA\Property(property="total_items", type="integer", example=501)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -181,6 +184,7 @@ class MasterDataController extends Controller
      */
     function fetchProducts(Request $request){
         $per_page = $request->query('per_page', 10);
+        $category_slug = $request->query('category_slug');
         $category_slug = $request->query('category_slug');
         $search = $request->query('search');
         $query = Product::with([
@@ -309,6 +313,7 @@ class MasterDataController extends Controller
      *                         @OA\Property(property="slug", type="string", example="mega-combo"),
      *                         @OA\Property(property="price", type="number", format="float", example=3640),
      *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=7000),
+     *                         @OA\Property(property="discount_percent", type="number", format="float", example=3),
      *                         @OA\Property(property="rating", type="number", format="float", example=2.8),
      *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/1642/package-4.jpg"),
      *                         @OA\Property(property="liked", type="boolean", example=false)
@@ -359,6 +364,7 @@ class MasterDataController extends Controller
      *                 @OA\Property(property="description", type="string", example="<p>Package details...</p>"),
      *                 @OA\Property(property="price", type="number", format="float", example=9000),
      *                 @OA\Property(property="discount_price", type="number", format="float", example=8910),
+     *                 @OA\Property(property="discount_percent", type="number", format="float", example=3),
      *                 @OA\Property(property="rating", type="number", format="float", example=2.8),
      *                 @OA\Property(property="featured_image", type="string", example="http://192.168.100.23:8008/storage/2636/package-1.jpg"),
      *                 @OA\Property(
