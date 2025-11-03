@@ -910,6 +910,64 @@
                 }
             }
         },
+        "/get-health-condition-list": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all active health conditions",
+                "description": "Get all active health conditions.",
+                "operationId": "ClientHealthConsitionList",
+                "responses": {
+                    "200": {
+                        "description": "List of health conditions.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of health conditions."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Hormonal Care"
+                                                    },
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "hormonal-care"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Products that help regulate hormones, including thyroid, adrenal, and reproductive hormones.",
+                                                        "nullable": true
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "format": "url",
+                                                        "example": "http://192.168.100.23:8008/storage/2646/hormonal-balance-icon-design-vector.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/products/": {
             "get": {
                 "tags": [
@@ -942,6 +1000,15 @@
                         "name": "category_slug",
                         "in": "query",
                         "description": "slug of a category",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "health_condition_slug",
+                        "in": "query",
+                        "description": "slug of a health condition",
                         "required": false,
                         "schema": {
                             "type": "string"

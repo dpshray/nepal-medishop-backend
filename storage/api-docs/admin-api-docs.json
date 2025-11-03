@@ -3042,6 +3042,384 @@
                 ]
             }
         },
+        "/admin/health-condition": {
+            "get": {
+                "tags": [
+                    "HealthCondition"
+                ],
+                "summary": "Get all active health condition",
+                "description": "Get all active health condition.",
+                "operationId": "HealthConditionList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page.(empty to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of available health condition list.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "list of available health condition list."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Skin Care 88"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "skin-care-88"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "some description of skin care 88.",
+                                                                "nullable": true
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/2662/origami-6275164_1920.jpg"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "HealthCondition"
+                ],
+                "summary": "Store a health condition.",
+                "description": "Store a health condition.",
+                "operationId": "StoreHealthCondition",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "description",
+                                    "image"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Skin Care"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "some description of skin care."
+                                    },
+                                    "image": {
+                                        "description": "Health condition image",
+                                        "type": "file",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vendor added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Health condition added successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/health-condition/{slug}": {
+            "get": {
+                "tags": [
+                    "HealthCondition"
+                ],
+                "summary": "Show an health condition detail.",
+                "description": "Show an health condition detail.",
+                "operationId": "HealthConditionShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of health condition",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Health resource detail.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Health resource detail."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Skin Care 88"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "skin-care-88"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "some description of skin care 88."
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "format": "url",
+                                                    "example": "http://192.168.100.23:8008/storage/2662/origami-6275164_1920.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "HealthCondition"
+                ],
+                "summary": "Update health condition based on slug.",
+                "description": "Update health condition based on slug.",
+                "operationId": "HealthConditionUpdate",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of health condition",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "skin-care"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "description",
+                                    "_method"
+                                ],
+                                "properties": {
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "patch"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Skin Care"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "some description of skin care."
+                                    },
+                                    "image": {
+                                        "description": "Health condition image",
+                                        "type": "file",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vendor added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Health condition updated successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "HealthCondition"
+                ],
+                "summary": "Delete a health condition.",
+                "description": "Delete a health condition.",
+                "operationId": "HealthConditionDelete",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of health condition to delete.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Brand successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Health condition removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/product-units": {
             "get": {
                 "tags": [
@@ -5170,6 +5548,10 @@
         {
             "name": "Category",
             "description": "Category"
+        },
+        {
+            "name": "HealthCondition",
+            "description": "HealthCondition"
         },
         {
             "name": "Product",

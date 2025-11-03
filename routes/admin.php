@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Admin\Banner\AdminBannerController;
 use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
+use App\Http\Controllers\Api\V1\Admin\Product\AdminHealthConditionController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
@@ -30,6 +31,7 @@ Route::prefix('admin')
         Route::apiResource('brand', AdminBrandController::class);
         Route::apiResource('category', AdminCategoryController::class);
         Route::apiResource('tag', AdminTagController::class);
+        Route::apiResource('health-condition', AdminHealthConditionController::class)->scoped(['health_condition' => 'slug']);
         Route::get('toggle-brand-status/{brand:slug}', [AdminBrandController::class, 'statusToggler']);
         Route::get('toggle-category-status/{category:slug}', [AdminCategoryController::class, 'statusToggler']);
         Route::get('toggle-tag-status/{tag:slug}', [AdminTagController::class, 'statusToggler']);

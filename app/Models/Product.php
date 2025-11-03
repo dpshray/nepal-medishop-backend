@@ -51,6 +51,10 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Brand::class);
     }
 
+    function healthConditions() {
+        return $this->belongsToMany(HealthCondition::class);
+    }
+
     public function cheapestVariation()
     {
         return $this->hasOne(ProductVariation::class)->orderBy('platform_price');

@@ -9,9 +9,11 @@ use App\Http\Resources\User\Package\PackageSingleResource;
 use App\Http\Resources\User\Product\Brand\ClientBrandResource;
 use App\Http\Resources\User\Product\Card\ProductCardResource;
 use App\Http\Resources\User\Product\Category\ClientCategoryResource;
+use App\Http\Resources\User\Product\HealthCondition\ClientHealthConditionListResource;
 use App\Http\Resources\User\Product\ProductDetailResource;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\HealthCondition;
 use App\Models\Package;
 use App\Models\Product;
 use App\Traits\PaginationTrait;
@@ -102,6 +104,39 @@ class MasterDataController extends Controller
 
     /**
      * @OA\Get(
+     *     path="/get-health-condition-list",
+     *     summary="Get all active health conditions",
+     *     description="Get all active health conditions.",
+     *     operationId="ClientHealthConsitionList",
+     *     tags={"Product"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of health conditions.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="List of health conditions."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="name", type="string", example="Hormonal Care"),
+     *                     @OA\Property(property="slug", type="string", example="hormonal-care"),
+     *                     @OA\Property(property="description", type="string", nullable=true, example="Products that help regulate hormones, including thyroid, adrenal, and reproductive hormones."),
+     *                     @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/storage/2646/hormonal-balance-icon-design-vector.jpg")
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     ),
+     * )
+     */
+    function fetchAllHealthCondition() {
+        $health_conditions = HealthCondition::with('media')->get();
+        $health_conditions = ClientHealthConditionListResource::collection($health_conditions);
+        return $this->apiSuccess('List of health conditions.', $health_conditions);
+    }
+
+    /**
+     * @OA\Get(
      *     security={{"sanctum": {}}}, 
      *     path="/products/",
      *     summary="Get product based on category slug",
@@ -127,6 +162,13 @@ class MasterDataController extends Controller
      *         in="query",
      *         required=false,
      *         description="slug of a category",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="health_condition_slug",
+     *         in="query",
+     *         required=false,
+     *         description="slug of a health condition",
      *         @OA\Schema(type="string")
      *     ),
      *     @OA\Parameter(
@@ -200,6 +242,7 @@ class MasterDataController extends Controller
         $per_page = $request->query('per_page', 10);
         $category_slug = $request->query('category_slug');
         $brand_slug = $request->query('brand_slug');
+        $health_condition_slug = $request->query('health_condition_slug');
         $list_type = $request->query('list_type');
         $search = $request->query('search');
         

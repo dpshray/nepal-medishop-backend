@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(MasterDataController::class)->group(function(){
     Route::get('get-brand-list', 'fetchAllActiveBrand');
     Route::get('get-category-list', 'fetchAllActiveCategory');
+    Route::get('get-health-condition-list', 'fetchAllHealthCondition');
     Route::get('products', 'fetchProducts');
     Route::get('product/{product:slug}', 'fetchProductDetail');
     Route::get('packages', 'fetchPackages');
