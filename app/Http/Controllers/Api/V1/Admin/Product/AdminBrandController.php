@@ -44,6 +44,13 @@ class AdminBrandController extends Controller
      *         description="Toggle active/inactive brands(values: 0 and 1)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Brand name to search.",
+     *         @OA\Schema(type="string", example="pfizer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Active brand lists",
@@ -78,9 +85,11 @@ class AdminBrandController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->query('per_page', Brand::count());
+        $search = $request->query('search');
         $status = $request->query('status',1) == 1 ? 1 : 0;
         $pagination = Brand::with(['media'])
             ->where('status', $status)
+            ->when($search, fn($qry) => $qry->whereLike('name', $search))
             ->orderBy('id','DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminBrandResource::collection($items))->data;

@@ -37,6 +37,13 @@ class AdminHealthConditionController extends Controller
      *         description="Items on each page.(empty to fetch all data)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Health condition name to search",
+     *         @OA\Schema(type="string", example="Immunity Boosters")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="List of available health condition list.",
@@ -66,7 +73,11 @@ class AdminHealthConditionController extends Controller
      */
     function index(Request $request) {
         $per_page = $request->query('per_page', HealthCondition::count());
-        $pagination = HealthCondition::with('media')->paginate($per_page);
+        $search = $request->query('search');
+        $pagination = HealthCondition::with('media')
+            ->when($search, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
+            ->orderBy('id','DESC')
+            ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminHealthConditionListResource::collection($item))->data;
         return $this->apiSuccess('list of available health condition list.', $data);
     }

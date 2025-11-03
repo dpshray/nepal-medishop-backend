@@ -33,7 +33,7 @@ class AdminTagController extends Controller
      *         name="per_page",
      *         in="query",
      *         required=false,
-     *         description="Items on each page",
+     *         description="Items on each page.(empty to fetch all data)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Parameter(
@@ -42,6 +42,13 @@ class AdminTagController extends Controller
      *         required=false,
      *         description="Toggle active/inactive tags(values: 0 and 1)",
      *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Tag name to search",
+     *         @OA\Schema(type="string", example="aspirin")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -74,8 +81,10 @@ class AdminTagController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->query('per_page', Tag::count());
+        $search = $request->query('search');
         $status = $request->query('status', 1) == 1 ? 1 : 0;
         $pagination = Tag::where('status', $status)
+            ->when($search, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
             ->orderBy('id','DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminTagResource::collection($item))->data;

@@ -2231,6 +2231,16 @@
                             "type": "integer",
                             "example": 1
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Brand name to search.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pfizer"
+                        }
                     }
                 ],
                 "responses": {
@@ -2693,6 +2703,16 @@
                             "type": "integer",
                             "example": 1
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Category name to search.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Pain Relief"
+                        }
                     }
                 ],
                 "responses": {
@@ -3069,6 +3089,16 @@
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Health condition name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Immunity Boosters"
                         }
                     }
                 ],
@@ -3905,7 +3935,7 @@
                     {
                         "name": "per_page",
                         "in": "query",
-                        "description": "Items on each page",
+                        "description": "Items on each page.(empty to fetch all data)",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -3920,6 +3950,16 @@
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tag name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "aspirin"
                         }
                     }
                 ],

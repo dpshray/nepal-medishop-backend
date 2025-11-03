@@ -44,6 +44,13 @@ class AdminCategoryController extends Controller
      *         description="Toggle active/inactive categories(values: 0 and 1)",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Category name to search.",
+     *         @OA\Schema(type="string", example="Pain Relief")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Active category lists",
@@ -74,9 +81,11 @@ class AdminCategoryController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->query('per_page', Category::count());
+        $search = $request->query('search');
         $status = $request->query('status',1) == 1 ? 1 : 0;
         $pagination = Category::with('media')
             ->where('status', $status)
+            ->when($search, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
             ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminCategoryResource::collection($items))->data;
