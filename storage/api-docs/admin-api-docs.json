@@ -2701,59 +2701,25 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Active category lists"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "items": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "slug": {
-                                                                "type": "string",
-                                                                "example": "pain-relief"
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Pain Relief"
-                                                            },
-                                                            "image": {
-                                                                "type": "string",
-                                                                "format": "url",
-                                                                "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_page": {
-                                                    "type": "integer",
-                                                    "example": 2
-                                                },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 6
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        }
-                                    },
                                     "type": "object"
+                                },
+                                "example": {
+                                    "message": "Active category lists",
+                                    "data": {
+                                        "items": [
+                                            {
+                                                "id": 5,
+                                                "slug": "skin-care",
+                                                "name": "Skin Care",
+                                                "image": "http://192.168.100.23:8008/assets/img/default-brand-category.png",
+                                                "discount_percent": 1
+                                            }
+                                        ],
+                                        "page": 2,
+                                        "total_page": 2,
+                                        "total_items": 15
+                                    },
+                                    "success": true
                                 }
                             }
                         }
@@ -2861,39 +2827,18 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Showing category"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "slug": {
-                                                    "type": "string",
-                                                    "example": "skin-care"
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "Skin Care"
-                                                },
-                                                "image": {
-                                                    "type": "string",
-                                                    "format": "url",
-                                                    "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        }
-                                    },
                                     "type": "object"
+                                },
+                                "example": {
+                                    "message": "Showing category",
+                                    "data": {
+                                        "id": 5,
+                                        "slug": "skin-care",
+                                        "name": "Skin Care",
+                                        "image": "http://192.168.100.23:8008/assets/img/default-brand-category.png",
+                                        "discount_percent": 1
+                                    },
+                                    "success": true
                                 }
                             }
                         }

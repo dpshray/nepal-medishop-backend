@@ -49,31 +49,24 @@ class AdminCategoryController extends Controller
      *         description="Active category lists",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Active category lists"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="items",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="slug", type="string", example="pain-relief"),
-     *                         @OA\Property(property="name", type="string", example="Pain Relief"),
-     *                         @OA\Property(
-     *                             property="image",
-     *                             type="string",
-     *                             format="url",
-     *                             example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
-     *                         )
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=2),
-     *                 @OA\Property(property="total_items", type="integer", example=6),
-     *             ),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *             example={
+     *                 "message": "Active category lists",
+     *                 "data": {
+     *                     "items": {
+     *                         {
+     *                             "id": 5,
+     *                             "slug": "skin-care",
+     *                             "name": "Skin Care",
+     *                             "image": "http://192.168.100.23:8008/assets/img/default-brand-category.png",
+     *                             "discount_percent": 1
+     *                         }
+     *                     },
+     *                     "page": 2,
+     *                     "total_page": 2,
+     *                     "total_items": 15
+     *                 },
+     *                 "success": true
+     *             }
      *         )
      *     )
      * )
@@ -111,21 +104,17 @@ class AdminCategoryController extends Controller
      *         description="Showing category",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Showing category"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=5),
-     *                 @OA\Property(property="slug", type="string", example="skin-care"),
-     *                 @OA\Property(property="name", type="string", example="Skin Care"),
-     *                 @OA\Property(
-     *                     property="image",
-     *                     type="string",
-     *                     format="url",
-     *                     example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
-     *                 )
-     *             ),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *             example={
+     *                 "message": "Showing category",
+     *                 "data": {
+     *                     "id": 5,
+     *                     "slug": "skin-care",
+     *                     "name": "Skin Care",
+     *                     "image": "http://192.168.100.23:8008/assets/img/default-brand-category.png",
+     *                     "discount_percent": 1
+     *                 },
+     *                 "success": true
+     *             }
      *         )
      *     )
      * )

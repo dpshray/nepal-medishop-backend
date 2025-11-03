@@ -21,6 +21,7 @@ class AdminCategoryResource extends JsonResource
             'slug' => $this->slug,
             'name' => $this->name,
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Category::CATEGORY_IMAGE)),
+            'discount_percent' => (float) $this->discount_percent
         ];
     }
 }
