@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchase;
 
+use App\Enums\Purchase\OrderTypeEnum;
 use App\Models\Traits\UuidModelTrait;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ class Order extends Model
     protected $fillable = [
         'user_type',
         'order_code',
+        'order_type',
         'name',
         'email',
         'mobile',
@@ -34,6 +36,7 @@ class Order extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
+        'order_type' => OrderTypeEnum::class
     ];
 
     /* public static function boot()

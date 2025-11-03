@@ -2,23 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\Client\Purchase;
 
-use App\Enums\OrderUserTypeEnum;
-use App\Enums\Purchase\OrderStatusEnum;
-use App\Enums\Purchase\PaymentMethodEnum;
-use App\Enums\Purchase\PaymentStatusEnum;
-use App\Enums\SettingEnum;
+use App\Enums\Purchase\OrderTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Purchase\CODRequest;
-use App\Models\Package;
-use App\Models\Product;
-use App\Models\Purchase\Order;
-use App\Models\Setting;
+use App\Services\OrderService;
 use App\Traits\ResponseTrait;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class CODPurchaseController extends Controller
 {
@@ -27,7 +15,7 @@ class CODPurchaseController extends Controller
     /**
      * @OA\Post(
      *     path="/orders",
-     *     summary="Submit an order.",
+     *     summary="Submit an order(Regular).",
      *     description="Submit an order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
      *     operationId="CODOrder",
      *     tags={"Order"},
@@ -99,148 +87,98 @@ class CODPurchaseController extends Controller
      *     )
      * )
      */
-    function __invoke(CODRequest $request)
+    function regularOrder(CODRequest $request)
     {       
         if (!$request->hasAny(['products', 'packages'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }
-        $products_ordered = [];
 
-        if ($request->has('products')) {
-            $product_slug = $request->collect('products')->pluck('product_slug');
-            $products = Product::select('id', 'slug', 'discount_percent','name','slug')->with(['variations'])->whereIn('slug', $product_slug)->get()->keyBy('slug');
+        $response = (new OrderService)->saveOrder($request, OrderTypeEnum::REGULAR);
 
-            $products_ordered = $request->collect('products')->map(function ($item) use ($products) {
-                $product = $products[$item['product_slug']];
-                $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
-                // Log::info($product_variant);
-                $product_variant_price = $product_variant->platform_price;
-                $product_discount_percent = $product['discount_percent'];
-                $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
-                $quantity = $item['quantity'];
-                return [
-                    'item_type' => Product::class,
-                    'item_id' => $products[$item['product_slug']]->id,
-                    'item_name' => $products[$item['product_slug']]->name,
-                    'item_slug' => $item['product_slug'],
-                    'item_variant_id' => $item['variant_id'],
-                    'variant_name' => $product_variant->name,
-                    'variant_size' => $product_variant->size_value.' '. $product_variant->size_unit,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                    'total' => $price * $quantity
-                ];
-            });
+        return $this->apiSuccess("Your order has been placed successfully.", $response);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/kitbag-orders",
+     *     summary="Submit an order(Kitbag).",
+     *     description="Submit an order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
+     *     operationId="CODKitbagOrder",
+     *     tags={"Order"},
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"payment_method","name","email","mobile","address","products"},
+     *             @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
+     *             @OA\Property(property="name", type="string", example="James P. Sullivan"),
+     *             @OA\Property(property="email", type="string", format="email", example="james.sullivan100@example.com"),
+     *             @OA\Property(property="mobile", type="string", example="9854112547"),
+     *             @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
+     *             @OA\Property(property="description", type="string", example="some description of this order COD"),
+     *             @OA\Property(property="gift_wrap", type="boolean", example=true),
+     *             @OA\Property(property="gift_wrap_remarks", type="boolean", example="gift wrap must be in silver paper."),
+     *             @OA\Property(
+     *                 property="products",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     required={"product_slug","variant_id","quantity"},
+     *                     @OA\Property(property="product_slug", type="string", example="unde-a-maiores-et-omnis"),
+     *                     @OA\Property(property="variant_id", type="integer", example=2),
+     *                     @OA\Property(property="quantity", type="integer", example=1)
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="packages",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     required={"package_slug","quantity"},
+     *                     @OA\Property(property="package_slug", type="string", example="deluxe-box"),
+     *                     @OA\Property(property="quantity", type="integer", example=1)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Your order has been placed successfully.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Your order has been placed successfully."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="amount", type="number", format="float", example=2248.46),
+     *                 @OA\Property(property="order_number", type="string", example="7gnhQMRGxGZORSC8OuNb"),
+     *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
+     *                 @OA\Property(property="date", type="string", example="2025/10/30"),
+     *                 @OA\Property(
+     *                     property="ordered_items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="item_name", type="string", example="Quo voluptas quam dolorum voluptas."),
+     *                         @OA\Property(property="variant_name", type="string", example="Variant-2"),
+     *                         @OA\Property(property="quantity", type="integer", example=2),
+     *                         @OA\Property(property="price", type="number", format="float", example=1124.23),
+     *                         @OA\Property(property="total", type="number", format="float", example=2248.46)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="delivery_address", type="string", example="Boudha, Kathmandu"),
+     *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
+     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper with golden ribbon"),
+     *                 @OA\Property(property="gift_wrap_charge", type="integer", example=300)
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function kitbagOrder(CODRequest $request) {
+        if (!$request->hasAny(['products', 'packages'])) {
+            return $this->apiError("At least one product or package must be included in the order.", 422);
         }
 
-        $packages_ordered = [];
-        if ($request->has('packages')) {
-            $product_slug = $request->collect('packages')->pluck('package_slug');
-            $packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')->whereIn('slug', $product_slug)->get()->keyBy('slug');
-
-            $packages_ordered = $request->collect('packages')->map(function ($item) use ($packages) {
-                $package = $packages[$item['package_slug']];
-                $actual_package_price = $package['price'];
-                $package_discount_precent = $package['discount_percent'];
-                $package_price = empty($package_discount_precent) ? $actual_package_price : ($actual_package_price - ($actual_package_price * $package_discount_precent) / 100);
-                $package_quantity = $item['quantity'];
-
-                return [
-                    'item_type' => Package::class,
-                    'item_name' => $packages[$item['package_slug']]->name,
-                    'item_slug' => $item['package_slug'],
-                    'item_id' => $packages[$item['package_slug']]->id,
-                    'quantity' => $package_quantity,
-                    'price' => $package_price,
-                    'total' => $package_quantity * $package_price
-                ];
-            });
-        }
-        $order_items = [...$products_ordered, ...$packages_ordered];
-        // Log::info($order_items);
-        $price = collect($order_items)->sum('total');
-        
-        $gift_wrap_status = $request->gift_wrap;
-        $gift_wrap_charge = 0;
-
-        if ($gift_wrap_status) {
-            $gift_wrap_charge = Setting::firstWhere('key', SettingEnum::GIFT_WRAP_CHARGE->value);
-            if ($gift_wrap_charge) {
-                $gift_wrap_charge = $gift_wrap_charge->value;
-                $price += $gift_wrap_charge;
-            }
-        }
-
-        $order_detail = [
-            'price' => $price,
-            'payment_method' => $request->payment_method,
-            'payment_status' => PaymentStatusEnum::UNPAID->value,
-            'status' => OrderStatusEnum::PENDING->value,
-            'gift_wrap' => $request->gift_wrap,
-            'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
-            'gift_wrap_charge' => $gift_wrap_charge,
-            'created_at' => now()
-        ];
-
-        $response = null;
-        DB::transaction(function () use ($request, $order_detail, $order_items, &$response, $gift_wrap_charge) {
-            $user = Auth::user();
-            $order_code = Str::random(20);
-            if ($user) { # Logged user
-                $order = array_merge(
-                    $request->only(['address', 'description']),
-                    $order_detail,
-                    ['user_type' => OrderUserTypeEnum::USER->value, 'order_code' => $order_code, 'user_id' => $user]
-                );
-                $user->orders()->create($order)->orderItems()->createMany($order_items);
-                $item_slugs = $request->collect('packages')->pluck('package_slug')->merge($request->collect('products')->pluck('product_slug'));
-                $user->cart()->whereIn('item_slug', $item_slugs)->delete();
-            } else { # Guest user
-                $order = array_merge(
-                    $request->only(['name', 'email', 'mobile', 'address', 'description']),
-                    $order_detail,
-                    ['user_type' => OrderUserTypeEnum::GUEST->value, 'order_code' => $order_code]
-                );
-                Order::create($order)->OrderItems()->createMany($order_items);
-            }
-            $user = Auth::user();
-            $order = Order::where('order_code', $order_code)->firstOrFail();
-            $order_items = $order
-                ->orderItems()
-                ->with(['package', 'product.variations'])
-                ->get()
-                ->map(function ($item) {
-                    if ($item->item_type == Product::class) {
-                        return [
-                            'item_name' => $item->product->name,
-                            'variant_name' => $item->product->variations->firstWhere('id', $item->item_variant_id)->name,
-                            'quantity' => (int) $item->quantity,
-                            'price' => (float) $item->price,
-                            'total' => (float) $item->total
-                        ];
-                    } elseif ($item->item_type == Package::class) {
-                        return [
-                            'item_name' => $item->package->name,
-                            'variant_name' => null,
-                            'quantity' => (int) $item->quantity,
-                            'price' => (float) $item->price,
-                            'total' => (float) $item->total
-                        ];
-                    }
-                });
-
-            $response = [
-                'amount' => (float) $order->price,
-                'order_number' => $order->order_code,
-                'payment_method' => $order->payment_method,
-                'date' => $order->created_at->format('Y/m/d'),
-                'ordered_items' => $order_items,
-                'delivery_address' => $order->address,
-                'gift_wrap' => $request->gift_wrap,
-                'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
-                'gift_wrap_charge' => (float) $gift_wrap_charge
-            ];
-        });
+        $response = (new OrderService)->saveOrder($request, OrderTypeEnum::KITBAG);
 
         return $this->apiSuccess("Your order has been placed successfully.", $response);
     }
