@@ -11,17 +11,15 @@ class Kitbag extends Model
 
     public $timestamps = false;
     protected $fillable = [
-        'product_variation_id',
-        'quantity',
-        'product_id',
         'user_id',
+        'created_at'
     ];
 
-    function product() {
-        return $this->belongsTo(Product::class);
+    function user() {
+        return $this->belongsTo(User::class);
     }
-    
-    function variation() {
-        return $this->belongsTo(ProductVariation::class, 'product_variation_id');
+
+    function kitbagItems() {
+        return $this->hasMany(KitbagItem::class);
     }
 }

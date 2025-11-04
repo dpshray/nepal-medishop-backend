@@ -9,6 +9,8 @@ use App\Models\Product;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ClientKitbagController extends Controller
 {
@@ -59,8 +61,11 @@ class ClientKitbagController extends Controller
      */
     public function index()
     {
-        $kitbag = Auth::user()->kitbags;
-        $kitbag->load(['product.media', 'product.brand', 'variation']);
+        $kitbag = Auth::user()
+            ->kitbag
+            ->kitbagItems()
+            ->with(['product.media', 'product.brand', 'variation'])
+            ->get();
 
         $items = KitbagCardResource::collection($kitbag)->toArray(request());
 
@@ -125,17 +130,31 @@ class ClientKitbagController extends Controller
             'product_variation_id' => 'required|exists:product_variations,id',
             'quantity' => 'required|integer'
         ]);
-        $product = Product::where('slug', $request->product_slug)->firstOrFail();
-        $kitbag_product = Kitbag::firstWhere([
-            ['product_id', $product->id],
-            ['user_id', Auth::id()],
-        ]);
-        if ($kitbag_product) {
-            $kitbag_product->increment('quantity', $request->quantity);
-        }else{
-            $data = [...$data, ...['product_id' => $product->id, 'user_id' => Auth::id()]];
-            Kitbag::create($data);
-        }
+        DB::transaction(function () use($request, $data) {            
+            $user_kitbag = Kitbag::firstOrCreate([
+                'user_id' => Auth::id()
+            ],[
+                'created_at' => now()
+            ]);
+            $product = Product::with('variations')
+                ->where('slug', $request->product_slug)
+                ->firstOrFail();
+            if ($product->variations->where('id', $request->product_variation_id)->isEmpty()) {
+                throw new NotFoundHttpException("Variant does not belong to this product.");
+            }
+            $kitbag_product = $user_kitbag->KitbagItems()
+                ->where([
+                    ['product_id', $product->id],
+                    ['product_variation_id', $request->product_variation_id],
+                ])
+                ->first();
+            if ($kitbag_product) {
+                $kitbag_product->increment('quantity', $request->quantity);
+            }else{
+                $data = [...$data, ...['product_id' => $product->id]];
+                $user_kitbag->KitbagItems()->create($data);
+            }
+        });
         return $this->apiSuccess('item added to kitbag.');
     }
 
@@ -181,11 +200,14 @@ class ClientKitbagController extends Controller
     {
         $data = $request->validate([
             'item_uuids' => 'required|array',
-            'item_uuids.*' => 'required|exists:kitbags,uuid' 
+            'item_uuids.*' => 'required|exists:kitbag_items,uuid' 
         ],[
             'item_uuids.*.exists' => 'One or more selected items do not exist.'
         ]);
-        Auth::user()->kitbags()->whereIn('uuid', $data['item_uuids'])->delete();
+        Auth::user()->kitbag
+            ->kitbagItems()
+            ->whereIn('uuid', $data['item_uuids'])
+            ->delete();
         return $this->apiSuccess('Kitbag item removed succesfully.');
     }
 }

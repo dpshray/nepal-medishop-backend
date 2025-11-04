@@ -127,7 +127,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         return $this->hasMany(Wishlist::class, 'user_id');
     }
 
-    function kitbags() {
-        return $this->hasMany(Kitbag::class);
+    function kitbag() {
+        return $this->hasOne(Kitbag::class);
     }
 }
