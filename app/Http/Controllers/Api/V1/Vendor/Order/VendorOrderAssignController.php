@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Vendor\Order;
 
+use App\Enums\Purchase\OrderStatusEnum;
+use App\Enums\Purchase\PaymentStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Vendor\Order\OrderAssignDetailResource;
 use App\Http\Resources\Vendor\Order\OrderAssignListResource;
@@ -10,6 +12,7 @@ use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Enum;
 
 class VendorOrderAssignController extends Controller
 {
@@ -139,6 +142,7 @@ class VendorOrderAssignController extends Controller
     /** @OA\Put(
      *     path="/vendor/orders/{order}",
      *     summary="Update the status of an assigned order",
+     *     description="Update the status of an assigned order.(values can be: 'PENDING','SHIPPED', 'DELIVERED')",
      *     tags={"Vendor Orders"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -156,8 +160,8 @@ class VendorOrderAssignController extends Controller
      *                 property="status",
      *                 type="string",
      *                 description="Order status",
-     *                 enum={"Processing", "Shipped", "Delivered"},
-     *                 example="Processing"
+     *                 enum={"PENDING","SHIPPED","DELIVERED"},
+     *                 example="PENDING"
      *             )
      *         )
      *     ),
@@ -176,10 +180,22 @@ class VendorOrderAssignController extends Controller
      */
     function update(Order $order, Request $request)
     {
-        $request->validate([
-            'status' => 'required|string|in:Processing,Shipped,Delivered'
+        //'in:Processing,Shipped,Delivered'
+        $request->merge([
+            'status' => strtoupper($request->input('status')) // example modification
         ]);
-        $order->update(['status' => $request->status]);
+        $data = $request->validate([
+            'status' => ['required',new Enum(OrderStatusEnum::class)]
+        ]);
+        $status = strtoupper($data['status']);
+        $status = OrderStatusEnum::from($status);
+        $data = ['status' => $status];
+        if ($status === OrderStatusEnum::DELIVERED) {
+            $data = [...$data, ...['payment_status' => PaymentStatusEnum::PAID]];
+        }else{
+            $data = [...$data, ...['payment_status' => PaymentStatusEnum::UNPAID]];
+        }
+        $order->update($data);
         return $this->apiSuccess('Order has been update successfull');
     }
 }

@@ -333,6 +333,7 @@
                     "Vendor Orders"
                 ],
                 "summary": "Update the status of an assigned order",
+                "description": "Update the status of an assigned order.(values can be: 'PENDING','SHIPPED', 'DELIVERED')",
                 "operationId": "d0d4d14d4119b329ff52427f8f553930",
                 "parameters": [
                     {
@@ -359,11 +360,11 @@
                                         "description": "Order status",
                                         "type": "string",
                                         "enum": [
-                                            "Processing",
-                                            "Shipped",
-                                            "Delivered"
+                                            "PENDING",
+                                            "SHIPPED",
+                                            "DELIVERED"
                                         ],
-                                        "example": "Processing"
+                                        "example": "PENDING"
                                     }
                                 },
                                 "type": "object"

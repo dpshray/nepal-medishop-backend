@@ -3,6 +3,7 @@
 namespace App\Models\Purchase;
 
 use App\Enums\Purchase\OrderTypeEnum;
+use App\Enums\Purchase\PaymentStatusEnum;
 use App\Models\Traits\UuidModelTrait;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +37,8 @@ class Order extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
-        'order_type' => OrderTypeEnum::class
+        'order_type' => OrderTypeEnum::class,
+        'payment_status' => PaymentStatusEnum::class
     ];
 
     /* public static function boot()
