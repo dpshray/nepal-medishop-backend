@@ -125,6 +125,7 @@ class ClientOrderController extends Controller
      *                         @OA\Property(property="type", type="string", example="product"),
      *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/storage/106/syrup.jpg"),
      *                         @OA\Property(property="item_name", type="string", example="Saepe reiciendis et quae dolores et tenetur voluptas."),
+     *                         @OA\Property(property="item_slug", type="string", example="saepe-reiciendis-et-quae-dolores-et-tenetur-voluptas"),
      *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-1"),
      *                         @OA\Property(property="variant_size", type="string", nullable=true, example="100.00 g"),
      *                         @OA\Property(property="quantity", type="integer", example=2),

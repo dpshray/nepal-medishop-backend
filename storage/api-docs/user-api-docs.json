@@ -2792,6 +2792,10 @@
                                                                 "type": "string",
                                                                 "example": "Saepe reiciendis et quae dolores et tenetur voluptas."
                                                             },
+                                                            "item_slug": {
+                                                                "type": "string",
+                                                                "example": "saepe-reiciendis-et-quae-dolores-et-tenetur-voluptas"
+                                                            },
                                                             "variant_name": {
                                                                 "type": "string",
                                                                 "example": "Variant-1",

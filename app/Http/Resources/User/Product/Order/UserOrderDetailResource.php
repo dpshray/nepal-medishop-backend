@@ -32,6 +32,7 @@ class UserOrderDetailResource extends JsonResource
                 $data = [
                     "image" => $item->image,
                     'item_name' => $item->item_name,
+                    'item_slug' => $item->item_slug,
                     'variant_name' => $item->variant_name,
                     'variant_size' => $item->variant_size,
                     'quantity' =>  (int) $item->quantity,
