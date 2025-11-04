@@ -107,35 +107,35 @@ class ClientOrderController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="order_code", type="string", example="l0eOi9EqRI45NRqWdJMZ"),
+     *                 @OA\Property(property="order_code", type="string", example="uPVydlBqN7WQQDC5dQVq"),
      *                 @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
      *                 @OA\Property(property="description", type="string", example="some description of this order COD"),
-     *                 @OA\Property(property="price", type="number", format="float", example=4712.54),
+     *                 @OA\Property(property="price", type="number", format="float", example=9696),
      *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
-     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver colour"),
-     *                 @OA\Property(property="gift_wrap_charge", type="integer", example=300),
+     *                 @OA\Property(property="gift_wrap_remarks", type="string", nullable=true, example="gift wrap must be in silver paper."),
+     *                 @OA\Property(property="gift_wrap_charge", type="number", format="float", example=300),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
      *                 @OA\Property(property="status", type="string", example="PENDING"),
-     *                 @OA\Property(property="created_at", type="string", example="2025/10/30"),
+     *                 @OA\Property(property="created_at", type="string", format="date", example="2025/11/04"),
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
      *                     @OA\Items(
-     *                         type="object",
      *                         @OA\Property(property="type", type="string", example="product"),
-     *                         @OA\Property(property="item_name", type="string", example="Nesciunt ab sapiente aut sit."),
-     *                         @OA\Property(property="variant_name", type="string", example="Variant-5"),
-     *                         @OA\Property(property="variant_size", type="string", example="500.00 mg"),
+     *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/storage/106/syrup.jpg"),
+     *                         @OA\Property(property="item_name", type="string", example="Saepe reiciendis et quae dolores et tenetur voluptas."),
+     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-1"),
+     *                         @OA\Property(property="variant_size", type="string", nullable=true, example="100.00 g"),
      *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="price", type="number", format="float", example=2296),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=4592)
+     *                         @OA\Property(property="price", type="number", format="float", example=198),
+     *                         @OA\Property(property="subtotal", type="number", format="float", example=396)
      *                     )
      *                 )
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
-     *     )
+     *     ),
      * )
      */
     function orderDetail(Request $request, Order $order) {

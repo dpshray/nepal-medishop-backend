@@ -25,7 +25,7 @@ class OrderService
 
         if ($request->has('products')) {
             $product_slug = $request->collect('products')->pluck('product_slug');
-            $products = Product::select('id', 'slug', 'discount_percent', 'name', 'slug')->with(['variations'])->whereIn('slug', $product_slug)->get()->keyBy('slug');
+            $products = Product::select('id', 'slug', 'discount_percent', 'name', 'slug')->with(['variations','media'])->whereIn('slug', $product_slug)->get()->keyBy('slug');
 
             $products_ordered = $request->collect('products')->map(function ($item) use ($products) {
                 $product = $products[$item['product_slug']];
@@ -35,6 +35,7 @@ class OrderService
                 $product_discount_percent = $product['discount_percent'];
                 $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
                 $quantity = $item['quantity'];
+                Log::info($product->getFirstMediaUrl(Product::PRODUCT_FEATURE));
                 return [
                     'item_type' => Product::class,
                     'item_id' => $products[$item['product_slug']]->id,
@@ -45,7 +46,8 @@ class OrderService
                     'variant_size' => $product_variant->size_value . ' ' . $product_variant->size_unit,
                     'quantity' => $quantity,
                     'price' => $price,
-                    'total' => $price * $quantity
+                    'total' => $price * $quantity,
+                    'image' => $product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
                 ];
             });
         }
@@ -53,7 +55,7 @@ class OrderService
         $packages_ordered = [];
         if ($request->has('packages')) {
             $product_slug = $request->collect('packages')->pluck('package_slug');
-            $packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')->whereIn('slug', $product_slug)->get()->keyBy('slug');
+            $packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')->with('media')->whereIn('slug', $product_slug)->get()->keyBy('slug');
 
             $packages_ordered = $request->collect('packages')->map(function ($item) use ($packages) {
                 $package = $packages[$item['package_slug']];
@@ -61,6 +63,7 @@ class OrderService
                 $package_discount_precent = $package['discount_percent'];
                 $package_price = empty($package_discount_precent) ? $actual_package_price : ($actual_package_price - ($actual_package_price * $package_discount_precent) / 100);
                 $package_quantity = $item['quantity'];
+                Log::info($packages[$item['package_slug']]->getFirstMediaUrl(Package::PACKAGE_FEATURED));
 
                 return [
                     'item_type' => Package::class,
@@ -69,7 +72,8 @@ class OrderService
                     'item_id' => $packages[$item['package_slug']]->id,
                     'quantity' => $package_quantity,
                     'price' => $package_price,
-                    'total' => $package_quantity * $package_price
+                    'total' => $package_quantity * $package_price,
+                    'image' => $packages[$item['package_slug']]->getFirstMediaUrl(Package::PACKAGE_FEATURED),
                 ];
             });
         }

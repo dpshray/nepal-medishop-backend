@@ -2729,7 +2729,7 @@
                                             "properties": {
                                                 "order_code": {
                                                     "type": "string",
-                                                    "example": "l0eOi9EqRI45NRqWdJMZ"
+                                                    "example": "uPVydlBqN7WQQDC5dQVq"
                                                 },
                                                 "address": {
                                                     "type": "string",
@@ -2742,7 +2742,7 @@
                                                 "price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 4712.54
+                                                    "example": 9696
                                                 },
                                                 "gift_wrap": {
                                                     "type": "boolean",
@@ -2750,10 +2750,12 @@
                                                 },
                                                 "gift_wrap_remarks": {
                                                     "type": "string",
-                                                    "example": "gift wrap must be in silver colour"
+                                                    "example": "gift wrap must be in silver paper.",
+                                                    "nullable": true
                                                 },
                                                 "gift_wrap_charge": {
-                                                    "type": "integer",
+                                                    "type": "number",
+                                                    "format": "float",
                                                     "example": 300
                                                 },
                                                 "payment_method": {
@@ -2770,7 +2772,8 @@
                                                 },
                                                 "created_at": {
                                                     "type": "string",
-                                                    "example": "2025/10/30"
+                                                    "format": "date",
+                                                    "example": "2025/11/04"
                                                 },
                                                 "ordered_items": {
                                                     "type": "array",
@@ -2780,17 +2783,24 @@
                                                                 "type": "string",
                                                                 "example": "product"
                                                             },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/106/syrup.jpg"
+                                                            },
                                                             "item_name": {
                                                                 "type": "string",
-                                                                "example": "Nesciunt ab sapiente aut sit."
+                                                                "example": "Saepe reiciendis et quae dolores et tenetur voluptas."
                                                             },
                                                             "variant_name": {
                                                                 "type": "string",
-                                                                "example": "Variant-5"
+                                                                "example": "Variant-1",
+                                                                "nullable": true
                                                             },
                                                             "variant_size": {
                                                                 "type": "string",
-                                                                "example": "500.00 mg"
+                                                                "example": "100.00 g",
+                                                                "nullable": true
                                                             },
                                                             "quantity": {
                                                                 "type": "integer",
@@ -2799,12 +2809,12 @@
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 2296
+                                                                "example": 198
                                                             },
                                                             "subtotal": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 4592
+                                                                "example": 396
                                                             }
                                                         },
                                                         "type": "object"

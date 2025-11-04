@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('variant_name')->nullable();
             $table->string('variant_size')->nullable();
             $table->unsignedTinyInteger('quantity');
+            $table->string('image');
             $table->decimal('price', 10, 2);
             $table->decimal('total', 10, 2);
         });

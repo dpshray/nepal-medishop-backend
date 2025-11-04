@@ -20,6 +20,7 @@ class OrderItem extends Model
         'variant_size',
         'quantity',
         'price',
+        'image',
         'total',
         'created_at'
     ];
