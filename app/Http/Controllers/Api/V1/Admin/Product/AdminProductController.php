@@ -157,6 +157,7 @@ class AdminProductController extends Controller
             $product->categories()->attach($request->categories);
             $product->tags()->attach($request->tags);
             $product->variations()->createMany($request->variations);
+            $product->healthConditions()->attach($request->health_condition);
             $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
             foreach ($request->file('gallery_images') as $GI) {
                 $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
@@ -229,6 +230,7 @@ class AdminProductController extends Controller
             $product->tags()->sync($request->tags);
             $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->all();
             $product->variations()->whereNotIn('id', $variation_to_avoid)->delete();
+            $product->healthConditions()->sync($request->health_condition);
             foreach ($request->variations as $variation) {
                 if (array_key_exists('variation_id', $variation)) {
                     $product_variation = $product->variations()->firstWhere('id', $variation['variation_id']);

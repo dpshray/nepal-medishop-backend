@@ -35,13 +35,15 @@ class ProductStoreRequest extends FormRequest
             'categories.*' => 'distinct|exists:categories,id',
             'tags' => 'required|array',
             'tags.*' => 'distinct|exists:tags,id',
+            'health_condition' => 'required|array',
+            'health_condition.*' => 'distinct|exists:health_conditions,id',
             'variations' => 'required|array',
             'variations.*.name' => 'required|string',
             'variations.*.size_value' => 'required|numeric',
             'variations.*.size_unit' => ['required', Rule::in(array_column(ProductUnitEnum::cases(), 'value'))],
             'variations.*.platform_price' => 'required|numeric',
             'variations.*.platform_discount_price' => 'sometimes|nullable|numeric',
-            'prescription_required' => 'sometimes'
+            'prescription_required' => 'sometimes',
         ];
         if ($product_id == null) {
             $rules = array_merge($rules, [
