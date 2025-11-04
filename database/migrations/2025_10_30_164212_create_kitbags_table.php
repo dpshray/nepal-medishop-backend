@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\KitbagItem;
 use App\Models\Product;
 use App\Models\ProductVariation;
 use App\Models\User;
@@ -18,9 +19,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignIdFor(Product::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignIdFor(ProductVariation::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->unsignedTinyInteger('quantity');
+            $table->timestamp('created_at');
         });
     }
 
