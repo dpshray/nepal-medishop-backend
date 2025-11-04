@@ -15,6 +15,13 @@ class Kitbag extends Model
         'created_at'
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime'
+        ];
+    }
+
     function user() {
         return $this->belongsTo(User::class);
     }

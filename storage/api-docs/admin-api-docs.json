@@ -4339,6 +4339,279 @@
                 ]
             }
         },
+        "/admin/kitbag": {
+            "get": {
+                "tags": [
+                    "Kitbag"
+                ],
+                "summary": "Client kitbag list.",
+                "description": "Client kitbag list.",
+                "operationId": "KitbagList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search vendor based on email",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "user"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of user kitbags",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of user kitbags"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "kitbag_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "dba1fe0a-2abd-4958-96e0-545908d88dd4"
+                                                            },
+                                                            "username": {
+                                                                "type": "string",
+                                                                "example": "user00"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "user@gmail.com"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2025/11/04"
+                                                            },
+                                                            "no_of_kitbag_items": {
+                                                                "type": "integer",
+                                                                "example": 4
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/kitbag/{uuid}": {
+            "get": {
+                "tags": [
+                    "Kitbag"
+                ],
+                "summary": "Client kitbag details.",
+                "description": "Client kitbag details.",
+                "operationId": "KitbagDetail",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of kitbag.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "dc0ea028-1f3c-465b-8cdc-b6d998512e76"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful kitbag detail response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kitbag detail"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2025/11/04"
+                                                },
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Saepe reiciendis et quae dolores et tenetur voluptas."
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/106/syrup.jpg"
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 7
+                                                            },
+                                                            "variant": {
+                                                                "properties": {
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Variant-1"
+                                                                    },
+                                                                    "size_value": {
+                                                                        "type": "number",
+                                                                        "example": 100
+                                                                    },
+                                                                    "size_unit": {
+                                                                        "type": "string",
+                                                                        "example": "g"
+                                                                    },
+                                                                    "price": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 198
+                                                                    },
+                                                                    "previous_price": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": null,
+                                                                        "nullable": true
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Kitbag"
+                ],
+                "summary": "Delete a kitbag.",
+                "description": "Delete a kitbag.",
+                "operationId": "KitbagDelete",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of kitbag to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Brand successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Kitbag has been deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/user-order": {
             "get": {
                 "tags": [
@@ -5610,6 +5883,10 @@
         {
             "name": "Tag",
             "description": "Tag"
+        },
+        {
+            "name": "Kitbag",
+            "description": "Kitbag"
         },
         {
             "name": "Order",

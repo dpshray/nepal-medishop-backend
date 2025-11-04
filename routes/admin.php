@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminHealthConditionController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
+use App\Http\Controllers\Api\V1\Admin\Purchase\AdminKitbagOrderController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\User\AdminUserController;
@@ -55,4 +56,5 @@ Route::prefix('admin')
         Route::post('order/{order_uuid}/cancel-assign', [AdminOrderAssignController::class, 'CancelAssignOrder']);
         Route::apiResource('banner', AdminBannerController::class)->scoped(['banner' => 'uuid']);
         Route::get('toggle-banner-status/{banner:uuid}', [AdminBannerController::class, 'visibilityToggler']);
+        Route::apiResource('kitbag', AdminKitbagOrderController::class)->only(['index','show','destroy'])->scoped(['kitbag' => 'uuid']);
 });
