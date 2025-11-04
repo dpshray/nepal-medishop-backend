@@ -2716,7 +2716,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Order Detail.",
+                        "description": "Order Detail",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2750,8 +2750,7 @@
                                                 },
                                                 "gift_wrap_remarks": {
                                                     "type": "string",
-                                                    "example": "gift wrap must be in silver paper.",
-                                                    "nullable": true
+                                                    "example": "gift wrap must be in silver paper."
                                                 },
                                                 "gift_wrap_charge": {
                                                     "type": "number",
@@ -2785,7 +2784,6 @@
                                                             },
                                                             "image": {
                                                                 "type": "string",
-                                                                "format": "url",
                                                                 "example": "http://192.168.100.23:8008/storage/106/syrup.jpg"
                                                             },
                                                             "item_name": {
@@ -2819,6 +2817,60 @@
                                                                 "type": "number",
                                                                 "format": "float",
                                                                 "example": 396
+                                                            },
+                                                            "my_reviews": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "image": {
+                                                                            "type": "string",
+                                                                            "example": "http://192.168.100.23:8008/assets/img/user-profile-default.png"
+                                                                        },
+                                                                        "comment_uuid": {
+                                                                            "type": "string",
+                                                                            "format": "uuid",
+                                                                            "example": "ed58fd11-477b-42fb-86c1-e91b7082beba"
+                                                                        },
+                                                                        "user_name": {
+                                                                            "type": "string",
+                                                                            "example": "user00"
+                                                                        },
+                                                                        "user_email": {
+                                                                            "type": "string",
+                                                                            "example": "user@gmail.com"
+                                                                        },
+                                                                        "review": {
+                                                                            "type": "string",
+                                                                            "example": "Beautiful, beauti--FUL SOUP!' 'Chorus again!' ..."
+                                                                        },
+                                                                        "rating": {
+                                                                            "type": "integer",
+                                                                            "example": 5
+                                                                        },
+                                                                        "user_type": {
+                                                                            "properties": {
+                                                                                "user_type": {
+                                                                                    "type": "integer",
+                                                                                    "example": 3
+                                                                                },
+                                                                                "label": {
+                                                                                    "type": "string",
+                                                                                    "example": "USER"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        },
+                                                                        "review_date": {
+                                                                            "type": "string",
+                                                                            "example": "30 Oct 2025"
+                                                                        },
+                                                                        "is_review_edited": {
+                                                                            "type": "boolean",
+                                                                            "example": true
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
                                                             }
                                                         },
                                                         "type": "object"

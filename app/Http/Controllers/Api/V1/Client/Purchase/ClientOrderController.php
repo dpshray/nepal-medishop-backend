@@ -101,7 +101,7 @@ class ClientOrderController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Order Detail.",
+     *         description="Order Detail",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Order Detail."),
      *             @OA\Property(
@@ -112,7 +112,7 @@ class ClientOrderController extends Controller
      *                 @OA\Property(property="description", type="string", example="some description of this order COD"),
      *                 @OA\Property(property="price", type="number", format="float", example=9696),
      *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
-     *                 @OA\Property(property="gift_wrap_remarks", type="string", nullable=true, example="gift wrap must be in silver paper."),
+     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper."),
      *                 @OA\Property(property="gift_wrap_charge", type="number", format="float", example=300),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
@@ -122,15 +122,37 @@ class ClientOrderController extends Controller
      *                     property="ordered_items",
      *                     type="array",
      *                     @OA\Items(
+     *                         type="object",
      *                         @OA\Property(property="type", type="string", example="product"),
-     *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/storage/106/syrup.jpg"),
+     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/106/syrup.jpg"),
      *                         @OA\Property(property="item_name", type="string", example="Saepe reiciendis et quae dolores et tenetur voluptas."),
      *                         @OA\Property(property="item_slug", type="string", example="saepe-reiciendis-et-quae-dolores-et-tenetur-voluptas"),
      *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-1"),
      *                         @OA\Property(property="variant_size", type="string", nullable=true, example="100.00 g"),
      *                         @OA\Property(property="quantity", type="integer", example=2),
      *                         @OA\Property(property="price", type="number", format="float", example=198),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=396)
+     *                         @OA\Property(property="subtotal", type="number", format="float", example=396),
+     *                         @OA\Property(
+     *                             property="my_reviews",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/assets/img/user-profile-default.png"),
+     *                                 @OA\Property(property="comment_uuid", type="string", format="uuid", example="ed58fd11-477b-42fb-86c1-e91b7082beba"),
+     *                                 @OA\Property(property="user_name", type="string", example="user00"),
+     *                                 @OA\Property(property="user_email", type="string", example="user@gmail.com"),
+     *                                 @OA\Property(property="review", type="string", example="Beautiful, beauti--FUL SOUP!' 'Chorus again!' ..."),
+     *                                 @OA\Property(property="rating", type="integer", example=5),
+     *                                 @OA\Property(
+     *                                     property="user_type",
+     *                                     type="object",
+     *                                     @OA\Property(property="user_type", type="integer", example=3),
+     *                                     @OA\Property(property="label", type="string", example="USER")
+     *                                 ),
+     *                                 @OA\Property(property="review_date", type="string", example="30 Oct 2025"),
+     *                                 @OA\Property(property="is_review_edited", type="boolean", example=true)
+     *                             )
+     *                         )
      *                     )
      *                 )
      *             ),
@@ -140,6 +162,11 @@ class ClientOrderController extends Controller
      * )
      */
     function orderDetail(Request $request, Order $order) {
+        $order->load([
+            'orderItems' => [
+                'product.reviews' => fn($qry) => $qry->with('user')->where('user_id',Auth::id()),
+                'package.reviews' => fn($qry) => $qry->with('user')->where('user_id',Auth::id()),
+            ]]);
         $order = new UserOrderDetailResource($order);
         return $this->apiSuccess('Order Detail.', $order);
     }

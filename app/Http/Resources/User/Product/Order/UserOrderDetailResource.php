@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\User\Product\Order;
 
+use App\Http\Resources\User\Review\PackageReviewListResource;
+use App\Http\Resources\User\Review\ProductReviewListResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -37,7 +39,8 @@ class UserOrderDetailResource extends JsonResource
                     'variant_size' => $item->variant_size,
                     'quantity' =>  (int) $item->quantity,
                     'price' => (float) $item->price,
-                    'subtotal' => (float) $item->total
+                    'subtotal' => (float) $item->total,
+                    'my_reviews' => ($item->item_type == Product::class) ? ProductReviewListResource::collection($item->product->reviews) : PackageReviewListResource::collection($item->package->reviews)
                 ];
                 if ($item->item_type == Product::class) {
                     $data = [...['type' => 'product'], ...$data];
