@@ -23,7 +23,8 @@ class OrderListResource extends JsonResource
             "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
             "status" => $this->status,
-            'no_of_ordered_items' => $this->whenCounted('orderItems')
+            'no_of_ordered_items' => $this->whenCounted('orderItems'),
+            'git_wrap' => (bool) $this->gift_wrap
         ];
         if ($this->user_type == OrderUserTypeEnum::USER->value) {
             $data = [...$data, ...[

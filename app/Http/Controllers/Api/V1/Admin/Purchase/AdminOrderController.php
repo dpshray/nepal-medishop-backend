@@ -53,7 +53,8 @@ class AdminOrderController extends Controller
      *         response=200,
      *         description="List of orders.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="List of orders"),
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="List of orders."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -62,25 +63,26 @@ class AdminOrderController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="order_uuid", type="string", example="e184e023-f7eb-4f46-ac3a-363237e158c0"),
-     *                         @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
-     *                         @OA\Property(property="payment_status", type="string", example="PAID"),
+     *                         @OA\Property(property="order_uuid", type="string", example="54cb29e1-061d-4a2f-bd99-f17ffc2e75cd"),
+     *                         @OA\Property(property="payment_method", type="string", example="Google Pay"),
+     *                         @OA\Property(property="payment_status", type="string", example="UNPAID"),
      *                         @OA\Property(property="status", type="string", example="DELIVERED"),
-     *                         @OA\Property(property="no_of_ordered_items", type="integer", example=4),
-     *                         @OA\Property(property="order_code", type="string", example="dfSde1NOo3J5XR9Hw833"),
-     *                         @OA\Property(property="name", type="string", example="James P. Sullivan"),
-     *                         @OA\Property(property="email", type="string", example="james.sullivan100@example.com"),
-     *                         @OA\Property(property="mobile", type="string", example="9854112547"),
-     *                         @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu")
+     *                         @OA\Property(property="no_of_ordered_items", type="integer", example=2),
+     *                         @OA\Property(property="git_wrap", type="boolean", example=true),
+     *                         @OA\Property(property="order_code", type="string", example="1PO91o89DV5qqKnQdRSb"),
+     *                         @OA\Property(property="name", type="string", example="user00"),
+     *                         @OA\Property(property="email", type="string", example="user@gmail.com"),
+     *                         @OA\Property(property="mobile", type="string", example="9870396296"),
+     *                         @OA\Property(property="address", type="string", example="ghar ma")
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=1),
-     *                 @OA\Property(property="total_items", type="integer", example=3)
+     *                 @OA\Property(property="total_page", type="integer", example=14),
+     *                 @OA\Property(property="total_items", type="integer", example=14)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
-     *     ),
+     *     )
      * )
      */
     function index(Request $request) {
@@ -120,32 +122,41 @@ class AdminOrderController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of orders.",
+     *         description="Order detail retrieved successfully.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="List of orders"),
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Order Detail."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
+     *                 @OA\Property(property="order_code", type="string", example="1PO91o89DV5qqKnQdRSb"),
+     *                 @OA\Property(property="user_type", type="string", example="USER"),
+     *                 @OA\Property(property="name", type="string", example="user00"),
+     *                 @OA\Property(property="email", type="string", example="user@gmail.com"),
+     *                 @OA\Property(property="mobile", type="string", example="9870396296"),
+     *                 @OA\Property(property="address", type="string", example="ghar ma"),
+     *                 @OA\Property(property="description", type="string", example="ciro hdjd"),
+     *                 @OA\Property(property="price", type="number", format="float", example=10840.07),
+     *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
+     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="Wth Paper"),
+     *                 @OA\Property(property="payment_method", type="string", example="Google Pay"),
+     *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
+     *                 @OA\Property(property="status", type="string", example="DELIVERED"),
+     *                 @OA\Property(property="created_at", type="string", example="2025/11/04"),
      *                 @OA\Property(
-     *                     property="items",
+     *                     property="ordered_items",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="order_uuid", type="string", example="e184e023-f7eb-4f46-ac3a-363237e158c0"),
-     *                         @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
-     *                         @OA\Property(property="payment_status", type="string", example="PAID"),
-     *                         @OA\Property(property="status", type="string", example="DELIVERED"),
-     *                         @OA\Property(property="no_of_ordered_items", type="integer", example=4),
-     *                         @OA\Property(property="order_code", type="string", example="dfSde1NOo3J5XR9Hw833"),
-     *                         @OA\Property(property="name", type="string", example="James P. Sullivan"),
-     *                         @OA\Property(property="email", type="string", example="james.sullivan100@example.com"),
-     *                         @OA\Property(property="mobile", type="string", example="9854112547"),
-     *                         @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu")
+     *                         @OA\Property(property="type", type="string", example="product"),
+     *                         @OA\Property(property="item_name", type="string", example="Voluptas blanditiis quasi velit amet."),
+     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-6"),
+     *                         @OA\Property(property="variant_size", type="string", nullable=true, example="650.00 ampoule"),
+     *                         @OA\Property(property="quantity", type="integer", example=1),
+     *                         @OA\Property(property="price", type="number", format="float", example=2940.07),
+     *                         @OA\Property(property="subtotal", type="number", format="float", example=2940.07)
      *                     )
-     *                 ),
-     *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=1),
-     *                 @OA\Property(property="total_items", type="integer", example=3)
+     *                 )
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )

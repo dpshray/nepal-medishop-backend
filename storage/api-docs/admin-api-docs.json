@@ -4661,7 +4661,7 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "List of orders"
+                                            "example": "List of orders."
                                         },
                                         "data": {
                                             "properties": {
@@ -4671,15 +4671,15 @@
                                                         "properties": {
                                                             "order_uuid": {
                                                                 "type": "string",
-                                                                "example": "e184e023-f7eb-4f46-ac3a-363237e158c0"
+                                                                "example": "54cb29e1-061d-4a2f-bd99-f17ffc2e75cd"
                                                             },
                                                             "payment_method": {
                                                                 "type": "string",
-                                                                "example": "Cash on Delivery"
+                                                                "example": "Google Pay"
                                                             },
                                                             "payment_status": {
                                                                 "type": "string",
-                                                                "example": "PAID"
+                                                                "example": "UNPAID"
                                                             },
                                                             "status": {
                                                                 "type": "string",
@@ -4687,27 +4687,31 @@
                                                             },
                                                             "no_of_ordered_items": {
                                                                 "type": "integer",
-                                                                "example": 4
+                                                                "example": 2
+                                                            },
+                                                            "git_wrap": {
+                                                                "type": "boolean",
+                                                                "example": true
                                                             },
                                                             "order_code": {
                                                                 "type": "string",
-                                                                "example": "dfSde1NOo3J5XR9Hw833"
+                                                                "example": "1PO91o89DV5qqKnQdRSb"
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "James P. Sullivan"
+                                                                "example": "user00"
                                                             },
                                                             "email": {
                                                                 "type": "string",
-                                                                "example": "james.sullivan100@example.com"
+                                                                "example": "user@gmail.com"
                                                             },
                                                             "mobile": {
                                                                 "type": "string",
-                                                                "example": "9854112547"
+                                                                "example": "9870396296"
                                                             },
                                                             "address": {
                                                                 "type": "string",
-                                                                "example": "Shyambhu, Kathmandu"
+                                                                "example": "ghar ma"
                                                             }
                                                         },
                                                         "type": "object"
@@ -4719,11 +4723,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 1
+                                                    "example": 14
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 3
+                                                    "example": 14
                                                 }
                                             },
                                             "type": "object"
@@ -4768,76 +4772,113 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of orders.",
+                        "description": "Order detail retrieved successfully.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "List of orders"
+                                            "example": "Order Detail."
                                         },
                                         "data": {
                                             "properties": {
-                                                "items": {
+                                                "order_code": {
+                                                    "type": "string",
+                                                    "example": "1PO91o89DV5qqKnQdRSb"
+                                                },
+                                                "user_type": {
+                                                    "type": "string",
+                                                    "example": "USER"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "user00"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "user@gmail.com"
+                                                },
+                                                "mobile": {
+                                                    "type": "string",
+                                                    "example": "9870396296"
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "ghar ma"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "ciro hdjd"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 10840.07
+                                                },
+                                                "gift_wrap": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "gift_wrap_remarks": {
+                                                    "type": "string",
+                                                    "example": "Wth Paper"
+                                                },
+                                                "payment_method": {
+                                                    "type": "string",
+                                                    "example": "Google Pay"
+                                                },
+                                                "payment_status": {
+                                                    "type": "string",
+                                                    "example": "UNPAID"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "DELIVERED"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2025/11/04"
+                                                },
+                                                "ordered_items": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "order_uuid": {
+                                                            "type": {
                                                                 "type": "string",
-                                                                "example": "e184e023-f7eb-4f46-ac3a-363237e158c0"
+                                                                "example": "product"
                                                             },
-                                                            "payment_method": {
+                                                            "item_name": {
                                                                 "type": "string",
-                                                                "example": "Cash on Delivery"
+                                                                "example": "Voluptas blanditiis quasi velit amet."
                                                             },
-                                                            "payment_status": {
+                                                            "variant_name": {
                                                                 "type": "string",
-                                                                "example": "PAID"
+                                                                "example": "Variant-6",
+                                                                "nullable": true
                                                             },
-                                                            "status": {
+                                                            "variant_size": {
                                                                 "type": "string",
-                                                                "example": "DELIVERED"
+                                                                "example": "650.00 ampoule",
+                                                                "nullable": true
                                                             },
-                                                            "no_of_ordered_items": {
+                                                            "quantity": {
                                                                 "type": "integer",
-                                                                "example": 4
+                                                                "example": 1
                                                             },
-                                                            "order_code": {
-                                                                "type": "string",
-                                                                "example": "dfSde1NOo3J5XR9Hw833"
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2940.07
                                                             },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "James P. Sullivan"
-                                                            },
-                                                            "email": {
-                                                                "type": "string",
-                                                                "example": "james.sullivan100@example.com"
-                                                            },
-                                                            "mobile": {
-                                                                "type": "string",
-                                                                "example": "9854112547"
-                                                            },
-                                                            "address": {
-                                                                "type": "string",
-                                                                "example": "Shyambhu, Kathmandu"
+                                                            "subtotal": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2940.07
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
-                                                },
-                                                "page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 3
                                                 }
                                             },
                                             "type": "object"

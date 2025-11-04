@@ -28,6 +28,8 @@ class AdminOrderDetailResource extends JsonResource
             "address" => $this->address,
             "description" => $this->description,
             "price" => (float) $this->price,
+            'gift_wrap' => (bool) $this->gift_wrap,
+            'gift_wrap_remarks' => $this->gift_wrap_remarks,
             "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
             "status" => $this->status,
