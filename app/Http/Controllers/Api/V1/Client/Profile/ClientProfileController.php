@@ -55,7 +55,7 @@ class ClientProfileController extends Controller
         $user = Auth::user();
         if (!$user)
         {
-            return $this->apiError('login first');
+            return $this->apiError('Unauthenticated',401);
         }
         return $this->apiSuccess('user detail', new UserProfileResource($user));
     }
