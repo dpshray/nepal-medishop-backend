@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Client\ClientBannerController;
 use App\Http\Controllers\Api\V1\Client\ClientKitbagController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
+use App\Http\Controllers\Api\V1\Client\Password\ClientPasswordController;
 use App\Http\Controllers\Api\V1\Client\Profile\ClientProfileController;
 use App\Http\Controllers\Api\V1\Client\Purchase\ClientCartController;
 use App\Http\Controllers\Api\V1\Client\Purchase\ClientOrderController;
@@ -52,6 +53,7 @@ Route::get('fetch-package-ratings/{package:slug}', [PackageReviewController::cla
 Route::get('user/profile', [ClientProfileController::class, 'index']);
 Route::put('user/profile', [ClientProfileController::class, 'update']);
 Route::get('banner', ClientBannerController::class);
+Route::post('user/change-password',[ClientPasswordController::class,'ChangePassword']);
 
 
 
