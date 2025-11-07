@@ -97,6 +97,10 @@ class ClientAddressController extends Controller
     {
         $user = Auth::user();
         $address = Address::where('user_id', $user->id)->get();
+        if(!$address)
+        {
+            return $this->apiError('No address found');
+        }
         return $this->apiSuccess('User address', $address);
     }
     /**
@@ -181,6 +185,6 @@ class ClientAddressController extends Controller
     function destroy(Address $address)
     {
         $address->delete();
-        return $this->apiSuccess('Address Successful');
+        return $this->apiSuccess('Address Deleted successfull');
     }
 }
