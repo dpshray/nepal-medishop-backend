@@ -24,6 +24,310 @@
         }
     ],
     "paths": {
+        "/user/address": {
+            "get": {
+                "tags": [
+                    "User Address"
+                ],
+                "summary": "Get all addresses of the authenticated user",
+                "description": "Retrieve a list of all addresses associated with the logged-in user.",
+                "operationId": "18a925d91af149945b384f376cd00259",
+                "responses": {
+                    "200": {
+                        "description": "List of user addresses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User address"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "address": {
+                                                        "type": "string",
+                                                        "example": "Kathmandu, Nepal"
+                                                    },
+                                                    "latitude": {
+                                                        "type": "string",
+                                                        "example": "27.7172"
+                                                    },
+                                                    "longitude": {
+                                                        "type": "string",
+                                                        "example": "85.3240"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User Address"
+                ],
+                "summary": "Store a new address for the authenticated user",
+                "description": "Allows a logged-in user to add a new address with optional latitude and longitude.",
+                "operationId": "070983a77ebc4460f08e8727425a5766",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "address"
+                                ],
+                                "properties": {
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Kathmandu, Nepal"
+                                    },
+                                    "latitude": {
+                                        "type": "string",
+                                        "example": "27.7172"
+                                    },
+                                    "longitude": {
+                                        "type": "string",
+                                        "example": "85.3240"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Address stored successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Address stored successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "Kathmandu, Nepal"
+                                                },
+                                                "latitude": {
+                                                    "type": "string",
+                                                    "example": "27.7172"
+                                                },
+                                                "longitude": {
+                                                    "type": "string",
+                                                    "example": "85.3240"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The address field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/user/address/{id}": {
+            "put": {
+                "tags": [
+                    "User Address"
+                ],
+                "summary": "Update an existing address",
+                "description": "Update the user's address using its ID. Only the owner can update their address.",
+                "operationId": "db7c9f056224e2e9a99a95881a181053",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Address ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "address"
+                                ],
+                                "properties": {
+                                    "address": {
+                                        "type": "string",
+                                        "example": "Bhaktapur, Nepal"
+                                    },
+                                    "latitude": {
+                                        "type": "string",
+                                        "example": "27.6710"
+                                    },
+                                    "longitude": {
+                                        "type": "string",
+                                        "example": "85.4298"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Address updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Address Update Successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Address not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "User Address"
+                ],
+                "summary": "Delete a user address",
+                "description": "Delete a specific address by ID. Only the owner of the address can delete it.",
+                "operationId": "0baa6557daed1f468029582b7778fae1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Address ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 7
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Address Successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Address not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/register": {
             "post": {
                 "tags": [
@@ -4077,6 +4381,10 @@
         }
     },
     "tags": [
+        {
+            "name": "User Address",
+            "description": "User Address"
+        },
         {
             "name": "Authentication",
             "description": "Authentication"
