@@ -56,6 +56,7 @@ class AdminHealthConditionController extends Controller
      *                     property="items",
      *                     type="array",
      *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=5),
      *                         @OA\Property(property="name", type="string", example="Skin Care 88"),
      *                         @OA\Property(property="slug", type="string", example="skin-care-88"),
      *                         @OA\Property(property="description", type="string", nullable=true, example="some description of skin care 88."),

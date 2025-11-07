@@ -23,6 +23,8 @@ class Order extends Model
         'email',
         'mobile',
         'address',
+        'latitude',
+        'longitude',
         'description',
         'price',
         'payment_method',
