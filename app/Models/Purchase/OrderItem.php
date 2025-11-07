@@ -6,10 +6,17 @@ use App\Models\Package;
 use App\Models\Product;
 use App\Models\ProductVariation;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class OrderItem extends Model
+class OrderItem extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+    
     public $timestamps = false;
+
+    const PRESCRIPTION_IMAGE = 'PRESCRIPTION_IMAGE';
+
     protected $fillable = [
         'item_type',
         'item_id',
@@ -39,5 +46,10 @@ class OrderItem extends Model
         return $this->belongsTo(Package::class,'item_id')->whereHas('orderItem', function ($q) {
             $q->where('item_type', Package::class);
         });
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(self::PRESCRIPTION_IMAGE)->singleFile();
     }
 }

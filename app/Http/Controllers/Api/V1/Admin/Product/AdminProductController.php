@@ -186,32 +186,87 @@ class AdminProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Showing brand",
+     *         description="Successful product detail response",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Showing brand"),
+     *             @OA\Property(property="message", type="string", example="Product detail"),
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=3),
-     *                 @OA\Property(property="slug", type="string", example="sun-pharma"),
-     *                 @OA\Property(property="brand", type="string", example="Bristol-Myers Squibb"),
-     *                 @OA\Property(property="name", type="string", example="Sun Pharma"),
+     *                 @OA\Property(property="name", type="string", example="Incidunt atque veniam voluptates inventore consequatur."),
+     *                 @OA\Property(property="uuid", type="string", example="b1b4a46a-9cb1-4d03-a421-16dcbdf976ae"),
+     *                 @OA\Property(property="slug", type="string", example="incidunt-atque-veniam-voluptates-inventore-consequatur"),
      *                 @OA\Property(
-     *                     property="image",
-     *                     type="string",
-     *                     format="url",
-     *                     example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                     property="brand",
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=3),
+     *                     @OA\Property(property="name", type="string", example="Sun Pharma")
+     *                 ),
+     *                 @OA\Property(property="description", type="string", example="<p>Placeat accusamus illum iure amet eius...</p>"),
+     *                 @OA\Property(property="added_date", type="string", format="date-time", example="2025-10-28T19:08:02.000000Z"),
+     *                 @OA\Property(property="no_of_vendors", type="integer", example=1),
+     *                 
+     *                 @OA\Property(
+     *                     property="categories",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=13),
+     *                         @OA\Property(property="name", type="string", example="Weight Management")
+     *                     )
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="tags",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=24),
+     *                         @OA\Property(property="name", type="string", example="Sunscreen")
+     *                     )
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="variations",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="variation_id", type="integer", example=5),
+     *                         @OA\Property(property="name", type="string", example="Variant-2"),
+     *                         @OA\Property(property="size_value", type="number", example=200),
+     *                         @OA\Property(property="size_unit", type="string", example="bottle"),
+     *                         @OA\Property(property="admin_price", type="number", example=1181)
+     *                     )
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="health_conditions",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="name", type="string", example="Sleep & Relaxation")
+     *                     )
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="featured_image",
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=111),
+     *                     @OA\Property(property="url", type="string", example="http://192.168.100.23:8008/storage/111/syrup.jpg")
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="gallery_images",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=112),
+     *                         @OA\Property(property="url", type="string", example="http://192.168.100.23:8008/storage/112/tablets.jpg")
+     *                     )
      *                 )
-     *             ),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *             )
      *         )
      *     )
      * )
      */
     public function show(Product $product)
     {
-        $product->loadMissing(['variations','categories','tags','media','brand']);
+        $product->loadMissing(['variations','categories','tags','media','brand', 'healthConditions:name']);
         $product->loadCount(['productVendors']);
         $product = new AdminProductDetailResource($product);
         return $this->apiSuccess('Product detail', $product);

@@ -3129,6 +3129,10 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
                                                             "name": {
                                                                 "type": "string",
                                                                 "example": "Skin Care 88"
@@ -3665,44 +3669,162 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Showing brand",
+                        "description": "Successful product detail response",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Showing brand"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 3
-                                                },
-                                                "slug": {
-                                                    "type": "string",
-                                                    "example": "sun-pharma"
-                                                },
-                                                "brand": {
-                                                    "type": "string",
-                                                    "example": "Bristol-Myers Squibb"
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "Sun Pharma"
-                                                },
-                                                "image": {
-                                                    "type": "string",
-                                                    "format": "url",
-                                                    "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "example": "Product detail"
                                         },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Incidunt atque veniam voluptates inventore consequatur."
+                                                },
+                                                "uuid": {
+                                                    "type": "string",
+                                                    "example": "b1b4a46a-9cb1-4d03-a421-16dcbdf976ae"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "incidunt-atque-veniam-voluptates-inventore-consequatur"
+                                                },
+                                                "brand": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Sun Pharma"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "<p>Placeat accusamus illum iure amet eius...</p>"
+                                                },
+                                                "added_date": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-28T19:08:02.000000Z"
+                                                },
+                                                "no_of_vendors": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 13
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Weight Management"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "tags": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 24
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Sunscreen"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "variations": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "variation_id": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Variant-2"
+                                                            },
+                                                            "size_value": {
+                                                                "type": "number",
+                                                                "example": 200
+                                                            },
+                                                            "size_unit": {
+                                                                "type": "string",
+                                                                "example": "bottle"
+                                                            },
+                                                            "admin_price": {
+                                                                "type": "number",
+                                                                "example": 1181
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "health_conditions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Sleep & Relaxation"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "featured_image": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 111
+                                                        },
+                                                        "url": {
+                                                            "type": "string",
+                                                            "example": "http://192.168.100.23:8008/storage/111/syrup.jpg"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "gallery_images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 112
+                                                            },
+                                                            "url": {
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/112/tablets.jpg"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

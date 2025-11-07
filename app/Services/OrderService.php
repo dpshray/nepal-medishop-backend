@@ -10,12 +10,14 @@ use App\Enums\SettingEnum;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\Purchase\Order;
+use App\Models\Purchase\OrderItem;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class OrderService
 {
@@ -25,9 +27,19 @@ class OrderService
 
         if ($request->has('products')) {
             $product_slug = $request->collect('products')->pluck('product_slug');
-            $products = Product::select('id', 'slug', 'discount_percent', 'name', 'slug')->with(['variations','media'])->whereIn('slug', $product_slug)->get()->keyBy('slug');
+            $products = Product::select('id', 'slug', 'discount_percent', 'name', 'slug','prescription_required')
+                ->with(['variations','media'])
+                ->whereIn('slug', $product_slug)
+                ->get()
+                ->keyBy('slug');
+            // Log::info($request->collect('products'));
+            // Log::info('***********************************');
+            // Log::info($request->products);
+            // Log::info('*************=========******************');
+            // Log::info($request->collect('products'));
+            //  = $request->collect('products')->map(function ($item) use ($products) {});
+            $products_ordered = array_map(function ($item) use ($products){
 
-            $products_ordered = $request->collect('products')->map(function ($item) use ($products) {
                 $product = $products[$item['product_slug']];
                 $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
                 // Log::info($product_variant);
@@ -35,6 +47,17 @@ class OrderService
                 $product_discount_percent = $product['discount_percent'];
                 $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
                 $quantity = $item['quantity'];
+                if ($product->prescription_required && empty($item['prescription_image'])) {
+                    // Log::info($product);
+                    // Log::info('----------------------------------------------');
+                    // Log::info($item);
+                    // Log::info('----------------------------------------------');
+                    // Log::info(empty($item['prescription_image']));
+                    // throw new ValidationException("Prescription is required");
+                    throw ValidationException::withMessages([
+                        'products' => ['Prescription is required for product: ' . $product->name],
+                    ]);
+                }
                 return [
                     'item_type' => Product::class,
                     'item_id' => $products[$item['product_slug']]->id,
@@ -47,10 +70,10 @@ class OrderService
                     'price' => $price,
                     'total' => $price * $quantity,
                     'image' => $product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
+                    'prescription_image' => array_key_exists('prescription_image', $item) ? $item['prescription_image'] : null
                 ];
-            });
+            }, $request->products);
         }
-
         $packages_ordered = [];
         if ($request->has('packages')) {
             $product_slug = $request->collect('packages')->pluck('package_slug');
@@ -98,6 +121,8 @@ class OrderService
             'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
             'gift_wrap_charge' => $gift_wrap_charge,
             'order_type' => $order_type,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'created_at' => now()
         ];
 
@@ -115,7 +140,13 @@ class OrderService
                         'user_id' => $user
                     ]
                 );
-                $user->orders()->create($order)->orderItems()->createMany($order_items);
+                $order_items_ins = $user->orders()->create($order)->orderItems();
+                foreach ($order_items as $item) {
+                    $created_order_items = $order_items_ins->create($item);
+                    if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
+                        $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
+                    }
+                }
                 $item_slugs = $request->collect('packages')->pluck('package_slug')->merge($request->collect('products')->pluck('product_slug'));
                 $user->cart()->whereIn('item_slug', $item_slugs)->delete();
             } else { # Guest user
@@ -124,7 +155,14 @@ class OrderService
                     $order_detail,
                     ['user_type' => OrderUserTypeEnum::GUEST->value, 'order_code' => $order_code]
                 );
-                Order::create($order)->OrderItems()->createMany($order_items);
+                // Order::create($order)->OrderItems()->createMany($order_items);
+                $order_items_ins = Order::create($order)->orderItems();
+                foreach ($order_items as $item) {
+                    $created_order_items = $order_items_ins->create($item);
+                    if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
+                        $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
+                    }
+                }
             }
             $user = Auth::user();
         });
@@ -141,7 +179,8 @@ class OrderService
                         'variant_name' => $item->product->variations->firstWhere('id', $item->item_variant_id)->name,
                         'quantity' => (int) $item->quantity,
                         'price' => (float) $item->price,
-                        'total' => (float) $item->total
+                        'total' => (float) $item->total,
+                        'prescription_image' => $item->getFirstMediaUrl(OrderItem::PRESCRIPTION_IMAGE)
                     ];
                 } elseif ($item->item_type == Package::class) {
                     return [
@@ -163,7 +202,9 @@ class OrderService
             'delivery_address' => $order->address,
             'gift_wrap' => $request->gift_wrap,
             'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
-            'gift_wrap_charge' => (float) $gift_wrap_charge
+            'gift_wrap_charge' => (float) $gift_wrap_charge,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ];
         return $response;
     }

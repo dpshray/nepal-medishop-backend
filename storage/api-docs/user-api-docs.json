@@ -1876,6 +1876,14 @@
                                         "type": "string",
                                         "example": "Shyambhu, Kathmandu"
                                     },
+                                    "latitude": {
+                                        "type": "string",
+                                        "example": "1.201255"
+                                    },
+                                    "longitude": {
+                                        "type": "string",
+                                        "example": "22.25458"
+                                    },
                                     "description": {
                                         "type": "string",
                                         "example": "some description of this order COD"
@@ -1908,6 +1916,9 @@
                                                 "quantity": {
                                                     "type": "integer",
                                                     "example": 1
+                                                },
+                                                "prescription_image": {
+                                                    "type": "image"
                                                 }
                                             },
                                             "type": "object"
@@ -1994,6 +2005,9 @@
                                                                 "type": "number",
                                                                 "format": "float",
                                                                 "example": 2248.46
+                                                            },
+                                                            "prescription_image": {
+                                                                "type": "image"
                                                             }
                                                         },
                                                         "type": "object"

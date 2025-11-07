@@ -18,6 +18,7 @@ class AdminProductDetailResource extends JsonResource
         // return parent::toArray($request);
         return [
             'name' => $this->name,
+            'uuid' => $this->uuid,
             'slug' => $this->slug,
             'brand' => $this->whenLoaded('brand', fn() => ['id' => $this->brand->id, 'name' => $this->brand->name]),
             'description' => $this->description,
@@ -32,6 +33,7 @@ class AdminProductDetailResource extends JsonResource
                 'size_unit' => $item->size_unit,
                 'admin_price' => (float)$item->platform_price
             ])),
+            'health_conditions' => $this->healthConditions->map(fn($item) => ['name' => $item->name]),
             'featured_image' => $this->whenLoaded('media', fn() => [
                 'id' => $this->getFirstMedia(Product::PRODUCT_FEATURE)->id,
                 'url' => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)

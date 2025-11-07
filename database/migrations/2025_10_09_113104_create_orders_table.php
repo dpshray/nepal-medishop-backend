@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('mobile')->nullable();
             $table->string('address');
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->boolean('gift_wrap')->default(0);

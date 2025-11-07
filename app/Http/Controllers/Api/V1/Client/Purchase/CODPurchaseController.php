@@ -29,6 +29,8 @@ class CODPurchaseController extends Controller
      *             @OA\Property(property="email", type="string", format="email", example="james.sullivan100@example.com"),
      *             @OA\Property(property="mobile", type="string", example="9854112547"),
      *             @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
+     *             @OA\Property(property="latitude", type="string", example="1.201255"),
+     *             @OA\Property(property="longitude", type="string", example="22.25458"),
      *             @OA\Property(property="description", type="string", example="some description of this order COD"),
      *             @OA\Property(property="gift_wrap", type="boolean", example=true),
      *             @OA\Property(property="gift_wrap_remarks", type="boolean", example="gift wrap must be in silver paper."),
@@ -39,7 +41,8 @@ class CODPurchaseController extends Controller
      *                     required={"product_slug","variant_id","quantity"},
      *                     @OA\Property(property="product_slug", type="string", example="unde-a-maiores-et-omnis"),
      *                     @OA\Property(property="variant_id", type="integer", example=2),
-     *                     @OA\Property(property="quantity", type="integer", example=1)
+     *                     @OA\Property(property="quantity", type="integer", example=1),
+     *                     @OA\Property(property="prescription_image", type="image"),
      *                 )
      *             ),
      *             @OA\Property(
@@ -74,7 +77,8 @@ class CODPurchaseController extends Controller
      *                         @OA\Property(property="variant_name", type="string", example="Variant-2"),
      *                         @OA\Property(property="quantity", type="integer", example=2),
      *                         @OA\Property(property="price", type="number", format="float", example=1124.23),
-     *                         @OA\Property(property="total", type="number", format="float", example=2248.46)
+     *                         @OA\Property(property="total", type="number", format="float", example=2248.46),
+     *                         @OA\Property(property="prescription_image", type="image"),
      *                     )
      *                 ),
      *                 @OA\Property(property="delivery_address", type="string", example="Boudha, Kathmandu"),
@@ -92,7 +96,6 @@ class CODPurchaseController extends Controller
         if (!$request->hasAny(['products', 'packages'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }
-
         $response = (new OrderService)->saveOrder($request, OrderTypeEnum::REGULAR);
 
         return $this->apiSuccess("Your order has been placed successfully.", $response);

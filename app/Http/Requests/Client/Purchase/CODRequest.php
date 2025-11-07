@@ -27,6 +27,8 @@ class CODRequest extends FormRequest
         $rules = [
             'payment_method' => ['required'],
             'address' => 'required',
+            'latitude' => 'sometimes|nullable',
+            'longitude' => 'sometimes|nullable',
             'description' => 'nullable',
             'products.*' => 'sometimes|nullable|array',
             'products.*.product_slug' => 'required|exists:products,slug',
@@ -35,6 +37,7 @@ class CODRequest extends FormRequest
             'packages.*' => 'sometimes|nullable|array',
             'packages.*.package_slug' => 'required|exists:packages,slug',
             'packages.*.quantity' => 'required|numeric',
+            'packages.*.prescription_image' => 'sometimes|nullable|image',
             'gift_wrap' => 'required|boolean',
             'gift_wrap_remarks' => 'nullable',
         ];
