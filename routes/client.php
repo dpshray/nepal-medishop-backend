@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\ItemTypeEnum;
+use App\Http\Controllers\Api\V1\Client\Address\ClientAddressController;
 use App\Http\Controllers\Api\V1\Client\ClientBannerController;
 use App\Http\Controllers\Api\V1\Client\ClientKitbagController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
@@ -54,6 +55,7 @@ Route::get('user/profile', [ClientProfileController::class, 'index']);
 Route::put('user/profile', [ClientProfileController::class, 'update']);
 Route::get('banner', ClientBannerController::class);
 Route::post('user/change-password',[ClientPasswordController::class,'ChangePassword']);
+Route::apiResource('user/address',ClientAddressController::class)->except(['show']);
 
 
 
