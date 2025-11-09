@@ -27,18 +27,18 @@ class OrderService
 
         if ($request->has('products')) {
             $product_slug = $request->collect('products')->pluck('product_slug');
-            $products = Product::select('id', 'slug', 'discount_percent', 'name', 'slug','prescription_required')
-                ->with(['variations','media'])
+            $products = Product::select('id', 'slug', 'discount_percent', 'name', 'slug', 'prescription_required')
+                ->with(['variations', 'media'])
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
             // Log::info($request->collect('products'));
             // Log::info('***********************************');
-            // Log::info($request->products);
+            Log::info($request->products);
             // Log::info('*************=========******************');
             // Log::info($request->collect('products'));
-            //  = $request->collect('products')->map(function ($item) use ($products) {});
-            $products_ordered = array_map(function ($item) use ($products){
+            $products_ordered = array_map(function ($item) use ($products) {
+                Log::info($item);
 
                 $product = $products[$item['product_slug']];
                 $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
@@ -48,11 +48,11 @@ class OrderService
                 $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
                 $quantity = $item['quantity'];
                 if ($product->prescription_required && empty($item['prescription_image'])) {
+                    // Log::info($item);
                     // Log::info($product);
                     // Log::info('----------------------------------------------');
                     // Log::info($item);
                     // Log::info('----------------------------------------------');
-                    // Log::info(empty($item['prescription_image']));
                     // throw new ValidationException("Prescription is required");
                     throw ValidationException::withMessages([
                         'products' => ['Prescription is required for product: ' . $product->name],
@@ -135,8 +135,8 @@ class OrderService
                     $request->only(['address', 'description']),
                     $order_detail,
                     [
-                        'user_type' => OrderUserTypeEnum::USER, 
-                        'order_code' => $order_code, 
+                        'user_type' => OrderUserTypeEnum::USER,
+                        'order_code' => $order_code,
                         'user_id' => $user
                     ]
                 );
@@ -198,13 +198,13 @@ class OrderService
             'order_number' => $order->order_code,
             'payment_method' => $order->payment_method,
             'date' => $order->created_at->format('Y/m/d'),
-            'ordered_items' => $order_items,
             'delivery_address' => $order->address,
             'gift_wrap' => $request->gift_wrap,
             'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
             'gift_wrap_charge' => (float) $gift_wrap_charge,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'ordered_items' => $order_items,
         ];
         return $response;
     }

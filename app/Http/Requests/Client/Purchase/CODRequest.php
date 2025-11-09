@@ -50,4 +50,11 @@ class CODRequest extends FormRequest
         }
         return $rules;
     }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'gift_wrap' => filter_var($this->gift_wrap, FILTER_VALIDATE_BOOLEAN)
+        ]);
+    }
 }

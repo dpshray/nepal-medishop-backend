@@ -2240,15 +2240,14 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "payment_method",
                                     "name",
                                     "email",
                                     "mobile",
-                                    "address",
-                                    "products"
+                                    "address"
                                 ],
                                 "properties": {
                                     "payment_method": {
@@ -2261,7 +2260,6 @@
                                     },
                                     "email": {
                                         "type": "string",
-                                        "format": "email",
                                         "example": "james.sullivan100@example.com"
                                     },
                                     "mobile": {
@@ -2289,56 +2287,56 @@
                                         "example": true
                                     },
                                     "gift_wrap_remarks": {
-                                        "type": "boolean",
+                                        "type": "string",
                                         "example": "gift wrap must be in silver paper."
                                     },
-                                    "products": {
-                                        "type": "array",
-                                        "items": {
-                                            "required": [
-                                                "product_slug",
-                                                "variant_id",
-                                                "quantity"
-                                            ],
-                                            "properties": {
-                                                "product_slug": {
-                                                    "type": "string",
-                                                    "example": "unde-a-maiores-et-omnis"
-                                                },
-                                                "variant_id": {
-                                                    "type": "integer",
-                                                    "example": 2
-                                                },
-                                                "quantity": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "prescription_image": {
-                                                    "type": "image"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
+                                    "products[0][product_slug]": {
+                                        "type": "string",
+                                        "example": "unde-a-maiores-et-omnis"
                                     },
-                                    "packages": {
-                                        "type": "array",
-                                        "items": {
-                                            "required": [
-                                                "package_slug",
-                                                "quantity"
-                                            ],
-                                            "properties": {
-                                                "package_slug": {
-                                                    "type": "string",
-                                                    "example": "deluxe-box"
-                                                },
-                                                "quantity": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
+                                    "products[0][variant_id]": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "products[0][quantity]": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "products[0][prescription_image]": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "products[1][product_slug]": {
+                                        "type": "string",
+                                        "example": "lorem-ipsum-product"
+                                    },
+                                    "products[1][variant_id]": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "products[1][quantity]": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "products[1][prescription_image]": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "packages[0][package_slug]": {
+                                        "type": "string",
+                                        "example": "deluxe-box"
+                                    },
+                                    "packages[0][quantity]": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "packages[1][package_slug]": {
+                                        "type": "string",
+                                        "example": "super-box"
+                                    },
+                                    "packages[1][quantity]": {
+                                        "type": "integer",
+                                        "example": 2
                                     }
                                 },
                                 "type": "object"
@@ -2348,7 +2346,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Your order has been placed successfully.",
+                        "description": "Order placed successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2362,11 +2360,11 @@
                                                 "amount": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 2248.46
+                                                    "example": 10853.38
                                                 },
                                                 "order_number": {
                                                     "type": "string",
-                                                    "example": "7gnhQMRGxGZORSC8OuNb"
+                                                    "example": "zSTfHnlLXYawwx9b58Bc"
                                                 },
                                                 "payment_method": {
                                                     "type": "string",
@@ -2374,7 +2372,31 @@
                                                 },
                                                 "date": {
                                                     "type": "string",
-                                                    "example": "2025/10/30"
+                                                    "example": "2025/11/09"
+                                                },
+                                                "delivery_address": {
+                                                    "type": "string",
+                                                    "example": "Shyambhu, Kathmandu"
+                                                },
+                                                "gift_wrap": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "gift_wrap_remarks": {
+                                                    "type": "string",
+                                                    "example": "gift wrap must be in silver paper."
+                                                },
+                                                "gift_wrap_charge": {
+                                                    "type": "integer",
+                                                    "example": 300
+                                                },
+                                                "latitude": {
+                                                    "type": "string",
+                                                    "example": "77.52144"
+                                                },
+                                                "longitude": {
+                                                    "type": "string",
+                                                    "example": "18.21554"
                                                 },
                                                 "ordered_items": {
                                                     "type": "array",
@@ -2382,11 +2404,12 @@
                                                         "properties": {
                                                             "item_name": {
                                                                 "type": "string",
-                                                                "example": "Quo voluptas quam dolorum voluptas."
+                                                                "example": "Saepe reiciendis et quae dolores et tenetur voluptas."
                                                             },
                                                             "variant_name": {
                                                                 "type": "string",
-                                                                "example": "Variant-2"
+                                                                "example": "Variant-1",
+                                                                "nullable": true
                                                             },
                                                             "quantity": {
                                                                 "type": "integer",
@@ -2395,35 +2418,20 @@
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 1124.23
+                                                                "example": 198
                                                             },
                                                             "total": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 2248.46
+                                                                "example": 396
                                                             },
                                                             "prescription_image": {
-                                                                "type": "image"
+                                                                "type": "string",
+                                                                "example": "http://192.168.100.23:8008/storage/2677/animal-4855514_1920.jpg"
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
-                                                },
-                                                "delivery_address": {
-                                                    "type": "string",
-                                                    "example": "Boudha, Kathmandu"
-                                                },
-                                                "gift_wrap": {
-                                                    "type": "boolean",
-                                                    "example": true
-                                                },
-                                                "gift_wrap_remarks": {
-                                                    "type": "string",
-                                                    "example": "gift wrap must be in silver paper with golden ribbon"
-                                                },
-                                                "gift_wrap_charge": {
-                                                    "type": "integer",
-                                                    "example": 300
                                                 }
                                             },
                                             "type": "object"
@@ -2465,7 +2473,8 @@
                                     "email",
                                     "mobile",
                                     "address",
-                                    "products"
+                                    "products",
+                                    "gift_wrap"
                                 ],
                                 "properties": {
                                     "payment_method": {
