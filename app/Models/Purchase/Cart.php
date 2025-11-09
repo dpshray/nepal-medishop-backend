@@ -33,4 +33,9 @@ class Cart extends Model
     function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function item()
+    {
+        return $this->morphTo();
+    }
 }

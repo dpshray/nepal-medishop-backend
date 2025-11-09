@@ -25,6 +25,7 @@ class ProductCardResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
+            'isPrescriptionRequired' => (bool) $this->prescription_required,
             'rating' => (float) $this->rating,
             'price' => $price,
             'previous_price' => $previous_price,

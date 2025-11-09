@@ -229,6 +229,7 @@ class MasterDataController extends Controller
      *                         @OA\Property(property="name", type="string", example="Sit quas consequatur dignissimos voluptatem."),
      *                         @OA\Property(property="slug", type="string", example="sit-quas-consequatur-dignissimos-voluptatem"),
      *                         @OA\Property(property="brand", type="string", example="Roche"),
+     *                         @OA\Property(property="isPrescriptionRequired", type="boolean", example=true),
      *                         @OA\Property(property="rating", type="number", format="float", example=3.5),
      *                         @OA\Property(property="price", type="number", format="float", example=137),
      *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=null),
@@ -319,6 +320,7 @@ class MasterDataController extends Controller
      *                 @OA\Property(property="brand", type="string", example="Bristol-Myers Squibb"),
      *                 @OA\Property(property="description", type="string", example="<p>Omnis corporis aut a aut et ut sunt...</p>"),
      *                 @OA\Property(property="added_date", type="string", format="date", example="2025-09-22"),
+     *                 @OA\Property(property="isPrescriptionRequired", type="boolean", example=true),
      *                 @OA\Property(property="rating", type="number", format="float", example=3.8),
      *                 @OA\Property(
      *                     property="categories",

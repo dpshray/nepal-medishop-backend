@@ -201,6 +201,7 @@ class ClientCartController extends Controller
                     "item_slug" => $item['item_slug'],
                     "brand_name" => $item['brand_name'],
                     "variant_name" => $item['variant_name'],
+                    "isPrescriptionRequired" => (bool) $item->item->prescription_required,
                     "image" => $item['image'],
                     "variant_id" => empty($item['variant_id']) ? null : (int) $item['variant_id'],
                     "quantity" => (int) $item['quantity'],
@@ -225,7 +226,6 @@ class ClientCartController extends Controller
      *         description="My Cart items.",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="My Cart items."),
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -234,22 +234,24 @@ class ClientCartController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="item_uuid", type="string", format="uuid", example="27ada7a2-4dd7-4f49-96b3-9a7c8b72b2ee"),
+     *                         @OA\Property(property="item_uuid", type="string", example="99f43455-91a5-4077-b44a-10ce814baad4"),
      *                         @OA\Property(property="item_type", type="string", example="product"),
-     *                         @OA\Property(property="item_name", type="string", example="Debitis debitis autem consectetur saepe."),
-     *                         @OA\Property(property="item_slug", type="string", example="debitis-debitis-autem-consectetur-saepe"),
-     *                         @OA\Property(property="brand_name", type="string", nullable=true, example="Sanofi"),
-     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="200 patch"),
-     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/91/medi-plaster.png"),
-     *                         @OA\Property(property="variant_id", type="integer", nullable=true, example=2),
-     *                         @OA\Property(property="quantity", type="integer", example=1),
-     *                         @OA\Property(property="price", type="number", format="float", example=1385.28),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=1385.28)
+     *                         @OA\Property(property="item_name", type="string", example="Sapiente quo unde fugiat et ipsa."),
+     *                         @OA\Property(property="item_slug", type="string", example="sapiente-quo-unde-fugiat-et-ipsa"),
+     *                         @OA\Property(property="brand_name", type="string", nullable=true, example="Roche"),
+     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-6"),
+     *                         @OA\Property(property="isPrescriptionRequired", type="boolean", example=true),
+     *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/storage/1966/visc-inhaler.jpg"),
+     *                         @OA\Property(property="variant_id", type="integer", nullable=true, example=1057),
+     *                         @OA\Property(property="quantity", type="integer", example=3),
+     *                         @OA\Property(property="price", type="number", format="float", example=3196.76),
+     *                         @OA\Property(property="subtotal", type="number", format="float", example=9590.28)
      *                     )
      *                 ),
-     *                 @OA\Property(property="cart_total_items", type="integer", example=5),
-     *                 @OA\Property(property="total", type="number", format="float", example=19674.34)
-     *             )
+     *                 @OA\Property(property="cart_total_items", type="integer", example=10),
+     *                 @OA\Property(property="total", type="number", format="float", example=35256.28)
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )

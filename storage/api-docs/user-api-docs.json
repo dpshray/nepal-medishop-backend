@@ -1401,6 +1401,10 @@
                                                                 "type": "string",
                                                                 "example": "Roche"
                                                             },
+                                                            "isPrescriptionRequired": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
                                                             "rating": {
                                                                 "type": "number",
                                                                 "format": "float",
@@ -1559,6 +1563,10 @@
                                                     "type": "string",
                                                     "format": "date",
                                                     "example": "2025-09-22"
+                                                },
+                                                "isPrescriptionRequired": {
+                                                    "type": "boolean",
+                                                    "example": true
                                                 },
                                                 "rating": {
                                                     "type": "number",
@@ -2752,10 +2760,6 @@
                                             "type": "string",
                                             "example": "My Cart items."
                                         },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "data": {
                                             "properties": {
                                                 "cart_items": {
@@ -2764,8 +2768,7 @@
                                                         "properties": {
                                                             "item_uuid": {
                                                                 "type": "string",
-                                                                "format": "uuid",
-                                                                "example": "27ada7a2-4dd7-4f49-96b3-9a7c8b72b2ee"
+                                                                "example": "99f43455-91a5-4077-b44a-10ce814baad4"
                                                             },
                                                             "item_type": {
                                                                 "type": "string",
@@ -2773,44 +2776,49 @@
                                                             },
                                                             "item_name": {
                                                                 "type": "string",
-                                                                "example": "Debitis debitis autem consectetur saepe."
+                                                                "example": "Sapiente quo unde fugiat et ipsa."
                                                             },
                                                             "item_slug": {
                                                                 "type": "string",
-                                                                "example": "debitis-debitis-autem-consectetur-saepe"
+                                                                "example": "sapiente-quo-unde-fugiat-et-ipsa"
                                                             },
                                                             "brand_name": {
                                                                 "type": "string",
-                                                                "example": "Sanofi",
+                                                                "example": "Roche",
                                                                 "nullable": true
                                                             },
                                                             "variant_name": {
                                                                 "type": "string",
-                                                                "example": "200 patch",
+                                                                "example": "Variant-6",
                                                                 "nullable": true
+                                                            },
+                                                            "isPrescriptionRequired": {
+                                                                "type": "boolean",
+                                                                "example": true
                                                             },
                                                             "image": {
                                                                 "type": "string",
-                                                                "example": "http://192.168.100.23:8008/storage/91/medi-plaster.png"
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/1966/visc-inhaler.jpg"
                                                             },
                                                             "variant_id": {
                                                                 "type": "integer",
-                                                                "example": 2,
+                                                                "example": 1057,
                                                                 "nullable": true
                                                             },
                                                             "quantity": {
                                                                 "type": "integer",
-                                                                "example": 1
+                                                                "example": 3
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 1385.28
+                                                                "example": 3196.76
                                                             },
                                                             "subtotal": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 1385.28
+                                                                "example": 9590.28
                                                             }
                                                         },
                                                         "type": "object"
@@ -2818,15 +2826,19 @@
                                                 },
                                                 "cart_total_items": {
                                                     "type": "integer",
-                                                    "example": 5
+                                                    "example": 10
                                                 },
                                                 "total": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 19674.34
+                                                    "example": 35256.28
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
