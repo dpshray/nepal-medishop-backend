@@ -199,11 +199,11 @@ class OrderService
             'payment_method' => $order->payment_method,
             'date' => $order->created_at->format('Y/m/d'),
             'delivery_address' => $order->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'gift_wrap' => $request->gift_wrap,
             'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
             'gift_wrap_charge' => (float) $gift_wrap_charge,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
             'ordered_items' => $order_items,
         ];
         return $response;

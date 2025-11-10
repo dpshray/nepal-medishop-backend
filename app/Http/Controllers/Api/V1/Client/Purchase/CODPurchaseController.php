@@ -112,65 +112,69 @@ class CODPurchaseController extends Controller
      *     security={{"sanctum": {}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"payment_method","name","email","mobile","address","products","gift_wrap"},
-     *             @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
-     *             @OA\Property(property="name", type="string", example="James P. Sullivan"),
-     *             @OA\Property(property="email", type="string", format="email", example="james.sullivan100@example.com"),
-     *             @OA\Property(property="mobile", type="string", example="9854112547"),
-     *             @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
-     *             @OA\Property(property="description", type="string", example="some description of this order COD"),
-     *             @OA\Property(property="gift_wrap", type="boolean", example=true),
-     *             @OA\Property(property="gift_wrap_remarks", type="boolean", example="gift wrap must be in silver paper."),
-     *             @OA\Property(
-     *                 property="products",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     required={"product_slug","variant_id","quantity"},
-     *                     @OA\Property(property="product_slug", type="string", example="unde-a-maiores-et-omnis"),
-     *                     @OA\Property(property="variant_id", type="integer", example=2),
-     *                     @OA\Property(property="quantity", type="integer", example=1)
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="packages",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     required={"package_slug","quantity"},
-     *                     @OA\Property(property="package_slug", type="string", example="deluxe-box"),
-     *                     @OA\Property(property="quantity", type="integer", example=1)
-     *                 )
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"payment_method","name","email","mobile","address"},
+     *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
+     *                 @OA\Property(property="name", type="string", example="Mathilda Monroe"),
+     *                 @OA\Property(property="email", type="string", example="mathilda.monroe@example.com"),
+     *                 @OA\Property(property="mobile", type="string", example="9855412544"),
+     *                 @OA\Property(property="address", type="string", example="Maharajgunj, Kathmandu"),
+     *                 @OA\Property(property="latitude", type="string", example="88.201255"),
+     *                 @OA\Property(property="longitude", type="string", example="12.25458"),
+     *                 @OA\Property(property="description", type="string", example="some description of this kitbag order COD"),
+     *                 @OA\Property(property="gift_wrap", type="boolean", example=false),
+     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper with pink ribbon."),
+     *     
+     *                 @OA\Property(property="products[0][product_slug]", type="string", example="unde-a-maiores-et-omnis"),
+     *                 @OA\Property(property="products[0][variant_id]", type="integer", example=2),
+     *                 @OA\Property(property="products[0][quantity]", type="integer", example=1),
+     *                 @OA\Property(property="products[0][prescription_image]", type="string", format="binary"),
+     *     
+     *                 @OA\Property(property="products[1][product_slug]", type="string", example="lorem-ipsum-product"),
+     *                 @OA\Property(property="products[1][variant_id]", type="integer", example=5),
+     *                 @OA\Property(property="products[1][quantity]", type="integer", example=3),
+     *                 @OA\Property(property="products[1][prescription_image]", type="string", format="binary"),
+     *     
+     *                 @OA\Property(property="packages[0][package_slug]", type="string", example="deluxe-box"),
+     *                 @OA\Property(property="packages[0][quantity]", type="integer", example=1),
+     *                 @OA\Property(property="packages[1][package_slug]", type="string", example="super-box"),
+     *                 @OA\Property(property="packages[1][quantity]", type="integer", example=2)
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Your order has been placed successfully.",
+     *         description="Your kitbag order has been placed successfully.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Your order has been placed successfully."),
+     *             @OA\Property(property="message", type="string", example="Your kitbag order has been placed successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="amount", type="number", format="float", example=2248.46),
-     *                 @OA\Property(property="order_number", type="string", example="7gnhQMRGxGZORSC8OuNb"),
+     *                 @OA\Property(property="amount", type="number", format="float", example=1384),
+     *                 @OA\Property(property="order_number", type="string", example="1GljzaAzrncgKdEGNobV"),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
-     *                 @OA\Property(property="date", type="string", example="2025/10/30"),
+     *                 @OA\Property(property="date", type="string", example="2025/11/10"),
+     *                 @OA\Property(property="delivery_address", type="string", example="Baisepatti, Kathmandu"),
+     *                 @OA\Property(property="gift_wrap", type="boolean", example=false),
+     *                 @OA\Property(property="gift_wrap_remarks", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="gift_wrap_charge", type="integer", example=0),
+     *                 @OA\Property(property="latitude", type="string", example="88.52144"),
+     *                 @OA\Property(property="longitude", type="string", example="12.21554"),
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="item_name", type="string", example="Quo voluptas quam dolorum voluptas."),
-     *                         @OA\Property(property="variant_name", type="string", example="Variant-2"),
+     *                         @OA\Property(property="item_name", type="string", example="Debitis quia nulla molestiae."),
+     *                         @OA\Property(property="variant_name", type="string", example="Variant-1"),
      *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="price", type="number", format="float", example=1124.23),
-     *                         @OA\Property(property="total", type="number", format="float", example=2248.46)
+     *                         @OA\Property(property="price", type="number", format="float", example=183),
+     *                         @OA\Property(property="total", type="number", format="float", example=366),
+     *                         @OA\Property(property="prescription_image", type="string", format="url", example="http://192.168.100.23:8008/storage/2684/flowers-7382926_1920.jpg")
      *                     )
-     *                 ),
-     *                 @OA\Property(property="delivery_address", type="string", example="Boudha, Kathmandu"),
-     *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
-     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper with golden ribbon"),
-     *                 @OA\Property(property="gift_wrap_charge", type="integer", example=300)
+     *                 )
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -184,6 +188,6 @@ class CODPurchaseController extends Controller
 
         $response = (new OrderService)->saveOrder($request, OrderTypeEnum::KITBAG);
 
-        return $this->apiSuccess("Your order has been placed successfully.", $response);
+        return $this->apiSuccess("Your kitbag order has been placed successfully.", $response);
     }
 }
