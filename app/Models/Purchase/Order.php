@@ -2,11 +2,18 @@
 
 namespace App\Models\Purchase;
 
+use App\Enums\LoyalityPoint\LoyalityPointSourceEnum;
+use App\Enums\LoyalityPoint\LoyalityPointStatusEnum;
+use App\Enums\LoyalityPoint\LoyalityPointTypeEnum;
+use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\OrderTypeEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
+use App\Models\LoyalityPoint;
 use App\Models\Traits\UuidModelTrait;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class Order extends Model
@@ -43,13 +50,34 @@ class Order extends Model
         'payment_status' => PaymentStatusEnum::class
     ];
 
-    /* public static function boot()
+    public static function boot()
     {
         parent::boot();
-        static::creating(function ($item) {
-            $item->order_code = Str::random(20);
+        static::updating(function ($item) {
+            $user = Auth::user();
+            $latest_approved_loyality_points = $user->latestApprovedLoyalityPoints;
+            $balance_after = $earned_points = $item->price * LoyalityPoint::LOYALITY_POINTS; #FIRST TIME DEFAULT
+
+            if ($item->status == OrderStatusEnum::PENDING) {
+                $item->loyalityPoint()->delete();
+            }elseif ($item->status == OrderStatusEnum::DELIVERED) {
+                if ($item->loyalityPoint()->doesntExist()) {                    
+                    if ($latest_approved_loyality_points) { # if previous approved loyality point exists
+                        $balance_after = $latest_approved_loyality_points->points + $earned_points;
+                    }
+                    $item->loyalityPoint()->create([
+                        'user_id' => $user->id,
+                        'points' => $earned_points,
+                        'type' => LoyalityPointTypeEnum::EARN,
+                        'source' => LoyalityPointSourceEnum::ORDER_PURCHASE,
+                        'description' => 'loyality points earned from :'.LoyalityPointSourceEnum::ORDER_PURCHASE->value,
+                        'status' => LoyalityPointStatusEnum::APPROVED,
+                        'balance_after' => $balance_after,
+                    ]);
+                }
+            }
         });
-    } */
+    }
 
     function orderItems() {
         return $this->hasMany(OrderItem::class);
@@ -62,5 +90,9 @@ class Order extends Model
 
     function assignedVendor() {
         return $this->belongsTo(User::class, 'assigned_vendor_id');
+    }
+
+    function loyalityPoint() {
+        return $this->hasOne(LoyalityPoint::class);
     }
 }

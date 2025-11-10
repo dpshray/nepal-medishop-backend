@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\LoyalityPoint\LoyalityPointStatusEnum;
 use App\Enums\UserTypeEnum;
 use App\Models\Purchase\Cart;
 use App\Models\Purchase\Order;
@@ -129,5 +130,14 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
 
     function kitbag() {
         return $this->hasOne(Kitbag::class);
+    }
+
+    function loyalityPoints() {
+        return $this->hasMany(LoyalityPoint::class)->where('status', LoyalityPointStatusEnum::APPROVED)->orderBy('id','DESC');
+    }
+
+    public function latestApprovedLoyalityPoints()
+    {
+        return $this->hasOne(LoyalityPoint::class)->where('status', LoyalityPointStatusEnum::APPROVED)->orderBy('id', 'DESC');
     }
 }

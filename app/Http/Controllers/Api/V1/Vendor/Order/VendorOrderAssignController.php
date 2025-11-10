@@ -12,6 +12,7 @@ use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\UnauthorizedException;
 
@@ -218,7 +219,7 @@ class VendorOrderAssignController extends Controller
         }else{
             $data = [...$data, ...['payment_status' => PaymentStatusEnum::UNPAID]];
         }
-        $order->update($data);
-        return $this->apiSuccess('Order has been update successfull');
+        DB::transaction(fn () => $order->update($data));
+        return $this->apiSuccess('Order has been changed to: '.strtolower($request->status));
     }
 }

@@ -24,6 +24,7 @@ class UserProfileResource extends JsonResource
             "user_type" => UserTypeEnum::tryFrom($this->user_type)?->name,
             'mobile_number'=>$this->mobile_number,
             'image' => $this->getFirstMediaUrl(User::USER_PROFILE) ?: null,
+            'loyality_points' => 0
         ];
     }
 }
