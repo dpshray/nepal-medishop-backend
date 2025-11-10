@@ -61,12 +61,15 @@ class ClientKitbagController extends Controller
      */
     public function index()
     {
-        $kitbag = Auth::user()
-            ->kitbag
-            ->kitbagItems()
+        $kitbag = Auth::user()->kitbag;
+        if (empty($kitbag)) {
+            $items = [];
+            $total_amount = $total_items = 0;
+            return $this->apiSuccess('List of kitbag items', compact('items', 'total_items', 'total_amount'));
+        }
+        $kitbag = $kitbag->kitbagItems()
             ->with(['product.media', 'product.brand', 'variation'])
             ->get();
-
         $items = KitbagCardResource::collection($kitbag)->toArray(request());
 
         $collection_data = collect($items['data'] ?? $items); // handle both cases
