@@ -4894,7 +4894,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Order detail retrieved successfully.",
+                        "description": "Order Detail",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4903,40 +4903,52 @@
                                             "type": "string",
                                             "example": "Order Detail."
                                         },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "data": {
                                             "properties": {
                                                 "order_code": {
                                                     "type": "string",
-                                                    "example": "1PO91o89DV5qqKnQdRSb"
+                                                    "example": "X8qi8h2ba6YoqQ7DtTBb"
                                                 },
                                                 "user_type": {
                                                     "type": "string",
-                                                    "example": "USER"
+                                                    "example": "GUEST"
                                                 },
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "user00"
+                                                    "example": "James P. Sullivan"
                                                 },
                                                 "email": {
                                                     "type": "string",
-                                                    "example": "user@gmail.com"
+                                                    "example": "james.sullivan100@example.com"
                                                 },
                                                 "mobile": {
                                                     "type": "string",
-                                                    "example": "9870396296"
+                                                    "example": "9844521125"
                                                 },
                                                 "address": {
                                                     "type": "string",
-                                                    "example": "ghar ma"
+                                                    "example": "Shyambhu, Kathmandu"
+                                                },
+                                                "latitude": {
+                                                    "type": "string",
+                                                    "example": "77.52144"
+                                                },
+                                                "longitude": {
+                                                    "type": "string",
+                                                    "example": "18.21554"
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "ciro hdjd"
+                                                    "example": "some description of this order COD"
                                                 },
                                                 "price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 10840.07
+                                                    "example": 10853.38
                                                 },
                                                 "gift_wrap": {
                                                     "type": "boolean",
@@ -4944,11 +4956,11 @@
                                                 },
                                                 "gift_wrap_remarks": {
                                                     "type": "string",
-                                                    "example": "Wth Paper"
+                                                    "example": "gift wrap must be in silver paper."
                                                 },
                                                 "payment_method": {
                                                     "type": "string",
-                                                    "example": "Google Pay"
+                                                    "example": "Cash on Delivery"
                                                 },
                                                 "payment_status": {
                                                     "type": "string",
@@ -4956,11 +4968,11 @@
                                                 },
                                                 "status": {
                                                     "type": "string",
-                                                    "example": "DELIVERED"
+                                                    "example": "PENDING"
                                                 },
                                                 "created_at": {
                                                     "type": "string",
-                                                    "example": "2025/11/04"
+                                                    "example": "2025/11/09"
                                                 },
                                                 "ordered_items": {
                                                     "type": "array",
@@ -4970,33 +4982,42 @@
                                                                 "type": "string",
                                                                 "example": "product"
                                                             },
+                                                            "prescription_required": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            },
+                                                            "prescription_image": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
                                                             "item_name": {
                                                                 "type": "string",
-                                                                "example": "Voluptas blanditiis quasi velit amet."
+                                                                "example": "Saepe reiciendis et quae dolores et tenetur voluptas."
                                                             },
                                                             "variant_name": {
                                                                 "type": "string",
-                                                                "example": "Variant-6",
+                                                                "example": "Variant-1",
                                                                 "nullable": true
                                                             },
                                                             "variant_size": {
                                                                 "type": "string",
-                                                                "example": "650.00 ampoule",
+                                                                "example": "100.00 g",
                                                                 "nullable": true
                                                             },
                                                             "quantity": {
                                                                 "type": "integer",
-                                                                "example": 1
+                                                                "example": 2
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 2940.07
+                                                                "example": 198
                                                             },
                                                             "subtotal": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 2940.07
+                                                                "example": 396
                                                             }
                                                         },
                                                         "type": "object"
@@ -5004,10 +5025,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
                                         }
                                     },
                                     "type": "object"

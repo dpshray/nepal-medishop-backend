@@ -13,6 +13,7 @@ use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\UnauthorizedException;
 
 class VendorOrderAssignController extends Controller
 {
@@ -105,37 +106,59 @@ class VendorOrderAssignController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Order detail retrieved successfully",
+     *         description="Order Detail",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Order Detail."),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="order_id", type="integer", example=12),
-     *                 @OA\Property(property="order_code", type="string", example="ORD-2025-001"),
-     *                 @OA\Property(property="price", type="number", format="float", example=2500.75),
-     *                 @OA\Property(property="payment_method", type="string", example="esewa"),
-     *                 @OA\Property(property="status", type="string", example="pending"),
-     *                 @OA\Property(property="customer_name", type="string", example="John Doe"),
-     *                 @OA\Property(property="address", type="string", example="Kathmandu, Nepal"),
-     *                 @OA\Property(property="order_items", type="array",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="order_code", type="string", example="K1CB3U895Sa8f83thrxp"),
+     *                 @OA\Property(property="user_type", type="string", example="USER"),
+     *                 @OA\Property(property="name", type="string", example="John Doe edi jsdsd"),
+     *                 @OA\Property(property="email", type="string", example="user@gmail.com"),
+     *                 @OA\Property(property="mobile", type="string", example="9878776566"),
+     *                 @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
+     *                 @OA\Property(property="latitude", type="string", example="77.52144"),
+     *                 @OA\Property(property="longitude", type="string", example="18.21554"),
+     *                 @OA\Property(property="description", type="string", example="some description of this order COD"),
+     *                 @OA\Property(property="price", type="number", format="float", example=2801.6),
+     *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
+     *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
+     *                 @OA\Property(property="status", type="string", example="PENDING"),
+     *                 @OA\Property(property="created_at", type="string", example="2025/11/10"),
+     *                 @OA\Property(
+     *                     property="ordered_items",
+     *                     type="array",
      *                     @OA\Items(
-     *                         @OA\Property(property="product_name", type="string", example="Laptop Pro 15"),
-     *                         @OA\Property(property="variant_name", type="string", example="8GB / 256GB"),
-     *                         @OA\Property(property="quantity", type="integer", example=1),
-     *                         @OA\Property(property="price", type="number", format="float", example=1200.50),
-     *                         @OA\Property(property="total", type="number", format="float", example=1200.50),
-     *                         @OA\Property(property="featured_image", type="string", example="https://example.com/image.jpg")
+     *                         type="object",
+     *                         @OA\Property(property="type", type="string", example="product"),
+     *                         @OA\Property(property="prescription_required", type="boolean", example=true),
+     *                         @OA\Property(
+     *                             property="prescription_image",
+     *                             type="string",
+     *                             format="uri",
+     *                             nullable=true,
+     *                             example="http://192.168.100.23:8008/storage/2680/animal-4855514_1920.jpg"
+     *                         ),
+     *                         @OA\Property(property="item_name", type="string", example="Debitis quia nulla molestiae."),
+     *                         @OA\Property(property="variant_name", type="string", example="Variant-1"),
+     *                         @OA\Property(property="variant_size", type="string", example="100.00 ml"),
+     *                         @OA\Property(property="quantity", type="integer", example=2),
+     *                         @OA\Property(property="price", type="number", format="float", example=183),
+     *                         @OA\Property(property="subtotal", type="number", format="float", example=366)
      *                     )
      *                 )
      *             )
      *         )
      *     ),
-     *     @OA\Response(response=404, description="Order not found")
      * )
      */
     function show(Order $order)
     {
+        if (empty($order->assignedVendor) || $order->assignedVendor->isNot(Auth::user())) {
+            throw new UnauthorizedException();
+        }
         $order = new OrderAssignDetailResource($order);
         return $this->apiSuccess('Order Detail.', $order);
     }

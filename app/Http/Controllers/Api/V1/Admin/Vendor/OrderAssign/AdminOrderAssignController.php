@@ -128,7 +128,6 @@ class AdminOrderAssignController extends Controller
 
         $user_order = collect($user_order)->keyBy('item_variant_id');
 
-        // 2️⃣ Load vendors with related user, products, and prices
         $vendors = Vendor::VerifiedAndActive()
             ->select('id', 'uuid', 'user_id', 'store_name')
             ->with([

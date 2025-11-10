@@ -55,7 +55,12 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    function user() {
+    #ID of user that has ordered
+    function user() { 
         return $this->belongsTo(User::class);
+    }
+
+    function assignedVendor() {
+        return $this->belongsTo(User::class, 'assigned_vendor_id');
     }
 }

@@ -231,79 +231,121 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Order detail retrieved successfully",
+                        "description": "Order Detail",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "Order Detail."
                                         },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "data": {
                                             "properties": {
-                                                "order_id": {
-                                                    "type": "integer",
-                                                    "example": 12
-                                                },
                                                 "order_code": {
                                                     "type": "string",
-                                                    "example": "ORD-2025-001"
+                                                    "example": "K1CB3U895Sa8f83thrxp"
+                                                },
+                                                "user_type": {
+                                                    "type": "string",
+                                                    "example": "USER"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe edi jsdsd"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "user@gmail.com"
+                                                },
+                                                "mobile": {
+                                                    "type": "string",
+                                                    "example": "9878776566"
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "Shyambhu, Kathmandu"
+                                                },
+                                                "latitude": {
+                                                    "type": "string",
+                                                    "example": "77.52144"
+                                                },
+                                                "longitude": {
+                                                    "type": "string",
+                                                    "example": "18.21554"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "some description of this order COD"
                                                 },
                                                 "price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 2500.75
+                                                    "example": 2801.6
                                                 },
                                                 "payment_method": {
                                                     "type": "string",
-                                                    "example": "esewa"
+                                                    "example": "Cash on Delivery"
+                                                },
+                                                "payment_status": {
+                                                    "type": "string",
+                                                    "example": "UNPAID"
                                                 },
                                                 "status": {
                                                     "type": "string",
-                                                    "example": "pending"
+                                                    "example": "PENDING"
                                                 },
-                                                "customer_name": {
+                                                "created_at": {
                                                     "type": "string",
-                                                    "example": "John Doe"
+                                                    "example": "2025/11/10"
                                                 },
-                                                "address": {
-                                                    "type": "string",
-                                                    "example": "Kathmandu, Nepal"
-                                                },
-                                                "order_items": {
+                                                "ordered_items": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "product_name": {
+                                                            "type": {
                                                                 "type": "string",
-                                                                "example": "Laptop Pro 15"
+                                                                "example": "product"
+                                                            },
+                                                            "prescription_required": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "prescription_image": {
+                                                                "type": "string",
+                                                                "format": "uri",
+                                                                "example": "http://192.168.100.23:8008/storage/2680/animal-4855514_1920.jpg",
+                                                                "nullable": true
+                                                            },
+                                                            "item_name": {
+                                                                "type": "string",
+                                                                "example": "Debitis quia nulla molestiae."
                                                             },
                                                             "variant_name": {
                                                                 "type": "string",
-                                                                "example": "8GB / 256GB"
+                                                                "example": "Variant-1"
+                                                            },
+                                                            "variant_size": {
+                                                                "type": "string",
+                                                                "example": "100.00 ml"
                                                             },
                                                             "quantity": {
                                                                 "type": "integer",
-                                                                "example": 1
+                                                                "example": 2
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 1200.5
+                                                                "example": 183
                                                             },
-                                                            "total": {
+                                                            "subtotal": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 1200.5
-                                                            },
-                                                            "featured_image": {
-                                                                "type": "string",
-                                                                "example": "https://example.com/image.jpg"
+                                                                "example": 366
                                                             }
                                                         },
                                                         "type": "object"
@@ -317,9 +359,6 @@
                                 }
                             }
                         }
-                    },
-                    "404": {
-                        "description": "Order not found"
                     }
                 },
                 "security": [
