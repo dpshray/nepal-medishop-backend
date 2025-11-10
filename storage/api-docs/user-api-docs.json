@@ -666,7 +666,7 @@
                 "operationId": "KitbagItemList",
                 "responses": {
                     "200": {
-                        "description": "List of kitbag items retrieved successfully.",
+                        "description": "List of kitbag items",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -675,57 +675,59 @@
                                             "type": "string",
                                             "example": "List of kitbag items"
                                         },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "data": {
                                             "properties": {
                                                 "items": {
+                                                    "description": "List of items inside the kitbag",
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
                                                             "item_uuid": {
                                                                 "type": "string",
-                                                                "example": "157cfda6-5bdc-4856-bf42-b82d951ae2c3"
+                                                                "example": "418efb8e-b404-42c5-bdf4-f9ccff64a567"
                                                             },
                                                             "item_name": {
                                                                 "type": "string",
-                                                                "example": "Similique natus a quidem deserunt."
+                                                                "example": "Illo magnam occaecati non sunt."
                                                             },
                                                             "item_slug": {
                                                                 "type": "string",
-                                                                "example": "similique-natus-a-quidem-deserunt"
+                                                                "example": "illo-magnam-occaecati-non-sunt"
                                                             },
                                                             "brand_name": {
                                                                 "type": "string",
-                                                                "example": "GlaxoSmithKline"
+                                                                "example": "Merck"
                                                             },
                                                             "variant_name": {
                                                                 "type": "string",
-                                                                "example": "Variant-2"
+                                                                "example": "Variant-1"
                                                             },
                                                             "variant_id": {
                                                                 "type": "integer",
-                                                                "example": 1
+                                                                "example": 813
+                                                            },
+                                                            "isPrescriptionRequired": {
+                                                                "type": "boolean",
+                                                                "example": false
                                                             },
                                                             "image": {
                                                                 "type": "string",
-                                                                "example": "http://192.168.100.23:8008/storage/91/visc-inhaler.jpg"
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/1546/cream.jpg"
                                                             },
                                                             "quantity": {
                                                                 "type": "integer",
-                                                                "example": 1
+                                                                "example": 2
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 1309
+                                                                "example": 162
                                                             },
                                                             "subtotal": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 1309
+                                                                "example": 324
                                                             }
                                                         },
                                                         "type": "object"
@@ -733,15 +735,19 @@
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 8
+                                                    "example": 5
                                                 },
                                                 "total_amount": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 6811
+                                                    "example": 4978
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"

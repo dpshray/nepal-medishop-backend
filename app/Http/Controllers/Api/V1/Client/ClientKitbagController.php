@@ -28,33 +28,35 @@ class ClientKitbagController extends Controller
      *     tags={"Kitbag"},
      *     @OA\Response(
      *         response=200,
-     *         description="List of kitbag items retrieved successfully.",
+     *         description="List of kitbag items",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="List of kitbag items"),
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(
      *                     property="items",
      *                     type="array",
+     *                     description="List of items inside the kitbag",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="item_uuid", type="string", example="157cfda6-5bdc-4856-bf42-b82d951ae2c3"),
-     *                         @OA\Property(property="item_name", type="string", example="Similique natus a quidem deserunt."),
-     *                         @OA\Property(property="item_slug", type="string", example="similique-natus-a-quidem-deserunt"),
-     *                         @OA\Property(property="brand_name", type="string", example="GlaxoSmithKline"),
-     *                         @OA\Property(property="variant_name", type="string", example="Variant-2"),
-     *                         @OA\Property(property="variant_id", type="integer", example=1),
-     *                         @OA\Property(property="image", type="string", example="http://192.168.100.23:8008/storage/91/visc-inhaler.jpg"),
-     *                         @OA\Property(property="quantity", type="integer", example=1),
-     *                         @OA\Property(property="price", type="number", format="float", example=1309),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=1309)
+     *                         @OA\Property(property="item_uuid", type="string", example="418efb8e-b404-42c5-bdf4-f9ccff64a567"),
+     *                         @OA\Property(property="item_name", type="string", example="Illo magnam occaecati non sunt."),
+     *                         @OA\Property(property="item_slug", type="string", example="illo-magnam-occaecati-non-sunt"),
+     *                         @OA\Property(property="brand_name", type="string", example="Merck"),
+     *                         @OA\Property(property="variant_name", type="string", example="Variant-1"),
+     *                         @OA\Property(property="variant_id", type="integer", example=813),
+     *                         @OA\Property(property="isPrescriptionRequired", type="boolean", example=false),
+     *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/storage/1546/cream.jpg"),
+     *                         @OA\Property(property="quantity", type="integer", example=2),
+     *                         @OA\Property(property="price", type="number", format="float", example=162),
+     *                         @OA\Property(property="subtotal", type="number", format="float", example=324)
      *                     )
      *                 ),
-     *                 @OA\Property(property="total_items", type="integer", example=8),
-     *                 @OA\Property(property="total_amount", type="number", format="float", example=6811)
-     *             )
+     *                 @OA\Property(property="total_items", type="integer", example=5),
+     *                 @OA\Property(property="total_amount", type="number", format="float", example=4978)
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )

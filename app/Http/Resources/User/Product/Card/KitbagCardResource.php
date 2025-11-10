@@ -23,6 +23,7 @@ class KitbagCardResource extends JsonResource
             "brand_name" => $this->product->brand->name,
             "variant_name" => $this->variation->name,
             "variant_id" => $this->variation->id,
+            'isPrescriptionRequired' => (bool) $this->product->prescription_required,
             "image" => $this->product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
             "quantity" => (integer) $this->quantity,
             "price" => (float) $this->variation->platform_price,

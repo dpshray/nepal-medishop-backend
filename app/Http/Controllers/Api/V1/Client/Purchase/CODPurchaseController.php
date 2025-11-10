@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Client\Purchase;
 use App\Enums\Purchase\OrderTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Purchase\CODRequest;
+use App\Http\Requests\Client\Purchase\KitbagRequest;
 use App\Services\OrderService;
 use App\Traits\ResponseTrait;
 
@@ -105,7 +106,7 @@ class CODPurchaseController extends Controller
     /**
      * @OA\Post(
      *     path="/kitbag-orders",
-     *     summary="Submit an order(Kitbag).",
+     *     summary="Submit an order(Kitbag | Only product can be added).",
      *     description="Submit an order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
      *     operationId="CODKitbagOrder",
      *     tags={"Order"},
@@ -181,8 +182,8 @@ class CODPurchaseController extends Controller
      *     )
      * )
      */
-    function kitbagOrder(CODRequest $request) {
-        if (!$request->hasAny(['products', 'packages'])) {
+    function kitbagOrder(KitbagRequest $request) {
+        if (!$request->hasAny(['products'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }
 
