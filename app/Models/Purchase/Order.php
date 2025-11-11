@@ -65,12 +65,12 @@ class Order extends Model
                     if ($latest_approved_loyality_points) { # if previous approved loyality point exists
                         $balance_after = $latest_approved_loyality_points->balance_after + $earned_points;
                     }
-                    Log::info([
+                    /* Log::info([
                         $order->loyalityPoint()->doesntExist(),
                         $user,
                         $latest_approved_loyality_points,
                         $balance_after,
-                    ]);
+                    ]); */
                     $order->loyalityPoint()->create([
                         'user_id' => $order->user_id,
                         'points' => $earned_points,
