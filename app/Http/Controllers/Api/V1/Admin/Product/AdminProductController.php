@@ -204,8 +204,8 @@ class AdminProductController extends Controller
      *                 ),
      *                 @OA\Property(property="description", type="string", example="<p>Placeat accusamus illum iure amet eius...</p>"),
      *                 @OA\Property(property="added_date", type="string", format="date-time", example="2025-10-28T19:08:02.000000Z"),
+     *                 @OA\Property(property="prescription_required", type="boolean", example=false),
      *                 @OA\Property(property="no_of_vendors", type="integer", example=1),
-     *                 
      *                 @OA\Property(
      *                     property="categories",
      *                     type="array",
@@ -283,14 +283,16 @@ class AdminProductController extends Controller
             $product->update($data);
             $product->categories()->sync($request->categories);
             $product->tags()->sync($request->tags);
-            $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->all();
-            $product->variations()->whereNotIn('id', $variation_to_avoid)->delete();
             $product->healthConditions()->sync($request->health_condition);
+            $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->filter(fn($item) => $item)->all();
+            $product->variations()
+                ->when(!empty($variation_to_avoid), fn($qry) => $qry->whereNotIn('id', $variation_to_avoid))
+                ->delete();
             foreach ($request->variations as $variation) {
-                if (array_key_exists('variation_id', $variation)) {
+                if (array_key_exists('variation_id', $variation) && !empty($variation['variation_id'])) {
                     $product_variation = $product->variations()->firstWhere('id', $variation['variation_id']);
                     if (empty($product_variation)) {
-                        throw new NotFoundHttpException("Variant could not be found");
+                        throw new NotFoundHttpException("Variant could not be found of this product");
                     }
                     $product_variation->update($variation);
                 }else{
