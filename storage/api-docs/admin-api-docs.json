@@ -3868,6 +3868,10 @@
                                                     "format": "date-time",
                                                     "example": "2025-10-28T19:08:02.000000Z"
                                                 },
+                                                "prescription_required": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
                                                 "no_of_vendors": {
                                                     "type": "integer",
                                                     "example": 1
