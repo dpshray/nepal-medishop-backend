@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\VendorProductStockStoreRequest;
 use App\Http\Resources\Vendor\Product\VendorProductListResource;
 use App\Http\Resources\Vendor\Product\VendorProductVariantResource;
+use App\Http\Resources\Vendor\Product\VendorStockedProductListResource;
 use App\Models\Product;
 use App\Models\ProductVendor;
 use App\Traits\PaginationTrait;
@@ -13,6 +14,7 @@ use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VendorProductController extends Controller
 {
@@ -23,10 +25,10 @@ class VendorProductController extends Controller
     /**
      * @OA\Get(
      *     security={{"sanctum": {}}},
-     *     path="/vendor/product",
-     *     summary="Get all available products",
-     *     description="Get all available products.",
-     *     operationId="VendorProductList",
+     *     path="/vendor/available-product",
+     *     summary="Get all currently available products.",
+     *     description="Get all currently available products.",
+     *     operationId="AvailableProductList",
      *     tags={"Product"},
      *     @OA\Parameter(
      *         name="page",
@@ -42,11 +44,17 @@ class VendorProductController extends Controller
      *         description="Items on each page",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Items to search",
+     *         @OA\Schema(type="string", example="Savlon")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Available product lists.",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Available product lists."),
      *             @OA\Property(
      *                 property="data",
@@ -56,19 +64,25 @@ class VendorProductController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="status", type="boolean", example=true),
-     *                         @OA\Property(property="is_approved_by_admin", type="boolean", example=true),
-     *                         @OA\Property(property="name", type="string", example="Laudantium quo ut vel id illo ut qui commodi."),
-     *                         @OA\Property(property="product_uuid", type="string", example="093db091-130c-4274-8293-2f9c7112466c"),
-     *                         @OA\Property(property="brand", type="string", example="Johnson & Johnson"),
-     *                         @OA\Property(property="views_count", type="integer", example=0),
-     *                         @OA\Property(property="total_units_in_stock", type="integer", example=467),
-     *                         @OA\Property(property="rating", type="number", format="float", example=3.6)
+     *                         @OA\Property(property="product_uuid", type="string", example="19a8e9db-2f17-40a6-ae8d-1fe3c75ba62d"),
+     *                         @OA\Property(property="product_name", type="string", example="Porro rerum autem aut odit."),
+     *                         @OA\Property(property="brand", type="string", example="Bayer"),
+     *                         @OA\Property(
+     *                             property="variations",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="id", type="integer", example=1),
+     *                                 @OA\Property(property="name", type="string", example="Variant-1"),
+     *                                 @OA\Property(property="size_value", type="integer", example=100),
+     *                                 @OA\Property(property="size_unit", type="string", example="l")
+     *                             )
+     *                         )
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=88),
-     *                 @OA\Property(property="total_items", type="integer", example=88)
+     *                 @OA\Property(property="total_page", type="integer", example=501),
+     *                 @OA\Property(property="total_items", type="integer", example=501)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -77,17 +91,12 @@ class VendorProductController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->query('per_page', ProductVendor::count());
-        /* $pagination = ProductVendor::with(['product.brand'])
-            ->whereRelation('product','status',1)
-            ->withSum(['vendorPrices as units_in_stock_sum' => function ($q) {
-                $q->where('vendor_id', Auth::id());
-            }], 'units_in_stock')            
-            ->orderBy('units_in_stock_sum', 'DESC')
-            ->paginate($per_page); */
-            $pagination = ProductVendor::with(['product.brand', 'product.variations'])
-                ->whereRelation('product', 'status', 1)
-                ->paginate($per_page);
+        $per_page = $request->query('per_page', Product::count());
+        $search = $request->query('search');
+        $pagination = Product::with(['brand', 'variations'])
+            ->when($search, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
+            ->active()
+            ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => VendorProductListResource::collection($item))->data;
         return $this->apiSuccess('Available product lists.', $data);
     }
@@ -147,6 +156,92 @@ class VendorProductController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/vendor/product-list",
+     *     summary="fetch list of vendor products.",
+     *     description="fetch list of vendor products.",
+     *     operationId="VendorProductList",
+     *     tags={"Product"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Page number of list",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),     
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Items on each page",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Product name to search",
+     *         @OA\Schema(type="string", example="Savlon")
+     *     ),
+
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vendor stocked product lists.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Vendor stocked product lists."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="accepted", type="boolean", example=true),
+     *                         @OA\Property(property="product_uuid", type="string", example="cb7c026b-9cab-435f-912a-f4d498e45628"),
+     *                         @OA\Property(property="product_name", type="string", example="Quam consequatur porro ex ullam optio dolorum."),
+     *                         @OA\Property(property="brand", type="string", example="Novartis"),
+     *                         @OA\Property(
+     *                             property="variations",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="accepted", type="boolean", example=true),
+     *                                 @OA\Property(property="product_variation_id", type="integer", example=69),
+     *                                 @OA\Property(property="vendor_price", type="number", format="float", example=3793),
+     *                                 @OA\Property(property="units_in_stock", type="integer", example=195),
+     *                                 @OA\Property(property="variant_name", type="string", example="Variant-5"),
+     *                                 @OA\Property(property="variant_size_value", type="string", example="500.00"),
+     *                                 @OA\Property(property="variant_size_unit", type="string", example="patch")
+     *                             )
+     *                         )
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=1),
+     *                 @OA\Property(property="total_items", type="integer", example=1)
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function vendorProductList(Request $request) {
+        $per_page = $request->query('per_page', Auth::user()->vendor->vendorProducts->count());
+        $search = $request->query('search');
+        $pagination = Auth::user()->vendor
+            ->vendorProducts()
+            ->with(['product.brand', 'vendorPrices.variation'])
+            ->when($search, fn($qry) => $qry->wherehas('product', fn($qry) => $qry->whereLike('name', '%'.$search.'%')))
+            ->orderBy('id','DESC')
+            ->paginate($per_page);
+
+        $data = $this->makePaginationResponse($pagination, fn($item) => VendorStockedProductListResource::collection($item))->data;
+        return $this->apiSuccess('Vendor stocked product lists.', $data);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     /**
@@ -173,6 +268,7 @@ class VendorProductController extends Controller
      *                 type="array",
      *                 @OA\Items(
      *                     type="object",
+     *                     @OA\Property(property="product_uuid", type="string", example="0fab9a1d-c7a9-4709-8426-d1c94d2c6b95"),
      *                     @OA\Property(property="product_variation_id", type="integer", example=1),
      *                     @OA\Property(property="units_in_stock", type="integer", example=50),
      *                     @OA\Property(property="price", type="number", format="float", example=500)
@@ -193,19 +289,32 @@ class VendorProductController extends Controller
      */
     public function store(VendorProductStockStoreRequest $request)
     {
-
-        $vendor_product = Auth::user()->vendorProducts();
-        $product = Product::where('uuid', $request->product_uuid)->firstOrFail();
-        if ($vendor_product->firstWhere('product_id', $product->id)) {
-            return $this->apiError('Stock entry for this product already exists in your vendor list.');
+        $form_data = $request->validated();
+        $product = Product::with('variations')->where('uuid', $form_data['product_uuid'])->firstOrFail();
+        $variation_not_exists = $product->variations()
+            ->whereIn('id', collect($form_data['variations'])->pluck('product_variation_id')->all())
+            ->count() != count($form_data['variations']);
+        if ($variation_not_exists) {
+            return $this->apiError('Variation does not belong to this product');
         }
-        $invalidIds = collect($request->stock)
-            ->pluck('product_variation_id')
-            ->diff($product->variations->pluck('id'));
-        if ($invalidIds->isNotEmpty()) {
-            return $this->apiError('Some product variation IDs are invalid.');
-        }
-        DB::transaction(fn() => $vendor_product->create(['product_id' => $product->id])->vendorPrices()->createMany($request->variations));
+        DB::transaction(function () use($form_data, $product){
+            $vendor_products = Auth::user()->vendor->vendorProducts();
+            $vendor_product = $vendor_products->firstOrCreate(['product_id' => $product->id]);
+            foreach ($form_data['variations'] as $variation) {
+                $vendor_prices = $vendor_product->vendorPrices();
+                $vendor_price_already_exists = $vendor_prices->firstWhere('product_variation_id', $variation['product_variation_id']);
+                if ($vendor_price_already_exists) {
+                    $variation['units_in_stock'] = $vendor_price_already_exists->units_in_stock + $variation['units_in_stock']; 
+                    // Log::info($vendor_price_already_exists);
+                    // Log::info('-----------------------------');
+                    // Log::info($variation);
+                    $vendor_price_already_exists->update($variation);
+                }else{
+                    // Log::info('else');
+                    $vendor_prices->create($variation);
+                }
+            }
+        });
         return $this->apiSuccess('Stock added successfully.');
     }
 

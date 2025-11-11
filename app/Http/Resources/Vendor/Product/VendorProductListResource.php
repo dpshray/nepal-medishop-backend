@@ -16,11 +16,11 @@ class VendorProductListResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            "product_name" => $this->whenLoaded('product', fn() => $this->product->name),
-            'product_uuid' => $this->whenLoaded('product', fn() => $this->product->uuid),
-            'brand' => $this->whenLoaded('product', fn() => $this->product->brand->name),
-            'variations' => $this->whenLoaded('product', function(){
-                return $this->product->variations->map(fn($item) => [
+            'product_uuid' => $this->uuid,
+            "product_name" => $this->name,
+            'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
+            'variations' => $this->whenLoaded('variations', function(){
+                return $this->variations->map(fn($item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'size_value' => (float) $item->size_value,

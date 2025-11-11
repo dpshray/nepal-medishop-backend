@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class ProductVendor extends Model
 {
     protected $fillable = [
-        'product_id'
+        'product_id',
+        'units_in_stock'
     ];
 
     protected $hidden = [

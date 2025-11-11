@@ -13,7 +13,8 @@ Route::prefix('vendor')
     ->group(function () {
         Route::middleware(['auth:sanctum', VendorMiddleware::class])->group(function(){
             Route::controller(VendorProductController::class)->group(function(){
-                Route::get('product', 'index');
+                Route::get('available-product', 'index');
+                Route::get('product-list', 'vendorProductList');
                 Route::get('product-variants/{product:uuid}', 'productVariants');
                 Route::post('product/{uuid?}', 'store');
             });
