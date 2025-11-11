@@ -3072,6 +3072,156 @@
                 ]
             }
         },
+        "/admin/category-menu-list": {
+            "get": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Get all category menu list",
+                "description": "Get all category menu list.",
+                "operationId": "CategoryMenuList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Category name to search.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Pain Relief"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active category lists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "example": {
+                                    "message": "Active category lists",
+                                    "data": {
+                                        "items": [
+                                            {
+                                                "id": 5,
+                                                "menu_order": 1,
+                                                "slug": "skin-care",
+                                                "name": "Skin Care"
+                                            }
+                                        ],
+                                        "page": 2,
+                                        "total_page": 2,
+                                        "total_items": 15
+                                    },
+                                    "success": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/category-menu-manager": {
+            "post": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Update menu order",
+                "description": "Update the order of categories in the menu",
+                "operationId": "updateMenuOrder",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "menu": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "category_id",
+                                                "order"
+                                            ],
+                                            "properties": {
+                                                "category_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "menu_order": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Menu has been ordered successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Menu has been ordered successfully."
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/health-condition": {
             "get": {
                 "tags": [
@@ -6051,6 +6201,10 @@
         {
             "name": "Category",
             "description": "Category"
+        },
+        {
+            "name": "Menu",
+            "description": "Menu"
         },
         {
             "name": "HealthCondition",

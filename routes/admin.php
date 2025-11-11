@@ -31,6 +31,8 @@ Route::prefix('admin')
         });
         Route::apiResource('brand', AdminBrandController::class);
         Route::apiResource('category', AdminCategoryController::class);
+        Route::get('category-menu-list', [AdminCategoryController::class, 'categoryMenuListFetcher']);
+        Route::post('category-menu-manager', [AdminCategoryController::class, 'categoryMenuHandler']);
         Route::apiResource('tag', AdminTagController::class);
         Route::apiResource('health-condition', AdminHealthConditionController::class)->scoped(['health_condition' => 'slug']);
         Route::get('toggle-brand-status/{brand:slug}', [AdminBrandController::class, 'statusToggler']);
