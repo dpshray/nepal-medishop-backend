@@ -61,7 +61,7 @@ class Product extends Model implements HasMedia
     }
 
     function productVendors(){
-        return $this->hasMany(ProductVendor::class);
+        return $this->hasMany(ProductVendor::class)->active();
     }
 
     function productVendorPrices(){
