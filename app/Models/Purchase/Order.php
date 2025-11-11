@@ -53,20 +53,26 @@ class Order extends Model
     public static function boot()
     {
         parent::boot();
-        static::updating(function ($item) {
-            $user = Auth::user();
+        static::updating(function ($order) {
+            $user = $order->user;
             $latest_approved_loyality_points = $user->latestApprovedLoyalityPoints;
-            $balance_after = $earned_points = $item->price * LoyalityPoint::LOYALITY_POINTS; #FIRST TIME DEFAULT
+            $balance_after = $earned_points = $order->price * LoyalityPoint::LOYALITY_POINTS; #FIRST TIME DEFAULT
 
-            if ($item->status == OrderStatusEnum::PENDING) {
-                $item->loyalityPoint()->delete();
-            }elseif ($item->status == OrderStatusEnum::DELIVERED) {
-                if ($item->loyalityPoint()->doesntExist()) {                    
+            if ($order->status == OrderStatusEnum::PENDING) {
+                $order->loyalityPoint()->delete();
+            }elseif ($order->status == OrderStatusEnum::DELIVERED) {
+                if ($order->loyalityPoint()->doesntExist()) {                    
                     if ($latest_approved_loyality_points) { # if previous approved loyality point exists
-                        $balance_after = $latest_approved_loyality_points->points + $earned_points;
+                        $balance_after = $latest_approved_loyality_points->balance_after + $earned_points;
                     }
-                    $item->loyalityPoint()->create([
-                        'user_id' => $user->id,
+                    Log::info([
+                        $order->loyalityPoint()->doesntExist(),
+                        $user,
+                        $latest_approved_loyality_points,
+                        $balance_after,
+                    ]);
+                    $order->loyalityPoint()->create([
+                        'user_id' => $order->user_id,
                         'points' => $earned_points,
                         'type' => LoyalityPointTypeEnum::EARN,
                         'source' => LoyalityPointSourceEnum::ORDER_PURCHASE,
