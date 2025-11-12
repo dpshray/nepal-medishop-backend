@@ -217,4 +217,35 @@ class AdminOrderController extends Controller
         $order->delete();
         return $this->apiSuccess('Order has been deleted.');
     }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/orders/{uuid}/cancel-order",
+     *     summary="Cancel an order based in order uuid.",
+     *     description="Cancell an order based in order uuid.",
+     *     operationId="UserOrderCancell",
+     *     tags={"Order"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of an order",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order cancellation response.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Order has been cancelled."),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function cancelUserOrder(Order $order) {
+        $order->update(['status' => OrderStatusEnum::CANCELLED]);
+        return $this->apiSuccess('Order has been cancelled.');
+    }
 }
