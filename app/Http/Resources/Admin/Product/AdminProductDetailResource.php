@@ -24,7 +24,7 @@ class AdminProductDetailResource extends JsonResource
             'description' => $this->description,
             'added_date' => $this->created_at,
             'prescription_required' => (bool) $this->prescription_required,
-            'no_of_vendors' => $this->whenCounted('productVendors', fn() => $this->product_vendors_count),
+            'no_of_vendors' => (int) $this->whenCounted('productVendors', fn() => $this->product_vendors_count),
             'total_units_in_stock' => ($this->productVendorPrices) ? $this->productVendorPrices->sum('units_in_stock') : 0,
             'categories' => $this->whenLoaded('categories', fn() => $this->categories->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
