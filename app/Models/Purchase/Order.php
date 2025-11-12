@@ -55,8 +55,11 @@ class Order extends Model
         parent::boot();
         static::updating(function ($order) {
             $user = $order->user;
-            $latest_approved_loyality_points = $user->latestApprovedLoyalityPoints;
-            $balance_after = $earned_points = $order->price * LoyalityPoint::LOYALITY_POINTS; #FIRST TIME DEFAULT
+            $latest_approved_loyality_points = null;
+            if ($user) {
+                $latest_approved_loyality_points = $user->latestApprovedLoyalityPoints;
+                $balance_after = $earned_points = $order->price * LoyalityPoint::LOYALITY_POINTS; #FIRST TIME DEFAULT
+            }
 
             if ($order->status == OrderStatusEnum::PENDING) {
                 foreach ($order->orderItems as $order_item) {
@@ -68,7 +71,7 @@ class Order extends Model
                 }
                 $order->loyalityPoint()->delete();
             }elseif ($order->status == OrderStatusEnum::DELIVERED) {
-                if ($order->loyalityPoint()->doesntExist()) {                    
+                if ($user && $order->loyalityPoint()->doesntExist()) {                    
                     if ($latest_approved_loyality_points) { # if previous approved loyality point exists
                         $balance_after = $latest_approved_loyality_points->balance_after + $earned_points;
                     }
@@ -85,15 +88,17 @@ class Order extends Model
                             ->where('product_variation_id',$order_item['item_variant_id'])
                             ->decrement('units_in_stock', $order_item['quantity']);
                     }
-                    $order->loyalityPoint()->create([
-                        'user_id' => $order->user_id,
-                        'points' => $earned_points,
-                        'type' => LoyalityPointTypeEnum::EARN,
-                        'source' => LoyalityPointSourceEnum::ORDER_PURCHASE,
-                        'description' => 'loyality points earned from :'.LoyalityPointSourceEnum::ORDER_PURCHASE->value,
-                        'status' => LoyalityPointStatusEnum::APPROVED,
-                        'balance_after' => $balance_after,
-                    ]);
+                    if ($user) {
+                        $order->loyalityPoint()->create([
+                            'user_id' => $order->user_id,
+                            'points' => $earned_points,
+                            'type' => LoyalityPointTypeEnum::EARN,
+                            'source' => LoyalityPointSourceEnum::ORDER_PURCHASE,
+                            'description' => 'loyality points earned from :'.LoyalityPointSourceEnum::ORDER_PURCHASE->value,
+                            'status' => LoyalityPointStatusEnum::APPROVED,
+                            'balance_after' => $balance_after,
+                        ]);
+                    }
                 }
             }
         });
