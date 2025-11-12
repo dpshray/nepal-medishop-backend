@@ -437,6 +437,6 @@ class VendorProductController extends Controller
             return $this->apiError('Product could not be found/already been deleted.');
         }
         $vendor_product->delete();
-        return $this->apiError('Vendor product has been removed.');
+        return $this->apiSuccess('Vendor product has been removed.');
     }
 }
