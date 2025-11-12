@@ -22,7 +22,7 @@ class VendorStockedProductListResource extends JsonResource
             'brand' => $this->product->brand->name,
             'variations' => $this->whenLoaded('vendorPrices', function () {
                 return $this->vendorPrices->map(fn($item) => [
-                    "accepted" => (bool) $item->status,
+                    // "accepted" => (bool) $item->status,
                     "product_variation_id" => $item->variation->id,
                     "vendor_price" => (float) $item->price,
                     "units_in_stock" => (int) $item->units_in_stock,
