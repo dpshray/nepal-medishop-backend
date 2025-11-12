@@ -29,7 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
         });
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->expectsJson()) {
-                return (new ResponseTraitClass)->apiError($e->getMessage(), 401);
+                $msg = $e->getMessage();
+                if (strtolower($msg) == 'unauthenticated.') {
+                    $msg = 'You must be logged in to access this resource.';
+                }
+                return (new ResponseTraitClass)->apiError($msg, 401);
             }
         });
         $exceptions->render(function (UnauthorizedException $e, Request $request) {
