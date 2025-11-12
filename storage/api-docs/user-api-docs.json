@@ -899,6 +899,119 @@
                 ]
             }
         },
+        "/user/feedback": {
+            "post": {
+                "tags": [
+                    "User Feedback"
+                ],
+                "summary": "Submit feedback from a client",
+                "description": "Allows an authenticated client to submit feedback and rating.",
+                "operationId": "68ad95df98d94146b54a835895d86e73",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "feedback",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "feedback": {
+                                        "type": "string",
+                                        "example": "Great service and fast delivery!"
+                                    },
+                                    "rating": {
+                                        "description": "Rating between 1 and 5",
+                                        "type": "integer",
+                                        "maximum": 5,
+                                        "minimum": 1,
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Feedback submitted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thank you for your feedback."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "feedback": {
+                                                    "type": "string",
+                                                    "example": "Great service and fast delivery!"
+                                                },
+                                                "rating": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-10-24T10:15:30Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The feedback field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/favourite/{slug}/product": {
             "get": {
                 "tags": [
@@ -4445,6 +4558,10 @@
         {
             "name": "Kitbag",
             "description": "Kitbag"
+        },
+        {
+            "name": "User Feedback",
+            "description": "User Feedback"
         },
         {
             "name": "Favourite",

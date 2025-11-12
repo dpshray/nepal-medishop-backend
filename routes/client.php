@@ -4,6 +4,7 @@ use App\Enums\ItemTypeEnum;
 use App\Http\Controllers\Api\V1\Client\Address\ClientAddressController;
 use App\Http\Controllers\Api\V1\Client\ClientBannerController;
 use App\Http\Controllers\Api\V1\Client\ClientKitbagController;
+use App\Http\Controllers\Api\V1\Client\Feedback\ClientFeedbackController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
 use App\Http\Controllers\Api\V1\Client\Password\ClientPasswordController;
@@ -57,6 +58,8 @@ Route::get('banner', ClientBannerController::class);
 Route::post('user/change-password',[ClientPasswordController::class,'ChangePassword']);
 Route::apiResource('user/address',ClientAddressController::class)->except(['show']);
 
+//feedback for client
+Route::apiResource('user/feedback',ClientFeedbackController::class)->except(['show','update','destroy','index']);
 
 
 /*=====  Purchase Part  ======*/
