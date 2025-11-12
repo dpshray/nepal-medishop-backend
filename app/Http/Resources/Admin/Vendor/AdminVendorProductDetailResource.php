@@ -17,7 +17,9 @@ class AdminVendorProductDetailResource extends JsonResource
         // return parent::toArray($request);
         $product = $this->product;
         return [
+            'accepted' => (bool) $this->is_approved,
             'product_name' => $product->name,
+            'product_detail' => $product->description,
             'prescription_required' => (bool)$product->prescription_required,
             "brand_name" => $product->brand->name,
             'variations' => $this->vendorPrices->map(function($item){
