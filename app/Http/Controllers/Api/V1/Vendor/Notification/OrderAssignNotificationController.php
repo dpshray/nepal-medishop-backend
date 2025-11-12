@@ -53,7 +53,7 @@ class OrderAssignNotificationController extends Controller
         $user = Auth::user();
         $notification = VendorNotification::where('vendor_id', $user->id)
             ->latest()
-            ->get();;
+            ->get();
         $unseenCount = VendorNotification::where('vendor_id', $user->id)
             ->where('is_seen', false)
             ->count();

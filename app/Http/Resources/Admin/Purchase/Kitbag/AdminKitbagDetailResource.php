@@ -18,6 +18,10 @@ class AdminKitbagDetailResource extends JsonResource
         // return parent::toArray($request);
         return [
             'created_at' => $this->created_at->format('Y/m/d'),
+            'user'=>[
+                'name'=>$this->user->name,
+                'email'=>$this->user->email,
+            ],
             'items' => $this->kitbagItems->map(function($item){
                 ['price' => $price, 'previous_price' => $previous_price] = $item->variation->original_price;
 

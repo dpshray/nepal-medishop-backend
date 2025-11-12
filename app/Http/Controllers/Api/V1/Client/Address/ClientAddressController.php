@@ -100,15 +100,12 @@ class ClientAddressController extends Controller
         $user = Auth::user();
         $address = Address::where('user_id', $user->id)
         ->latest()
-        ->paginate(10);
+        ->get();
         if(!$address)
         {
             return $this->apiError('No address found');
         }
-        $data = $this->makePaginationResponse(
-            $address,
-            fn($items) => UserAddressResource::collection($items)
-        )->data;
+        $data= UserAddressResource::collection($address);
         return $this->apiSuccess('User address', $data);
     }
     /**

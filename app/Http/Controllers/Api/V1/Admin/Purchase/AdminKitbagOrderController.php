@@ -31,7 +31,7 @@ class AdminKitbagOrderController extends Controller
      *         required=false,
      *         description="Page number of list",
      *         @OA\Schema(type="integer", example=1)
-     *     ),     
+     *     ),
      *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
@@ -81,8 +81,8 @@ class AdminKitbagOrderController extends Controller
         $search = $request->query('search');
         $pagination = Kitbag::with(['user'])
             ->withCount('kitbagItems')
-            ->when($search, fn($qry) => $qry->whereHas('user', fn($qry) => $qry->whereLike('email', '%'.$search.'%')))
-            ->orderBy('id','DESC')
+            ->when($search, fn($qry) => $qry->whereHas('user', fn($qry) => $qry->whereLike('email', '%' . $search . '%')))
+            ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminKitbagListResource::collection($item))->data;
         return $this->apiSuccess('List of user kitbags', $data);
@@ -105,7 +105,7 @@ class AdminKitbagOrderController extends Controller
      *         required=true,
      *         description="UUID of kitbag.",
      *         @OA\Schema(type="string", example="dc0ea028-1f3c-465b-8cdc-b6d998512e76")
-     *     ),   
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful kitbag detail response",
@@ -142,9 +142,13 @@ class AdminKitbagOrderController extends Controller
      */
     public function show(Kitbag $kitbag)
     {
-        $kitbag->load(['kitbagItems' => [
-            'product.media',
-            'variation']]);
+        $kitbag->load([
+            'kitbagItems' => [
+                'product.media',
+                'variation'
+            ],
+            'user'
+        ]);
         $data = new AdminKitbagDetailResource($kitbag);
         return $this->apiSuccess('Kitbag detail', $data);
     }
@@ -154,7 +158,7 @@ class AdminKitbagOrderController extends Controller
      */
     /**
      * @OA\Delete(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/admin/kitbag/{uuid}",
      *     operationId="KitbagDelete",
      *     tags={"Kitbag"},
