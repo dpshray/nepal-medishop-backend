@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Client\Address;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\Address\UserAddressResource;
 use App\Models\Address;
+use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 class ClientAddressController extends Controller
 {
     //
-    use ResponseTrait;
+    use ResponseTrait,PaginationTrait;
     /**
      * @OA\Post(
      *     path="/user/address",
@@ -96,12 +98,18 @@ class ClientAddressController extends Controller
     function index()
     {
         $user = Auth::user();
-        $address = Address::where('user_id', $user->id)->get();
+        $address = Address::where('user_id', $user->id)
+        ->latest()
+        ->paginate(10);
         if(!$address)
         {
             return $this->apiError('No address found');
         }
-        return $this->apiSuccess('User address', $address);
+        $data = $this->makePaginationResponse(
+            $address,
+            fn($items) => UserAddressResource::collection($items)
+        )->data;
+        return $this->apiSuccess('User address', $data);
     }
     /**
      * @OA\Put(

@@ -2473,7 +2473,7 @@
                 "tags": [
                     "Order"
                 ],
-                "summary": "Submit an order(Kitbag).",
+                "summary": "Submit an order(Kitbag | Only product can be added).",
                 "description": "Submit an order.NOTE: name, email, mobile fields are only needed for GUEST USER.",
                 "operationId": "CODKitbagOrder",
                 "requestBody": {
