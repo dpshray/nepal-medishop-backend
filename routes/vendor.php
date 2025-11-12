@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Vendor\Dashboard\VendorDashboardController;
+use App\Http\Controllers\Api\V1\Vendor\Notification\OrderAssignNotificationController;
 use App\Http\Controllers\Api\V1\Vendor\Order\VendorOrderAssignController;
 use App\Http\Controllers\Api\V1\Vendor\VendorAuthController;
 use App\Http\Controllers\Api\V1\Vendor\VendorProductController;
@@ -23,4 +24,6 @@ Route::prefix('vendor')
             Route::get('dashboard',[VendorDashboardController::class,'index']);
         });
         Route::post('registration', [VendorAuthController::class, 'registerVendor']);
+        Route::get('notifications',[OrderAssignNotificationController::class,'getNotification']);
+        Route::post('notifications/{id}/seen',[OrderAssignNotificationController::class,'seennotification']);
     });

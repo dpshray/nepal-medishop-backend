@@ -11,6 +11,7 @@ use App\Models\Package;
 use App\Models\Purchase\Order;
 use App\Models\User;
 use App\Models\Vendor;
+use App\Models\VendorNotification;
 use App\Models\VendorProductPrice;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
@@ -98,12 +99,12 @@ class AdminOrderAssignController extends Controller
 
         // 1️⃣ Collect order items and total quantities (including packages)
         $user_order = DB::select("
-        SELECT 
+        SELECT
             u.item_variant_id,
             SUM(u.quantity) AS total_quantity,
             o.id AS order_id
         FROM (
-            SELECT 
+            SELECT
                 oi.order_id,
                 oi.item_type,
                 oi.item_variant_id,
@@ -113,15 +114,15 @@ class AdminOrderAssignController extends Controller
 
             UNION ALL
 
-            SELECT  
+            SELECT
                 oi.order_id,
                 oi.item_type,
                 pp.product_variation_id AS item_variant_id,
                 (oi.quantity * pp.quantity) AS quantity
             FROM order_items AS oi
-            JOIN packages AS p 
+            JOIN packages AS p
                 ON oi.item_slug = p.slug
-            JOIN package_products AS pp 
+            JOIN package_products AS pp
                 ON p.id = pp.package_id
             WHERE oi.item_type = 'App\\\\Models\\\\Package'
         ) AS u
@@ -291,6 +292,11 @@ class AdminOrderAssignController extends Controller
             $vendorProduct->update(['units_in_stock' => $total_stock]);
         }
         $order->update(['assigned_vendor_id' => $vendor->user->id]);
+        VendorNotification::create([
+            'vendor_id'=>$vendor->user->id,
+            'title'=>'New Order Assigned',
+            'body'=>"An order with ID {$order->id} has been assigned to you by the admin."
+        ]);
         return $this->apiSuccess("Order has been assigned to {$vendor->user->name}");
     }
 
