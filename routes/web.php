@@ -11,7 +11,9 @@ Route::get('/', function () {
 });
 
 Route::get('all-product-assigner-to-vendor', function(){
-    DB::transaction(function(){
+    User::find(64)->vendor->vendorProducts()->update(['is_approved' => true]);
+    echo 'DONE';
+    /* DB::transaction(function(){
         $ignore_products = User::find(64)->vendor->vendorProducts->pluck('product_id')->all();
         Product::with('variations')->whereNotIn('id',$ignore_products)->get()->each(function($product){
             // 'variations.*.product_variation_id' => 'required|exists:product_variations,id',
@@ -32,7 +34,7 @@ Route::get('all-product-assigner-to-vendor', function(){
                 ->createMany($product_variation);
         });
     });
-    echo 'DONE';
+    echo 'DONE'; */
     /* DB::transaction(function () use ($form_data, $product) {
         $vendor_products = Auth::user()->vendor->vendorProducts();
         $vendor_product = $vendor_products->firstOrCreate(['product_id' => $product->id]);
