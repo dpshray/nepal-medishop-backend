@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Admin\Vendor\OrderAssign;
 
+use App\Enums\Purchase\OrderStatusEnum;
+use App\Enums\Purchase\PaymentStatusEnum;
 use App\Enums\UserTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Vendor\Order\AdminVendorAssignabilityList;
@@ -87,6 +89,9 @@ class AdminOrderAssignController extends Controller
          * - vendor_product_prices status: 1
          * - units_in_stock must be greater than order quantity
          */
+        if ($order->payment_status == PaymentStatusEnum::PAID || $order->status == OrderStatusEnum::DELIVERED) {
+            return $this->apiError('This order has already been delivered/paid.');
+        }
 
         $order->load('orderItems');
         $order_uuid = $order->uuid;

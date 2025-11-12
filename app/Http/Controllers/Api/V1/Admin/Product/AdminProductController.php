@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Product\ProductStoreRequest;
 use App\Http\Resources\Admin\Product\AdminProductDetailResource;
 use App\Http\Resources\Admin\Product\AdminProductList;
 use App\Http\Resources\Admin\Product\AdminProductResource;
+use App\Http\Resources\Vendor\Product\VendorProductAssociationListResource;
 use App\Models\Product;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
@@ -204,8 +205,8 @@ class AdminProductController extends Controller
      *                 ),
      *                 @OA\Property(property="description", type="string", example="<p>Placeat accusamus illum iure amet eius...</p>"),
      *                 @OA\Property(property="added_date", type="string", format="date-time", example="2025-10-28T19:08:02.000000Z"),
+     *                 @OA\Property(property="prescription_required", type="boolean", example=false),
      *                 @OA\Property(property="no_of_vendors", type="integer", example=1),
-     *                 
      *                 @OA\Property(
      *                     property="categories",
      *                     type="array",
@@ -283,14 +284,16 @@ class AdminProductController extends Controller
             $product->update($data);
             $product->categories()->sync($request->categories);
             $product->tags()->sync($request->tags);
-            $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->all();
-            $product->variations()->whereNotIn('id', $variation_to_avoid)->delete();
             $product->healthConditions()->sync($request->health_condition);
+            $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->filter(fn($item) => $item)->all();
+            $product->variations()
+                ->when(!empty($variation_to_avoid), fn($qry) => $qry->whereNotIn('id', $variation_to_avoid))
+                ->delete();
             foreach ($request->variations as $variation) {
-                if (array_key_exists('variation_id', $variation)) {
+                if (array_key_exists('variation_id', $variation) && !empty($variation['variation_id'])) {
                     $product_variation = $product->variations()->firstWhere('id', $variation['variation_id']);
                     if (empty($product_variation)) {
-                        throw new NotFoundHttpException("Variant could not be found");
+                        throw new NotFoundHttpException("Variant could not be found of this product");
                     }
                     $product_variation->update($variation);
                 }else{
@@ -447,5 +450,47 @@ class AdminProductController extends Controller
             }
         });
         return $this->apiSuccess("Media saved successfully of product: $product->name.");
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/product/{uuid}/vendors",
+     *     summary="Get all vendor list associated with this product.",
+     *     description="Get all vendor list associated with this product.",
+     *     operationId="ProductVendorList",
+     *     tags={"Product"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of product",
+     *         @OA\Schema(type="string", example="123e4567-e89b-12d3-a456-426614174000")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of available product units",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="List of available product units"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="label", type="string", example="Mg"),
+     *                     @OA\Property(property="value", type="string", example="mg")
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function productVendors(Request $request, Product $product) {
+        $per_page = $request->query('per_page', $product->productVendors->count());
+        $pagination = $product->productVendors()->with(['associatedVendor.user'])->paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($items) => VendorProductAssociationListResource::collection($items))->data;
+        return $this->apiSuccess('Vendor list associated with this product', $data);
     }
 }

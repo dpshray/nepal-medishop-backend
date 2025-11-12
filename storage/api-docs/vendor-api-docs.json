@@ -723,14 +723,14 @@
                 }
             }
         },
-        "/vendor/product": {
+        "/vendor/available-product": {
             "get": {
                 "tags": [
                     "Product"
                 ],
-                "summary": "Get all available products",
-                "description": "Get all available products.",
-                "operationId": "VendorProductList",
+                "summary": "Get all currently available products.",
+                "description": "Get all currently available products.",
+                "operationId": "AvailableProductList",
                 "parameters": [
                     {
                         "name": "page",
@@ -751,6 +751,16 @@
                             "type": "integer",
                             "example": 1
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Items to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Savlon"
+                        }
                     }
                 ],
                 "responses": {
@@ -770,38 +780,41 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "status": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "is_approved_by_admin": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Laudantium quo ut vel id illo ut qui commodi."
-                                                            },
                                                             "product_uuid": {
                                                                 "type": "string",
-                                                                "example": "093db091-130c-4274-8293-2f9c7112466c"
+                                                                "example": "19a8e9db-2f17-40a6-ae8d-1fe3c75ba62d"
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Porro rerum autem aut odit."
                                                             },
                                                             "brand": {
                                                                 "type": "string",
-                                                                "example": "Johnson & Johnson"
+                                                                "example": "Bayer"
                                                             },
-                                                            "views_count": {
-                                                                "type": "integer",
-                                                                "example": 0
-                                                            },
-                                                            "total_units_in_stock": {
-                                                                "type": "integer",
-                                                                "example": 467
-                                                            },
-                                                            "rating": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 3.6
+                                                            "variations": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-1"
+                                                                        },
+                                                                        "size_value": {
+                                                                            "type": "integer",
+                                                                            "example": 100
+                                                                        },
+                                                                        "size_unit": {
+                                                                            "type": "string",
+                                                                            "example": "l"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
                                                             }
                                                         },
                                                         "type": "object"
@@ -813,11 +826,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 88
+                                                    "example": 501
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 88
+                                                    "example": 501
                                                 }
                                             },
                                             "type": "object"
@@ -950,6 +963,149 @@
                 ]
             }
         },
+        "/vendor/product-list": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "fetch list of vendor products.",
+                "description": "fetch list of vendor products.",
+                "operationId": "VendorProductList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Product name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Savlon"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendor stocked product lists.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor stocked product lists."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "accepted": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "product_uuid": {
+                                                                "type": "string",
+                                                                "example": "cb7c026b-9cab-435f-912a-f4d498e45628"
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Quam consequatur porro ex ullam optio dolorum."
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Novartis"
+                                                            },
+                                                            "variations": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "product_variation_id": {
+                                                                            "type": "integer",
+                                                                            "example": 69
+                                                                        },
+                                                                        "vendor_price": {
+                                                                            "type": "number",
+                                                                            "format": "float",
+                                                                            "example": 3793
+                                                                        },
+                                                                        "units_in_stock": {
+                                                                            "type": "integer",
+                                                                            "example": 195
+                                                                        },
+                                                                        "variant_name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-5"
+                                                                        },
+                                                                        "variant_size_value": {
+                                                                            "type": "string",
+                                                                            "example": "500.00"
+                                                                        },
+                                                                        "variant_size_unit": {
+                                                                            "type": "string",
+                                                                            "example": "patch"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/vendor/product/{uuid}": {
             "post": {
                 "tags": [
@@ -980,6 +1136,10 @@
                                         "type": "array",
                                         "items": {
                                             "properties": {
+                                                "product_uuid": {
+                                                    "type": "string",
+                                                    "example": "0fab9a1d-c7a9-4709-8426-d1c94d2c6b95"
+                                                },
                                                 "product_variation_id": {
                                                     "type": "integer",
                                                     "example": 1
@@ -1017,6 +1177,153 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/product-detail/{uuid}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all currently available products.",
+                "description": "Get all currently available products.",
+                "operationId": "VendorProductDetail",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "c413e2db-9126-4a94-8da5-8756360867ec"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendor product list resource",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor product list resource"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "product_name": {
+                                                    "type": "string",
+                                                    "example": "Sed quam error adipisci quia qui."
+                                                },
+                                                "prescription_required": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "brand_name": {
+                                                    "type": "string",
+                                                    "example": "Sun Pharma"
+                                                },
+                                                "variations": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "variant_name": {
+                                                                "type": "string",
+                                                                "example": "Variant-1"
+                                                            },
+                                                            "size_value": {
+                                                                "type": "string",
+                                                                "example": "100.00"
+                                                            },
+                                                            "size_unit": {
+                                                                "type": "string",
+                                                                "example": "mcg"
+                                                            },
+                                                            "units_in_stock": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "vendor_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1000
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/product-delete/{uuid}": {
+            "delete": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Delete a vendor product.",
+                "description": "Delete a vendor product.",
+                "operationId": "VendorProductDelete",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of product to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendor product has been removed.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor product has been removed."
                                         }
                                     },
                                     "type": "object"

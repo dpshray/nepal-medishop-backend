@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductVendor extends Model
 {
+    use SoftDeletes;
+    
     protected $fillable = [
-        'product_id'
+        'product_id',
+        'units_in_stock'
     ];
 
     protected $hidden = [
@@ -28,6 +32,10 @@ class ProductVendor extends Model
     public function vendor()
     {
         return $this->belongsTo(User::class, 'vendor_id');
+    }
+
+    function associatedVendor() {
+        return $this->belongsTo(Vendor::class,'vendor_id');
     }
 
     function scopeActive($qry) {

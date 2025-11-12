@@ -65,6 +65,8 @@ class ProductStoreRequest extends FormRequest
             'variations.*.size_unit.required' => 'Variant size unit is required.',
             'variations.*.size_unit.in' => 'Variant size unit must be one of: ' . implode(', ', array_column(ProductUnitEnum::cases(), 'value')),
             'variations.*.platform_price.required' => 'Variant platform price is required.',
+            'health_condition.required' => 'Health condition is required',
+            'health_condition.*.exists' => 'Health condition does not exists',
         ];
     }
 

@@ -3868,6 +3868,10 @@
                                                     "format": "date-time",
                                                     "example": "2025-10-28T19:08:02.000000Z"
                                                 },
+                                                "prescription_required": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
                                                 "no_of_vendors": {
                                                     "type": "integer",
                                                     "example": 1
@@ -4176,6 +4180,71 @@
                                             "type": "object",
                                             "example": null,
                                             "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/product/{uuid}/vendors": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all vendor list associated with this product.",
+                "description": "Get all vendor list associated with this product.",
+                "operationId": "ProductVendorList",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of available product units",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of available product units"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "label": {
+                                                        "type": "string",
+                                                        "example": "Mg"
+                                                    },
+                                                    "value": {
+                                                        "type": "string",
+                                                        "example": "mg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
                                         },
                                         "success": {
                                             "type": "boolean",
