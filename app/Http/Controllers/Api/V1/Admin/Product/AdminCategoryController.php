@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api\V1\Admin\Product;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AdminCategoryMenuRequest;
 use App\Http\Requests\Admin\CategoryStoreRequest;
 use App\Http\Resources\Admin\AdminCategoryResource;
+use App\Http\Resources\Admin\Menu\AdminCategoryMenuListResource;
 use App\Models\Category;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminCategoryController extends Controller
 {
@@ -310,4 +313,134 @@ class AdminCategoryController extends Controller
         ]);
         return $this->apiSuccess($message);
     }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/category-menu-list",
+     *     summary="Get all category menu list",
+     *     description="Get all category menu list.",
+     *     operationId="CategoryMenuList",
+     *     tags={"Menu"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Page number of list",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),     
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Items on each page",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Category name to search.",
+     *         @OA\Schema(type="string", example="Pain Relief")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Active category lists",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             example={
+     *                 "message": "Active category lists",
+     *                 "data": {
+     *                     "items": {
+     *                         {
+     *                             "id": 5,
+     *                             "menu_order": 1,
+     *                             "slug": "skin-care",
+     *                             "name": "Skin Care"
+     *                         }
+     *                     },
+     *                     "page": 2,
+     *                     "total_page": 2,
+     *                     "total_items": 15
+     *                 },
+     *                 "success": true
+     *             }
+     *         )
+     *     )
+     * )
+     */
+    function categoryMenuListFetcher(Request $request) {
+        $per_page = $request->query('per_page', Category::count());
+        $search = $request->query('search');
+        $pagination = Category::whereNotNull('menu_order')
+            ->where('status', true)
+            ->when($search, fn($qry) => $qry->whereLike('name', '%' . $search . '%'))
+            ->orderBy('menu_order')
+            ->paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($items) => AdminCategoryMenuListResource::collection($items))->data;
+        return $this->apiSuccess("Menu category lists", $data);
+    }
+    /**
+     * @OA\Post(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/category-menu-manager",
+     *     summary="Update menu order",
+     *     description="Update the order of categories in the menu",
+     *     operationId="updateMenuOrder",
+     *     tags={"Menu"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="menu",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     required={"category_id","order"},
+     *                     @OA\Property(property="category_id", type="integer", example=1),
+     *                     @OA\Property(property="menu_order", type="integer", example=1)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Menu has been ordered successfully.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Menu has been ordered successfully."),
+     *             @OA\Property(property="data", type="string", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function categoryMenuHandler(AdminCategoryMenuRequest $request)
+    {
+        $form_data = $request->validated();
+    
+        DB::transaction(function () use ($form_data) {
+            // Reset menu_order only for categories in the request
+            $categoryIds = collect($form_data['menu'])->pluck('category_id');
+            DB::table('categories')->whereIn('id', $categoryIds)->update(['menu_order' => null]);
+    
+            // Prepare all update cases in a single query
+            $caseStatements = '';
+            foreach ($form_data['menu'] as $item) {
+                $caseStatements .= "WHEN id = {$item['category_id']} THEN {$item['menu_order']} ";
+            }
+    
+            // Run a single optimized update query
+            DB::update("
+                UPDATE categories
+                SET menu_order = CASE
+                    $caseStatements
+                END
+                WHERE id IN (" . $categoryIds->implode(',') . ")
+            ");
+        });
+    
+        return $this->apiSuccess('Menu has been ordered successfully.');
+    }
+    
 }

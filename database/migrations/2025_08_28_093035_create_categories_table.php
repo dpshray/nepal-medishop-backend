@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedTinyInteger('menu_order')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('categories')->restrictOnDelete()->cascadeOnUpdate();
             $table->boolean('status')->default(1);
