@@ -427,9 +427,14 @@ class AdminVendorController extends Controller
         if ((int)$current_verification_status == 1) {
             $message = 'Vendor verification status changed to INACTIVE';
         }
-        $vendor->update([
-            'verified_at' => !(bool)$current_verification_status ? now() : null
-        ]);
+        DB::transaction(function () use($vendor, $current_verification_status){
+            $vendor->user->update([
+                'status' => !(bool)$current_verification_status
+            ]);
+            $vendor->update([
+                'verified_at' => !(bool)$current_verification_status ? now() : null
+            ]);
+        });
         return $this->apiSuccess($message);
     }
 
