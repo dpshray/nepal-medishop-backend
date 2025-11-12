@@ -42,4 +42,8 @@ class ProductVariation extends Model
         $previous_price = empty($previous_price) ? $previous_price : (float) round($previous_price, 2);
         return ['price' => (float) round($price, 2), 'previous_price' => $previous_price, 'discount_percent' => (float) $discount_percent];
     }
+
+    function vendorProductPrices() {
+        return $this->hasMany(VendorProductPrice::class,'product_variation_id');
+    }
 }
