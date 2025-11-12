@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Vendor;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\VendorProductStockStoreRequest;
+use App\Http\Resources\Admin\Vendor\AdminVendorProductDetailResource;
 use App\Http\Resources\Vendor\Product\VendorProductListResource;
 use App\Http\Resources\Vendor\Product\VendorProductVariantResource;
 use App\Http\Resources\Vendor\Product\VendorStockedProductListResource;
@@ -207,7 +208,6 @@ class VendorProductController extends Controller
      *                             type="array",
      *                             @OA\Items(
      *                                 type="object",
-     *                                 @OA\Property(property="accepted", type="boolean", example=true),
      *                                 @OA\Property(property="product_variation_id", type="integer", example=69),
      *                                 @OA\Property(property="vendor_price", type="number", format="float", example=3793),
      *                                 @OA\Property(property="units_in_stock", type="integer", example=195),
@@ -340,5 +340,68 @@ class VendorProductController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/vendor/product-detail/{uuid}",
+     *     summary="Get all currently available products.",
+     *     description="Get all currently available products.",
+     *     operationId="VendorProductDetail",
+     *     tags={"Product"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of a product",
+     *         @OA\Schema(type="string", example="c413e2db-9126-4a94-8da5-8756360867ec")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Available product lists.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Available product lists."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="product_uuid", type="string", example="19a8e9db-2f17-40a6-ae8d-1fe3c75ba62d"),
+     *                         @OA\Property(property="product_name", type="string", example="Porro rerum autem aut odit."),
+     *                         @OA\Property(property="brand", type="string", example="Bayer"),
+     *                         @OA\Property(
+     *                             property="variations",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="id", type="integer", example=1),
+     *                                 @OA\Property(property="name", type="string", example="Variant-1"),
+     *                                 @OA\Property(property="size_value", type="integer", example=100),
+     *                                 @OA\Property(property="size_unit", type="string", example="l")
+     *                             )
+     *                         )
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=501),
+     *                 @OA\Property(property="total_items", type="integer", example=501)
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+    */
+    function vendorProductDetail(Product $product) {
+        $product_id = $product->id;
+        $data =  Auth::user()->vendor
+            ->vendorProducts()
+            ->with(['product.brand', 'vendorPrices.variation'])
+            ->firstWhere('product_id', $product_id);
+        $data = new AdminVendorProductDetailResource($data);
+        return $this->apiSuccess('Vendor product list resource', $data); 
     }
 }

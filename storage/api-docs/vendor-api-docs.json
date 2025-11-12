@@ -903,10 +903,6 @@
                                                                 "type": "array",
                                                                 "items": {
                                                                     "properties": {
-                                                                        "accepted": {
-                                                                            "type": "boolean",
-                                                                            "example": true
-                                                                        },
                                                                         "product_variation_id": {
                                                                             "type": "integer",
                                                                             "example": 69
@@ -1040,6 +1036,116 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Stock added successfully."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/product-detail/{uuid}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all currently available products.",
+                "description": "Get all currently available products.",
+                "operationId": "VendorProductDetail",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a product",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "c413e2db-9126-4a94-8da5-8756360867ec"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Available product lists.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Available product lists."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "product_uuid": {
+                                                                "type": "string",
+                                                                "example": "19a8e9db-2f17-40a6-ae8d-1fe3c75ba62d"
+                                                            },
+                                                            "product_name": {
+                                                                "type": "string",
+                                                                "example": "Porro rerum autem aut odit."
+                                                            },
+                                                            "brand": {
+                                                                "type": "string",
+                                                                "example": "Bayer"
+                                                            },
+                                                            "variations": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-1"
+                                                                        },
+                                                                        "size_value": {
+                                                                            "type": "integer",
+                                                                            "example": 100
+                                                                        },
+                                                                        "size_unit": {
+                                                                            "type": "string",
+                                                                            "example": "l"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 501
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 501
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "success": {
                                             "type": "boolean",

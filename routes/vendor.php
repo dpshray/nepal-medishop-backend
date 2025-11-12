@@ -15,6 +15,7 @@ Route::prefix('vendor')
             Route::controller(VendorProductController::class)->group(function(){
                 Route::get('available-product', 'index');
                 Route::get('product-list', 'vendorProductList');
+                Route::get('product-detail/{product:uuid}', 'vendorProductDetail');
                 Route::get('product-variants/{product:uuid}', 'productVariants');
                 Route::post('product/{uuid?}', 'store');
             });
