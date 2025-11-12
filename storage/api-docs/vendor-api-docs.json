@@ -1214,72 +1214,57 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Available product lists.",
+                        "description": "Vendor product list resource",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Available product lists."
+                                            "example": "Vendor product list resource"
                                         },
                                         "data": {
                                             "properties": {
-                                                "items": {
+                                                "product_name": {
+                                                    "type": "string",
+                                                    "example": "Sed quam error adipisci quia qui."
+                                                },
+                                                "prescription_required": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "brand_name": {
+                                                    "type": "string",
+                                                    "example": "Sun Pharma"
+                                                },
+                                                "variations": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "product_uuid": {
+                                                            "variant_name": {
                                                                 "type": "string",
-                                                                "example": "19a8e9db-2f17-40a6-ae8d-1fe3c75ba62d"
+                                                                "example": "Variant-1"
                                                             },
-                                                            "product_name": {
+                                                            "size_value": {
                                                                 "type": "string",
-                                                                "example": "Porro rerum autem aut odit."
+                                                                "example": "100.00"
                                                             },
-                                                            "brand": {
+                                                            "size_unit": {
                                                                 "type": "string",
-                                                                "example": "Bayer"
+                                                                "example": "mcg"
                                                             },
-                                                            "variations": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "properties": {
-                                                                        "id": {
-                                                                            "type": "integer",
-                                                                            "example": 1
-                                                                        },
-                                                                        "name": {
-                                                                            "type": "string",
-                                                                            "example": "Variant-1"
-                                                                        },
-                                                                        "size_value": {
-                                                                            "type": "integer",
-                                                                            "example": 100
-                                                                        },
-                                                                        "size_unit": {
-                                                                            "type": "string",
-                                                                            "example": "l"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
+                                                            "units_in_stock": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "vendor_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1000
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
-                                                },
-                                                "page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_page": {
-                                                    "type": "integer",
-                                                    "example": 501
-                                                },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 501
                                                 }
                                             },
                                             "type": "object"
@@ -1287,6 +1272,58 @@
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/product-delete/{uuid}": {
+            "delete": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Delete a vendor product.",
+                "description": "Delete a vendor product.",
+                "operationId": "VendorProductDelete",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of product to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendor product has been removed.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor product has been removed."
                                         }
                                     },
                                     "type": "object"

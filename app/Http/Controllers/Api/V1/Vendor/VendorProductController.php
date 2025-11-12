@@ -236,7 +236,7 @@ class VendorProductController extends Controller
             ->when($search, fn($qry) => $qry->wherehas('product', fn($qry) => $qry->whereLike('name', '%'.$search.'%')))
             ->orderBy('id','DESC')
             ->paginate($per_page);
-
+        // Log::info($pagination);
         $data = $this->makePaginationResponse($pagination, fn($item) => VendorStockedProductListResource::collection($item))->data;
         return $this->apiSuccess('Vendor stocked product lists.', $data);
     }
@@ -359,49 +359,84 @@ class VendorProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Available product lists.",
+     *         description="Vendor product list resource",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Available product lists."),
+     *             @OA\Property(property="message", type="string", example="Vendor product list resource"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
+     *                 @OA\Property(property="product_name", type="string", example="Sed quam error adipisci quia qui."),
+     *                 @OA\Property(property="prescription_required", type="boolean", example=true),
+     *                 @OA\Property(property="brand_name", type="string", example="Sun Pharma"),
      *                 @OA\Property(
-     *                     property="items",
+     *                     property="variations",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="product_uuid", type="string", example="19a8e9db-2f17-40a6-ae8d-1fe3c75ba62d"),
-     *                         @OA\Property(property="product_name", type="string", example="Porro rerum autem aut odit."),
-     *                         @OA\Property(property="brand", type="string", example="Bayer"),
-     *                         @OA\Property(
-     *                             property="variations",
-     *                             type="array",
-     *                             @OA\Items(
-     *                                 type="object",
-     *                                 @OA\Property(property="id", type="integer", example=1),
-     *                                 @OA\Property(property="name", type="string", example="Variant-1"),
-     *                                 @OA\Property(property="size_value", type="integer", example=100),
-     *                                 @OA\Property(property="size_unit", type="string", example="l")
-     *                             )
-     *                         )
+     *                         @OA\Property(property="variant_name", type="string", example="Variant-1"),
+     *                         @OA\Property(property="size_value", type="string", example="100.00"),
+     *                         @OA\Property(property="size_unit", type="string", example="mcg"),
+     *                         @OA\Property(property="units_in_stock", type="integer", example=10),
+     *                         @OA\Property(property="vendor_price", type="number", format="float", example=1000)
      *                     )
-     *                 ),
-     *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=501),
-     *                 @OA\Property(property="total_items", type="integer", example=501)
+     *                 )
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
-    */
+     */
     function vendorProductDetail(Product $product) {
+        if (empty($product)) {
+            return $this->apiError('Product could not be found/already been deleted.');
+        }
         $product_id = $product->id;
         $data =  Auth::user()->vendor
             ->vendorProducts()
             ->with(['product.brand', 'vendorPrices.variation'])
             ->firstWhere('product_id', $product_id);
+        if (empty($data)) {
+            $this->apiError('product is not associated to vendor.');
+        }
         $data = new AdminVendorProductDetailResource($data);
-        return $this->apiSuccess('Vendor product list resource', $data); 
+        return $this->apiSuccess('Vendor product list detail.', $data); 
+    }
+
+    /**
+     * @OA\Delete(
+     *     security={{"sanctum": {}}}, 
+     *     path="/vendor/product-delete/{uuid}",
+     *     operationId="VendorProductDelete",
+     *     tags={"Product"},
+     *     summary="Delete a vendor product.",
+     *     description="Delete a vendor product.",
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of product to delete",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vendor product has been removed.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="data", type="null", example=null),
+     *             @OA\Property(property="message", type="string", example="Vendor product has been removed.")
+     *         )
+     *     )
+     * )
+     */
+    function vendorProductRemover(Product $product) {
+        $product_id = $product->id;
+        $vendor_product = Auth::user()->vendor
+            ->vendorProducts()
+            ->firstWhere('product_id', $product_id);
+        if (empty($vendor_product)) {
+            return $this->apiError('Product could not be found/already been deleted.');
+        }
+        $vendor_product->delete();
+        return $this->apiError('Vendor product has been removed.');
     }
 }
