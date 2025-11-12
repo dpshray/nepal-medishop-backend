@@ -16,7 +16,6 @@ use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\User\AdminUserController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\OrderAssign\AdminOrderAssignController;
-use App\Http\Controllers\Api\V1\Admin\Vendor\VendorProductList\VendorProductListController;
 use App\Http\Controllers\Api\V1\Purchase\AdminCODController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Resources\Admin\AdminBannerResource;
