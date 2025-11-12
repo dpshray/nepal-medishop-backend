@@ -31,6 +31,10 @@ class ProductVendor extends Model
         return $this->belongsTo(User::class, 'vendor_id');
     }
 
+    function associatedVendor() {
+        return $this->belongsTo(Vendor::class,'vendor_id');
+    }
+
     function scopeActive($qry) {
         $qry->where('status',1);
     }
