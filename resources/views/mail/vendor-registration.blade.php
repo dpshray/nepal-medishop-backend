@@ -76,7 +76,7 @@
             <p>Your vendor account has been created by our admin. Please verifying your email by clicking on button below.</p>
             
             <div class="credentials">
-                <p><strong>Username:</strong> {{ $vendor->user->name }}</p>
+                <p><strong>Email:</strong> {{ $vendor->user->email }}</p>
                 <p><strong>Password:</strong> {{ $password }}</p>
                 <div class="clickme-parent-el">
                     <a href="{{ $link }}" class="clickme">Verify Your Email Address</a>
