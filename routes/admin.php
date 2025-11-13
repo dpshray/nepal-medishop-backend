@@ -53,6 +53,7 @@ Route::prefix('admin')
         Route::delete('vendor-product-prices/{id}', [AdminVendorProductController::class, 'deleteVendorProduct']);
         Route::get('vendor-product-prices-detail/{id}', [AdminVendorProductController::class, 'detail']);
         Route::apiResource('user-order', AdminOrderController::class)->parameters(['user-order' => 'order'])->scoped(['order' => 'uuid'])->except(['store']);
+        Route::get('orders/{order:uuid}/cancel-order', [AdminOrderController::class, 'cancelUserOrder']);
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
         Route::apiResource('banner', AdminBannerController::class);
         Route::get('orders/{order:uuid}/vendors', [AdminOrderAssignController::class, 'getVendorsWithAssignability']);

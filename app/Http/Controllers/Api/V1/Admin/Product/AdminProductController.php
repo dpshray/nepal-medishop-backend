@@ -207,6 +207,7 @@ class AdminProductController extends Controller
      *                 @OA\Property(property="added_date", type="string", format="date-time", example="2025-10-28T19:08:02.000000Z"),
      *                 @OA\Property(property="prescription_required", type="boolean", example=false),
      *                 @OA\Property(property="no_of_vendors", type="integer", example=1),
+     *                 @OA\Property(property="units_in_stock", type="integer", example=1),
      *                 @OA\Property(
      *                     property="categories",
      *                     type="array",
@@ -267,7 +268,7 @@ class AdminProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->loadMissing(['variations','categories','tags','media','brand', 'healthConditions:name']);
+        $product->loadMissing(['variations','categories','tags','media','brand', 'healthConditions:name','productVendorPrices']);
         $product->loadCount(['productVendors']);
         $product = new AdminProductDetailResource($product);
         return $this->apiSuccess('Product detail', $product);

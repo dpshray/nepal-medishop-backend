@@ -24,7 +24,8 @@ class AdminProductDetailResource extends JsonResource
             'description' => $this->description,
             'added_date' => $this->created_at,
             'prescription_required' => (bool) $this->prescription_required,
-            'no_of_vendors' => $this->whenCounted('productVendors', fn() => $this->product_vendors_count),
+            'no_of_vendors' => (int) $this->whenCounted('productVendors', fn() => $this->product_vendors_count),
+            'total_units_in_stock' => ($this->productVendorPrices) ? $this->productVendorPrices->sum('units_in_stock') : 0,
             'categories' => $this->whenLoaded('categories', fn() => $this->categories->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
             'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(fn($item) => [
@@ -32,7 +33,8 @@ class AdminProductDetailResource extends JsonResource
                 'name' => $item->name,
                 'size_value' => (float)$item->size_value,
                 'size_unit' => $item->size_unit,
-                'admin_price' => (float)$item->platform_price
+                'admin_price' => (float)$item->platform_price,
+                'units_in_stock' => $item->vendorProductPrices->sum('units_in_stock')
             ])),
             'health_conditions' => $this->healthConditions->map(fn($item) => ['name' => $item->name]),
             'featured_image' => $this->whenLoaded('media', fn() => [

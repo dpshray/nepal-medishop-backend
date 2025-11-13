@@ -2912,6 +2912,10 @@
                                         "type": "string",
                                         "example": "0"
                                     },
+                                    "menu_order": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
                                     "image": {
                                         "description": "Category image",
                                         "type": "file",
@@ -3999,6 +4003,10 @@
                                                     "example": false
                                                 },
                                                 "no_of_vendors": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "units_in_stock": {
                                                     "type": "integer",
                                                     "example": 1
                                                 },
@@ -5416,6 +5424,59 @@
                                         "data": {
                                             "type": "null",
                                             "example": null
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/orders/{uuid}/cancel-order": {
+            "get": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Cancel an order based in order uuid.",
+                "description": "Cancell an order based in order uuid.",
+                "operationId": "UserOrderCancell",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of an order",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order cancellation response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order has been cancelled."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "success": {
                                             "type": "boolean",
