@@ -14,6 +14,16 @@ class AdminFeedbackResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        // return parent::toArray($request);
+        return[
+            'id'=>$this->id,
+            'users'=>[
+                'uuid'=>$this->user->uuid,
+                'name'=>$this->user->name,
+                'email'=>$this->user->email,
+            ],
+            'feedback'=>$this->feedback,
+            'rating'=>$this->rating
+        ];
     }
 }
