@@ -108,7 +108,7 @@ class MasterDataController extends Controller
      * )
     */
     function fetchAllActiveCategory(){
-        $categories = Category::with('media')->whereNotNull('menu_order')->orderBy('menu_order', 'asc')->active()->get();
+        $categories = Category::with('media')->orderByRaw('menu_order IS NULL, menu_order ASC')->active()->get();
         $categories = ClientCategoryResource::collection($categories);
         return $this->apiSuccess('List of active categories', $categories);
     }
