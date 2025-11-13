@@ -20,7 +20,7 @@ class AdminVendorUserList extends JsonResource
             'user_uuid' => $this->uuid,
             'vendor_uuid' => $this->whenLoaded('vendor', fn() => $this->vendor->uuid),
             'status' => (bool)$this->status,
-            'verified' => $this->whenLoaded('vendor', fn() => $this->vendor->verified_at ? true : false),
+            'verified' => $this->whenLoaded('vendor', fn() => $this->email_verified_at ? true : false),
             'name' => $this->name,
             'email' => $this->email,
             'mobile_number' => $this->mobile_number,
