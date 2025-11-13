@@ -141,4 +141,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     {
         return $this->hasOne(LoyalityPoint::class)->where('status', LoyalityPointStatusEnum::APPROVED)->orderBy('id', 'DESC');
     }
+
+    function getIsActiveAttribute() {
+        return (bool)$this->status;
+    }
 }

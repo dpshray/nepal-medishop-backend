@@ -57,6 +57,7 @@ class ClientAuthController extends ClientController
     {
         $form_data = $request->validated();
         $form_data['user_type'] = UserTypeEnum::USER->value;
+        $form_data['status'] = true;
         DB::transaction(function () use ($form_data, $request) {
             $user = User::create($form_data);
             event(new Registered($user));
