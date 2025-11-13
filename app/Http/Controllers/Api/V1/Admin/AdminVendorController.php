@@ -79,7 +79,6 @@ class AdminVendorController extends Controller
      *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="42f9e1a0-0699-425e-af15-2b7485206e68"),
      *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="64cc5e61-c98f-41f7-997c-2b4fbedbf4dc"),
      *                         @OA\Property(property="status", type="boolean", example=true),
-     *                         @OA\Property(property="verified", type="boolean", example=true),
      *                         @OA\Property(property="name", type="string", example="vendor30956945"),
      *                         @OA\Property(property="email", type="string", format="email", example="vendor30956945@gmail.com"),
      *                         @OA\Property(property="mobile_number", type="string", example="9808096921"),
@@ -114,9 +113,9 @@ class AdminVendorController extends Controller
             // apply verified filter only when not "All"
             ->when($verified_vendor !== 'All', function ($q) use ($verified_vendor) {
                 if ((string)$verified_vendor === '1') {
-                    $q->whereHas('vendor', fn($q2) => $q2->whereNotNull('verified_at'));
+                    $q->whereHas('vendor', fn($q2) => $q2->where('status', true));
                 } else { // assume 0
-                    $q->whereHas('vendor', fn($q2) => $q2->whereNull('verified_at'));
+                    $q->whereHas('vendor', fn($q2) => $q2->where('status',false));
                 }
             })
             ->latest()
@@ -234,7 +233,7 @@ class AdminVendorController extends Controller
      *                 @OA\Property(
      *                     property="vendor_details",
      *                     type="object",
-     *                     @OA\Property(property="is_verified", type="boolean", example=true),
+     *                     @OA\Property(property="status", type="boolean", example=true),
      *                     @OA\Property(property="store_name", type="string", example="Lilly Lee Store"),
      *                     @OA\Property(property="store_description", type="string", example="Lilly Lee Store Description"),
      *                     @OA\Property(property="location", type="string", example="Maharajgunj"),
