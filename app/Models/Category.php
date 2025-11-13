@@ -20,7 +20,8 @@ class Category extends Model implements HasMedia
         'name',
         'slug',
         'status',
-        'discount_percent'
+        'discount_percent',
+        'menu_order'
     ];
 
     public function scopeActive($qry)

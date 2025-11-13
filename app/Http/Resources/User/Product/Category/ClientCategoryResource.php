@@ -19,6 +19,7 @@ class ClientCategoryResource extends JsonResource
         return [
             'slug' => $this->slug,
             'name' => $this->name,
+            'menu_order'=>$this->menu_order?'Active':'Inactive',
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Category::CATEGORY_IMAGE)),
         ];
     }
