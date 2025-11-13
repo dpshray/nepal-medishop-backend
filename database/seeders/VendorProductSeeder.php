@@ -22,9 +22,9 @@ class VendorProductSeeder extends Seeder
             User::FilterByRole(UserTypeEnum::VENDOR)->get()->map(function($user) use($product){
                 // $random_product = $product->random(1,3);
                 $randomCount = rand(1, min(5, $product->count()));
-                $random_product = $product->random($randomCount);
+                $random_product = $product;
 
-                Log::info(count($random_product));
+                // Log::info(count($random_product));
                 foreach ($random_product as $rp) {
                     $vendor_product = $user->vendor->vendorProducts()->create([
                         'is_approved' => true,
@@ -47,5 +47,23 @@ class VendorProductSeeder extends Seeder
                 
             });
         });
+
+        // DB::transaction(function () {
+        //     $ignore_products = User::firstWhere('email','vendor@gmail.com')->vendor->vendorProducts->pluck('product_id')->all();
+        //     Product::with('variations')->whereNotIn('id', $ignore_products)->get()->each(function ($product) {
+        //         $product_variation = $product->variations->map(function ($item) {
+        //             return [
+        //                 'product_variation_id' => $item->id,
+        //                 'units_in_stock' => rand(50, 200),
+        //                 'price' => rand(1000, 5000)
+        //             ];
+        //         });
+        //         User::firstWhere('email', 'vendor@gmail.com')->vendor
+        //             ->vendorProducts()
+        //             ->firstOrCreate(['is_approved' => true,'product_id' => $product->id])
+        //             ->vendorPrices()
+        //             ->createMany($product_variation);
+        //     });
+        // });
     }
 }

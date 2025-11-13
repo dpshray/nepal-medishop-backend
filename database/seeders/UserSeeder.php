@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
         $faker = Faker::create();
         $user = 1;
         $just_once = true;
-        while ($user <= 30) {
+        while ($user <= 10) {
             $name = 'vendor' . $user.$faker->randomNumber();
             $new_user = [
                 'status' => 1,
@@ -34,21 +34,13 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ];
             if ($just_once) {
-                $new_user = [
-                    'status' => 1,
-                    'uuid' => $faker->uuid(),
-                    'name' => 'vendor00',
-                    'email' => 'vendor@gmail.com',
-                    'mobile_number' => $faker->numerify('98########'),
-                    'password' => Hash::make('password123'),
-                    'user_type' => UserTypeEnum::VENDOR->value,
-                    'email_verified_at' => now(),
-                ];
+                $new_user['name'] = 'vendor00'; 
+                $new_user['email'] = 'vendor@gmail.com'; 
             }
             $vendor = User::create($new_user)
             ->vendor()
             ->create([
-                'verified_at' => $faker->boolean(50) ? now() : null,
+                'verified_at' => now(),
                 'store_name' => $faker->company(),
                 'store_description' => $faker->realText(350),
                 'location' => $faker->address(),
@@ -69,7 +61,7 @@ class UserSeeder extends Seeder
             $just_once = false;
         }
         $user = 1;
-        while ($user <= 30) {
+        while ($user <= 10) {
             $name = 'user' . $faker->randomNumber().$user;
             $vendor = User::create([
                 'status' => 1,

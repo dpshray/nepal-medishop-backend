@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->essentialsSeeders();
 
         $this->call([
+            BannerSeeder::class,
             UserSeeder::class,
             HealthConditionSeeder::class,
             ProductSeeder::class,
