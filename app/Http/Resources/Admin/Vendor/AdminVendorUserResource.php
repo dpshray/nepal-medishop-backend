@@ -20,7 +20,7 @@ class AdminVendorUserResource extends JsonResource
             'email' => $this->email,
             'mobile_number' => $this->mobile_number,
             'vendor_details' => $this->whenLoaded('vendor', fn() => [
-                'is_verified' => !empty($this->is_verified),
+                'is_verified' => (bool)!empty($this->email_verified_at),
                 'store_name' => $this->vendor->store_name,
                 'store_description' => $this->vendor->store_description,
                 'location' => $this->vendor->location,
