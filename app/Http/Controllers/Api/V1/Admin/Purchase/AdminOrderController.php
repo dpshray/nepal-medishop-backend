@@ -107,44 +107,54 @@ class AdminOrderController extends Controller
 
     /**
      * @OA\Get(
-     *     security={{"sanctum": {}}},
+     *     security={{"sanctum": {}}}, 
      *     path="/admin/user-order/{uuid}",
      *     summary="Get user order details.",
-     *     description="Get user orders details.",
+     *     description="Fetch detailed information of a specific user order by UUID.",
      *     operationId="UserOrderDetail",
      *     tags={"Order"},
+     *
      *     @OA\Parameter(
      *         name="uuid",
      *         in="path",
      *         required=true,
-     *         description="UUID of product details",
+     *         description="UUID of the order",
      *         @OA\Schema(type="string", example="5cc40466-e88d-4ab3-80d8-6274a4ecf4a3")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
-     *         description="Order Detail",
+     *         description="Order Detail Response",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="message", type="string", example="Order Detail."),
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="order_code", type="string", example="X8qi8h2ba6YoqQ7DtTBb"),
-     *                 @OA\Property(property="user_type", type="string", example="GUEST"),
-     *                 @OA\Property(property="name", type="string", example="James P. Sullivan"),
-     *                 @OA\Property(property="email", type="string", example="james.sullivan100@example.com"),
-     *                 @OA\Property(property="mobile", type="string", example="9844521125"),
+     *                 @OA\Property(property="order_code", type="string", example="hNdz0Ck2k6E0ioxUH6qH"),
+     *                 @OA\Property(property="user_type", type="string", example="USER"),
+     *                 @OA\Property(property="name", type="string", example="user00"),
+     *                 @OA\Property(property="email", type="string", example="user@gmail.com"),
+     *                 @OA\Property(property="mobile", type="string", example="9835064312"),
      *                 @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
      *                 @OA\Property(property="latitude", type="string", example="77.52144"),
      *                 @OA\Property(property="longitude", type="string", example="18.21554"),
      *                 @OA\Property(property="description", type="string", example="some description of this order COD"),
-     *                 @OA\Property(property="price", type="number", format="float", example=10853.38),
+     *                 @OA\Property(property="price", type="number", format="float", example=1761.1),
      *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
      *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper."),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
      *                 @OA\Property(property="status", type="string", example="PENDING"),
-     *                 @OA\Property(property="created_at", type="string", example="2025/11/09"),
+     *                 @OA\Property(property="created_at", type="string", example="2025/11/13"),
+     *
+     *                 @OA\Property(
+     *                     property="order_assigned_to",
+     *                     type="object",
+     *                     @OA\Property(property="store_name", type="string", example="Lockman Ltd"),
+     *                     @OA\Property(property="email", type="string", example="vendor@gmail.com")
+     *                 ),
+     *
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
@@ -153,19 +163,20 @@ class AdminOrderController extends Controller
      *                         @OA\Property(property="type", type="string", example="product"),
      *                         @OA\Property(property="prescription_required", type="boolean", example=false),
      *                         @OA\Property(property="prescription_image", type="string", nullable=true, example=null),
-     *                         @OA\Property(property="item_name", type="string", example="Saepe reiciendis et quae dolores et tenetur voluptas."),
-     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-1"),
-     *                         @OA\Property(property="variant_size", type="string", nullable=true, example="100.00 g"),
+     *                         @OA\Property(property="item_name", type="string", example="Quia velit sed quia repellendus."),
+     *                         @OA\Property(property="variant_name", type="string", example="Variant-1"),
+     *                         @OA\Property(property="variant_size", type="string", example="100.00 IU"),
      *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="price", type="number", format="float", example=198),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=396)
+     *                         @OA\Property(property="price", type="number", format="float", example=100.7),
+     *                         @OA\Property(property="subtotal", type="number", format="float", example=201.4)
      *                     )
      *                 )
-     *             )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     ),
      * )
-     */
+    */
     function show(Order $order) {
         $order->load('orderItems');
         $order = new AdminOrderDetailResource($order);

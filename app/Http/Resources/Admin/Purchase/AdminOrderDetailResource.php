@@ -19,7 +19,13 @@ class AdminOrderDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
-
+        $order_assigned_to_vendor = null;
+        if($this->assignedVendor){
+            $order_assigned_to_vendor = [
+                'store_name' => $this->assignedVendor->vendor->store_name,
+                'email' => $this->assignedVendor->email
+            ];
+        }
         $data = [
             "order_code" => $this->order_code,
             'user_type' => $this->user_type,
@@ -37,6 +43,7 @@ class AdminOrderDetailResource extends JsonResource
             "payment_status" => $this->payment_status,
             "status" => $this->status,
             "created_at" => $this->created_at->format('Y/m/d'),
+            'order_assigned_to' => $order_assigned_to_vendor,
             'ordered_items' => $this->orderItems->map(function ($item) {
                 $data = [
                     'item_name' => $item->item_name,

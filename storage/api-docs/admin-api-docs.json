@@ -2329,6 +2329,94 @@
                 ]
             }
         },
+        "/admin/coupon-point": {
+            "post": {
+                "tags": [
+                    "CouponCode"
+                ],
+                "summary": "Store a coupon.",
+                "description": "Store a coupon.",
+                "operationId": "CouponCodeStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "coupon_code",
+                                    "discount_percent",
+                                    "is_active",
+                                    "start_date",
+                                    "end_date"
+                                ],
+                                "properties": {
+                                    "coupon_code": {
+                                        "type": "string",
+                                        "example": "MERCK10"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "10% off on all Merck products"
+                                    },
+                                    "discount_percent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-11-12"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-12-12"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category create response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Category added successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/brand": {
             "get": {
                 "tags": [
@@ -5235,13 +5323,13 @@
                     "Order"
                 ],
                 "summary": "Get user order details.",
-                "description": "Get user orders details.",
+                "description": "Fetch detailed information of a specific user order by UUID.",
                 "operationId": "UserOrderDetail",
                 "parameters": [
                     {
                         "name": "uuid",
                         "in": "path",
-                        "description": "UUID of product details",
+                        "description": "UUID of the order",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -5251,7 +5339,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Order Detail",
+                        "description": "Order Detail Response",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5260,31 +5348,27 @@
                                             "type": "string",
                                             "example": "Order Detail."
                                         },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "data": {
                                             "properties": {
                                                 "order_code": {
                                                     "type": "string",
-                                                    "example": "X8qi8h2ba6YoqQ7DtTBb"
+                                                    "example": "hNdz0Ck2k6E0ioxUH6qH"
                                                 },
                                                 "user_type": {
                                                     "type": "string",
-                                                    "example": "GUEST"
+                                                    "example": "USER"
                                                 },
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "James P. Sullivan"
+                                                    "example": "user00"
                                                 },
                                                 "email": {
                                                     "type": "string",
-                                                    "example": "james.sullivan100@example.com"
+                                                    "example": "user@gmail.com"
                                                 },
                                                 "mobile": {
                                                     "type": "string",
-                                                    "example": "9844521125"
+                                                    "example": "9835064312"
                                                 },
                                                 "address": {
                                                     "type": "string",
@@ -5305,7 +5389,7 @@
                                                 "price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 10853.38
+                                                    "example": 1761.1
                                                 },
                                                 "gift_wrap": {
                                                     "type": "boolean",
@@ -5329,7 +5413,20 @@
                                                 },
                                                 "created_at": {
                                                     "type": "string",
-                                                    "example": "2025/11/09"
+                                                    "example": "2025/11/13"
+                                                },
+                                                "order_assigned_to": {
+                                                    "properties": {
+                                                        "store_name": {
+                                                            "type": "string",
+                                                            "example": "Lockman Ltd"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "vendor@gmail.com"
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 },
                                                 "ordered_items": {
                                                     "type": "array",
@@ -5350,17 +5447,15 @@
                                                             },
                                                             "item_name": {
                                                                 "type": "string",
-                                                                "example": "Saepe reiciendis et quae dolores et tenetur voluptas."
+                                                                "example": "Quia velit sed quia repellendus."
                                                             },
                                                             "variant_name": {
                                                                 "type": "string",
-                                                                "example": "Variant-1",
-                                                                "nullable": true
+                                                                "example": "Variant-1"
                                                             },
                                                             "variant_size": {
                                                                 "type": "string",
-                                                                "example": "100.00 g",
-                                                                "nullable": true
+                                                                "example": "100.00 IU"
                                                             },
                                                             "quantity": {
                                                                 "type": "integer",
@@ -5369,12 +5464,12 @@
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 198
+                                                                "example": 100.7
                                                             },
                                                             "subtotal": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 396
+                                                                "example": 201.4
                                                             }
                                                         },
                                                         "type": "object"
@@ -5382,6 +5477,10 @@
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -6457,6 +6556,10 @@
         {
             "name": "Package",
             "description": "Package"
+        },
+        {
+            "name": "CouponCode",
+            "description": "CouponCode"
         },
         {
             "name": "Brand",
