@@ -1150,6 +1150,10 @@
                                                                 "format": "url",
                                                                 "example": "http://192.168.100.23:8008/storage/91/medi-plaster.png"
                                                             },
+                                                            "isPrescriptionRequired": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
                                                             "variations": {
                                                                 "type": "array",
                                                                 "items": {

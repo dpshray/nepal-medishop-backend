@@ -98,6 +98,7 @@ class LikeController extends Controller
      *                         @OA\Property(property="previous_price", type="number", format="float", example=139),
      *                         @OA\Property(property="discount_percent", type="number", format="float", example=4),
      *                         @OA\Property(property="feature_image", type="string", format="url", example="http://192.168.100.23:8008/storage/91/medi-plaster.png"),
+     *                         @OA\Property(property="isPrescriptionRequired", type="boolean", example=true),
      *                         @OA\Property(
      *                             property="variations",
      *                             type="array",
