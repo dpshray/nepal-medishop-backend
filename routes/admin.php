@@ -5,6 +5,7 @@ use App\Enums\RouteParamEnum;
 use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Admin\Banner\AdminBannerController;
+use App\Http\Controllers\Api\V1\Admin\ClientFeedback\AdminFeedbackController;
 use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
@@ -61,5 +62,5 @@ Route::prefix('admin')
         Route::apiResource('banner', AdminBannerController::class)->scoped(['banner' => 'uuid']);
         Route::get('toggle-banner-status/{banner:uuid}', [AdminBannerController::class, 'visibilityToggler']);
         Route::apiResource('kitbag', AdminKitbagOrderController::class)->only(['index','show','destroy'])->scoped(['kitbag' => 'uuid']);
-
+        Route::apiResource('clientfeedback',AdminFeedbackController::class)->only(['index']);
 });

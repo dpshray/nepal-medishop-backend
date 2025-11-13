@@ -1325,6 +1325,132 @@
                 ]
             }
         },
+        "/admin/clientfeedback": {
+            "get": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Get list of client feedback",
+                "description": "Retrieve a paginated list of client feedback with optional search by user's name or email.",
+                "operationId": "getClientFeedback",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of feedback items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search feedback by user's name or email",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of Client Feedback",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of Client Feedback"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 12
+                                                            },
+                                                            "feedback": {
+                                                                "type": "string",
+                                                                "example": "Great service, thank you!"
+                                                            },
+                                                            "rating": {
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2025-11-13T09:25:00Z"
+                                                            },
+                                                            "user": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 5
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "John Doe"
+                                                                    },
+                                                                    "email": {
+                                                                        "type": "string",
+                                                                        "example": "johndoe@example.com"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/package": {
             "get": {
                 "tags": [
@@ -2782,13 +2908,13 @@
                                         "type": "string",
                                         "example": "Merck"
                                     },
-                                    "discount_percent": {
-                                        "type": "string",
-                                        "example": "0"
-                                    },
                                     "menu_order": {
                                         "type": "integer",
                                         "example": 1
+                                    },
+                                    "discount_percent": {
+                                        "type": "string",
+                                        "example": "0"
                                     },
                                     "image": {
                                         "description": "Category image",
@@ -2918,6 +3044,10 @@
                                     "name": {
                                         "type": "string",
                                         "example": "Merck"
+                                    },
+                                    "menu_order": {
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "discount_percent": {
                                         "type": "string",
@@ -6319,6 +6449,10 @@
         {
             "name": "Banner",
             "description": "Banner"
+        },
+        {
+            "name": "Feedback",
+            "description": "Feedback"
         },
         {
             "name": "Package",

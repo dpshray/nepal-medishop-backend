@@ -32,7 +32,7 @@ class AdminCategoryController extends Controller
      *         required=false,
      *         description="Page number of list",
      *         @OA\Schema(type="integer", example=1)
-     *     ),     
+     *     ),
      *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
@@ -155,6 +155,7 @@ class AdminCategoryController extends Controller
      *             @OA\Schema(
      *                 required={"name", "image"},
      *                 @OA\Property(property="name", type="string", example="Merck"),
+     *                 @OA\Property(property="menu_order", type="integer", example=1),
      *                 @OA\Property(property="discount_percent", type="string", example="0"),
      *                 @OA\Property(
      *                     property="image",
@@ -209,6 +210,7 @@ class AdminCategoryController extends Controller
      *             @OA\Schema(
      *                 required={"name","_method"},
      *                 @OA\Property(property="name", type="string", example="Merck"),
+     *                 @OA\Property(property="menu_order", type="integer", example=1),
      *                 @OA\Property(property="discount_percent", type="string", example="0"),
      *                 @OA\Property(property="_method", type="string", example="patch"),
      *                 @OA\Property(
@@ -244,7 +246,7 @@ class AdminCategoryController extends Controller
 
     /**
      * @OA\Delete(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/admin/category/{category}",
      *     operationId="CategoryDelete",
      *     tags={"Category"},
@@ -328,7 +330,7 @@ class AdminCategoryController extends Controller
      *         required=false,
      *         description="Page number of list",
      *         @OA\Schema(type="integer", example=1)
-     *     ),     
+     *     ),
      *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
@@ -418,18 +420,18 @@ class AdminCategoryController extends Controller
     function categoryMenuHandler(AdminCategoryMenuRequest $request)
     {
         $form_data = $request->validated();
-    
+
         DB::transaction(function () use ($form_data) {
             // Reset menu_order only for categories in the request
             $categoryIds = collect($form_data['menu'])->pluck('category_id');
             DB::table('categories')->whereIn('id', $categoryIds)->update(['menu_order' => null]);
-    
+
             // Prepare all update cases in a single query
             $caseStatements = '';
             foreach ($form_data['menu'] as $item) {
                 $caseStatements .= "WHEN id = {$item['category_id']} THEN {$item['menu_order']} ";
             }
-    
+
             // Run a single optimized update query
             DB::update("
                 UPDATE categories
@@ -439,8 +441,8 @@ class AdminCategoryController extends Controller
                 WHERE id IN (" . $categoryIds->implode(',') . ")
             ");
         });
-    
+
         return $this->apiSuccess('Menu has been ordered successfully.');
     }
-    
+
 }
