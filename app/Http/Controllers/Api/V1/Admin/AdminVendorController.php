@@ -344,6 +344,7 @@ class AdminVendorController extends Controller
             $user_data = $request->safe()->only(["name", "email", "mobile_number","status"]);
             $vendor_data = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate",'is_verified']);
             $vendor_data['verified_at'] = $request->is_verified == 1 ? now() : null;
+            $user_data['status'] = $request->is_verified == 1 ? true : false;
             Log::info($vendor_data);
             tap($user, fn() =>$user->update($user_data))->vendor()->update($vendor_data);
             if ($request->hasFile('vendor_citizenship_card')) {
