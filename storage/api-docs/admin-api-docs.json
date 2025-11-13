@@ -2908,13 +2908,13 @@
                                         "type": "string",
                                         "example": "Merck"
                                     },
-                                    "discount_percent": {
-                                        "type": "string",
-                                        "example": "0"
-                                    },
                                     "menu_order": {
                                         "type": "integer",
                                         "example": 1
+                                    },
+                                    "discount_percent": {
+                                        "type": "string",
+                                        "example": "0"
                                     },
                                     "image": {
                                         "description": "Category image",
@@ -3044,6 +3044,10 @@
                                     "name": {
                                         "type": "string",
                                         "example": "Merck"
+                                    },
+                                    "menu_order": {
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "discount_percent": {
                                         "type": "string",

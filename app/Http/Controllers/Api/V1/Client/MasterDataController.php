@@ -108,7 +108,7 @@ class MasterDataController extends Controller
      * )
     */
     function fetchAllActiveCategory(){
-        $categories = Category::with('media')->active()->get();
+        $categories = Category::with('media')->whereNotNull('menu_order')->orderBy('menu_order', 'asc')->active()->get();
         $categories = ClientCategoryResource::collection($categories);
         return $this->apiSuccess('List of active categories', $categories);
     }
@@ -158,7 +158,7 @@ class MasterDataController extends Controller
 
     /**
      * @OA\Get(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/products/",
      *     summary="Get product based on category slug",
      *     description="Get product based on category slug.",
@@ -267,11 +267,11 @@ class MasterDataController extends Controller
         $health_condition_slug = $request->query('health_condition_slug');
         $list_type = $request->query('list_type');
         $search = $request->query('search');
-        
+
         $query = Product::with([
             'media',
-            'brand', 
-            'cheapestVariation', 
+            'brand',
+            'cheapestVariation',
             'likes' => fn($qry) => $qry->where('user_id', Auth::id()),
             'variations'
             ])
@@ -283,7 +283,7 @@ class MasterDataController extends Controller
             ->when($health_condition_slug, fn($qry) => $qry->whereRelation('healthConditions','slug', $health_condition_slug))
             ->when($list_type, function($qry,$value){
                 if ($value == 'random') {
-                    $qry->inRandomOrder(); 
+                    $qry->inRandomOrder();
                 }
             },fn($qry) => $qry->latest());
 
@@ -294,7 +294,7 @@ class MasterDataController extends Controller
 
     /**
      * @OA\Get(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/product/{slug}",
      *     summary="Show an product",
      *     description="Show an active brand.",
@@ -369,7 +369,7 @@ class MasterDataController extends Controller
 
     /**
      * @OA\Get(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/packages",
      *     summary="Get package list",
      *     description="Get package list.",
@@ -430,7 +430,7 @@ class MasterDataController extends Controller
 
     /**
      * @OA\Get(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/package/{slug}",
      *     summary="Show a package",
      *     description="Show a package.",
@@ -497,10 +497,10 @@ class MasterDataController extends Controller
      */
     function fetchPackageDetail(Package $package){
         $package->loadMissing([
-            'media', 
-            'packageProducts.variant.product.media', 
+            'media',
+            'packageProducts.variant.product.media',
             'packageProducts.variant.product.categories',
-            'packageProducts.variant.product.brand', 
+            'packageProducts.variant.product.brand',
             'likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
         $data = new PackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);

@@ -20,6 +20,7 @@ class AdminCategoryResource extends JsonResource
             'id' => $this->id,
             'slug' => $this->slug,
             'name' => $this->name,
+            'menu_order'=>$this->menu_order,
             'image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Category::CATEGORY_IMAGE)),
             'discount_percent' => (float) $this->discount_percent
         ];

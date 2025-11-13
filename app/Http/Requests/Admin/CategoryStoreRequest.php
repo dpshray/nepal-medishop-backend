@@ -29,12 +29,14 @@ class CategoryStoreRequest extends FormRequest
             $category_id = $this->category->id;
             $rule = [
                 'name' => 'required|max:255|unique:categories,name,' . $category_id,
+                'menu_order'=>'sometimes|nullable|integer',
                 'image' => 'sometimes|nullable|image|exclude',
                 'discount_percent' => 'sometimes|nullable|between:0,100'
             ];
         } else { #create
             $rule = [
                 'name' => 'required|max:255|unique:categories,name',
+                'menu_order'=>'sometimes|nullable|integer',
                 'image' => 'required|image|exclude',
                 'discount_percent' => 'sometimes|nullable|between:0,100'
             ];
