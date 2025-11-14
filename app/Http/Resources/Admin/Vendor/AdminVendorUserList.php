@@ -19,8 +19,8 @@ class AdminVendorUserList extends JsonResource
         return [
             'user_uuid' => $this->uuid,
             'vendor_uuid' => $this->whenLoaded('vendor', fn() => $this->vendor->uuid),
-            'status' => (bool)$this->status,
-            // 'verified' => $this->whenLoaded('vendor', fn() => $this->email_verified_at ? true : false),
+            'account_status' => (bool)$this->status,
+            'email_verified' => $this->whenLoaded('vendor', fn() => $this->email_verified_at ? true : false),
             'name' => $this->name,
             'email' => $this->email,
             'mobile_number' => $this->mobile_number,
