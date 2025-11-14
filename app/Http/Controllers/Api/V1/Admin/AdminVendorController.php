@@ -302,7 +302,7 @@ class AdminVendorController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"_method","store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","name","email","mobile_number"},
+     *                 required={"_method","store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","account_status","name","mobile_number"},
      *                 @OA\Property(property="_method", type="string", example="patch"),
      *                 @OA\Property(property="name", type="string", example="Dave Chappelle"),
      *                 @OA\Property(property="mobile_number", type="string", example="9452114525"),
@@ -317,7 +317,7 @@ class AdminVendorController extends Controller
      *                 @OA\Property(property="bank_name", type="string", example="Laxmi Sunrise"),
      *                 @OA\Property(property="bank_account_holder_name", type="string", example="Laxmi Thapa"),
      *                 @OA\Property(property="bank_account_number", type="string", example="21547741201300157899"),
-     *                 @OA\Property(property="is_verified", type="integer", example=1),
+     *                 @OA\Property(property="account_status", type="boolean", example=true),
      *                 @OA\Property(property="vendor_citizenship_card", type="string", format="binary", description="Multiple image files to upload vendor citizenship card"),
      *                 @OA\Property(property="vendor_business_license", type="string", format="binary", description="Multiple image files to upload vendor business license"),
      *                 @OA\Property(property="vendor_tax_certificate", type="string", format="binary", description="Multiple image files to upload vendor tax certificate")
@@ -341,11 +341,12 @@ class AdminVendorController extends Controller
     public function update(VendorStoreRequest $request, User $user)
     {
         DB::transaction(function () use ($request, $user) {
-            $user_data = $request->safe()->only(["name", "email", "mobile_number","status"]);
-            $vendor_data = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate",'is_verified']);
-            $vendor_data['verified_at'] = $request->is_verified == 1 ? now() : null;
-            $user_data['status'] = $request->is_verified == 1 ? true : false;
-            Log::info($vendor_data);
+            $user_data = $request->safe()->only(["name", "email", "mobile_number"]);
+            $vendor_data = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate","account_status"]);
+            $vendor_data['verified_at'] = $request->account_status == 1 ? now() : null;
+            $user_data['status'] = $request->account_status == 1 ? true : false;
+            // return $vendor_data;
+            // Log::info($vendor_data);
             tap($user, fn() =>$user->update($user_data))->vendor()->update($vendor_data);
             if ($request->hasFile('vendor_citizenship_card')) {
                 $user->vendor->addMedia($request->file('vendor_citizenship_card'))->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
