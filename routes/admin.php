@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Point\AdminCouponPointController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
+use App\Http\Controllers\Api\V1\Admin\Product\AdminGenericProductNameController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminHealthConditionController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
@@ -21,7 +22,6 @@ use App\Http\Controllers\Api\V1\Admin\User\AdminUserController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\OrderAssign\AdminOrderAssignController;
 use App\Http\Controllers\Api\V1\Purchase\AdminCODController;
 use App\Http\Middleware\AdminMiddleware;
-use App\Http\Resources\Admin\AdminBannerResource;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')
@@ -66,4 +66,6 @@ Route::prefix('admin')
         Route::apiResource('kitbag', AdminKitbagOrderController::class)->only(['index','show','destroy'])->scoped(['kitbag' => 'uuid']);
         Route::apiResource('clientfeedback',AdminFeedbackController::class)->only(['index']);
         Route::apiResource('coupon',AdminPromoCodeControlller::class)->except(['show'])->scoped(['coupon'=>'uuid']);
+        Route::apiResource('coupon-point', AdminCouponPointController::class);
+        Route::apiResource('generic-product-name', AdminGenericProductNameController::class)->scoped(['generic_product_name' => 'slug']);
 });

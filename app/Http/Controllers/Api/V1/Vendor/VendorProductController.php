@@ -299,7 +299,7 @@ class VendorProductController extends Controller
         }
         DB::transaction(function () use($form_data, $product){
             $vendor_products = Auth::user()->vendor->vendorProducts();
-            $vendor_product = $vendor_products->firstOrCreate(['product_id' => $product->id]);
+            $vendor_product = $vendor_products->firstOrCreate(['status' => true, 'product_id' => $product->id]);
             foreach ($form_data['variations'] as $variation) {
                 $vendor_prices = $vendor_product->vendorPrices();
                 $vendor_price_already_exists = $vendor_prices->firstWhere('product_variation_id', $variation['product_variation_id']);

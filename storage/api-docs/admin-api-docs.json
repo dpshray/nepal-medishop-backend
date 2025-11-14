@@ -2334,94 +2334,6 @@
                 ]
             }
         },
-        "/admin/coupon-point": {
-            "post": {
-                "tags": [
-                    "CouponCode"
-                ],
-                "summary": "Store a coupon.",
-                "description": "Store a coupon.",
-                "operationId": "CouponCodeStore",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "coupon_code",
-                                    "discount_percent",
-                                    "is_active",
-                                    "start_date",
-                                    "end_date"
-                                ],
-                                "properties": {
-                                    "coupon_code": {
-                                        "type": "string",
-                                        "example": "MERCK10"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "10% off on all Merck products"
-                                    },
-                                    "discount_percent": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 10
-                                    },
-                                    "is_active": {
-                                        "type": "boolean",
-                                        "example": true
-                                    },
-                                    "start_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-11-12"
-                                    },
-                                    "end_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-12-12"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Category create response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category added successfully."
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "example": null,
-                                            "nullable": true
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
         "/admin/brand": {
             "get": {
                 "tags": [
@@ -3428,6 +3340,372 @@
                                         },
                                         "data": {
                                             "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/generic-product-name": {
+            "get": {
+                "tags": [
+                    "ProductGenericName"
+                ],
+                "summary": "Get all active/inactive product generic name.",
+                "description": "Get all active/inactive product generic name.",
+                "operationId": "ProductGenericNameList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Toggle active/inactive brands(values: 0 and 1)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Brand name to search.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pfizer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active brand lists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Active brand lists"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "pfizer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Pfizer"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/assets/img/default-brand-category.png"
+                                                            },
+                                                            "is_featured": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            },
+                                                            "is_popular": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 26
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 26
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "ProductGenericName"
+                ],
+                "summary": "Store a product generic name.",
+                "description": "Store a product generic name.",
+                "operationId": "ProductGenericNameStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Broad Spectrum"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generic product create response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product generic name added successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/generic-product-name/{slug}": {
+            "get": {
+                "tags": [
+                    "ProductGenericName"
+                ],
+                "summary": "Show a generic product name.",
+                "description": "Show a generic product name.",
+                "operationId": "ProductGenericNameShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of generic product name",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "omega-3"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show generic product name.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Detail of product generic name."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "ProductGenericName"
+                ],
+                "summary": "Delete a product generic name.",
+                "description": "Delete a product generic name.",
+                "operationId": "ProductGenericNameDelete",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "slug of product generic name to remove.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product generic name successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Generic product name has successfully been deleted."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "ProductGenericName"
+                ],
+                "summary": "Update product generic name based on slug.",
+                "description": "Update product generic name based on slug.",
+                "operationId": "ProductGenericNameUpdate",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "slug of a product generic name",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "proactive-ii"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Anesthesiology"
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tag update response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tag updated successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
                                             "example": null,
                                             "nullable": true
                                         },
@@ -6817,10 +7095,6 @@
             "description": "Package"
         },
         {
-            "name": "CouponCode",
-            "description": "CouponCode"
-        },
-        {
             "name": "Brand",
             "description": "Brand"
         },
@@ -6831,6 +7105,10 @@
         {
             "name": "Menu",
             "description": "Menu"
+        },
+        {
+            "name": "ProductGenericName",
+            "description": "ProductGenericName"
         },
         {
             "name": "HealthCondition",
