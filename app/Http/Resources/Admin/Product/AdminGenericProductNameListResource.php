@@ -16,6 +16,7 @@ class AdminGenericProductNameListResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
+            "id" => (int) $this->id,
             "status" => (bool) $this->status,
             "name" => $this->name,
             "slug" => $this->slug,

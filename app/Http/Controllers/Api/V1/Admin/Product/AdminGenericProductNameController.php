@@ -55,29 +55,23 @@ class AdminGenericProductNameController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Active brand lists",
+     *         description="Active product generic name lists",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Active brand lists"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="items",
-     *                     type="array",
+     *             @OA\Property(property="message", type="string", example="Active product generic name lists"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="items", type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="slug", type="string", example="pfizer"),
-     *                         @OA\Property(property="name", type="string", example="Pfizer"),
-     *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/assets/img/default-brand-category.png"),
-     *                         @OA\Property(property="is_featured", type="boolean", example=false),
-     *                         @OA\Property(property="is_popular", type="boolean", example=true)
+     *                         @OA\Property(property="id", type="integer", example=4),
+     *                         @OA\Property(property="status", type="boolean", example=true),
+     *                         @OA\Property(property="name", type="string", example="dada"),
+     *                         @OA\Property(property="slug", type="string", example="dada")
      *                     )
      *                 ),
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=26),
-     *                 @OA\Property(property="total_items", type="integer", example=26)
+     *                 @OA\Property(property="total_page", type="integer", example=1),
+     *                 @OA\Property(property="total_items", type="integer", example=3)
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
@@ -155,11 +149,19 @@ class AdminGenericProductNameController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Show generic product name.",
+     *         description="Detail of product generic name.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="boolean", example=true),
-     *             @OA\Property(property="data", type="null", example=null),
-     *             @OA\Property(property="message", type="string", example="Detail of product generic name.")
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Detail of product generic name."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=4),
+     *                 @OA\Property(property="status", type="boolean", example=true),
+     *                 @OA\Property(property="name", type="string", example="dada"),
+     *                 @OA\Property(property="slug", type="string", example="dada")
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
