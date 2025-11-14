@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('coupon_codes', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
             $table->string('code');
             $table->decimal('discount_percent', 5, 2);
             $table->unsignedSmallInteger('usage_limit')->nullable();
             $table->unsignedSmallInteger('used_count')->nullable();
-            $table->unsignedSmallInteger('per_user_limit');
+            $table->unsignedSmallInteger('per_user_limit')->nullable();
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('is_active')->default(true);

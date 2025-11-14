@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminHealthConditionController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
+use App\Http\Controllers\Api\V1\Admin\PromoCode\AdminPromoCodeControlller;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminKitbagOrderController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
@@ -64,5 +65,5 @@ Route::prefix('admin')
         Route::get('toggle-banner-status/{banner:uuid}', [AdminBannerController::class, 'visibilityToggler']);
         Route::apiResource('kitbag', AdminKitbagOrderController::class)->only(['index','show','destroy'])->scoped(['kitbag' => 'uuid']);
         Route::apiResource('clientfeedback',AdminFeedbackController::class)->only(['index']);
-        Route::apiResource('coupon-point', AdminCouponPointController::class);
+        Route::apiResource('coupon',AdminPromoCodeControlller::class)->except(['show'])->scoped(['coupon'=>'uuid']);
 });
