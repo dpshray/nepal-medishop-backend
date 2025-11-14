@@ -78,7 +78,8 @@ class AdminVendorController extends Controller
      *                         type="object",
      *                         @OA\Property(property="user_uuid", type="string", format="uuid", example="42f9e1a0-0699-425e-af15-2b7485206e68"),
      *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="64cc5e61-c98f-41f7-997c-2b4fbedbf4dc"),
-     *                         @OA\Property(property="status", type="boolean", example=true),
+     *                         @OA\Property(property="account_status", type="boolean", example=true),
+     *                         @OA\Property(property="email_verified", type="boolean", example=true),
      *                         @OA\Property(property="name", type="string", example="vendor30956945"),
      *                         @OA\Property(property="email", type="string", format="email", example="vendor30956945@gmail.com"),
      *                         @OA\Property(property="mobile_number", type="string", example="9808096921"),
@@ -143,7 +144,7 @@ class AdminVendorController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                 required={"store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","vendor_citizenship_card","vendor_business_license","vendor_tax_certificate","name","email","mobile_number"},
+     *                 required={"store_name","store_description","location","country","state","district","municipality","postal_code","bank_name","bank_account_holder_name","bank_account_number","account_status","vendor_citizenship_card","vendor_business_license","vendor_tax_certificate","name","email","mobile_number"},
      *                 @OA\Property(property="name", type="string", example="Dave Chappelle"),
      *                 @OA\Property(property="email", type="string", format="email", example="dev.chappelle@mailinator.com"),
      *                 @OA\Property(property="mobile_number", type="string", example="9452114525"),
@@ -158,7 +159,7 @@ class AdminVendorController extends Controller
      *                 @OA\Property(property="bank_name", type="string", example="Laxmi Sunrise"),
      *                 @OA\Property(property="bank_account_holder_name", type="string", example="Laxmi Thapa"),
      *                 @OA\Property(property="bank_account_number", type="string", example="21547741201300157899"),
-     *                 @OA\Property(property="is_verified", type="integer", example=1),
+     *                 @OA\Property(property="account_status", type="boolean", example=true),
      *                 @OA\Property(
      *                     property="vendor_citizenship_card",
      *                     type="string",
@@ -191,7 +192,7 @@ class AdminVendorController extends Controller
      *         )
      *     )
      * )
-    */
+     */
     public function store(VendorStoreRequest $request)
     {
         DB::transaction(function () use($request){
@@ -232,6 +233,7 @@ class AdminVendorController extends Controller
      *                 @OA\Property(
      *                     property="vendor_details",
      *                     type="object",
+     *                     @OA\Property(property="email_verified", type="boolean", example=true),
      *                     @OA\Property(property="status", type="boolean", example=true),
      *                     @OA\Property(property="store_name", type="string", example="Lilly Lee Store"),
      *                     @OA\Property(property="store_description", type="string", example="Lilly Lee Store Description"),
