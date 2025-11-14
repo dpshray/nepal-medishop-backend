@@ -6,7 +6,7 @@ use App\Exceptions\LoginException;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\PersonalAccessToken;
-use Illuminate\Support\Facades\{DB, Hash};
+use Illuminate\Support\Facades\{DB, Hash, Log};
 
 /**
  * Sanctum Service
@@ -33,10 +33,12 @@ class SanctumTokenService
     public function check(array $credentials, $callback = null)
     {
         ['email' => $email, 'password' => $password] = $credentials;
-        $this->user = $user = User::select('id','uuid','user_type','name','email','password', 'email_verified_at')->firstWhere('email', $email);
+        $this->user = $user = User::firstWhere('email', $email);
 
         if (!$user->hasVerifiedEmail()) {
             throw new LoginException('Please verify your mail to continue.', 403);
+        } else if (!$user->is_active) {
+            throw new LoginException('User account is currently inactive.', 403);
         } else if (!$user || !Hash::check($password, $user->password)) {
             throw new LoginException('Username/password does not match.', 401);
         }

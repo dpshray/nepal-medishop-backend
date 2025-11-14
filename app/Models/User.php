@@ -35,6 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
      */
 
     protected $fillable = [
+        'status',
         'uuid',
         'name',
         'email',
@@ -139,5 +140,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     public function latestApprovedLoyalityPoints()
     {
         return $this->hasOne(LoyalityPoint::class)->where('status', LoyalityPointStatusEnum::APPROVED)->orderBy('id', 'DESC');
+    }
+
+    function getIsActiveAttribute() {
+        return (bool)$this->status;
     }
 }

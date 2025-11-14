@@ -109,10 +109,6 @@
                                                                 "type": "boolean",
                                                                 "example": true
                                                             },
-                                                            "verified": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
                                                             "name": {
                                                                 "type": "string",
                                                                 "example": "vendor30956945"
@@ -357,7 +353,7 @@
                                                 },
                                                 "vendor_details": {
                                                     "properties": {
-                                                        "is_verified": {
+                                                        "status": {
                                                             "type": "boolean",
                                                             "example": true
                                                         },
@@ -2320,94 +2316,6 @@
                     },
                     "500": {
                         "description": "Internal Server Error"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/admin/coupon-point": {
-            "post": {
-                "tags": [
-                    "CouponCode"
-                ],
-                "summary": "Store a coupon.",
-                "description": "Store a coupon.",
-                "operationId": "CouponCodeStore",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "coupon_code",
-                                    "discount_percent",
-                                    "is_active",
-                                    "start_date",
-                                    "end_date"
-                                ],
-                                "properties": {
-                                    "coupon_code": {
-                                        "type": "string",
-                                        "example": "MERCK10"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "10% off on all Merck products"
-                                    },
-                                    "discount_percent": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 10
-                                    },
-                                    "is_active": {
-                                        "type": "boolean",
-                                        "example": true
-                                    },
-                                    "start_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-11-12"
-                                    },
-                                    "end_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-12-12"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Category create response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Category added successfully."
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "example": null,
-                                            "nullable": true
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
                     }
                 },
                 "security": [
@@ -6556,10 +6464,6 @@
         {
             "name": "Package",
             "description": "Package"
-        },
-        {
-            "name": "CouponCode",
-            "description": "CouponCode"
         },
         {
             "name": "Brand",
