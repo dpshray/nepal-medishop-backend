@@ -76,8 +76,13 @@ class ClientAuthController extends ClientController
         if (!hash_equals(sha1($user->getEmailForVerification()), $request->query('hash'))) {
             abort(403, 'Invalid verification hash.');
         }
-
-        $user->markEmailAsVerified();
+        DB::transaction(function () use($user){
+            if ($user->isVendor()) {
+                $user->update(['status' => true]);
+                $user->vendor(['verified_at' => now()]);
+            }
+            $user->markEmailAsVerified();
+        });
         return view('auth.mail.email_verified');
     }
 
