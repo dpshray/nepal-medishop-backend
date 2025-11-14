@@ -43,7 +43,7 @@ class VendorStoreRequest extends FormRequest
             'bank_name' => 'required',
             'bank_account_holder_name' => 'required',
             'bank_account_number' => 'required',
-            'is_verified' => 'sometimes|between:0,1'
+            'account_status' => 'sometimes|nullable|boolean'
         ];
         if ($user_id == null) {
             $rules = array_merge($rules, [
@@ -74,7 +74,7 @@ class VendorStoreRequest extends FormRequest
     function prepareForValidation()
     {
         return $this->merge([
-            'is_verified' => filter_var($this->is_verified, FILTER_VALIDATE_BOOLEAN) ? 1 : 0
+            'account_status' => filter_var($this->account_status, FILTER_VALIDATE_BOOLEAN) ? 1 : 0
         ]);
     }
 }
