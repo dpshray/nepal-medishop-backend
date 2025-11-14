@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\LoginException;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,12 @@ class VendorMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!(bool)Auth::user()->isVendor()) {
+        $vendor = Auth::user();
+        if (!$vendor->hasVerifiedEmail()) {
+            throw new AuthenticationException('Please verify your mail to continue.');
+        } else if (!$vendor->is_active) {
+            throw new AuthenticationException('User account is currently inactive.');
+        } else if (!(bool)Auth::user()->isVendor()) {
             throw new AuthenticationException('Unauthorized: This action is restricted to vendors only.');
         }
         return $next($request);
