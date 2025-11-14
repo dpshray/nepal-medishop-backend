@@ -123,7 +123,6 @@ class ClientProfileController extends Controller
             $user->addMedia($request->file('image'))
                 ->toMediaCollection(User::USER_PROFILE);
         }
-        $user->status = (int) $user->status;
-        return $this->apiSuccess('profile update successfull',$user);
+        return $this->apiSuccess('profile update successfull',new UserProfileResource($user));
     }
 }
