@@ -4946,6 +4946,52 @@
             }
         },
         "/admin/coupon/{coupon}": {
+            "get": {
+                "tags": [
+                    "Admin Promo Code"
+                ],
+                "summary": "Get coupon detail",
+                "operationId": "2c1de78e3a1e5d33b0312a53d03c1c88",
+                "parameters": [
+                    {
+                        "name": "coupon",
+                        "in": "path",
+                        "description": "Coupon UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Coupon detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Coupon detail"
+                                        },
+                                        "data": {
+                                            "description": "Coupon details resource",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "put": {
                 "tags": [
                     "Admin Promo Code"

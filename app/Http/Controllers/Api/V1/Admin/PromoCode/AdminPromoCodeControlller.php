@@ -114,7 +114,7 @@ class AdminPromoCodeControlller extends Controller
      *     )
      * )
      */
-    function destroy (CouponCode $coupon)
+    function destroy(CouponCode $coupon)
     {
         $coupon->delete();
         return $this->apiSuccess('Coupon delete successfull');
@@ -159,5 +159,38 @@ class AdminPromoCodeControlller extends Controller
             ->paginate($per_page);
         $coupon = $this->makePaginationResponse($paginated, fn($item) => AdminPromoCodeResource::collection($item))->data;
         return $this->apiSuccess('List of coupon code', $coupon);
+    }
+    /**
+     * @OA\Get(
+     *     path="/admin/coupon/{coupon}",
+     *     summary="Get coupon detail",
+     *     tags={"Admin Promo Code"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="coupon",
+     *         in="path",
+     *         required=true,
+     *         description="Coupon UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Coupon detail",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Coupon detail"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 description="Coupon details resource"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+
+    function show(CouponCode $coupon)
+    {
+        return $this->apiSuccess('Coupon detail', new AdminPromoCodeResource($coupon));
     }
 }
