@@ -68,4 +68,5 @@ Route::prefix('admin')
         Route::apiResource('coupon',AdminPromoCodeControlller::class)->except(['show'])->scoped(['coupon'=>'uuid']);
         Route::apiResource('coupon-point', AdminCouponPointController::class);
         Route::apiResource('generic-product-name', AdminGenericProductNameController::class)->scoped(['generic_product_name' => 'slug']);
+        Route::apiResource('coupon',AdminPromoCodeControlller::class)->scoped(['coupon'=>'uuid']);
 });
