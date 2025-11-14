@@ -30,7 +30,8 @@ class Product extends Model implements HasMedia
         'status',
         'rating',
         'prescription_required',
-        'discount_percent'
+        'discount_percent',
+        'generic_product_name_id'
     ];
     
     public function categories()

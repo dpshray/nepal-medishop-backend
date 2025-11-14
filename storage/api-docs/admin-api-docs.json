@@ -3413,14 +3413,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Active brand lists",
+                        "description": "Active product generic name lists",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Active brand lists"
+                                            "example": "Active product generic name lists"
                                         },
                                         "data": {
                                             "properties": {
@@ -3430,28 +3430,19 @@
                                                         "properties": {
                                                             "id": {
                                                                 "type": "integer",
-                                                                "example": 1
+                                                                "example": 4
                                                             },
-                                                            "slug": {
-                                                                "type": "string",
-                                                                "example": "pfizer"
+                                                            "status": {
+                                                                "type": "boolean",
+                                                                "example": true
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Pfizer"
+                                                                "example": "dada"
                                                             },
-                                                            "image": {
+                                                            "slug": {
                                                                 "type": "string",
-                                                                "format": "url",
-                                                                "example": "http://192.168.100.23:8008/assets/img/default-brand-category.png"
-                                                            },
-                                                            "is_featured": {
-                                                                "type": "boolean",
-                                                                "example": false
-                                                            },
-                                                            "is_popular": {
-                                                                "type": "boolean",
-                                                                "example": true
+                                                                "example": "dada"
                                                             }
                                                         },
                                                         "type": "object"
@@ -3463,11 +3454,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 26
+                                                    "example": 1
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 26
+                                                    "example": 3
                                                 }
                                             },
                                             "type": "object"
@@ -3571,22 +3562,39 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Show generic product name.",
+                        "description": "Detail of product generic name.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "null",
-                                            "example": null
-                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "Detail of product generic name."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "status": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "dada"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "dada"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"

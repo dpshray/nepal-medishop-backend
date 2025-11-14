@@ -44,7 +44,8 @@ class ProductStoreRequest extends FormRequest
             'variations.*.platform_price' => 'required|numeric',
             'variations.*.platform_discount_price' => 'sometimes|nullable|numeric',
             'prescription_required' => 'sometimes',
-            'discount_percent' => 'sometimes|nullable|numeric|lte:100'
+            'discount_percent' => 'sometimes|nullable|numeric|lte:100',
+            'generic_product_name_id' => 'required|exists:generic_product_names,id'
         ];
         if ($product_id == null) {
             $rules = array_merge($rules, [
