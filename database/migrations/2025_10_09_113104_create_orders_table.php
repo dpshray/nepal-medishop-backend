@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('order_type');
             $table->foreignIdFor(User::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedBigInteger('assigned_vendor_id')->nullable();
-            $table->foreign('assigned_vendor_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('assigned_vendor_id')->references('id')->on('vendors')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('user_type');
             $table->string('name')->nullable();
             $table->string('email')->nullable();

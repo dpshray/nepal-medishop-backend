@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Product\GenericProductName;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->foreign('added_by')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('updated_by')->nullable()->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('brand_id')->constrained()->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignIdFor(GenericProductName::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('slug')->unique();
             $table->string('name');
             $table->text('description');
