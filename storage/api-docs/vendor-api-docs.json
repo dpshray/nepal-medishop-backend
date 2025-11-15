@@ -1132,26 +1132,26 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "stock": {
+                                    "product_uuid": {
+                                        "type": "string",
+                                        "example": "b12b5484-4f28-4390-ae92-cba32de96759"
+                                    },
+                                    "variations": {
                                         "type": "array",
                                         "items": {
                                             "properties": {
-                                                "product_uuid": {
-                                                    "type": "string",
-                                                    "example": "0fab9a1d-c7a9-4709-8426-d1c94d2c6b95"
-                                                },
                                                 "product_variation_id": {
                                                     "type": "integer",
-                                                    "example": 1
+                                                    "example": 19
                                                 },
                                                 "units_in_stock": {
                                                     "type": "integer",
-                                                    "example": 50
+                                                    "example": 10
                                                 },
                                                 "price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 500
+                                                    "example": 100
                                                 }
                                             },
                                             "type": "object"
