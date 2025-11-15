@@ -32,28 +32,24 @@ class OrderService
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
-            // Log::info($request->collect('products'));
+            Log::info($products);
             // Log::info('***********************************');
-            Log::info($request->products);
+            // Log::info($request->products);
             // Log::info('*************=========******************');
             // Log::info($request->collect('products'));
             $products_ordered = array_map(function ($item) use ($products) {
-                Log::info($item);
-
                 $product = $products[$item['product_slug']];
                 $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
-                // Log::info($product_variant);
+                if (empty($product_variant)) {
+                    throw ValidationException::withMessages([
+                        'products' => ['Invalid variant of product: ' . $product->name],
+                    ]);
+                }
                 $product_variant_price = $product_variant->platform_price;
                 $product_discount_percent = $product['discount_percent'];
                 $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
                 $quantity = $item['quantity'];
                 if ($product->prescription_required && empty($item['prescription_image'])) {
-                    // Log::info($item);
-                    // Log::info($product);
-                    // Log::info('----------------------------------------------');
-                    // Log::info($item);
-                    // Log::info('----------------------------------------------');
-                    // throw new ValidationException("Prescription is required");
                     throw ValidationException::withMessages([
                         'products' => ['Prescription is required for product: ' . $product->name],
                     ]);
