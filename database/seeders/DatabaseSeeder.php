@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BannerSeeder::class,
             UserSeeder::class,
+            BrandSeeder::class,
             GenericProductNameSeeder::class,
             HealthConditionSeeder::class,
             ProductSeeder::class,
@@ -52,37 +53,6 @@ class DatabaseSeeder extends Seeder
     }
 
     private function essentialsSeeders(){
-        $brands = [
-            ['id' => 1, 'name' => 'Pfizer', 'slug' => str()->slug('Pfizer', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 2, 'name' => 'Cipla', 'slug' => str()->slug('Cipla', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 3, 'name' => 'Sun Pharma', 'slug' => str()->slug('Sun Pharma', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 4, 'name' => 'GlaxoSmithKline', 'slug' => str()->slug('GlaxoSmithKline', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 5, 'name' => 'Bayer', 'slug' => str()->slug('Bayer', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 6, 'name' => 'Merck', 'slug' => str()->slug('Merck', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 7, 'name' => 'Novartis', 'slug' => str()->slug('Novartis', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 8, 'name' => 'Abbott', 'slug' => str()->slug('Abbott', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 9, 'name' => 'Johnson & Johnson', 'slug' => str()->slug('Johnson & Johnson', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 10, 'name' => 'Roche', 'slug' => str()->slug('Roche', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 11, 'name' => 'AstraZeneca', 'slug' => str()->slug('AstraZeneca', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 12, 'name' => 'Bristol-Myers Squibb', 'slug' => str()->slug('Bristol-Myers Squibb', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 13, 'name' => 'Sanofi', 'slug' => str()->slug('Sanofi', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 14, 'name' => 'Takeda', 'slug' => str()->slug('Takeda', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 15, 'name' => 'Gilead Sciences', 'slug' => str()->slug('Gilead Sciences', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 16, 'name' => 'Eli Lilly', 'slug' => str()->slug('Eli Lilly', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 17, 'name' => 'Boehringer Ingelheim', 'slug' => str()->slug('Boehringer Ingelheim', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 18, 'name' => 'Teva Pharmaceuticals', 'slug' => str()->slug('Teva Pharmaceuticals', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 19, 'name' => 'Mylan', 'slug' => str()->slug('Mylan', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 20, 'name' => 'Fresenius Kabi', 'slug' => str()->slug('Fresenius Kabi', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 21, 'name' => 'Mallinckrodt', 'slug' => str()->slug('Mallinckrodt', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 22, 'name' => 'Sandoz', 'slug' => str()->slug('Sandoz', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 23, 'name' => 'Viatris', 'slug' => str()->slug('Viatris', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 24, 'name' => 'Biocon', 'slug' => str()->slug('Biocon', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-            ['id' => 25, 'name' => 'Sunovion', 'slug' => str()->slug('Sunovion', '-'), 'is_featured' => fake()->boolean(50), 'is_popular' => fake()->boolean(50)],
-        ];
-
-        DB::table('brands')->insert($brands);
-
-
 
         $categories = [
             ['id' => 1, 'name' => 'Pain Relief', 'slug' => str()->slug('Pain Relief')],

@@ -33,7 +33,8 @@ class ProductSeeder extends Seeder
                     'rating' => round(mt_rand(0, 500) / 100, 1),
                     'discount_percent' => $apply_discount ? rand(1,5) : null,
                     'prescription_required' => fake()->boolean(50),
-                    'created_at' => fake()->dateTimeInInterval('now','-7 days')
+                    'created_at' => fake()->dateTimeInInterval('now','-7 days'),
+                    'generic_product_name_id' => rand(1,20)
                 ];
 
                 $categories = range(1, 15);#this is used same for health condition
