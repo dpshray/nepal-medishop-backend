@@ -44,7 +44,7 @@ class Vendor extends Model implements HasMedia
     }
 
     function scopeVerifiedAndActive($query) {
-        return $query->whereNotNull('verified_at')->whereRelation('user','email_verified_at','<>',null)->whereRelation('user','status',1);
+        return $query->whereRelation('user','email_verified_at','<>',null)->whereRelation('user','status',1);
     }
 
     public function registerMediaCollections(): void
