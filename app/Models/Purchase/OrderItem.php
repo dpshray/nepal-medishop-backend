@@ -48,6 +48,11 @@ class OrderItem extends Model implements HasMedia
         });
     }
 
+    public function item()
+    {
+        return $this->morphTo();
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::PRESCRIPTION_IMAGE)->singleFile();
