@@ -11,6 +11,7 @@ use App\Enums\Purchase\PaymentStatusEnum;
 use App\Models\LoyalityPoint;
 use App\Models\Traits\UuidModelTrait;
 use App\Models\User;
+use App\Models\Vendor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -114,7 +115,7 @@ class Order extends Model
     }
 
     function assignedVendor() {
-        return $this->belongsTo(User::class, 'assigned_vendor_id');
+        return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
     }
 
     function loyalityPoint() {
