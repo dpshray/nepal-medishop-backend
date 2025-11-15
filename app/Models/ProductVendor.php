@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Traits\UuidModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductVendor extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, UuidModelTrait;
     
     protected $fillable = [
+        'uuid',
         'product_id',
         'units_in_stock'
     ];
