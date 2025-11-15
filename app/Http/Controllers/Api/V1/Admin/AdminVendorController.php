@@ -445,8 +445,8 @@ class AdminVendorController extends Controller
      * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/admin/fetch-vendor-products/{uuid}",
-     *     summary="Vendor list",
-     *     description="Get vendor list.",
+     *     summary="Vendors product list",
+     *     description="Get vendor product list.",
      *     operationId="VendorProductList",
      *     tags={"Vendor"},
      *     @OA\Parameter(

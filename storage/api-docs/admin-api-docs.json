@@ -728,8 +728,8 @@
                 "tags": [
                     "Vendor"
                 ],
-                "summary": "Vendor list",
-                "description": "Get vendor list.",
+                "summary": "Vendors product list",
+                "description": "Get vendor product list.",
                 "operationId": "VendorProductList",
                 "parameters": [
                     {
