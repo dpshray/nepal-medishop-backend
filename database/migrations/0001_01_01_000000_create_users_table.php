@@ -18,7 +18,7 @@ return new class extends Migration
             $table->uuid('uuid');
             $table->char('user_type')->default(UserTypeEnum::USER->value);
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('mobile_number')->nullable();
             $table->string('password');
