@@ -264,14 +264,31 @@ class VendorProductController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
-     *                 property="stock",
+     *                 property="product_uuid",
+     *                 type="string",
+     *                 example="b12b5484-4f28-4390-ae92-cba32de96759"
+     *             ),
+     *             @OA\Property(
+     *                 property="variations",
      *                 type="array",
      *                 @OA\Items(
      *                     type="object",
-     *                     @OA\Property(property="product_uuid", type="string", example="0fab9a1d-c7a9-4709-8426-d1c94d2c6b95"),
-     *                     @OA\Property(property="product_variation_id", type="integer", example=1),
-     *                     @OA\Property(property="units_in_stock", type="integer", example=50),
-     *                     @OA\Property(property="price", type="number", format="float", example=500)
+     *                     @OA\Property(
+     *                         property="product_variation_id",
+     *                         type="integer",
+     *                         example=19
+     *                     ),
+     *                     @OA\Property(
+     *                         property="units_in_stock",
+     *                         type="integer",
+     *                         example=10
+     *                     ),
+     *                     @OA\Property(
+     *                         property="price",
+     *                         type="number",
+     *                         format="float",
+     *                         example=100
+     *                     )
      *                 )
      *             )
      *         )
