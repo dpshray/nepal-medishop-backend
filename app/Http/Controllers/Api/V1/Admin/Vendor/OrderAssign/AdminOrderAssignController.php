@@ -7,7 +7,9 @@ use App\Enums\Purchase\PaymentStatusEnum;
 use App\Enums\UserTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Vendor\Order\AdminVendorAssignabilityList;
+use App\Http\Resources\Admin\Vendor\Order\AdminVendorOrderAssignListResource;
 use App\Models\Package;
+use App\Models\Product;
 use App\Models\Purchase\Order;
 use App\Models\User;
 use App\Models\Vendor;
@@ -82,114 +84,62 @@ class AdminOrderAssignController extends Controller
      */
     public function getVendorsWithAssignability(Request $request, Order $order)
     {
-        /**
-         * Conditions of assignability:
-         * - Vendor must be verified and user must be verified and active
-         * - vendor_products status: 1
-         * - vendor_product_prices status: 1
-         * - units_in_stock must be greater than order quantity
-         */
-        if ($order->payment_status == PaymentStatusEnum::PAID || $order->status == OrderStatusEnum::DELIVERED) {
-            return $this->apiError('This order has already been delivered/paid.');
-        }
 
-        $order->load('orderItems');
-        $order_uuid = $order->uuid;
-        $search = $request->query('search');
-
-        // 1️⃣ Collect order items and total quantities (including packages)
-        $user_order = DB::select("
-        SELECT
-            u.item_variant_id,
-            SUM(u.quantity) AS total_quantity,
-            o.id AS order_id
-        FROM (
-            SELECT
-                oi.order_id,
-                oi.item_type,
-                oi.item_variant_id,
-                oi.quantity
-            FROM order_items AS oi
-            WHERE oi.item_type != 'App\\\\Models\\\\Package'
-
-            UNION ALL
-
-            SELECT
-                oi.order_id,
-                oi.item_type,
-                pp.product_variation_id AS item_variant_id,
-                (oi.quantity * pp.quantity) AS quantity
-            FROM order_items AS oi
-            JOIN packages AS p
-                ON oi.item_slug = p.slug
-            JOIN package_products AS pp
-                ON p.id = pp.package_id
-            WHERE oi.item_type = 'App\\\\Models\\\\Package'
-        ) AS u
-        JOIN orders AS o
-            ON u.order_id = o.id
-        WHERE o.uuid = ?
-        GROUP BY u.item_variant_id, o.id
-    ", [$order_uuid]);
-
-        $user_order = collect($user_order)->keyBy('item_variant_id');
-
-        $vendors = Vendor::VerifiedAndActive()
-            ->select('id', 'uuid', 'user_id', 'store_name')
-            ->with([
-                'user',
-                'vendorProducts' => fn($qry) => $qry
-                    ->select('id', 'status', 'is_approved', 'vendor_id')
-                    ->with([
-                        'vendorPrices' => fn($q) => $q
-                            ->select('status', 'product_vendor_id', 'product_variation_id', 'units_in_stock')
-                            ->active()
-                    ])
-                    ->active()
-            ])
-            ->when($search, function ($qry) use ($search) {
-                $qry->where(function ($sub) use ($search) {
-                    $sub->where('store_name', 'like', "%{$search}%")
-                        ->orWhereHas('user', function ($userQry) use ($search) {
-                            $userQry->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        });
-                });
+        $package = $order->orderItems()->with(['item.packageProducts'])->whereRelation('item', 'item_type', Package::class)->get()->map(function ($order_item) {
+            return $order_item->item->packageProducts->map(function ($pkg_pdt) use ($order_item) {
+                return [
+                    'quantity' => $order_item->quantity * $pkg_pdt->quantity,
+                    'item_variant_id' => $pkg_pdt->product_variation_id
+                ];
+            });
+        })
+            ->flatten(1)
+            ->groupBy('item_variant_id')
+            ->map(function ($group) {
+                return [
+                    'item_variant_id' => $group->first()['item_variant_id'],
+                    'quantity' => $group->sum('quantity'),
+                ];
             })
-            ->get();
+            ->values()
+            ->toArray();
+        $orders = $order->orderItems()->where('item_type', Product::class)->get()->map(
+            fn($item) => [
+                'quantity' => $item->quantity,
+                'item_variant_id' => $item->item_variant_id
+            ]
+        )
+            ->merge($package)
+            ->groupBy('item_variant_id')
+            ->map(function ($group) {
+                return [
+                    'item_variant_id' => (int)$group->first()['item_variant_id'],
+                    'quantity' => $group->sum('quantity'),
+                ];
+            })
+            ->values();
+        // dd($product);
+        $matchedVendors = collect(); // final result collection
 
-        // 3️⃣ Filter only assignable vendors
-        $assignable_vendors = $vendors->filter(function ($vendor) use ($user_order) {
-            foreach ($user_order as $variant_id => $order_item) {
-                $has_variant = $vendor->vendorProducts->contains(function ($product) use ($variant_id, $order_item) {
-                    $prices = $product->vendorPrices->where('product_variation_id', $variant_id);
-                    return $prices->isNotEmpty() && $prices->first()->units_in_stock > $order_item->total_quantity;
+        $vendor = Vendor::with(['vendorProductPrices','user'])
+            ->verifiedAndActive()
+            ->chunk(200, function ($vendors) use ($orders, &$matchedVendors) {
+
+                $filtered = $vendors->filter(function ($vendor) use ($orders) {
+                    return $orders->every(function ($item) use ($vendor) {
+
+                        $temp = $vendor->vendorProductPrices
+                            ->firstWhere('product_variation_id', $item['item_variant_id']);
+
+                        return $temp && $temp->units_in_stock >= $item['quantity'];
+                    });
                 });
 
-                if (!$has_variant) {
-                    return false; // If any variant not available, vendor is not assignable
-                }
-            }
-
-            return true;
-        });
-
-        // 4️⃣ Format data — return all (no pagination)
-        $items = $assignable_vendors->map(function ($vendor) {
-            return [
-                'user_name' => $vendor->user->name,
-                'store_name' => $vendor->store_name,
-                'vendor_uuid' => $vendor->uuid,
-                'is_assignable' => true,
-            ];
-        })->values();
-
-        $data = [
-            'items' => $items,
-            'total_items' => $items->count(),
-        ];
-
-        return $this->apiSuccess('List of vendors with order assignability status', $data);
+                $matchedVendors = $matchedVendors->merge($filtered);
+            });
+        $total_items = count($matchedVendors);
+        $items = AdminVendorOrderAssignListResource::collection($matchedVendors);
+        return $this->apiSuccess('List of vendors with order assignability status', compact('total_items','items'));
     }
 
 
@@ -258,7 +208,7 @@ class AdminOrderAssignController extends Controller
         $order = Order::where('uuid', $order_uuid)
             ->with('orderItems') // load order items
             ->firstOrFail();
-        $vendor = Vendor::with(['vendorProductPrices','user'])->where('uuid', $vendor_uuid)->firstOrFail();
+        $vendor = Vendor::with(['vendorProductPrices', 'user'])->where('uuid', $vendor_uuid)->firstOrFail();
         // Loop
         foreach ($order->orderItems as $item) {
             // Skip check for packages
@@ -293,9 +243,9 @@ class AdminOrderAssignController extends Controller
         }
         $order->update(['assigned_vendor_id' => $vendor->user->id]);
         VendorNotification::create([
-            'vendor_id'=>$vendor->user->id,
-            'title'=>'New Order Assigned',
-            'body'=>"An order with ID {$order->id} has been assigned to you by the admin."
+            'vendor_id' => $vendor->user->id,
+            'title' => 'New Order Assigned',
+            'body' => "An order with ID {$order->id} has been assigned to you by the admin."
         ]);
         return $this->apiSuccess("Order has been assigned to {$vendor->user->name}");
     }
