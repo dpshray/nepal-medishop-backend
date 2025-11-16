@@ -29,14 +29,12 @@ class VendorProductSeeder extends Seeder
                     $vendor_product = $user->vendor->vendorProducts()->create([
                         'is_approved' => true,
                         'product_id' => $rp->id,
-                        'is_featured' => fake()->boolean(50),
                     ]);
                     $variations = $rp->variations;
                     $temp = [];
                     foreach ($variations as $variation) {
                         $price = rand(1000, 5000);
                         $temp[] = [
-                            'status' => true,
                             'product_variation_id' => $variation->id,
                             'price' => $price,
                             'units_in_stock' => rand(50, 200)
