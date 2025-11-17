@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('order_code');
             $table->string('order_type');
             $table->foreignIdFor(User::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->unsignedBigInteger('assigned_vendor_id')->nullable();
+            $table->foreign('assigned_vendor_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->unsignedBigInteger('used_coupon_code_id')->nullable();
+            $table->foreign('used_coupon_code_id')->references('id')->on('coupon_codes')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('user_type');
             $table->string('name')->nullable();
             $table->string('email')->nullable();
