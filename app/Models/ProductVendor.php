@@ -22,8 +22,6 @@ class ProductVendor extends Model
         'deleted_at'
     ];
 
-    public $timestamps = false;
-
     function vendorPrices()
     {
         return $this->hasMany(VendorProductPrice::class);
