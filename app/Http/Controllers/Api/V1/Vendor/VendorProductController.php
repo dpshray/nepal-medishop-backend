@@ -97,6 +97,7 @@ class VendorProductController extends Controller
         $pagination = Product::with(['brand', 'variations'])
             ->when($search, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
             ->active()
+            ->latest()
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => VendorProductListResource::collection($item))->data;
         return $this->apiSuccess('Available product lists.', $data);
@@ -234,6 +235,7 @@ class VendorProductController extends Controller
             ->vendorProducts()
             ->with(['product.brand', 'vendorPrices.variation'])
             ->when($search, fn($qry) => $qry->wherehas('product', fn($qry) => $qry->whereLike('name', '%'.$search.'%')))
+            ->latest('updated_at')
             ->orderBy('id','DESC')
             ->paginate($per_page);
         // Log::info($pagination);
@@ -330,25 +332,13 @@ class VendorProductController extends Controller
             return $this->apiError('Variation does not belong to this product');
         }
         DB::transaction(function () use($form_data, $product){
-            $vendor_products = Auth::user()->vendor->vendorProducts();
-            $vendor_product = $vendor_products->firstOrCreate(['product_id' => $product->id]);
-            foreach ($form_data['variations'] as $variation) {
-                $vendor_prices = $vendor_product->vendorPrices();
-                $vendor_price_already_exists = $vendor_prices->firstWhere('product_variation_id', $variation['product_variation_id']);
-                if ($vendor_price_already_exists) {
-                    $variation['units_in_stock'] = $vendor_price_already_exists->units_in_stock + $variation['units_in_stock']; 
-                    // Log::info($vendor_price_already_exists);
-                    // Log::info('-----------------------------');
-                    // Log::info($variation);
-                    $vendor_price_already_exists->update($variation);
-                }else{
-                    // Log::info('else');
-                    $vendor_prices->create($variation);
-                }
-            }
             array_map(function($variation) use($product){
                 $vendor_products = Auth::user()->vendor->vendorProducts();
-                $vendor_product = $vendor_products->firstOrCreate(['product_id' => $product->id]);
+                $vendor_product = $vendor_products->updateOrCreate([
+                    'product_id' => $product->id 
+                ],[
+                    'is_approved' => null
+                ]);
 
                 $vendor_prices = $vendor_product->vendorPrices();
                 $vendor_price_already_exists = $vendor_prices->firstWhere('product_variation_id', $variation['product_variation_id']);
@@ -356,11 +346,12 @@ class VendorProductController extends Controller
                     'units_in_stock' => $variation['units_in_stock'],
                     'price' => $variation['price'],
                     'manufacturer' => $variation['variant_manufacturer'],
-                    'batch_no' => $variation['variant_batch_no'],
+                    'batch_number' => $variation['variant_batch_no'],
                     'expiry_date' => $variation['variant_expiry_date'],
                 ];
                 if ($vendor_price_already_exists) {
-                    $variation['units_in_stock'] = $vendor_price_already_exists->units_in_stock + $variation['units_in_stock'];
+                    Log::info([$vendor_price_already_exists->units_in_stock , $variation['units_in_stock']]);
+                    $variation_transform['units_in_stock'] = $vendor_price_already_exists->units_in_stock + $variation['units_in_stock'];
                     // Log::info($vendor_price_already_exists);
                     // Log::info('-----------------------------');
                     // Log::info($variation);
