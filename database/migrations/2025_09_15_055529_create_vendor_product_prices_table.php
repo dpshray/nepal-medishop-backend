@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->unsignedSmallInteger('units_in_stock')->default(0);
             $table->string('batch_number');
-            $table->string('manufacture');
+            $table->text('manufacture');
             $table->date('expiry_date');
             $table->softDeletes();
         });
