@@ -13,7 +13,9 @@ class ProductVendor extends Model
     protected $fillable = [
         'uuid',
         'product_id',
-        'units_in_stock'
+        'units_in_stock',
+        'vendor_id',
+        'is_approved'
     ];
 
     protected $hidden = [

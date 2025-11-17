@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Product\GenericProductName;
 use App\Models\Purchase\OrderItem;
 use App\Models\Traits\SlugTrait;
 use App\Models\Traits\UuidModelTrait;
@@ -91,6 +92,10 @@ class Product extends Model implements HasMedia
 
     function orderItem() {
         return $this->hasMany(OrderItem::class,'item_id')->where('item_type', Product::class);
+    }
+
+    function genericProductName() {
+        return $this->belongsTo(GenericProductName::class);
     }
 
     public function registerMediaCollections(): void

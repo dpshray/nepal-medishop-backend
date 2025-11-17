@@ -10,19 +10,28 @@ class ProductVariation extends Model
     use SoftDeletes;
     protected $dates = ['deleted_at'];
     public $timestamps = false;
-    
+
+    protected function casts(): array
+    {
+        return [
+            'expiry_date' => 'date'
+        ];
+    }
+
     protected $fillable = [
         'name',
         'size_value',
         'size_unit',
         'platform_price',
-        'platform_discount_price'
+        'platform_discount_price',
+        'batch_number',
+        'manufacture',
+        'expiry_date'
     ];
     
     function product(){
         return $this->belongsTo(Product::class);
     }
-
 
     function getOriginalPriceAttribute(): array
     {
