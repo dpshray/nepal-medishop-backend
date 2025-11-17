@@ -41,7 +41,8 @@ class Order extends Model
         'gift_wrap_remarks',
         'gift_wrap_charge',
         'assigned_vendor_id',
-        'created_at'
+        'created_at',
+        'used_coupon_code_id'
     ];
 
     protected $casts = [
@@ -71,7 +72,7 @@ class Order extends Model
                 }
                 $order->loyalityPoint()->delete();
             }elseif ($order->status == OrderStatusEnum::DELIVERED) {
-                if ($user && $order->loyalityPoint()->doesntExist()) {                    
+                if ($user && $order->loyalityPoint()->doesntExist()) {
                     if ($latest_approved_loyality_points) { # if previous approved loyality point exists
                         $balance_after = $latest_approved_loyality_points->balance_after + $earned_points;
                     }
@@ -81,7 +82,7 @@ class Order extends Model
                         $latest_approved_loyality_points,
                         $balance_after,
                     ]); */
-                    foreach ($order->orderItems as $order_item) {                        
+                    foreach ($order->orderItems as $order_item) {
                         $order->assignedVendor
                             ->vendor
                             ->vendorProductPrices()
@@ -109,7 +110,7 @@ class Order extends Model
     }
 
     #ID of user that has ordered
-    function user() { 
+    function user() {
         return $this->belongsTo(User::class);
     }
 
