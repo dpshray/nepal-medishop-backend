@@ -16,7 +16,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();            
+            $table->unsignedBigInteger('added_by_admin_id')->nullable();
+            $table->foreign('added_by_admin_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('store_name');
             $table->text('store_description')->nullable();
             $table->string('location');

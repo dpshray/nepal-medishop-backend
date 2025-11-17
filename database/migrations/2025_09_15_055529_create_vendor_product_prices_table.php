@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('product_variation_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->decimal('price', 10, 2);
             $table->unsignedSmallInteger('units_in_stock')->default(0);
+            $table->string('batch_number');
+            $table->string('manufacture');
+            $table->date('expiry_date');
             $table->softDeletes();
         });
     }

@@ -28,7 +28,7 @@ class VendorProductSeeder extends Seeder
                 foreach ($random_product as $rp) {
                     $vendor_product = $user->vendor->vendorProducts()->create([
                         'is_approved' => true,
-                        'product_id' => $rp->id,
+                        'product_id' => $rp->id
                     ]);
                     $variations = $rp->variations;
                     $temp = [];
@@ -37,7 +37,10 @@ class VendorProductSeeder extends Seeder
                         $temp[] = [
                             'product_variation_id' => $variation->id,
                             'price' => $price,
-                            'units_in_stock' => rand(50, 200)
+                            'units_in_stock' => rand(50, 200),
+                            'batch_number' => fake()->unixTime(),
+                            'manufacture' => fake()->address(),
+                            'expiry_date' => fake()->dateTimeBetween('-1 years', '5 years')
                         ];
                     } 
                     $vendor_product->vendorPrices()->createMany($temp);

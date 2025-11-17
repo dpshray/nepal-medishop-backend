@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Constants\VendorContants;
 use App\Enums\UserTypeEnum;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -156,7 +157,7 @@ class DatabaseSeeder extends Seeder
         DB::table('tags')->insert($tags);
 
         $faker = Faker::create();
-        User::create([
+        $admin = User::create([
             'status' => 1,
             'id' => UserTypeEnum::ADMIN->value,
             'uuid' => $faker->uuid(),
@@ -166,7 +167,27 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'),
             'user_type' => UserTypeEnum::ADMIN->value,
             'email_verified_at' => now(),
+        ])
+        ->vendor()
+        ->create([
+            'verified_at' => now(),
+            'store_name' => $faker->company(),
+            'store_description' => $faker->realText(350),
+            'location' => $faker->address(),
+            'country' => 'Nepal',
+            'state' => $faker->state(),
+            'district' => $faker->city(),
+            'municipality' => $faker->streetAddress(),
+            'postal_code' => $faker->postcode(),
+            'bank_name' => $faker->company(),
+            'bank_account_holder_name' => $faker->name(),
+            'bank_account_number' => $faker->creditCardNumber(),
         ]);
+        $image = public_path('assets/img/company-registration-certificate.jpg');
+        clone ($admin)->addMedia($image)->preservingOriginal()->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
+        clone ($admin)->addMedia($image)->preservingOriginal()->toMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
+        clone ($admin)->addMedia($image)->preservingOriginal()->toMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
+
         User::create([
             'status' => 1,
             'id' => UserTypeEnum::USER->value,

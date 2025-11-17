@@ -11,6 +11,9 @@ class VendorProductPrice extends Model
         "product_variation_id",
         "price",
         "units_in_stock",
+        "batch_number",
+        "manufacture",
+        "expiry_date"
     ];
 
     protected $hidden = [
