@@ -5,6 +5,7 @@ namespace App\Http\Resources\Admin\Product;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class AdminProductDetailResource extends JsonResource
 {
@@ -21,6 +22,10 @@ class AdminProductDetailResource extends JsonResource
             'uuid' => $this->uuid,
             'slug' => $this->slug,
             'brand' => $this->whenLoaded('brand', fn() => ['id' => $this->brand->id, 'name' => $this->brand->name]),
+            'generic_product' => [
+                'generic_product_name' => $this->genericProductName->name, 
+                'generic_product_id' => $this->genericProductName->id
+            ],
             'description' => $this->description,
             'added_date' => $this->created_at,
             'prescription_required' => (bool) $this->prescription_required,
@@ -36,7 +41,7 @@ class AdminProductDetailResource extends JsonResource
                 'admin_price' => (float)$item->platform_price,
                 'units_in_stock' => $item->vendorProductPrices->sum('units_in_stock')
             ])),
-            'health_conditions' => $this->healthConditions->map(fn($item) => ['name' => $item->name]),
+            'health_conditions' => $this->healthConditions->map(fn($item) => ['name' => $item->name, 'id' => $item->id]),
             'featured_image' => $this->whenLoaded('media', fn() => [
                 'id' => $this->getFirstMedia(Product::PRODUCT_FEATURE)->id,
                 'url' => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)
@@ -44,7 +49,7 @@ class AdminProductDetailResource extends JsonResource
             'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Product::PRODUCT_GALLERY)->map(fn($item) => [
                 'id' => $item->id,
                 'url' => $item->getUrl()
-            ]))
+            ])),
         ];
     }
 }
