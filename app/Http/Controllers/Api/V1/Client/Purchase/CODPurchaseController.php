@@ -37,17 +37,19 @@ class CODPurchaseController extends Controller
      *                 @OA\Property(property="description", type="string", example="some description of this order COD"),
      *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
      *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper."),
-     *     
+     *
+     *                 @OA\Property(property="code", type="string", example="22.Test"),
+     *
      *                 @OA\Property(property="products[0][product_slug]", type="string", example="unde-a-maiores-et-omnis"),
      *                 @OA\Property(property="products[0][variant_id]", type="integer", example=2),
      *                 @OA\Property(property="products[0][quantity]", type="integer", example=1),
      *                 @OA\Property(property="products[0][prescription_image]", type="string", format="binary"),
-     *     
+     *
      *                 @OA\Property(property="products[1][product_slug]", type="string", example="lorem-ipsum-product"),
      *                 @OA\Property(property="products[1][variant_id]", type="integer", example=5),
      *                 @OA\Property(property="products[1][quantity]", type="integer", example=3),
      *                 @OA\Property(property="products[1][prescription_image]", type="string", format="binary"),
-     *     
+     *
      *                 @OA\Property(property="packages[0][package_slug]", type="string", example="deluxe-box"),
      *                 @OA\Property(property="packages[0][quantity]", type="integer", example=1),
      *                 @OA\Property(property="packages[1][package_slug]", type="string", example="super-box"),
@@ -73,7 +75,7 @@ class CODPurchaseController extends Controller
      *                 @OA\Property(property="gift_wrap_charge", type="integer", example=300),
      *                 @OA\Property(property="latitude", type="string", example="77.52144"),
      *                 @OA\Property(property="longitude", type="string", example="18.21554"),
-     *     
+     *
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
@@ -94,7 +96,7 @@ class CODPurchaseController extends Controller
      * )
      */
     function regularOrder(CODRequest $request)
-    {       
+    {
         if (!$request->hasAny(['products', 'packages'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }
@@ -127,17 +129,17 @@ class CODPurchaseController extends Controller
      *                 @OA\Property(property="description", type="string", example="some description of this kitbag order COD"),
      *                 @OA\Property(property="gift_wrap", type="boolean", example=false),
      *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper with pink ribbon."),
-     *     
+     *
      *                 @OA\Property(property="products[0][product_slug]", type="string", example="unde-a-maiores-et-omnis"),
      *                 @OA\Property(property="products[0][variant_id]", type="integer", example=2),
      *                 @OA\Property(property="products[0][quantity]", type="integer", example=1),
      *                 @OA\Property(property="products[0][prescription_image]", type="string", format="binary"),
-     *     
+     *
      *                 @OA\Property(property="products[1][product_slug]", type="string", example="lorem-ipsum-product"),
      *                 @OA\Property(property="products[1][variant_id]", type="integer", example=5),
      *                 @OA\Property(property="products[1][quantity]", type="integer", example=3),
      *                 @OA\Property(property="products[1][prescription_image]", type="string", format="binary"),
-     *     
+     *
      *                 @OA\Property(property="packages[0][package_slug]", type="string", example="deluxe-box"),
      *                 @OA\Property(property="packages[0][quantity]", type="integer", example=1),
      *                 @OA\Property(property="packages[1][package_slug]", type="string", example="super-box"),
