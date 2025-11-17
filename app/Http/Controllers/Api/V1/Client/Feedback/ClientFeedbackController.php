@@ -78,6 +78,9 @@ class ClientFeedbackController extends Controller
     function store(ClientFeedbackRequest $request)
     {
         $user = Auth::user();
+        if (!$user) {
+            return $this->apiError('Unauthenticated',401);
+        }
         $feedback = Feedback::create([
             'user_id' => $user->id,
             'feedback' => $request->feedback,
