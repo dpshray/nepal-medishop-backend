@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Product\ProductMediaStoreRequest;
 use App\Http\Requests\Admin\Product\ProductStoreRequest;
+use App\Http\Requests\Admin\Product\ProductupdateRequest;
 use App\Http\Resources\Admin\Product\AdminProductDetailResource;
 use App\Http\Resources\Admin\Product\AdminProductList;
 use App\Http\Resources\Admin\Product\AdminProductResource;
@@ -151,13 +152,29 @@ class AdminProductController extends Controller
      */
     public function store(ProductStoreRequest $request)
     {
-        // dd($request->all());
         DB::transaction(function () use($request){
             $product = $request->safe()->merge(['added_by' => Auth::id()])->all();
             $product = Product::create($product);
+            $pv = $product->productVendors()->create(['is_approved' => true, 'vendor_id' => Auth::id()]);
             $product->categories()->attach($request->categories);
             $product->tags()->attach($request->tags);
-            $product->variations()->createMany($request->variations);
+
+            collect($request->variations)->each(function($item) use($product, $pv){
+                $product->variations()->create([
+                    'name' => $item['variant_name'],
+                    'platform_price' => $item['variant_price'],
+                    'size_value' => $item['variant_stock'],
+                    'size_unit' => $item['variant_unit'],
+                ])->vendorProductPrices()->create([
+                    'product_vendor_id' => $pv->id,
+                    'units_in_stock' => $item["variant_stock"],
+                    'expiry_date' => $item["variant_expiry_date"],
+                    'batch_number' => $item["variant_batch_no"],
+                    'manufacture' => $item["variant_manufacturer"],
+                    'price' => $item['variant_price']
+                ]);
+            });
+            
             $product->healthConditions()->attach($request->health_condition);
             $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
             foreach ($request->file('gallery_images') as $GI) {
@@ -277,7 +294,7 @@ class AdminProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductStoreRequest $request, Product $product)
+    public function update(ProductupdateRequest $request, Product $product)
     {
         // dd($request->validated());
         DB::transaction(function () use ($request, $product) {

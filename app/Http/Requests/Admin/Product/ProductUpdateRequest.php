@@ -6,7 +6,7 @@ use App\Enums\ProductUnitEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ProductStoreRequest extends FormRequest
+class ProductupdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -43,9 +43,6 @@ class ProductStoreRequest extends FormRequest
             'variations.*.variant_unit' => ['required', Rule::in(array_column(ProductUnitEnum::cases(), 'value'))],
             'variations.*.variant_price' => 'required|numeric',
             'variations.*.discount_percent' => 'sometimes|nullable|numeric',
-            'variations.*.variant_batch_no' => 'required|string|max:255',
-            'variations.*.variant_manufacturer' => 'required|string|max:255',
-            'variations.*.variant_expiry_date' => 'required|date|date_format:Y-m-d',
             'prescription_required' => 'sometimes',
             'discount_percent' => 'sometimes|nullable|numeric|lte:100',
             'generic_product_name_id' => 'required|exists:generic_product_names,id'
@@ -60,7 +57,8 @@ class ProductStoreRequest extends FormRequest
         return $rules;
     }
 
-    function messages(){
+    function messages()
+    {
         return [
             'categories.*.distinct' => 'Categories has a duplicate values.',
             'tags.*.distinct' => 'Tags has a duplicate values.',
@@ -87,6 +85,5 @@ class ProductStoreRequest extends FormRequest
         $this->merge([
             'prescription_required' => filter_var($this->prescription_required, FILTER_VALIDATE_BOOLEAN) ? 1 : 0
         ]);
-        
     }
 }
