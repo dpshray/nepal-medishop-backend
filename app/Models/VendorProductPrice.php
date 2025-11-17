@@ -22,6 +22,13 @@ class VendorProductPrice extends Model
 
     public $timestamps = false;
 
+    protected static function booted()
+    {
+        static::updated(function ($vpp) {
+            $vpp->ProductVendor->touch(); // updates updated_at timestamp
+        });
+    }
+
     function ProductVendor()
     {
         return $this->belongsTo(ProductVendor::class);
