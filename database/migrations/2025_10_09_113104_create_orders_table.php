@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->uuid();
+            $table->boolean('is_order_completely_assigned')->default(false);
             $table->string('order_code');
             $table->string('order_type');
             $table->foreignIdFor(User::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
