@@ -27,6 +27,9 @@ class VendorProductStockStoreRequest extends FormRequest
             'variations.*.product_variation_id' => 'required|exists:product_variations,id',
             'variations.*.units_in_stock' => 'required|numeric',
             'variations.*.price' => 'required|numeric',
+            'variations.*.variant_batch_no' => 'required|string|max:255',
+            'variations.*.variant_expiry_date' => 'required|string|max:255',
+            'variations.*.variant_manufacturer' => 'required|string|max:255',
         ];
     }
 }

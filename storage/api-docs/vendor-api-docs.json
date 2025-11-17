@@ -1112,7 +1112,7 @@
                     "Product"
                 ],
                 "summary": "Add stock for vendor products",
-                "description": "Add stock details for product variations",
+                "description": "Add stock details for product variations.NOTE: creates if variant does not exists but if it does adds that stock",
                 "operationId": "AddVendorStock",
                 "parameters": [
                     {
@@ -1152,6 +1152,18 @@
                                                     "type": "number",
                                                     "format": "float",
                                                     "example": 100
+                                                },
+                                                "variant_manufacturer": {
+                                                    "type": "string",
+                                                    "example": "some menufacture detail goes here"
+                                                },
+                                                "variant_batch_no": {
+                                                    "type": "string",
+                                                    "example": "12ED311"
+                                                },
+                                                "variant_expiry_date": {
+                                                    "type": "sate",
+                                                    "example": "2025-11-17"
                                                 }
                                             },
                                             "type": "object"
@@ -1197,8 +1209,8 @@
                 "tags": [
                     "Product"
                 ],
-                "summary": "Get all currently available products.",
-                "description": "Get all currently available products.",
+                "summary": "Get details of a vendors product.",
+                "description": "Get details of a vendors product.",
                 "operationId": "VendorProductDetail",
                 "parameters": [
                     {
@@ -1214,20 +1226,28 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Vendor product list resource",
+                        "description": "Vendor product detail response",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Vendor product list resource"
+                                            "example": "Vendor product list detail."
                                         },
                                         "data": {
                                             "properties": {
+                                                "accepted": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
                                                 "product_name": {
                                                     "type": "string",
-                                                    "example": "Sed quam error adipisci quia qui."
+                                                    "example": "Omnis ab beatae animi sunt."
+                                                },
+                                                "product_detail": {
+                                                    "type": "string",
+                                                    "example": "<p>Aspernatur dolorum eos deleniti...</p>"
                                                 },
                                                 "prescription_required": {
                                                     "type": "boolean",
@@ -1235,7 +1255,7 @@
                                                 },
                                                 "brand_name": {
                                                     "type": "string",
-                                                    "example": "Sun Pharma"
+                                                    "example": "AstraZeneca"
                                                 },
                                                 "variations": {
                                                     "type": "array",
@@ -1251,16 +1271,28 @@
                                                             },
                                                             "size_unit": {
                                                                 "type": "string",
-                                                                "example": "mcg"
+                                                                "example": "strip"
                                                             },
                                                             "units_in_stock": {
                                                                 "type": "integer",
-                                                                "example": 10
+                                                                "example": 130
                                                             },
                                                             "vendor_price": {
                                                                 "type": "number",
-                                                                "format": "float",
-                                                                "example": 1000
+                                                                "example": 2451
+                                                            },
+                                                            "batch_number": {
+                                                                "type": "integer",
+                                                                "example": 633036334
+                                                            },
+                                                            "manufacture": {
+                                                                "type": "string",
+                                                                "example": "5368 Elna Viaduct Apt. 594\\nSouth Leilanifurt, LA 59129"
+                                                            },
+                                                            "expiry_date": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2027-11-24"
                                                             }
                                                         },
                                                         "type": "object"

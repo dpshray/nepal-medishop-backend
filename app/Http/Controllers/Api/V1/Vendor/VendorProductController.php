@@ -249,7 +249,7 @@ class VendorProductController extends Controller
      *     security={{"sanctum": {}}},
      *     path="/vendor/product/{uuid}",
      *     summary="Add stock for vendor products",
-     *     description="Add stock details for product variations",
+     *     description="Add stock details for product variations.NOTE: creates if variant does not exists but if it does adds that stock",
      *     operationId="AddVendorStock",
      *     tags={"Product"},
      *     @OA\Parameter(
@@ -288,6 +288,21 @@ class VendorProductController extends Controller
      *                         type="number",
      *                         format="float",
      *                         example=100
+     *                     ),
+     *                     @OA\Property(
+     *                         property="variant_manufacturer",
+     *                         type="string",
+     *                         example="some menufacture detail goes here"
+     *                     ),                     
+     *                     @OA\Property(
+     *                         property="variant_batch_no",
+     *                         type="string",
+     *                         example="12ED311"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="variant_expiry_date",
+     *                         type="sate",
+     *                         example="2025-11-17"
      *                     )
      *                 )
      *             )
@@ -331,6 +346,30 @@ class VendorProductController extends Controller
                     $vendor_prices->create($variation);
                 }
             }
+            array_map(function($variation) use($product){
+                $vendor_products = Auth::user()->vendor->vendorProducts();
+                $vendor_product = $vendor_products->firstOrCreate(['product_id' => $product->id]);
+
+                $vendor_prices = $vendor_product->vendorPrices();
+                $vendor_price_already_exists = $vendor_prices->firstWhere('product_variation_id', $variation['product_variation_id']);
+                $variation_transform = [
+                    'units_in_stock' => $variation['units_in_stock'],
+                    'price' => $variation['price'],
+                    'manufacturer' => $variation['variant_manufacturer'],
+                    'batch_no' => $variation['variant_batch_no'],
+                    'expiry_date' => $variation['variant_expiry_date'],
+                ];
+                if ($vendor_price_already_exists) {
+                    $variation['units_in_stock'] = $vendor_price_already_exists->units_in_stock + $variation['units_in_stock'];
+                    // Log::info($vendor_price_already_exists);
+                    // Log::info('-----------------------------');
+                    // Log::info($variation);
+                    $vendor_price_already_exists->update($variation_transform);
+                } else {
+                    // Log::info('else');
+                    $vendor_prices->create($variation_transform);
+                }
+            }, $form_data['variations']);
         });
         return $this->apiSuccess('Stock added successfully.');
     }
@@ -363,8 +402,8 @@ class VendorProductController extends Controller
      * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/vendor/product-detail/{uuid}",
-     *     summary="Get all currently available products.",
-     *     description="Get all currently available products.",
+     *     summary="Get details of a vendors product.",
+     *     description="Get details of a vendors product.",
      *     operationId="VendorProductDetail",
      *     tags={"Product"},
      *     @OA\Parameter(
@@ -376,15 +415,23 @@ class VendorProductController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Vendor product list resource",
+     *         description="Vendor product detail response",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Vendor product list resource"),
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Vendor product list detail."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="product_name", type="string", example="Sed quam error adipisci quia qui."),
+     *                 @OA\Property(property="accepted", type="boolean", example=true),
+     *                 @OA\Property(property="product_name", type="string", example="Omnis ab beatae animi sunt."),
+     *                 @OA\Property(
+     *                     property="product_detail",
+     *                     type="string",
+     *                     example="<p>Aspernatur dolorum eos deleniti...</p>"
+     *                 ),
      *                 @OA\Property(property="prescription_required", type="boolean", example=true),
-     *                 @OA\Property(property="brand_name", type="string", example="Sun Pharma"),
+     *                 @OA\Property(property="brand_name", type="string", example="AstraZeneca"),
+     *
      *                 @OA\Property(
      *                     property="variations",
      *                     type="array",
@@ -392,9 +439,12 @@ class VendorProductController extends Controller
      *                         type="object",
      *                         @OA\Property(property="variant_name", type="string", example="Variant-1"),
      *                         @OA\Property(property="size_value", type="string", example="100.00"),
-     *                         @OA\Property(property="size_unit", type="string", example="mcg"),
-     *                         @OA\Property(property="units_in_stock", type="integer", example=10),
-     *                         @OA\Property(property="vendor_price", type="number", format="float", example=1000)
+     *                         @OA\Property(property="size_unit", type="string", example="strip"),
+     *                         @OA\Property(property="units_in_stock", type="integer", example=130),
+     *                         @OA\Property(property="vendor_price", type="number", example=2451),
+     *                         @OA\Property(property="batch_number", type="integer", example=633036334),
+     *                         @OA\Property(property="manufacture", type="string", example="5368 Elna Viaduct Apt. 594\nSouth Leilanifurt, LA 59129"),
+     *                         @OA\Property(property="expiry_date", type="string", format="date", example="2027-11-24")
      *                     )
      *                 )
      *             ),

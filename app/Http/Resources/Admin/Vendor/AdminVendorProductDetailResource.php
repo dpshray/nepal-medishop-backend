@@ -28,7 +28,11 @@ class AdminVendorProductDetailResource extends JsonResource
                     "size_value" => $item->variation->size_value,
                     "size_unit" => $item->variation->size_unit,
                     "units_in_stock" => (int) $item->units_in_stock,
-                    "vendor_price" => (float) $item->price
+                    "vendor_price" => (float) $item->price,
+                    "batch_number" => (int)$item->batch_number,
+                    "manufacture" => $item->manufacture,
+                    "expiry_date" => $item->expiry_date,
+
                 ];
             })
             
