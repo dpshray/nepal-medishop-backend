@@ -64,7 +64,6 @@ class AdminGenericProductNameController extends Controller
      *                     @OA\Items(
      *                         type="object",
      *                         @OA\Property(property="id", type="integer", example=4),
-     *                         @OA\Property(property="status", type="boolean", example=true),
      *                         @OA\Property(property="name", type="string", example="dada"),
      *                         @OA\Property(property="slug", type="string", example="dada")
      *                     )
@@ -157,7 +156,6 @@ class AdminGenericProductNameController extends Controller
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=4),
-     *                 @OA\Property(property="status", type="boolean", example=true),
      *                 @OA\Property(property="name", type="string", example="dada"),
      *                 @OA\Property(property="slug", type="string", example="dada")
      *             ),
