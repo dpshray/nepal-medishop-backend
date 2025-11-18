@@ -43,7 +43,8 @@ class Order extends Model
         'gift_wrap_charge',
         'assigned_vendor_id',
         'created_at',
-        'used_coupon_code_id'
+        'used_coupon_code_id',
+        'is_order_completely_assigned'
     ];
 
     protected $casts = [
@@ -115,9 +116,9 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    function assignedVendor() {
+    /* function assignedVendor() {
         return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
-    }
+    } */
 
     function loyalityPoint() {
         return $this->hasOne(LoyalityPoint::class);

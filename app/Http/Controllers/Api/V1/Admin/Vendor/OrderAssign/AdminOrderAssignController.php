@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\Vendor;
 use App\Models\VendorNotification;
 use App\Models\VendorProductPrice;
+use App\Services\AssignOrderToVendorService;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -50,18 +51,123 @@ class AdminOrderAssignController extends Controller
      *         name="search",
      *         in="query",
      *         required=false,
-     *         description="search vendor based on username and store name",
+     *         description="search vendor based on store name",
      *         @OA\Schema(
      *             type="string"
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
-     *         description="List of vendors with order assignability status.",
+     *         description="List of vendors with order assignability status",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="List of vendors with order assignability status"),
-     *             @OA\Property(property="success", type="boolean", example=true),
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="List of vendors with order assignability status"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="total_items",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(
+     *                             property="vendor_uuid",
+     *                             type="string",
+     *                             example="a382ab1b-1152-47cb-92e1-99ce9d64781f"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="vendor_location",
+     *                             type="string",
+     *                             example="2453 Milan Plaza Suite 289\nMullerchester, IL 69167-0480"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="store_name",
+     *                             type="string",
+     *                             example="Bosco PLC"
+     *                         )
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 example=true
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function getVendorsWithAssignability(Request $request, Order $order)
+    {
+        $AAV_service = (new AssignOrderToVendorService);
+        $AAV_service->search = $request->query('search');
+        $matchedVendors = $AAV_service->fetchEligibleVendors($order->orderItems->pluck('id')->all());
+        $total_items = count($matchedVendors);
+        $items = AdminVendorOrderAssignListResource::collection($matchedVendors);
+        return $this->apiSuccess('List of vendors with order assignability status', compact('total_items','items'));
+    }
+
+
+    /**
+     * @OA\Post(
+     *     security={{"sanctum":{}}},
+     *     path="/admin/order/{order_uuid}/assign/{vendor_uuid}",
+     *     summary="Assign an order to a vendor using UUIDs",
+     *     operationId="OrderAssignToVendor",
+     *     tags={"Order Assign"},
+     *     @OA\Parameter(
+     *         name="order_uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of an order.",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="dee559ea-c25c-4263-b24f-560fe9c8a22d"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="vendor_uuid",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of a vendor.",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="efa981ff-6095-4976-9d8a-d415e62832a4"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="order_items_ids",
+     *                 type="array",
+     *                 @OA\Items(type="integer"),
+     *                 example={1, 2, 3}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Order has been assigned to admin",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Order has been assigned to admin"
+     *             ),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -70,194 +176,124 @@ class AdminOrderAssignController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="user_name", type="string", example="vendor00"),
-     *                         @OA\Property(property="store_name", type="string", example="Schumm Ltd"),
-     *                         @OA\Property(property="vendor_uuid", type="string", format="uuid", example="7fdd51b5-795c-4f01-8484-709eea4e2e77"),
-     *                         @OA\Property(property="is_assignable", type="boolean", example=true)
+     *                         @OA\Property(
+     *                             property="item_name",
+     *                             type="string",
+     *                             example="Dr Rashel VitaminC Sun screen SPF 50+++ 200g"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="item_price",
+     *                             type="number",
+     *                             format="float",
+     *                             example=3375
+     *                         ),
+     *                         @OA\Property(
+     *                             property="quantity",
+     *                             type="integer",
+     *                             example=2
+     *                         ),
+     *                         @OA\Property(
+     *                             property="sub_total",
+     *                             type="number",
+     *                             format="float",
+     *                             example=6750
+     *                         )
      *                     )
      *                 ),
-     *                 @OA\Property(property="total_items", type="integer", example=1)
+     *                 @OA\Property(
+     *                     property="vendor_name",
+     *                     type="string",
+     *                     example="sCHOLAR ltd "
+     *                 ),
+     *                 @OA\Property(
+     *                     property="vendor_store_name",
+     *                     type="string",
+     *                     example="Bosco PLC"
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 example=true
      *             )
      *         )
      *     )
      * )
      */
-    public function getVendorsWithAssignability(Request $request, Order $order)
+    public function AssignOrder(Request $request, $order_uuid, $vendor_uuid)
     {
-
-        $package = $order->orderItems()->with(['item.packageProducts'])->whereRelation('item', 'item_type', Package::class)->get()->map(function ($order_item) {
-            return $order_item->item->packageProducts->map(function ($pkg_pdt) use ($order_item) {
-                return [
-                    'quantity' => $order_item->quantity * $pkg_pdt->quantity,
-                    'item_variant_id' => $pkg_pdt->product_variation_id
-                ];
-            });
-        })
-            ->flatten(1)
-            ->groupBy('item_variant_id')
-            ->map(function ($group) {
-                return [
-                    'item_variant_id' => $group->first()['item_variant_id'],
-                    'quantity' => $group->sum('quantity'),
-                ];
-            })
-            ->values()
-            ->toArray();
-        $orders = $order->orderItems()->where('item_type', Product::class)->get()->map(
-            fn($item) => [
-                'quantity' => $item->quantity,
-                'item_variant_id' => $item->item_variant_id
-            ]
-        )
-            ->merge($package)
-            ->groupBy('item_variant_id')
-            ->map(function ($group) {
-                return [
-                    'item_variant_id' => (int)$group->first()['item_variant_id'],
-                    'quantity' => $group->sum('quantity'),
-                ];
-            })
-            ->values();
-        // dd($product);
-        $matchedVendors = collect(); // final result collection
-
-        $vendor = Vendor::with(['vendorProductPrices','user'])
-            ->verifiedAndActive()
-            ->chunk(200, function ($vendors) use ($orders, &$matchedVendors) {
-
-                $filtered = $vendors->filter(function ($vendor) use ($orders) {
-                    return $orders->every(function ($item) use ($vendor) {
-
-                        $temp = $vendor->vendorProductPrices
-                            ->firstWhere('product_variation_id', $item['item_variant_id']);
-
-                        return $temp && $temp->units_in_stock >= $item['quantity'];
-                    });
-                });
-
-                $matchedVendors = $matchedVendors->merge($filtered);
-            });
-        $total_items = count($matchedVendors);
-        $items = AdminVendorOrderAssignListResource::collection($matchedVendors);
-        return $this->apiSuccess('List of vendors with order assignability status', compact('total_items','items'));
-    }
-
-
-    /**
-     * @OA\get(
-     *     path="/admin/order/{order_uuid}/assign/{vendor_uuid}",
-     *     summary="Assign an order to a vendor using UUIDs",
-     *     tags={"Order Assign"},
-     *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="order_uuid",
-     *         in="path",
-     *         required=true,
-     *         description="Order UUID",
-     *         @OA\Schema(
-     *             type="string",
-     *             format="uuid",
-     *             example="55c9af7b-e7fb-4798-b3f6-3e76edc5cf2f"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="vendor_uuid",
-     *         in="path",
-     *         required=true,
-     *         description="Vendor User UUID",
-     *         @OA\Schema(
-     *             type="string",
-     *             format="uuid",
-     *             example="aa566e85-ce2f-4756-8a8f-d4f58a500ace"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Order has been assigned successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Order has been assigned to John Doe"),
-     *             @OA\Property(property="data", type="object", nullable=true)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Order or User not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Order or User not found"),
-     *             @OA\Property(property="data", type="object", nullable=true)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal server error",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Internal server error"),
-     *             @OA\Property(property="data", type="object", nullable=true)
-     *         )
-     *     )
-     * )
-     */
-    public function AssignOrder($order_uuid, $vendor_uuid)
-    {
-        $order = Order::where('uuid', $order_uuid)
-            ->with('orderItems') // load order items
-            ->firstOrFail();
-        $vendor = Vendor::with(['vendorProductPrices', 'user'])->where('uuid', $vendor_uuid)->firstOrFail();
-        // Loop
-        foreach ($order->orderItems as $item) {
-            // Skip check for packages
-            if ($item->item_type === Package::class) {
-                continue;
-            }
-
-            // For product, check vendor's stock
-            /* $vendorProduct = VendorProductPrice::where([
-                'product_vendor_id' => $user->id,
-                'product_variation_id' => $item->item_variant_id,
-                'status' => 1, // approved by admin
-            ])->first(); */
-            /* $vendorProduct = $vendor->vendorProductPrices()->active()->where([
-                'product_variation_id' => $item->item_variant_id
-            ])->first(); */
-
-            $vendorProduct = $vendor->vendorProductPrices()
-                ->where('vendor_product_prices.product_variation_id', $item->item_variant_id)
-                ->where('vendor_product_prices.status', 1)
-                ->first();
-
-            if (!$vendorProduct) {
-                return $this->apiError("Vendor does not have the product variation (ID: {$item->item_variant_id}) approved for sale.");
-            }
-
-            if ($vendorProduct->units_in_stock < $item->quantity) {
-                return $this->apiError("Vendor does not have enough stock for product variation (ID: {$item->item_variant_id}).");
-            }
-            $total_stock = $vendorProduct->units_in_stock - $item->quantity;
-            $vendorProduct->update(['units_in_stock' => $total_stock]);
-        }
-        $order->update(['assigned_vendor_id' => $vendor->user->id]);
-        VendorNotification::create([
-            'vendor_id' => $vendor->user->id,
-            'title' => 'New Order Assigned',
-            'body' => "An order with ID {$order->id} has been assigned to you by the admin."
+        $request->validate([
+            'order_items_ids' => 'required|array',
+            'order_items_ids.*' => 'required|exists:order_items,id'
+        ],[
+            'order_items_ids.*.exists' => 'The selected order items ids is invalid.'
         ]);
-        return $this->apiSuccess("Order has been assigned to {$vendor->user->name}");
+        $order_items_ids = $request->order_items_ids;
+        $order = Order::where('uuid', $order_uuid)->firstOrFail();
+        /* if ($order->is_order_completely_assigned) {
+            return $this->apiError('This order has already been assigned');
+        } */
+        
+        $vendor = Vendor::where('uuid', $vendor_uuid)->firstOrFail();
+        // return $request->all();
+        /**
+         * verifying that wether all incoming order_items_is belongs to this order
+         */
+        $order_qry = $order->orderItems();
+        $order_items = $order_qry->whereIn('id', $order_items_ids)
+            ->get();
+        if ($order_items->count() != count($order_items_ids)) {
+            return $this->apiError('Order items does not exists in this order');
+        }
+
+        $AAV_service = new AssignOrderToVendorService;
+        $AAV_service->vendor_id = $vendor->id;
+        // return $request->order_items_ids;
+        $res = $AAV_service->fetchEligibleVendors($order_items_ids);
+        $product_item_variant_id_w_quantity = $AAV_service->product_item_variant_id_w_quantity;
+        /**
+         * rechecking that this vendor have sufficient stock to meet this order items
+         */
+        if (count($res) <= 0) {
+            return $this->apiError('Assignment failed: vendor inventory is insufficient for these items.');
+        }
+
+        DB::transaction(function () use($order, $order_items_ids, $vendor, $product_item_variant_id_w_quantity){
+            $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id]);
+            $vendor->vendorProductPrices()
+                ->whereIn('product_variation_id', $product_item_variant_id_w_quantity->pluck('item_variant_id')->all())
+                ->each(function($item) use($product_item_variant_id_w_quantity){
+                    $quantity = $product_item_variant_id_w_quantity->firstWhere('item_variant_id', $item->product_variation_id)['quantity'];
+                    # reducing units_in_stock from vendor
+                    $item->decrement('units_in_stock', $quantity);
+                });
+            $order->refresh();
+            $all_order_hasBeen_assigned = $order->orderItems->whereNull('assigned_vendor_id')->isEmpty();
+            if ($all_order_hasBeen_assigned) {
+                $order->update(['is_order_completely_assigned' => true]);
+            }
+        });
+        $items = $order_items_for_response = $order_items->map(function($item){
+            return [
+                'item_name' => $item['item_name'],
+                'item_price' => (float)$item['price'],
+                'quantity' => (int)$item['quantity'],
+                'sub_total' => (float) $item['total']
+            ];
+        });
+        $vendor_name = $vendor->user->name;
+        $vendor_store_name = $vendor->store_name;
+        return $this->apiSuccess("Order has been assigned to {$vendor_name}", compact('items','vendor_name','vendor_store_name'));
     }
 
     /**
      * @OA\Post(
-     *     path="/admin/order/{order_uuid}/cancel-assign",
+     *     path="/admin/order/{uuid}/cancel-assign",
      *     summary="Cancel the assignment of an order to a vendor",
      *     tags={"Order Assign"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
-     *         name="order_uuid",
+     *         name="uuid",
      *         in="path",
      *         required=true,
      *         description="Order UUID",
@@ -272,46 +308,48 @@ class AdminOrderAssignController extends Controller
      *         description="Order assignment canceled successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Order assignment canceled successfully"),
-     *             @OA\Property(property="data", type="object", nullable=true)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Order not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Order not found"),
-     *             @OA\Property(property="data", type="object", nullable=true)
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Order assignment canceled successfully"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 nullable=true,
+     *                 example=null
+     *             ),
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 example=true
+     *             )
      *         )
      *     )
      * )
      */
-    public function CancelAssignOrder($order_uuid)
+    public function CancelAssignOrder(Order $order)
     {
-        $order = Order::where('uuid', $order_uuid)->with('orderItems')->firstOrFail();
-        $vendor = User::findOrFail($order->assigned_vendor_id)->vendor;
-        $vendor->load('vendorProductPrices');
-
-        foreach ($order->orderItems as $item) {
-            if ($item->item_type === Package::class) {
-                continue;
-            }
-
-            $vendorProduct = $vendor->vendorProductPrices()
-                ->where('vendor_product_prices.product_variation_id', $item->item_variant_id)
-                ->where('vendor_product_prices.status', 1) // qualified table name
-                ->first();
-
-            if ($vendorProduct) {
-                $total_stock = $vendorProduct->units_in_stock + $item->quantity;
-                $vendorProduct->update(['units_in_stock' => $total_stock]);
-            }
+        if ($order->payment_status == PaymentStatusEnum::PAID) {
+            return $this->apiSuccess('Order has already been paid.');
+        }else if ($order->status == OrderStatusEnum::DELIVERED || $order->status == OrderStatusEnum::SHIPPED) {
+            return $this->apiSuccess('Order has already been delivered.');
         }
-
-        $order->update(['assigned_vendor_id' => null]);
+        $order->load('orderItems.assignedVendor.vendorProductPrices');
+        // return $order;
+        DB::transaction(function () use($order){
+            $AOTVService = new AssignOrderToVendorService;
+            $order_items = $order->orderItems;
+            $products_to_handle = $AOTVService->transformOrderItemsIntoProducts($order_items->pluck('id')->all());
+            foreach ($order_items as $OI) {
+                $qty_to_increase = $products_to_handle->firstWhere('item_variant_id', $OI->item_variant_id)['quantity'];
+                $OI->assignedVendor
+                    ->vendorProductPrices()
+                    ->firstWhere('product_variation_id', $OI->item_variant_id)
+                    ->increment('units_in_stock', $qty_to_increase);
+            }
+            $order->update(['status' => OrderStatusEnum::CANCELLED]);
+        });
 
         return $this->apiSuccess('Order assignment canceled successfully');
     }

@@ -17,9 +17,8 @@ class AdminVendorOrderAssignListResource extends JsonResource
         // return parent::toArray($request);
         return [
             'vendor_uuid' => $this->uuid,
-            "user_uuid" => $this->user->uuid,
-            "store_name" => $this->store_name,
-            "is_assignable" => true
+            "vendor_location" => $this->location,
+            "store_name" => $this->store_name
         ];
     }
 }

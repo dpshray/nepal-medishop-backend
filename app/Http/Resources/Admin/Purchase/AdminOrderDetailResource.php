@@ -46,6 +46,7 @@ class AdminOrderDetailResource extends JsonResource
             'order_assigned_to' => $order_assigned_to_vendor,
             'ordered_items' => $this->orderItems->map(function ($item) {
                 $data = [
+                    "order_item_id" => $item->id,
                     'item_name' => $item->item_name,
                     'variant_name' => $item->variant_name,
                     'variant_size' => $item->variant_size,
