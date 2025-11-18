@@ -230,9 +230,9 @@ class AdminOrderAssignController extends Controller
         ]);
         $order_items_ids = $request->order_items_ids;
         $order = Order::where('uuid', $order_uuid)->firstOrFail();
-        /* if ($order->is_order_completely_assigned) {
+        if ($order->is_order_completely_assigned) {
             return $this->apiError('This order has already been assigned');
-        } */
+        }
         
         $vendor = Vendor::where('uuid', $vendor_uuid)->firstOrFail();
         // return $request->all();
@@ -257,7 +257,7 @@ class AdminOrderAssignController extends Controller
         if (count($res) <= 0) {
             return $this->apiError('Assignment failed: vendor inventory is insufficient for these items.');
         }
-
+        // return 'OK';
         DB::transaction(function () use($order, $order_items_ids, $vendor, $product_item_variant_id_w_quantity){
             $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id]);
             $vendor->vendorProductPrices()

@@ -19,14 +19,8 @@ class AdminOrderDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
-        $order_assigned_to_vendor = null;
-        if($this->assignedVendor){
-            $order_assigned_to_vendor = [
-                'store_name' => $this->assignedVendor->vendor->store_name,
-                'email' => $this->assignedVendor->email
-            ];
-        }
         $data = [
+            "order_id" => $this->id,
             "order_code" => $this->order_code,
             'user_type' => $this->user_type,
             'name' => $this->name,
@@ -43,8 +37,17 @@ class AdminOrderDetailResource extends JsonResource
             "payment_status" => $this->payment_status,
             "status" => $this->status,
             "created_at" => $this->created_at->format('Y/m/d'),
-            'order_assigned_to' => $order_assigned_to_vendor,
+            // 'order_assigned_to' => $order_assigned_to_vendor,
             'ordered_items' => $this->orderItems->map(function ($item) {
+                $order_item_assigned_to = null;
+                if ($item->assignedVendor) {
+                    $order_item_assigned_to = [
+                        'vendor_name' => $item->assignedVendor->user->name,
+                        'vendor_store_name' => $item->assignedVendor->store_name,
+                        // 'quantity' => (int)$item->quantity,
+                        // 'sub_total' => (float) $item->total
+                    ];
+                }
                 $data = [
                     "order_item_id" => $item->id,
                     'item_name' => $item->item_name,
@@ -53,6 +56,7 @@ class AdminOrderDetailResource extends JsonResource
                     'quantity' =>  $item->quantity,
                     'price' => (float) $item->price,
                     'subtotal' => (float) $item->total,
+                    'order_item_assigned_to' => $order_item_assigned_to
                 ];
                 if ($item->item_type == Product::class) {
                     $is_prescription_required = (bool) $item->product->prescription_required;

@@ -6,6 +6,7 @@ use App\Models\Package;
 use App\Models\Product;
 use App\Models\Purchase\OrderItem;
 use App\Models\Vendor;
+use Illuminate\Support\Facades\Log;
 
 class AssignOrderToVendorService
 {
@@ -15,7 +16,9 @@ class AssignOrderToVendorService
     function fetchEligibleVendors(array $order_item_ids)
     {
         $vendor_id = $this->vendor_id;
+        // Log::info(['order_items_id' => $order_item_ids]);
         $orders = $this->transformOrderItemsIntoProducts($order_item_ids);
+        // Log::info(['orders' => $orders]);
         $this->product_item_variant_id_w_quantity = $orders;
         /**
          * finally finding vendors that are eligible to
@@ -67,29 +70,41 @@ class AssignOrderToVendorService
                     'quantity' => $group->sum('quantity'),
                 ];
             })
-            ->values()
-            ->toArray();
+            ->values();
+            // Log::info($package);
 
         /**
-         * transforming order items results in same 
-         * format and then merging that results with
-         * extracted product of a package
+         * transforming ordered product item in array into this format...
+         * [
+         *      'item_variant_id' => '.....',
+         *      'quantity' => '.....',
+         * ]
          */
-        return OrderItem::whereIn('id', $order_item_ids)
+        $product = OrderItem::whereIn('id', $order_item_ids)
             ->where('item_type', Product::class)
             ->get()
             ->map(fn($item) => [
                 'quantity' => $item->quantity,
                 'item_variant_id' => $item->item_variant_id
-            ])
-            ->merge($package)
-            ->groupBy('item_variant_id')
-            ->map(function ($group) {
-                return [
-                    'item_variant_id' => (int)$group->first()['item_variant_id'],
-                    'quantity' => $group->sum('quantity'),
-                ];
-            })
-            ->values();
+            ]);
+        $combined_products = $package;
+
+        /**
+         * finally combining both transformed package and product
+         * and returning then in type collection
+         */
+        if (count($product)) {
+            $combined_products = $product->merge($package->toArray())
+                ->groupBy('item_variant_id')
+                ->map(function ($group) {
+                    return [
+                        'item_variant_id' => (int)$group->first()['item_variant_id'],
+                        'quantity' => $group->sum('quantity'),
+                    ];
+                })
+                ->values();
+            
+        }
+        return $combined_products;
     }
 }
