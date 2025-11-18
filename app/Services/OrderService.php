@@ -103,18 +103,7 @@ class OrderService
 
     $order_items = [...$products_ordered, ...$packages_ordered];
     $price = collect($order_items)->sum('total');
-
-    $gift_wrap_status = $request->gift_wrap;
-    $gift_wrap_charge = 0;
-
-    if ($gift_wrap_status) {
-        $gift_wrap_charge = Setting::firstWhere('key', SettingEnum::GIFT_WRAP_CHARGE->value);
-        if ($gift_wrap_charge) {
-            $gift_wrap_charge = $gift_wrap_charge->value;
-            $price += $gift_wrap_charge;
-        }
-    }
-
+    $previous_price=$price;
     // =====================================================
     // === PROMOCODE SECTION START ====
     // =====================================================
@@ -146,7 +135,21 @@ class OrderService
     // === PROMOCODE SECTION END ===========================
     // =====================================================
 
+    $gift_wrap_status = $request->gift_wrap;
+    $gift_wrap_charge = 0;
+
+    if ($gift_wrap_status) {
+        $gift_wrap_charge = Setting::firstWhere('key', SettingEnum::GIFT_WRAP_CHARGE->value);
+        if ($gift_wrap_charge) {
+            $gift_wrap_charge = $gift_wrap_charge->value;
+            $price += $gift_wrap_charge;
+            $previous_price+=$gift_wrap_charge;
+        }
+    }
+
+
     $order_detail = [
+        'previous_price'=>$previous_price,
         'price' => $price,
         'promo_code' => $promocode?->code,          // <-- Added
         'promo_discount' => $promo_discount,        // <-- Added
@@ -243,6 +246,7 @@ class OrderService
         });
 
     $response = [
+        'previous_price'=>$previous_price,
         'amount' => (float) $order->price,
         'order_number' => $order->order_code,
         'payment_method' => $order->payment_method,

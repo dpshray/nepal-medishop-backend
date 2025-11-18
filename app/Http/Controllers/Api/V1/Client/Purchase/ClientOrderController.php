@@ -23,8 +23,8 @@ class ClientOrderController extends Controller
      *     security={{"sanctum": {}}},
      *     path="/my-orders",
      *     summary="Fetch orders of a logged in user.",
-     *     description="Fetch orders of a logged in user.NOTE: 
-     *      payment_status values can be: PENDING, PAID, UNPAID, FAILED | 
+     *     description="Fetch orders of a logged in user.NOTE:
+     *      payment_status values can be: PENDING, PAID, UNPAID, FAILED |
      *      order_status values can be : PENDING, SHIPPED, DELIVERED",
      *     operationId="MyOrders",
      *     tags={"Order"},
@@ -78,8 +78,8 @@ class ClientOrderController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->query('per_page');       
-        $pagination = Auth::user()->orders()->latest()->paginate($per_page);
+        $per_page = $request->query('per_page');
+        $pagination = Auth::user()->orders()->with('promoCode')->latest()->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => UserOrderListResource::collection($item))->data;
         return $this->apiSuccess('List of orders.', $data);
     }
@@ -161,12 +161,15 @@ class ClientOrderController extends Controller
      *     ),
      * )
      */
-    function orderDetail(Request $request, Order $order) {
+    function orderDetail(Request $request, Order $order)
+    {
         $order->load([
             'orderItems' => [
-                'product.reviews' => fn($qry) => $qry->with('user')->where('user_id',Auth::id()),
-                'package.reviews' => fn($qry) => $qry->with('user')->where('user_id',Auth::id()),
-            ]]);
+                'product.reviews' => fn($qry) => $qry->with('user')->where('user_id', Auth::id()),
+                'package.reviews' => fn($qry) => $qry->with('user')->where('user_id', Auth::id()),
+            ],
+            'promoCode'
+        ]);
         $order = new UserOrderDetailResource($order);
         return $this->apiSuccess('Order Detail.', $order);
     }

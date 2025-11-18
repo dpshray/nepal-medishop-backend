@@ -23,14 +23,19 @@ class UserOrderDetailResource extends JsonResource
             "address" => $this->address,
             "description" => $this->description,
             "price" => (float) $this->price,
-            'gift_wrap' => (boolean) $this->gift_wrap,
+            "previous_price" => (float)$this->previous_price,
+            'promo_code' => $this->promoCode ? [
+                'code' => $this->promoCode->code,
+                'discount' => $this->promoCode->discount_percent,
+            ] : null,
+            'gift_wrap' => (bool) $this->gift_wrap,
             'gift_wrap_remarks' => $this->gift_wrap_remarks,
             'gift_wrap_charge' => (float) $this->gift_wrap_charge,
             "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
             "status" => $this->status,
             "created_at" => $this->created_at->format('Y/m/d'),
-            'ordered_items' => $this->orderItems->map(function($item){
+            'ordered_items' => $this->orderItems->map(function ($item) {
                 $data = [
                     "image" => $item->image,
                     'item_name' => $item->item_name,
@@ -44,7 +49,7 @@ class UserOrderDetailResource extends JsonResource
                 ];
                 if ($item->item_type == Product::class) {
                     $data = [...['type' => 'product'], ...$data];
-                }else{
+                } else {
                     $data = [...['type' => 'package'], ...$data];
                 }
                 return $data;
