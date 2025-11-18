@@ -120,11 +120,9 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    // function assignedVendor()
-    // {
-    // /* function assignedVendor() {
-    //     return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
-    // } */
+    /* function assignedVendor() {
+        return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
+    } */
 
     function loyalityPoint()
     {
