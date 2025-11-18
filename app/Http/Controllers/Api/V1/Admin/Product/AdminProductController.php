@@ -51,8 +51,9 @@ class AdminProductController extends Controller
      *     )
      * )
      */
-    function productUnits(){
-        $units = array_map(fn($item) => ['label' => ucfirst($item->value),'value' => $item->value], \App\Enums\ProductUnitEnum::cases());
+    function productUnits()
+    {
+        $units = array_map(fn($item) => ['label' => ucfirst($item->value), 'value' => $item->value], \App\Enums\ProductUnitEnum::cases());
         return $this->apiSuccess('List of available product units', $units);
     }
     /**
@@ -128,19 +129,19 @@ class AdminProductController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-        $search = $request->query('search',null);
+        $search = $request->query('search', null);
         $status = $request->query('status', null);
         $msg = 'All';
         if ($status != null) {
             if ($status == 1) {
                 $msg = 'published';
-            }else{
+            } else {
                 $msg = 'unpublished';
             }
         }
-        $pagination = Product::with(['brand', 'cheapestVariation', 'productVendorPrices','variations'])
+        $pagination = Product::with(['brand', 'cheapestVariation', 'productVendorPrices', 'variations', 'genericProductName', 'healthConditions'])
             ->when($status != null, fn($qry) => $qry->where('status', $status))
-            ->when($search != null, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
+            ->when($search != null, fn($qry) => $qry->whereLike('name', '%' . $search . '%'))
             ->latest('id')
             ->paginate($per_page);
         $product = $this->makePaginationResponse($pagination, fn($item) => AdminProductResource::collection($item))->data;
@@ -152,14 +153,14 @@ class AdminProductController extends Controller
      */
     public function store(ProductStoreRequest $request)
     {
-        DB::transaction(function () use($request){
+        DB::transaction(function () use ($request) {
             $product = $request->safe()->merge(['added_by' => Auth::id()])->all();
             $product = Product::create($product);
             $pv = $product->productVendors()->create(['is_approved' => true, 'vendor_id' => Auth::id()]);
             $product->categories()->attach($request->categories);
             $product->tags()->attach($request->tags);
 
-            collect($request->variations)->each(function($item) use($product, $pv){
+            collect($request->variations)->each(function ($item) use ($product, $pv) {
                 $product->variations()->create([
                     'name' => $item['variant_name'],
                     'platform_price' => $item['variant_price'],
@@ -174,7 +175,7 @@ class AdminProductController extends Controller
                     'price' => $item['variant_price']
                 ]);
             });
-            
+
             $product->healthConditions()->attach($request->health_condition);
             $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
             foreach ($request->file('gallery_images') as $GI) {
@@ -285,7 +286,7 @@ class AdminProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->loadMissing(['variations','categories','tags','media','brand', 'healthConditions:name','productVendorPrices']);
+        $product->loadMissing(['variations', 'categories', 'tags', 'media', 'brand', 'healthConditions:name', 'productVendorPrices']);
         $product->loadCount(['productVendors']);
         $product = new AdminProductDetailResource($product);
         return $this->apiSuccess('Product detail', $product);
@@ -314,7 +315,7 @@ class AdminProductController extends Controller
                         throw new NotFoundHttpException("Variant could not be found of this product");
                     }
                     $product_variation->update($variation);
-                }else{
+                } else {
                     $product->variations()->create($variation);
                 }
             }
@@ -404,7 +405,8 @@ class AdminProductController extends Controller
      *     )
      * )
      */
-    function statusToggler(Product $product){
+    function statusToggler(Product $product)
+    {
         $current_status = $product->status;
         $product->update(['status' => !$current_status]);
         $status = $current_status == 1 ? 'Inactive' : 'Active';
@@ -459,9 +461,10 @@ class AdminProductController extends Controller
      *         )
      *     )
      * )
-    */
-    function storeMedia(ProductMediaStoreRequest $request, Product $product){
-        DB::transaction(function () use($request,$product){
+     */
+    function storeMedia(ProductMediaStoreRequest $request, Product $product)
+    {
+        DB::transaction(function () use ($request, $product) {
             $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
             foreach ($request->file('gallery_images') as $GI) {
                 $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
@@ -505,7 +508,8 @@ class AdminProductController extends Controller
      *     )
      * )
      */
-    function productVendors(Request $request, Product $product) {
+    function productVendors(Request $request, Product $product)
+    {
         $per_page = $request->query('per_page', $product->productVendors->count());
         $pagination = $product->productVendors()->with(['associatedVendor.user'])->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => VendorProductAssociationListResource::collection($items))->data;
