@@ -45,7 +45,7 @@ class Order extends Model
         'assigned_vendor_id',
         'created_at',
         'used_coupon_code_id',
-        'previous_price'
+        'previous_price',
         'is_order_completely_assigned'
     ];
 
