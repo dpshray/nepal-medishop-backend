@@ -5,6 +5,7 @@ namespace App\Models\Purchase;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\ProductVariation;
+use App\Models\Vendor;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -51,6 +52,11 @@ class OrderItem extends Model implements HasMedia
     public function item()
     {
         return $this->morphTo();
+    }
+
+    function assignedVendor()
+    {
+        return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
     }
 
     public function registerMediaCollections(): void

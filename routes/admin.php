@@ -58,15 +58,16 @@ Route::prefix('admin')
         Route::get('orders/{order:uuid}/cancel-order', [AdminOrderController::class, 'cancelUserOrder']);
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
         Route::apiResource('banner', AdminBannerController::class);
+        /*----------  Order and Order Assign  ----------*/
         Route::get('orders/{order:uuid}/vendors', [AdminOrderAssignController::class, 'getVendorsWithAssignability']);
-        Route::get('order/{order_uuid}/assign/{user_uuid}', [AdminOrderAssignController::class, 'AssignOrder']);
-        Route::post('order/{order_uuid}/cancel-assign', [AdminOrderAssignController::class, 'CancelAssignOrder']);
+        Route::post('order/{order_uuid}/assign/{vendor_uuid}', [AdminOrderAssignController::class, 'AssignOrder']);
+        Route::post('order/{order:uuid}/cancel-assign', [AdminOrderAssignController::class, 'CancelAssignOrder']);
         Route::apiResource('banner', AdminBannerController::class)->scoped(['banner' => 'uuid']);
         Route::get('toggle-banner-status/{banner:uuid}', [AdminBannerController::class, 'visibilityToggler']);
         Route::apiResource('kitbag', AdminKitbagOrderController::class)->only(['index','show','destroy'])->scoped(['kitbag' => 'uuid']);
         Route::apiResource('clientfeedback',AdminFeedbackController::class)->only(['index']);
         Route::apiResource('coupon',AdminPromoCodeControlller::class)->except(['show'])->scoped(['coupon'=>'uuid']);
-        Route::apiResource('coupon-point', AdminCouponPointController::class);
+        // Route::apiResource('coupon-point', AdminCouponPointController::class);
         Route::apiResource('generic-product-name', AdminGenericProductNameController::class)->scoped(['generic_product_name' => 'slug']);
         Route::apiResource('coupon',AdminPromoCodeControlller::class)->scoped(['coupon'=>'uuid']);
 });

@@ -46,6 +46,7 @@ class Order extends Model
         'created_at',
         'used_coupon_code_id',
         'previous_price'
+        'is_order_completely_assigned'
     ];
 
     protected $casts = [
@@ -119,10 +120,9 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    function assignedVendor()
-    {
+    /* function assignedVendor() {
         return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
-    }
+    } */
 
     function loyalityPoint()
     {

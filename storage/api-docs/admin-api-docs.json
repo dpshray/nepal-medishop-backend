@@ -6863,7 +6863,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "search vendor based on username and store name",
+                        "description": "search vendor based on store name",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -6872,7 +6872,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of vendors with order assignability status.",
+                        "description": "List of vendors with order assignability status",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -6881,43 +6881,38 @@
                                             "type": "string",
                                             "example": "List of vendors with order assignability status"
                                         },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "data": {
                                             "properties": {
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
                                                 "items": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "user_name": {
+                                                            "vendor_uuid": {
                                                                 "type": "string",
-                                                                "example": "vendor00"
+                                                                "example": "a382ab1b-1152-47cb-92e1-99ce9d64781f"
+                                                            },
+                                                            "vendor_location": {
+                                                                "type": "string",
+                                                                "example": "2453 Milan Plaza Suite 289\\nMullerchester, IL 69167-0480"
                                                             },
                                                             "store_name": {
                                                                 "type": "string",
-                                                                "example": "Schumm Ltd"
-                                                            },
-                                                            "vendor_uuid": {
-                                                                "type": "string",
-                                                                "format": "uuid",
-                                                                "example": "7fdd51b5-795c-4f01-8484-709eea4e2e77"
-                                                            },
-                                                            "is_assignable": {
-                                                                "type": "boolean",
-                                                                "example": true
+                                                                "example": "Bosco PLC"
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
-                                                },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 1
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -6934,102 +6929,112 @@
             }
         },
         "/admin/order/{order_uuid}/assign/{vendor_uuid}": {
-            "get": {
+            "post": {
                 "tags": [
                     "Order Assign"
                 ],
                 "summary": "Assign an order to a vendor using UUIDs",
-                "operationId": "20d9ce3ef20d94acb1ab736c1b59b7e0",
+                "operationId": "OrderAssignToVendor",
                 "parameters": [
                     {
                         "name": "order_uuid",
                         "in": "path",
-                        "description": "Order UUID",
+                        "description": "UUID of an order.",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
-                            "example": "55c9af7b-e7fb-4798-b3f6-3e76edc5cf2f"
+                            "example": "dee559ea-c25c-4263-b24f-560fe9c8a22d"
                         }
                     },
                     {
                         "name": "vendor_uuid",
                         "in": "path",
-                        "description": "Vendor User UUID",
+                        "description": "UUID of a vendor.",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "format": "uuid",
-                            "example": "aa566e85-ce2f-4756-8a8f-d4f58a500ace"
+                            "example": "efa981ff-6095-4976-9d8a-d415e62832a4"
                         }
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "order_items_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            3
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Order has been assigned successfully",
+                        "description": "Order has been assigned to admin",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order has been assigned to admin"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "item_name": {
+                                                                "type": "string",
+                                                                "example": "Dr Rashel VitaminC Sun screen SPF 50+++ 200g"
+                                                            },
+                                                            "item_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3375
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "sub_total": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 6750
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "vendor_name": {
+                                                    "type": "string",
+                                                    "example": "sCHOLAR ltd "
+                                                },
+                                                "vendor_store_name": {
+                                                    "type": "string",
+                                                    "example": "Bosco PLC"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Order has been assigned to John Doe"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Order or User not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Order or User not found"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Internal server error"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "nullable": true
                                         }
                                     },
                                     "type": "object"
@@ -7045,16 +7050,16 @@
                 ]
             }
         },
-        "/admin/order/{order_uuid}/cancel-assign": {
+        "/admin/order/{uuid}/cancel-assign": {
             "post": {
                 "tags": [
                     "Order Assign"
                 ],
                 "summary": "Cancel the assignment of an order to a vendor",
-                "operationId": "c0352e03de3d27692d69cc6bec4d2b47",
+                "operationId": "60f198fd24937184a0c7523f5a78439e",
                 "parameters": [
                     {
-                        "name": "order_uuid",
+                        "name": "uuid",
                         "in": "path",
                         "description": "Order UUID",
                         "required": true,
@@ -7072,41 +7077,18 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "Order assignment canceled successfully"
                                         },
                                         "data": {
                                             "type": "object",
+                                            "example": null,
                                             "nullable": true
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Order not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
+                                        },
                                         "success": {
                                             "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Order not found"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "nullable": true
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
