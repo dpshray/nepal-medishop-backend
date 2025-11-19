@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->unsignedTinyInteger('quantity');
             $table->decimal('price', 10, 2);
+            $table->decimal('previous_price', 10, 2)->nullable();
             $table->decimal('subtotal', 10, 2);
             $table->date('created_at');
         });

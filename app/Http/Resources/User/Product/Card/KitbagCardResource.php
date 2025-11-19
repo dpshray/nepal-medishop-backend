@@ -16,6 +16,7 @@ class KitbagCardResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
+        $price=$this->variation->platform_price-($this->variation->platform_price*($this->product->discount_percent/100));
         return [
             "item_uuid" => $this->uuid,
             "item_name" => $this->product->name,
@@ -26,8 +27,9 @@ class KitbagCardResource extends JsonResource
             'isPrescriptionRequired' => (bool) $this->product->prescription_required,
             "image" => $this->product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
             "quantity" => (integer) $this->quantity,
-            "price" => (float) $this->variation->platform_price,
-            "subtotal" => (float) ($this->quantity * $this->variation->platform_price),
+            "price"=>(float)$price,
+            "previous_price" =>$this->product->discount_percent !== null? (float) $this->variation->platform_price:null,
+            "subtotal" => (float) ($this->quantity * $price),
         ];
     }
 }

@@ -23,7 +23,7 @@ class UserOrderListResource extends JsonResource
             "previous_price" => (float)$this->previous_price,
             'promo_code' => $this->promoCode ? [
                 'code' => $this->promoCode->code,
-                'discount' => $this->promoCode->discount_percent,
+                'discount_percent' => $this->promoCode->discount_percent,
             ] : null,
             "price" => (float) $this->price,
             "gift_wrap" => (bool) $this->gift_wrap,

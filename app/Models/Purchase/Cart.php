@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cart extends Model
 {
     use UuidModelTrait;
-    
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -26,6 +26,7 @@ class Cart extends Model
         'image',
         'quantity',
         'price',
+        'previous_price',
         'subtotal',
         'created_at'
     ];
