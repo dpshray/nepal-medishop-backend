@@ -332,35 +332,24 @@ class VendorProductController extends Controller
             return $this->apiError('Variation does not belong to this product');
         }
         DB::transaction(function () use($form_data, $product){
-            array_map(function($variation) use($product){
-                $vendor_products = Auth::user()->vendor->vendorProducts();
-                $vendor_product = $vendor_products->updateOrCreate([
-                    'product_id' => $product->id 
-                ],[
-                    'is_approved' => null
-                ]);
+            $product_vendor_prices = array_map(function ($variation) {
+                    return [
+                        'product_variation_id' => $variation['product_variation_id'],
+                        'units_in_stock' => $variation['units_in_stock'],
+                        'price' => $variation['price'],
+                        'manufacture' => $variation['variant_manufacturer'],
+                        'batch_number' => $variation['variant_batch_no'],
+                        'expiry_date' => $variation['variant_expiry_date'],
+                    ];
+                }, $form_data['variations']);
 
-                $vendor_prices = $vendor_product->vendorPrices();
-                $vendor_price_already_exists = $vendor_prices->firstWhere('product_variation_id', $variation['product_variation_id']);
-                $variation_transform = [
-                    'units_in_stock' => $variation['units_in_stock'],
-                    'price' => $variation['price'],
-                    'manufacturer' => $variation['variant_manufacturer'],
-                    'batch_number' => $variation['variant_batch_no'],
-                    'expiry_date' => $variation['variant_expiry_date'],
-                ];
-                if ($vendor_price_already_exists) {
-                    Log::info([$vendor_price_already_exists->units_in_stock , $variation['units_in_stock']]);
-                    $variation_transform['units_in_stock'] = $vendor_price_already_exists->units_in_stock + $variation['units_in_stock'];
-                    // Log::info($vendor_price_already_exists);
-                    // Log::info('-----------------------------');
-                    // Log::info($variation);
-                    $vendor_price_already_exists->update($variation_transform);
-                } else {
-                    // Log::info('else');
-                    $vendor_prices->create($variation_transform);
-                }
-            }, $form_data['variations']);
+            Auth::user()->vendor
+                ->vendorProducts()->create([
+                    'product_id' => $product->id,
+                    'is_approved' => null
+                ])
+                ->vendorPrices()
+                ->createMany($product_vendor_prices);
         });
         return $this->apiSuccess('Stock added successfully.');
     }
