@@ -230,9 +230,9 @@ class AdminOrderAssignController extends Controller
         ]);
         $order_items_ids = $request->order_items_ids;
         $order = Order::where('uuid', $order_uuid)->firstOrFail();
-        if ($order->is_order_completely_assigned) {
+        /* if ($order->is_order_completely_assigned) {
             return $this->apiError('This order has already been assigned');
-        }
+        } */
         
         $vendor = Vendor::where('uuid', $vendor_uuid)->firstOrFail();
         // return $request->all();
@@ -259,6 +259,26 @@ class AdminOrderAssignController extends Controller
         }
         // return 'OK';
         DB::transaction(function () use($order, $order_items_ids, $vendor, $product_item_variant_id_w_quantity){
+            $order->orderItems()
+                ->whereIn('id', $order_items_ids)
+                ->whereNotNull('assigned_vendor_id')
+                ->get()
+                ->each(function($item){
+                    if ($item->item_type == Product::class) {
+                        Vendor::find($item->assigned_vendor_id)
+                            ->vendorProductPrices()
+                            ->firstWhere('product_variation_id', $item->item_variant_id)
+                            ->increment('units_in_stock',$item->quantity);
+                    }elseif ($item->item_type == Package::class) {
+                        $item->package->packageProducts->each(function($PP) use($item){
+                            Vendor::find($item->assigned_vendor_id)
+                                ->vendorProductPrices()
+                                ->firstWhere('product_variation_id', $PP->product_variation_id)
+                                ->increment('units_in_stock', $item->quantity);
+                        });
+                    }
+                });
+
             $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id]);
             $vendor->vendorProductPrices()
                 ->whereIn('product_variation_id', $product_item_variant_id_w_quantity->pluck('item_variant_id')->all())
