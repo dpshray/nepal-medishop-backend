@@ -31,7 +31,8 @@ class OrderItem extends Model implements HasMedia
         'image',
         'total',
         'created_at',
-        'assigned_vendor_id'
+        'assigned_vendor_id',
+        'status'
     ];
 
     function product(){

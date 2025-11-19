@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
+            $table->string('status');
             $table->foreignIdFor(Order::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedBigInteger('assigned_vendor_id')->nullable();
             $table->foreign('assigned_vendor_id')->references('id')->on('vendors')->cascadeOnDelete()->cascadeOnUpdate();
