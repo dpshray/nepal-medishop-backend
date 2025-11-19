@@ -167,7 +167,7 @@ class OrderService
     ];
 
     $response = null;
-    $order_code = Str::random(20);
+    $order_code = Str::random(6);
 
     DB::transaction(function () use ($request, $order_detail, $order_items, $order_code, $order_type) {
         $user = Auth::user();
