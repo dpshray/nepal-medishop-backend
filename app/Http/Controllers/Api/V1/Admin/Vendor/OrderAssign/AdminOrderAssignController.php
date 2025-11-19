@@ -230,9 +230,9 @@ class AdminOrderAssignController extends Controller
         ]);
         $order_items_ids = $request->order_items_ids;
         $order = Order::where('uuid', $order_uuid)->firstOrFail();
-        if ($order->is_order_completely_assigned) {
+        /* if ($order->is_order_completely_assigned) {
             return $this->apiError('This order has already been assigned');
-        }
+        } */
         
         $vendor = Vendor::where('uuid', $vendor_uuid)->firstOrFail();
         // return $request->all();
