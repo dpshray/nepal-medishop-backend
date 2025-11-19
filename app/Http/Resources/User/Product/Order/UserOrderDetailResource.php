@@ -37,6 +37,7 @@ class UserOrderDetailResource extends JsonResource
             "created_at" => $this->created_at->format('Y/m/d'),
             'ordered_items' => $this->orderItems->map(function ($item) {
                 $data = [
+                    "Prescription_image" => $item->getFirstMediaUrl($item::PRESCRIPTION_IMAGE),
                     "image" => $item->image,
                     'item_name' => $item->item_name,
                     'item_slug' => $item->item_slug,
