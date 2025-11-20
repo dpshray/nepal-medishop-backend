@@ -4,36 +4,74 @@ namespace App\Services;
 
 use App\Models\Package;
 use App\Models\Product;
+use App\Models\Purchase\Order;
 use App\Models\Purchase\OrderItem;
 use App\Models\Vendor;
 use Illuminate\Support\Facades\Log;
 
 class AssignOrderToVendorService
 {
+    public $order = null;
     public $vendor_id = null; public $search = null;
     public $product_item_variant_id_w_quantity = null;
 
-    function fetchEligibleVendors(array $order_item_ids)
+    function fetchEligibleVendors(array $order_item_ids, Order $order = null)
     {
         $vendor_id = $this->vendor_id;
-        // Log::info(['order_items_id' => $order_item_ids]);
         $orders = $this->transformOrderItemsIntoProducts($order_item_ids);
-        // Log::info(['orders' => $orders]);
         $this->product_item_variant_id_w_quantity = $orders;
         /**
          * finally finding vendors that are eligible to
          * assign above order items
          */
+        Log::info($orders);
+        Log::info('**************************');
+
         $matchedVendors = collect(); // final result collection
-        Vendor::with(['vendorProductPrices', 'user'])
+        Vendor::with(['vendorProductPrices.ProductVendor.associatedVendor', 'user'])
             ->when($vendor_id, fn($qry) => $qry->where('id', $vendor_id))
             ->when($this->search, fn($qry) => $qry->whereLike('store_name', '%'.$this->search.'%'))
             ->verifiedAndActive()
             ->chunk(200, function ($vendors) use ($orders, &$matchedVendors) {
                 $filtered = $vendors->filter(function ($vendor) use ($orders) {
                     return $orders->every(function ($item) use ($vendor) {
-                        $temp = $vendor->vendorProductPrices->firstWhere('product_variation_id', $item['item_variant_id']);
-                        return $temp && $temp->units_in_stock >= $item['quantity'];
+                        $tot_stock = $vendor->vendorProductPrices
+                            ->where('product_variation_id', $item['item_variant_id'])
+                            ->sum('units_in_stock');
+                        $product_used_stock = $vendor->assignedOrders()
+                            ->where('item_type', Product::class)
+                            ->where('item_variant_id', $item['item_variant_id'])
+                            ->sum('quantity');
+                        $package_used_stock = $vendor->assignedOrders()
+                            ->with([
+                                'item' 
+                                => 
+                                    fn($itm) 
+                                    => 
+                                    $itm->with([
+                                        'packageProducts' 
+                                        => 
+                                        fn($i) => $i->where('product_variation_id', $item['item_variant_id'])
+                                    ])
+                            ])
+                            ->where('item_type', Package::class)
+                            ->get()
+                            ->sum(function($item){
+                                return $item->quantity * $item->item->packageProducts->count();
+                            });
+                        $tot_used_stock = $product_used_stock + $package_used_stock;
+                            
+                        if (in_array($vendor->id,[11,10])) {
+                            Log::info([
+                                'vendor_id' => $vendor->id, 
+                                'variant_id' => $item['item_variant_id'], 
+                                'tot_stock' => $tot_stock , 
+                                'product_used_stock' => $product_used_stock, 
+                                'package_used_stock' => $package_used_stock, 
+                                'qty' => $item['quantity']
+                            ]);
+                        }
+                        return ($tot_stock - $tot_used_stock) >= $item['quantity'];
                     });
                 });
                 $matchedVendors = $matchedVendors->merge($filtered);
