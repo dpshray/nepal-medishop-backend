@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchase;
 
+use App\Enums\Purchase\OrderStatusEnum;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\ProductVariation;
@@ -51,6 +52,10 @@ class OrderItem extends Model implements HasMedia
         });
     }
 
+    function order() {
+        return $this->belongsTo(Order::class,'assigned_vendor_id');
+    }
+
     public function item()
     {
         return $this->morphTo();
@@ -59,6 +64,14 @@ class OrderItem extends Model implements HasMedia
     function assignedVendor()
     {
         return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
+    }
+
+    function getItemTypeStrAttribute() {
+        return ($this->item_type == Product::class) ? 'Product' : 'Package'; 
+    }
+
+    function scopeCompleted($qry) {
+        return $qry->where('status', OrderStatusEnum::DELIVERED);
     }
 
     public function registerMediaCollections(): void
