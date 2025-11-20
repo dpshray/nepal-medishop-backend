@@ -135,7 +135,7 @@ class ClientKitbagController extends Controller
             'product_variation_id' => 'required|exists:product_variations,id',
             'quantity' => 'required|integer'
         ]);
-        DB::transaction(function () use($request, $data) {            
+        DB::transaction(function () use($request, $data) {
             $user_kitbag = Kitbag::firstOrCreate([
                 'user_id' => Auth::id()
             ],[
@@ -168,7 +168,7 @@ class ClientKitbagController extends Controller
      */
     /**
      * @OA\Delete(
-     *     security={{"sanctum": {}}}, 
+     *     security={{"sanctum": {}}},
      *     path="/kitbag",
      *     operationId="KitbagDelete",
      *     tags={"Kitbag"},
@@ -205,7 +205,7 @@ class ClientKitbagController extends Controller
     {
         $data = $request->validate([
             'item_uuids' => 'required|array',
-            'item_uuids.*' => 'required|exists:kitbag_items,uuid' 
+            'item_uuids.*' => 'required|exists:kitbag_items,uuid'
         ],[
             'item_uuids.*.exists' => 'One or more selected items do not exist.'
         ]);

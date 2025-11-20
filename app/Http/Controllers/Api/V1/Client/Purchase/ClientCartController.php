@@ -22,8 +22,8 @@ class ClientCartController extends Controller
      * @OA\Post(
      *     path="/add-to-cart",
      *     summary="Add an item to the cart",
-     *     description="Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.  
-     *                 If omitted, the request is treated as adding a **package** to the cart.  
+     *     description="Adds either a product or a package to the user's cart depending on the presence of the variant ID. NOTE: Variant ID of the product.
+     *                 If omitted, the request is treated as adding a **package** to the cart.
      *                 If provided, the request is treated as adding a **product** to the cart.
      *                 If both variant_id and quantity are omitted, product of cheapest variant item is added.",
      *     operationId="AddToCart",
@@ -46,8 +46,8 @@ class ClientCartController extends Controller
      *                 type="integer",
      *                 example=2,
      *                 nullable=true,
-     *                 description="Variant ID of the product.  
-     *                 If omitted, the request is treated as adding a **package** to the cart.  
+     *                 description="Variant ID of the product.
+     *                 If omitted, the request is treated as adding a **package** to the cart.
      *                 If provided, the request is treated as adding a **product** to the cart."
      *             ),
      *             @OA\Property(
@@ -75,12 +75,12 @@ class ClientCartController extends Controller
     {
         $cart = [];
         if ($request->has(["slug", "variant_id", "quantity"])) { #Product
-            $product_w_variant = Product::with(['brand','variations' => fn($qry) => $qry->where('id', $request->variant_id), 'media'])
+            $product_w_variant = Product::with(['brand', 'variations' => fn($qry) => $qry->where('id', $request->variant_id), 'media'])
                 ->where('slug', $request->slug)->firstOrFail();
             $product_variation = $product_w_variant->variations->first();
             $product_actual_price = $product_variation->platform_price;
-            $product_discount = $product_w_variant->discount_percent; 
-            $price = empty($product_discount) ? $product_actual_price : ($product_actual_price - ($product_actual_price * $product_discount)/100); 
+            $product_discount = $product_w_variant->discount_percent;
+            $price = empty($product_discount) ? $product_actual_price : ($product_actual_price - ($product_actual_price * $product_discount) / 100);
             $cart = $request->safe()->merge([
                 'user_id' => Auth::id(),
                 'item_type' => Product::class,
@@ -92,11 +92,12 @@ class ClientCartController extends Controller
                 'variant_name' => $product_variation->name,
                 'quantity' => $request->quantity,
                 'price' => $price,
+                'previous_price' => empty($product_discount) ? null : $product_actual_price,
                 'subtotal' => $price * $request->quantity,
                 'created_at' => now(),
                 'image' => $product_w_variant->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()
             ])->all();
-        }elseif($request->has(["slug","quantity"])){ #Package
+        } elseif ($request->has(["slug", "quantity"])) { #Package
             $package = Package::where('slug', $request->slug)->firstOrFail();
             $package_actual_price = $package->price;
             $package_discount = $package->discount_percent;
@@ -113,7 +114,7 @@ class ClientCartController extends Controller
                 'created_at' => now(),
                 'image' => $package->getFirstMedia(Package::PACKAGE_FEATURED)->getUrl()
             ])->all();
-        }else{ #A product w. default item
+        } else { #A product w. default item
             $product_w_variant = Product::with(['brand', 'cheapestVariation', 'media'])
                 ->where('slug', $request->slug)->firstOrFail();
             $product_variation = $product_w_variant->variations->first();
@@ -132,6 +133,7 @@ class ClientCartController extends Controller
                 'variant_name' => ((float) $product_variation->size_value) . ' ' . $product_variation->size_unit,
                 'quantity' => $quantity,
                 'price' => $price,
+                'previous_price' => empty($product_discount) ? null : $product_actual_price,
                 'subtotal' => $price * $quantity,
                 'created_at' => now(),
                 'image' => $product_w_variant->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()
@@ -142,17 +144,18 @@ class ClientCartController extends Controller
         return $this->apiSuccess('Item has been added to cart.');
     }
 
-    private function getUserCartItems(){
+    private function getUserCartItems()
+    {
         $cart_items = Auth::user()->cart()->get()->groupBy('item_type');
         $product_items = $cart_items->get(Product::class)?->groupBy('item_id');
         $merged1 = [];
-        if ($product_items) {            
+        if ($product_items) {
             foreach ($product_items as $key => $items) {
                 $merged1[$key] = [];
-    
+
                 foreach ($items as $item) {
                     $uniqueKey = $item['item_id'] . '-' . $item['variant_id'];
-    
+
                     if (!isset($merged1[$key][$uniqueKey])) {
                         $merged1[$key][$uniqueKey] = $item;
                     } else {
@@ -160,7 +163,7 @@ class ClientCartController extends Controller
                         $merged1[$key][$uniqueKey]['subtotal'] += $item['subtotal'];
                     }
                 }
-    
+
                 // Reset to indexed array for clean JSON structure
                 $merged1[$key] = array_values($merged1[$key]);
             }
@@ -169,13 +172,13 @@ class ClientCartController extends Controller
         $merged2 = [];
         $package_items = $cart_items->get(Package::class)?->groupBy('item_id');
 
-        if ($package_items) {            
+        if ($package_items) {
             foreach ($package_items as $key => $items) {
                 $merged2[$key] = [];
-    
+
                 foreach ($items as $item) {
                     $uniqueKey = $item['item_id'] . '-' . $item['variant_id'];
-    
+
                     if (!isset($merged2[$key][$uniqueKey])) {
                         $merged2[$key][$uniqueKey] = $item;
                     } else {
@@ -183,7 +186,7 @@ class ClientCartController extends Controller
                         $merged2[$key][$uniqueKey]['subtotal'] += $item['subtotal'];
                     }
                 }
-    
+
                 // Reset to indexed array for clean JSON structure
                 $merged2[$key] = array_values($merged2[$key]);
             }
@@ -206,11 +209,14 @@ class ClientCartController extends Controller
                     "variant_id" => empty($item['variant_id']) ? null : (int) $item['variant_id'],
                     "quantity" => (int) $item['quantity'],
                     "price" => (float) $item['price'],
+                    "previous_price" => $item['previous_price'] !== null
+                        ? (float) $item['previous_price']
+                        : null,
                     "subtotal" => (float) round($item['subtotal'], 2),
                 ];
             });
-        
-        return ['cart_items' => $cart, 'cart_total_items' => (int) collect($cart)->sum('quantity'), 'total' => round($cart->sum('subtotal'),2)];
+
+        return ['cart_items' => $cart, 'cart_total_items' => (int) collect($cart)->sum('quantity'), 'total' => round($cart->sum('subtotal'), 2)];
     }
 
     /**
@@ -256,7 +262,8 @@ class ClientCartController extends Controller
      *     )
      * )
      */
-    function fetchMyCart() {
+    function fetchMyCart()
+    {
         return $this->apiSuccess('My Cart items.', $this->getUserCartItems());
     }
 
@@ -310,13 +317,14 @@ class ClientCartController extends Controller
      *     )
      * )
      */
-    function cartItemUpdater(Request $request, Cart $cart) {
+    function cartItemUpdater(Request $request, Cart $cart)
+    {
         throw_if($cart->user->isNot(Auth::user()), UnauthorizedException::class);
         $msg = 'A cart item quantity has been updated.';
         if ($request->quantity == 0) {
             $msg = 'A cart item has been removed.';
             $cart->delete();
-        }else{
+        } else {
             $quantity = $request->quantity;
             $subtotal = $quantity * $cart->price;
             $cart->update([
@@ -363,7 +371,8 @@ class ClientCartController extends Controller
      *     )
      * )
      */
-    function cartItemRemover(Request $request) {
+    function cartItemRemover(Request $request)
+    {
         $data = $request->validate([
             'item_uuids' => 'required|array',
             'item_uuids.*' => 'required|exists:carts,uuid'
