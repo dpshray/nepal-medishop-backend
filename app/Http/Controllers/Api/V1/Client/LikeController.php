@@ -44,7 +44,7 @@ class LikeController extends Controller
     */
     function toggleProductFavourite(Product $product){
         $query = $product->likes();
-        $user_like = $query->where('user_id', Auth::id()); 
+        $user_like = $query->where('user_id', Auth::id());
         $msg = null;
         if ($user_like->exists()) {
             $user_like->delete();
@@ -124,7 +124,7 @@ class LikeController extends Controller
      */
     function myLikedItems(Request $request) {
         $per_page = $request->query('per_page');
-        $pagination = Like::with(['product.cheapestVariation','product.media','product.brand', 'product.variations'])
+        $pagination = Like::with(['product.cheapestVariation','product.media','product.brand', 'product.variations.vendorProductPrice'])
             ->where('user_id', Auth::id())
             ->paginate($per_page);
         $data  = $this->makePaginationResponse($pagination, fn($item) => UserLikeResource::collection($item))->data;

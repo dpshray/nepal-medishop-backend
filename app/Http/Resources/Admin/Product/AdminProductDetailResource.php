@@ -23,7 +23,7 @@ class AdminProductDetailResource extends JsonResource
             'slug' => $this->slug,
             'brand' => $this->whenLoaded('brand', fn() => ['id' => $this->brand->id, 'name' => $this->brand->name]),
             'generic_product' => [
-                'generic_product_name' => $this->genericProductName->name, 
+                'generic_product_name' => $this->genericProductName->name,
                 'generic_product_id' => $this->genericProductName->id
             ],
             'description' => $this->description,
@@ -34,12 +34,13 @@ class AdminProductDetailResource extends JsonResource
             'categories' => $this->whenLoaded('categories', fn() => $this->categories->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
             'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(fn($item) => [
-                'variation_id' => $item->id,
-                'name' => $item->name,
-                'size_value' => (float)$item->size_value,
-                'size_unit' => $item->size_unit,
-                'admin_price' => (float)$item->platform_price,
-                'units_in_stock' => $item->vendorProductPrices->sum('units_in_stock')
+                'variant_id' => $item->id,
+                'variant_name' => $item->name,
+                'variant_size_value' => (float)$item->size_value,
+                'variant_size_unit' => $item->size_unit,
+                'variant_admin_price' => (float)$item->platform_price,
+                // 'variant_expiry_date'=>$item->vendorProductPrices->expiry_date,
+                'variant_units_in_stock' => $item->vendorProductPrices->sum('units_in_stock')
             ])),
             'health_conditions' => $this->healthConditions->map(fn($item) => ['name' => $item->name, 'id' => $item->id]),
             'featured_image' => $this->whenLoaded('media', fn() => [
