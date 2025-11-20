@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Constants\VendorContants;
+use App\Models\Purchase\OrderItem;
 use App\Models\Traits\UuidModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,6 +46,10 @@ class Vendor extends Model implements HasMedia
 
     function scopeVerifiedAndActive($query) {
         return $query->whereRelation('user','email_verified_at','<>',null)->whereRelation('user','status',1);
+    }
+
+    function assignedOrders() {
+        return $this->hasMany(OrderItem::class,'assigned_vendor_id');
     }
 
     public function registerMediaCollections(): void
