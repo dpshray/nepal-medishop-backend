@@ -120,6 +120,18 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    function getCustomerNameAttribute() {
+        return ($this->name) ?? $this->user->name;
+    }
+
+    function getMobNoAttribute() {
+        return $this->mobile ?? $this->user->mobile_number;
+    }
+    
+    function getMailAttribute() {
+        return $this->email ?? $this->user->email;
+    }
+
     /* function assignedVendor() {
         return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
     } */
