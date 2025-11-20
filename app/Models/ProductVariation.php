@@ -28,8 +28,9 @@ class ProductVariation extends Model
         'manufacture',
         'expiry_date'
     ];
-    
-    function product(){
+
+    function product()
+    {
         return $this->belongsTo(Product::class);
     }
 
@@ -52,7 +53,12 @@ class ProductVariation extends Model
         return ['price' => (float) round($price, 2), 'previous_price' => $previous_price, 'discount_percent' => (float) $discount_percent];
     }
 
-    function vendorProductPrices() {
-        return $this->hasMany(VendorProductPrice::class,'product_variation_id');
+    function vendorProductPrices()
+    {
+        return $this->hasMany(VendorProductPrice::class, 'product_variation_id');
+    }
+    function vendorProductPrice()
+    {
+        return $this->hasOne(VendorProductPrice::class, 'product_variation_id');
     }
 }

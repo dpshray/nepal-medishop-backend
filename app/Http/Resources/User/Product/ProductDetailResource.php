@@ -48,7 +48,8 @@ class ProductDetailResource extends JsonResource
                     'size_value' => (float)$item->size_value,
                     'size_unit' => $item->size_unit,
                     'price' => $price,
-                    'previous_price' => $previous_price
+                    'previous_price' => $previous_price,
+                    'stock' => $item->vendorProductPrices->sum('units_in_stock'),
                 ];
             })),
             'featured_image' => $this->whenLoaded('media', fn() => $this->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()),

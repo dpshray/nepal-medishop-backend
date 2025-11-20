@@ -75,7 +75,7 @@ class ClientCartController extends Controller
     {
         $cart = [];
         if ($request->has(["slug", "variant_id", "quantity"])) { #Product
-            $product_w_variant = Product::with(['brand', 'variations' => fn($qry) => $qry->where('id', $request->variant_id), 'media'])
+            $product_w_variant = Product::with(['brand', 'variations.vendorProductPrice' => fn($qry) => $qry->where('id', $request->variant_id), 'media'])
                 ->where('slug', $request->slug)->firstOrFail();
             $product_variation = $product_w_variant->variations->first();
             $product_actual_price = $product_variation->platform_price;
@@ -110,6 +110,7 @@ class ClientCartController extends Controller
                 'item_slug' => $package->slug,
                 'quantity' => $request->quantity,
                 'price' => $price,
+                'previous_price' => empty($package_discount) ? null : $package_actual_price,
                 'subtotal' => $price * $request->quantity,
                 'created_at' => now(),
                 'image' => $package->getFirstMedia(Package::PACKAGE_FEATURED)->getUrl()

@@ -30,7 +30,7 @@ class UserLikeResource extends JsonResource
             'rating' => (float) $product->rating,
             'price' => $price,
             'previous_price' => $previous_price,
-            'discount_percent' => $discount_percent, 
+            'discount_percent' => $discount_percent,
             'feature_image' => $product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
             'liked' => $this->whenLoaded('likes', fn() => $product->likes->count() ? true : false),
             'isPrescriptionRequired' => (bool)$product->prescription_required,
@@ -43,7 +43,8 @@ class UserLikeResource extends JsonResource
                         'size_value' => (float)$item->size_value,
                         'size_unit' => $item->size_unit,
                         'price' => $v_price,
-                        'previous_price' => $v_previous_price
+                        'previous_price' => $v_previous_price,
+                        'stock' => $item->vendorProductPrices->sum('units_in_stock'),
                     ];
                 }
             )

@@ -42,6 +42,7 @@ class ProductCardResource extends JsonResource
                     'size_unit' => $item->size_unit,
                     'price' => $price,
                     'previous_price' => $previous_price,
+                    'stock' => $item->vendorProductPrices->sum('units_in_stock'),
                 ];
             }))
         ];
