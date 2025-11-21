@@ -17,6 +17,7 @@ class AdminProductDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
+        // return $this->healthConditions;
         return [
             'name' => $this->name,
             'uuid' => $this->uuid,
@@ -42,6 +43,7 @@ class AdminProductDetailResource extends JsonResource
                 // 'variant_expiry_date'=>$item->vendorProductPrices->expiry_date,
                 'variant_units_in_stock' => $item->vendorProductPrices->sum('units_in_stock')
             ])),
+            // 'health_condition'=>$this->healthConditions,
             'health_conditions' => $this->healthConditions->map(fn($item) => ['name' => $item->name, 'id' => $item->id]),
             'featured_image' => $this->whenLoaded('media', fn() => [
                 'id' => $this->getFirstMedia(Product::PRODUCT_FEATURE)->id,
