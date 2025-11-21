@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Exceptions\AssignOrderException;
 use App\Models\Package;
 use App\Models\Product;
 use App\Models\Purchase\Order;
 use App\Models\Purchase\OrderItem;
 use App\Models\Vendor;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AssignOrderToVendorService
@@ -61,7 +63,7 @@ class AssignOrderToVendorService
                             });
                         $tot_used_stock = $product_used_stock + $package_used_stock;
                             
-                        if (in_array($vendor->id,[11,10])) {
+                        /* if (in_array($vendor->id,[11,10])) {
                             Log::info([
                                 'vendor_id' => $vendor->id, 
                                 'variant_id' => $item['item_variant_id'], 
@@ -70,7 +72,7 @@ class AssignOrderToVendorService
                                 'package_used_stock' => $package_used_stock, 
                                 'qty' => $item['quantity']
                             ]);
-                        }
+                        } */
                         return ($tot_stock - $tot_used_stock) >= $item['quantity'];
                     });
                 });
@@ -144,5 +146,50 @@ class AssignOrderToVendorService
             
         }
         return $combined_products;
+    }
+
+    function assignOrderToVendor($vendor, $order, $order_items_ids) {
+        // $order_items_ids = $request->order_items_ids;
+        if ($order->is_order_completely_assigned) {
+            throw new AssignOrderException('This order has already been assigned');
+        }
+
+        /**
+         * verifying that wether all incoming order_items_is belongs to this order
+         */
+        $order_qry = $order->orderItems();
+        $order_items = $order_qry->whereIn('id', $order_items_ids)
+            ->get();
+        if ($order_items->count() != count($order_items_ids)) {
+            throw new AssignOrderException('Order items does not exists in this order');
+        }
+
+        // $AAV_service = new AssignOrderToVendorService;
+        $this->vendor_id = $vendor->id;
+        // return $request->order_items_ids;
+        $res = $this->fetchEligibleVendors($order_items_ids);
+        $product_item_variant_id_w_quantity = $this->product_item_variant_id_w_quantity;
+        /**
+         * rechecking that this vendor have sufficient stock to meet this order items
+         */
+        if (count($res) <= 0) {
+            throw new AssignOrderException('Assignment failed: vendor inventory is insufficient for these items.');
+        }
+        DB::transaction(function () use ($order, $order_items_ids, $vendor, $product_item_variant_id_w_quantity) {
+            $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id]);
+            $order->refresh();
+            $all_order_hasBeen_assigned = $order->orderItems->whereNull('assigned_vendor_id')->isEmpty();
+            if ($all_order_hasBeen_assigned) {
+                $order->update(['is_order_completely_assigned' => true]);
+            }
+        });
+        return $order_items->map(function ($item) {
+            return [
+                'item_name' => $item['item_name'],
+                'item_price' => (float)$item['price'],
+                'quantity' => (int)$item['quantity'],
+                'sub_total' => (float) $item['total']
+            ];
+        });
     }
 }

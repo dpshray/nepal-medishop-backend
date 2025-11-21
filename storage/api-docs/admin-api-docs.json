@@ -7103,6 +7103,117 @@
                     }
                 ]
             }
+        },
+        "/admin/order/{uuid}/assign-to-admin": {
+            "post": {
+                "tags": [
+                    "Order Assign"
+                ],
+                "summary": "Assign an order to an admin using UUIDs",
+                "operationId": "OrderAssignToAdmin",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of an order.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "dee559ea-c25c-4263-b24f-560fe9c8a22d"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "order_items_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            3
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order has been assigned to admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order has been assigned to admin"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "item_name": {
+                                                                "type": "string",
+                                                                "example": "Dr Rashel VitaminC Sun screen SPF 50+++ 200g"
+                                                            },
+                                                            "item_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 3375
+                                                            },
+                                                            "quantity": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "sub_total": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 6750
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "vendor_name": {
+                                                    "type": "string",
+                                                    "example": "sCHOLAR ltd "
+                                                },
+                                                "vendor_store_name": {
+                                                    "type": "string",
+                                                    "example": "Bosco PLC"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
