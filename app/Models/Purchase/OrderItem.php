@@ -7,6 +7,7 @@ use App\Models\Package;
 use App\Models\Product;
 use App\Models\ProductVariation;
 use App\Models\Vendor;
+use App\Models\VendorProductPrice;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -72,6 +73,10 @@ class OrderItem extends Model implements HasMedia
 
     function scopeCompleted($qry) {
         return $qry->where('status', OrderStatusEnum::DELIVERED);
+    }
+
+    function batchNumbers() {
+        return $this->belongsToMany(ProductVariation::class, 'order_item_batch_number');
     }
 
     public function registerMediaCollections(): void
