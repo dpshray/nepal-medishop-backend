@@ -47,7 +47,7 @@ class OrderService
                 $stock = $product_variant->vendorProductPrice->units_in_stock;
                 $product_discount_percent = $product['discount_percent'];
                 $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
-                // Log::info($stock);
+                Log::info($stock);
                 $quantity = $item['quantity'];
                 if ($quantity > $stock) {
                     throw ValidationException::withMessages([
@@ -69,6 +69,7 @@ class OrderService
                     'item_id' => $products[$item['product_slug']]->id,
                     'item_name' => $products[$item['product_slug']]->name,
                     'item_slug' => $item['product_slug'],
+                    'status' => OrderStatusEnum::PENDING->value,
                     'item_variant_id' => $item['variant_id'],
                     'variant_name' => $product_variant->name,
                     'variant_size' => $product_variant->size_value . ' ' . $product_variant->size_unit,
@@ -103,6 +104,7 @@ class OrderService
                     'item_slug' => $item['package_slug'],
                     'item_id' => $packages[$item['package_slug']]->id,
                     'quantity' => $package_quantity,
+                    'status' => OrderStatusEnum::PENDING->value,
                     'price' => $package_price,
                     'total' => $package_quantity * $package_price,
                     'image' => $packages[$item['package_slug']]->getFirstMediaUrl(Package::PACKAGE_FEATURED),
@@ -253,7 +255,7 @@ class OrderService
                     ];
                 }
             });
-
+        Log::info($order_items);
         $response = [
             'previous_price' => $previous_price,
             'amount' => (float) $order->price,
