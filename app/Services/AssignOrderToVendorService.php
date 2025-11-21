@@ -150,9 +150,9 @@ class AssignOrderToVendorService
 
     function assignOrderToVendor($vendor, $order, $order_items_ids) {
         // $order_items_ids = $request->order_items_ids;
-        if ($order->is_order_completely_assigned) {
+        /* if ($order->is_order_completely_assigned) {
             throw new AssignOrderException('This order has already been assigned');
-        }
+        } */
 
         /**
          * verifying that wether all incoming order_items_is belongs to this order
