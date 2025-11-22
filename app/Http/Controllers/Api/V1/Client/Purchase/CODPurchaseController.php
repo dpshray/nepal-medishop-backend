@@ -59,34 +59,37 @@ class CODPurchaseController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Order placed successfully",
+     *         description="Order placed successfully.",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Your order has been placed successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="amount", type="number", format="float", example=10853.38),
-     *                 @OA\Property(property="order_number", type="string", example="zSTfHnlLXYawwx9b58Bc"),
+     *                 @OA\Property(property="previous_price", type="number", example=18820),
+     *                 @OA\Property(property="amount", type="number", example=18820),
+     *                 @OA\Property(property="order_number", type="string", example="9b9Xn9"),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
-     *                 @OA\Property(property="date", type="string", example="2025/11/09"),
-     *                 @OA\Property(property="delivery_address", type="string", example="Shyambhu, Kathmandu"),
+     *                 @OA\Property(property="date", type="string", example="2025/11/22"),
+     *                 @OA\Property(property="delivery_address", type="string", example="Lazimpat, Kathmandu"),
+     *                 @OA\Property(property="latitude", type="string", example="2.52144"),
+     *                 @OA\Property(property="longitude", type="string", example="18.21554"),
      *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
      *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper."),
-     *                 @OA\Property(property="gift_wrap_charge", type="integer", example=300),
-     *                 @OA\Property(property="latitude", type="string", example="77.52144"),
-     *                 @OA\Property(property="longitude", type="string", example="18.21554"),
-     *
+     *                 @OA\Property(property="gift_wrap_charge", type="number", example=300),
+     *                 @OA\Property(property="promo_code", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="promo_discount", type="number", example=0),
+     *     
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="item_name", type="string", example="Saepe reiciendis et quae dolores et tenetur voluptas."),
-     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-1"),
+     *                         @OA\Property(property="item_name", type="string", example="Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."),
+     *                         @OA\Property(property="variant_name", type="string", nullable=true, example="Variant-8"),
      *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="price", type="number", format="float", example=198),
-     *                         @OA\Property(property="total", type="number", format="float", example=396),
-     *                         @OA\Property(property="prescription_image", type="string", example="http://192.168.100.23:8008/storage/2677/animal-4855514_1920.jpg")
+     *                         @OA\Property(property="price", type="number", example=4310),
+     *                         @OA\Property(property="total", type="number", example=8620),
+     *                         @OA\Property(property="prescription_image", type="string", example="")
      *                     )
      *                 )
      *             ),

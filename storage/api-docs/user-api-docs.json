@@ -2580,7 +2580,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Order placed successfully",
+                        "description": "Order placed successfully.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2591,14 +2591,17 @@
                                         },
                                         "data": {
                                             "properties": {
+                                                "previous_price": {
+                                                    "type": "number",
+                                                    "example": 18820
+                                                },
                                                 "amount": {
                                                     "type": "number",
-                                                    "format": "float",
-                                                    "example": 10853.38
+                                                    "example": 18820
                                                 },
                                                 "order_number": {
                                                     "type": "string",
-                                                    "example": "zSTfHnlLXYawwx9b58Bc"
+                                                    "example": "9b9Xn9"
                                                 },
                                                 "payment_method": {
                                                     "type": "string",
@@ -2606,11 +2609,19 @@
                                                 },
                                                 "date": {
                                                     "type": "string",
-                                                    "example": "2025/11/09"
+                                                    "example": "2025/11/22"
                                                 },
                                                 "delivery_address": {
                                                     "type": "string",
-                                                    "example": "Shyambhu, Kathmandu"
+                                                    "example": "Lazimpat, Kathmandu"
+                                                },
+                                                "latitude": {
+                                                    "type": "string",
+                                                    "example": "2.52144"
+                                                },
+                                                "longitude": {
+                                                    "type": "string",
+                                                    "example": "18.21554"
                                                 },
                                                 "gift_wrap": {
                                                     "type": "boolean",
@@ -2621,16 +2632,17 @@
                                                     "example": "gift wrap must be in silver paper."
                                                 },
                                                 "gift_wrap_charge": {
-                                                    "type": "integer",
+                                                    "type": "number",
                                                     "example": 300
                                                 },
-                                                "latitude": {
+                                                "promo_code": {
                                                     "type": "string",
-                                                    "example": "77.52144"
+                                                    "example": null,
+                                                    "nullable": true
                                                 },
-                                                "longitude": {
-                                                    "type": "string",
-                                                    "example": "18.21554"
+                                                "promo_discount": {
+                                                    "type": "number",
+                                                    "example": 0
                                                 },
                                                 "ordered_items": {
                                                     "type": "array",
@@ -2638,11 +2650,11 @@
                                                         "properties": {
                                                             "item_name": {
                                                                 "type": "string",
-                                                                "example": "Saepe reiciendis et quae dolores et tenetur voluptas."
+                                                                "example": "Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."
                                                             },
                                                             "variant_name": {
                                                                 "type": "string",
-                                                                "example": "Variant-1",
+                                                                "example": "Variant-8",
                                                                 "nullable": true
                                                             },
                                                             "quantity": {
@@ -2651,17 +2663,15 @@
                                                             },
                                                             "price": {
                                                                 "type": "number",
-                                                                "format": "float",
-                                                                "example": 198
+                                                                "example": 4310
                                                             },
                                                             "total": {
                                                                 "type": "number",
-                                                                "format": "float",
-                                                                "example": 396
+                                                                "example": 8620
                                                             },
                                                             "prescription_image": {
                                                                 "type": "string",
-                                                                "example": "http://192.168.100.23:8008/storage/2677/animal-4855514_1920.jpg"
+                                                                "example": ""
                                                             }
                                                         },
                                                         "type": "object"
