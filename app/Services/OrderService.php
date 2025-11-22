@@ -24,6 +24,7 @@ class OrderService
 {
     function saveOrder(Request $request, OrderTypeEnum $order_type)
     {
+        $order_item_products = [];
         $products_ordered = [];
         $promocode = CouponCode::where('code', $request->code)->where('is_active', true)->first();
 
@@ -34,7 +35,6 @@ class OrderService
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
-
             // Log::info($request->products);
 
             $products_ordered = array_map(function ($item) use ($products) {
@@ -47,7 +47,7 @@ class OrderService
                 $stock = $product_variant->vendorProductPrice->units_in_stock;
                 $product_discount_percent = $product['discount_percent'];
                 $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
-                Log::info($stock);
+                // Log::info($stock);
                 $quantity = $item['quantity'];
                 if ($quantity > $stock) {
                     throw ValidationException::withMessages([
@@ -82,16 +82,32 @@ class OrderService
                 ];
             }, $request->products);
         }
-
+        foreach ($products_ordered as $PO) {
+            $order_item_products[$PO['item_slug']][] = [
+                'product_variation_id' => $PO['item_variant_id'],
+                'quantity' => $PO['quantity']
+            ];
+            // Log::info($order_item_products);
+        }
+        // dd($order_item_products);
         $packages_ordered = [];
         if ($request->has('packages')) {
             $product_slug = $request->collect('packages')->pluck('package_slug');
             $packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')
-                ->with('media')
+                ->with(['media','packageProducts'])
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
-
+            $order_item_products = $packages->mapWithKeys(fn($pkg,$k) => 
+                [
+                    $k =>
+                   $pkg->packageProducts->map(fn($pkg_pdt) => [
+                        'product_variation_id' => $pkg_pdt['product_variation_id'],
+                        'quantity' => $pkg_pdt['quantity']
+                    ])
+                ]
+            )->merge($order_item_products)->toArray();
+                    // dd($order_item_products);
             $packages_ordered = $request->collect('packages')->map(function ($item) use ($packages) {
                 $package = $packages[$item['package_slug']];
                 $actual_package_price = $package['price'];
@@ -113,7 +129,7 @@ class OrderService
                 ];
             });
         }
-
+        // Log::info($order_item_products);
         $order_items = [...$products_ordered, ...$packages_ordered];
         $price = collect($order_items)->sum('total');
         $previous_price = $price;
@@ -181,9 +197,11 @@ class OrderService
 
         $response = null;
         $order_code = Str::random(6);
+        // dd($order_item_products);
 
-        DB::transaction(function () use ($request, $order_detail, $order_items, $order_code, $order_type) {
+        DB::transaction(function () use ($request, $order_detail, $order_items, $order_code, &$order_item_products, $order_type) {
             $user = Auth::user();
+            // Log::info('$order_item_products');
 
             if ($user) {
                 $order = array_merge(
@@ -197,13 +215,12 @@ class OrderService
                 );
 
                 $order_items_ins = $user->orders()->create($order)->orderItems();
-
-                foreach ($order_items as $item) {
-                    $created_order_items = $order_items_ins->create($item);
+                /* foreach ($order_items as $item) {
+                    $created_order_items = $order_items_ins->create($item);                 
                     if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
                         $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
                     }
-                }
+                } */
 
                 $item_slugs = $request->collect('packages')->pluck('package_slug')
                     ->merge($request->collect('products')->pluck('product_slug'));
@@ -221,17 +238,27 @@ class OrderService
 
                 $order_items_ins = Order::create($order)->orderItems();
 
-                foreach ($order_items as $item) {
+                /* foreach ($order_items as $item) {
                     $created_order_items = $order_items_ins->create($item);
                     if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
                         $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
                     }
+                } */
+            }
+            foreach ($order_items as $item) {
+                $created_order_items = $order_items_ins->create($item);
+                foreach ($order_item_products[$created_order_items->item_slug] as &$items) {
+                    $items['order_item_id'] = $created_order_items->id;
+                    $items['order_id'] = $created_order_items->order_id;
+                }
+                unset($items);
+                if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
+                    $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
                 }
             }
-
-            $user = Auth::user();
+            // dd(($order_item_products));
+            DB::table('order_item_product')->insert(array_merge(...array_values($order_item_products)));
         });
-
         $order = Order::where('order_code', $order_code)->firstOrFail();
         $order_items = $order
             ->orderItems()
@@ -257,7 +284,7 @@ class OrderService
                     ];
                 }
             });
-        Log::info($order_items);
+        // Log::info($order_items);
         $response = [
             'previous_price' => $previous_price,
             'amount' => (float) $order->price,
