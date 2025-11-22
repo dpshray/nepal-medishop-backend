@@ -86,7 +86,7 @@ class AdminOrderController extends Controller
      * )
      */
     function index(Request $request) {
-        $per_page = $request->query('per_page',10);
+        $per_page = $request->query('per_page',Order::count());
         $search = $request->query('search');
 
         $pagination = Order::with(['user'])
@@ -178,7 +178,7 @@ class AdminOrderController extends Controller
      * )
     */
     function show(Order $order) {
-        $order->load('orderItems.assignedVendor');
+        $order->load(['orderItems.assignedVendor', 'orderItems.batchNumbers']);
         $order = new AdminOrderDetailResource($order);
         return $this->apiSuccess('Order Detail.', $order);
     }

@@ -76,7 +76,7 @@ class OrderItem extends Model implements HasMedia
     }
 
     function batchNumbers() {
-        return $this->belongsToMany(ProductVariation::class, 'order_item_batch_number');
+        return $this->belongsToMany(VendorProductPrice::class, 'order_item_batch_number')->withPivot(['quantity']);
     }
 
     public function registerMediaCollections(): void

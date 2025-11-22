@@ -286,7 +286,7 @@ class AdminProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->loadMissing(['variations', 'categories', 'tags', 'media', 'brand', 'healthConditions:name', 'productVendorPrices']);
+        $product->loadMissing(['variations', 'categories', 'tags', 'media', 'brand', 'healthConditions', 'productVendorPrices']);
         $product->loadCount(['productVendors']);
         $product = new AdminProductDetailResource($product);
         return $this->apiSuccess('Product detail', $product);

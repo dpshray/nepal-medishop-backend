@@ -33,15 +33,19 @@ class AdminProductDetailResource extends JsonResource
             'total_units_in_stock' => ($this->productVendorPrices) ? $this->productVendorPrices->sum('units_in_stock') : 0,
             'categories' => $this->whenLoaded('categories', fn() => $this->categories->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
-            'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(fn($item) => [
-                'variant_id' => $item->id,
-                'variant_name' => $item->name,
-                'variant_size_value' => (float)$item->size_value,
-                'variant_size_unit' => $item->size_unit,
-                'variant_admin_price' => (float)$item->platform_price,
-                // 'variant_expiry_date'=>$item->vendorProductPrices->expiry_date,
-                'variant_units_in_stock' => $item->vendorProductPrices->sum('units_in_stock')
-            ])),
+            'variations' => $this->productVendors->where('vendor_id', Auth::id())->flatMap(fn($item) => 
+                $item->vendorPrices->map(fn($itm) => [
+                    'variant_id' => $itm->product_variation_id,
+                    'variant_name' => $itm->variation->name,
+                    'variant_size_value' => (int)$itm->variation->size_value,
+                    'variant_size_unit' => $itm->variation->size_unit,
+                    'variant_admin_price' => (float)$itm->variation->platform_price,
+                    'variant_units_in_stock' => (float)$itm->units_in_stock,
+                    "batch_number" => (int)$itm->batch_number,
+                    "manufacture" => $itm->manufacture,
+                    "expiry_date" => $itm->expiry_date,
+                ])
+            )->values(),
             'health_conditions' => $this->healthConditions->map(fn($item) => ['name' => $item->name, 'id' => $item->id]),
             'featured_image' => $this->whenLoaded('media', fn() => [
                 'id' => $this->getFirstMedia(Product::PRODUCT_FEATURE)->id,
@@ -51,6 +55,7 @@ class AdminProductDetailResource extends JsonResource
                 'id' => $item->id,
                 'url' => $item->getUrl()
             ])),
+
         ];
     }
 }

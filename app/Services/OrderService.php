@@ -65,6 +65,7 @@ class OrderService
                 }
 
                 return [
+                    'status' => OrderStatusEnum::PENDING->value,
                     'item_type' => Product::class,
                     'item_id' => $products[$item['product_slug']]->id,
                     'item_name' => $products[$item['product_slug']]->name,
@@ -99,6 +100,7 @@ class OrderService
                 $package_quantity = $item['quantity'];
 
                 return [
+                    'status' => OrderStatusEnum::PENDING->value,
                     'item_type' => Package::class,
                     'item_name' => $packages[$item['package_slug']]->name,
                     'item_slug' => $item['package_slug'],

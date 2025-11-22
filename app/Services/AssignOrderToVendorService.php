@@ -26,8 +26,8 @@ class AssignOrderToVendorService
          * finally finding vendors that are eligible to
          * assign above order items
          */
-        Log::info($orders);
-        Log::info('**************************');
+        /* Log::info($orders);
+        Log::info('**************************'); */
 
         $matchedVendors = collect(); // final result collection
         Vendor::with(['vendorProductPrices.ProductVendor.associatedVendor', 'user'])
