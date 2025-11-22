@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ProductVariation;
+use App\Models\Purchase\Order;
 use App\Models\Purchase\OrderItem;
 use App\Models\VendorProductPrice;
 use Illuminate\Database\Migrations\Migration;
@@ -14,12 +15,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_item_batch_number', function (Blueprint $table) {
+        Schema::create('order_item_product', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(OrderItem::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignIdFor(VendorProductPrice::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(ProductVariation::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->unsignedTinyInteger('quantity');
+            $table->foreignIdFor(Order::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(OrderItem::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->unsignedSmallInteger('quantity');
+            $table->foreignIdFor(VendorProductPrice::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_item_batch_number');
+        Schema::dropIfExists('order_item_product');
     }
 };
