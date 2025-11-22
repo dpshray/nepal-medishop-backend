@@ -17,6 +17,7 @@ class AdminProductDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
+        // return $this->healthConditions;
         return [
             'name' => $this->name,
             'uuid' => $this->uuid,
