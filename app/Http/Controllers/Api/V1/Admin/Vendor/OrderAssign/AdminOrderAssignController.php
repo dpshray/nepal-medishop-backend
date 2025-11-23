@@ -59,7 +59,7 @@ class AdminOrderAssignController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of vendors with order assignability status",
+     *         description="Vendors capable of fulfilling at least part of your order.",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(
@@ -111,10 +111,10 @@ class AdminOrderAssignController extends Controller
     {
         $AAV_service = (new AssignOrderToVendorService);
         $AAV_service->search = $request->query('search');
-        $matchedVendors = $AAV_service->fetchEligibleVendors($order->orderItems->pluck('id')->all());
-        $total_items = count($matchedVendors);
-        $items = AdminVendorOrderAssignListResource::collection($matchedVendors);
-        return $this->apiSuccess('List of vendors with order assignability status', compact('total_items','items'));
+        $atleast_one_order_item_any_vendors = $AAV_service->fetchEligibleVendors($order);
+        $total_items = count($atleast_one_order_item_any_vendors);
+        $items = AdminVendorOrderAssignListResource::collection($atleast_one_order_item_any_vendors);
+        return $this->apiSuccess('Vendors capable of fulfilling at least part of your order', compact('total_items','items'));
     }
 
 
