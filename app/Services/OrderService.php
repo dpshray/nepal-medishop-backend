@@ -98,15 +98,7 @@ class OrderService
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
-            $order_item_products = $packages->mapWithKeys(fn($pkg,$k) => 
-                [
-                    $k =>
-                   $pkg->packageProducts->map(fn($pkg_pdt) => [
-                        'product_variation_id' => $pkg_pdt['product_variation_id'],
-                        'quantity' => $pkg_pdt['quantity']
-                    ])
-                ]
-            )->merge($order_item_products)->toArray();
+
                     // dd($order_item_products);
             $packages_ordered = $request->collect('packages')->map(function ($item) use ($packages) {
                 $package = $packages[$item['package_slug']];
@@ -128,6 +120,15 @@ class OrderService
                     'image' => $packages[$item['package_slug']]->getFirstMediaUrl(Package::PACKAGE_FEATURED),
                 ];
             });
+            $order_item_products = $packages->mapWithKeys(fn($pkg,$k) => 
+                [
+                    $k =>
+                $pkg->packageProducts->map(fn($pkg_pdt) => [
+                        'product_variation_id' => $pkg_pdt['product_variation_id'],
+                        'quantity' => $pkg_pdt['quantity'] * $packages_ordered->firstWhere('item_slug', $k)['quantity']
+                    ])
+                ]
+            )->merge($order_item_products)->toArray();
         }
         // Log::info($order_item_products);
         $order_items = [...$products_ordered, ...$packages_ordered];
@@ -257,7 +258,7 @@ class OrderService
                 }
             }
             // dd(($order_item_products));
-            DB::table('order_item_product')->insert(array_merge(...array_values($order_item_products)));
+            DB::table('order_item_products')->insert(array_merge(...array_values($order_item_products)));
         });
         $order = Order::where('order_code', $order_code)->firstOrFail();
         $order_items = $order
