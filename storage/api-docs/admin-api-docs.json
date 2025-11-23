@@ -6872,7 +6872,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of vendors with order assignability status",
+                        "description": "Vendors capable of fulfilling at least part of your order.",
                         "content": {
                             "application/json": {
                                 "schema": {
