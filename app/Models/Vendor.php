@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Constants\VendorContants;
 use App\Models\Purchase\OrderItem;
+use App\Models\Purchase\OrderItemProduct;
 use App\Models\Traits\UuidModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -50,6 +51,11 @@ class Vendor extends Model implements HasMedia
 
     function assignedOrders() {
         return $this->hasMany(OrderItem::class,'assigned_vendor_id');
+    }
+
+    function orderItemProducts()
+    {
+        return $this->hasManyThrough(OrderItemProduct::class,OrderItem::class,'assigned_vendor_id');
     }
 
     public function registerMediaCollections(): void
