@@ -17,7 +17,7 @@ class AssignOrderToVendorService
     public $vendor_id = null; public $search = null;
     public $product_item_variant_id_w_quantity = null;
 
-    function fetchEligibleVendors(Order $order)
+    function vendorsThatCanFulfillOneItem(Order $order)
     {
         /** ---------------------------------------------------
          * STEP 1: Build required variations (required_qty per variant)
@@ -119,6 +119,112 @@ class AssignOrderToVendorService
 
         return $vendors_any->values();
     }
+
+    function canVendorFulfillAllItems(Order $order, array $order_item_ids, Vendor $vendor)
+    {
+        /** ---------------------------------------------------
+         * STEP 1: Build required variations (required qty per variant)
+         * ----------------------------------------------------*/
+        $data_to_watch = $order->orderItemProducts()
+            ->with('variation.product')
+            ->whereIn('order_item_id', $order_item_ids)
+            ->get()
+            ->groupBy('product_variation_id')
+            ->map(fn($items) => [
+                'variant_id'     => $items->first()->product_variation_id,
+                'required_qty'   => $items->sum('quantity'),
+                'variant_name' => $items->first()->variation->name,
+                'product_name' => $items->first()->variation->product->name,
+            ])
+            ->values();
+
+        $required_variations = $data_to_watch->pluck('variant_id')->all();
+
+
+        /** ---------------------------------------------------
+         * STEP 2: Load ONLY this vendor’s relevant stock + reserved items
+         * ----------------------------------------------------*/
+        $vendor->load([
+            'vendorProductPrices' => function ($q) use ($required_variations) {
+                $q->whereIn('product_variation_id', $required_variations)
+                    ->whereRelation('ProductVendor', 'is_approved', true);
+            },
+            'orderItemProducts' => function ($q) use ($required_variations) {
+                $q->whereIn('product_variation_id', $required_variations)
+                    ->whereRelation('orderItem', 'assigned_vendor_id', '<>', null);
+            }
+        ]);
+
+
+        /** ---------------------------------------------------
+         * STEP 3: Pre-calc reserved stock for this vendor
+         * ----------------------------------------------------*/
+        $reserved_by_variant = $vendor->orderItemProducts
+            ->groupBy('product_variation_id')
+            ->map->sum('quantity');
+
+
+        /** ---------------------------------------------------
+         * STEP 4: Check if vendor can fulfill ALL required items
+         * ----------------------------------------------------*/
+        $failed_items = [];
+
+        foreach ($data_to_watch as $dtw) {
+
+            $variant_id   = $dtw['variant_id'];
+            $required_qty = $dtw['required_qty'];
+            $variant_name = $dtw['variant_name'];
+            $product_name = $dtw['product_name'];
+
+            // vendor’s stock entry
+            $variant_stock = $vendor->vendorProductPrices
+                ->where('product_variation_id', $variant_id);
+
+            // vendor does NOT sell this variant → FAIL
+            if ($variant_stock->isEmpty()) {
+
+                $failed_items[] = [
+                    'variant_name'    => $variant_name,
+                    'product_name'    => $product_name,
+                    'reason'        => 'Vendor does not sell this variant',
+                    'required_qty'  => $required_qty,
+                    'available_qty' => 0,
+                ];
+
+                continue;
+            }
+
+            // reserved stock
+            $reserved = $reserved_by_variant[$variant_id] ?? 0;
+
+            // actual stock = stock - reserved
+            $actual_units = $variant_stock->sum('units_in_stock') - $reserved;
+
+            // vendor does NOT have enough → FAIL
+            if ($actual_units < $required_qty) {
+
+                $failed_items[] = [
+                    'variant_name'    => $variant_name,
+                    'product_name'    => $product_name,
+                    'reason'        => 'Insufficient stock',
+                    'required_qty'  => $required_qty,
+                    'available_qty' => $actual_units,
+                ];
+            }
+        }
+
+
+        /** ---------------------------------------------------
+         * STEP 5: Return Result
+         * ----------------------------------------------------*/
+        return [
+            'eligible'      => empty($failed_items),
+            'failed_items'  => $failed_items,
+        ];
+    }
+
+
+
 
     public function transformOrderItemsIntoProducts($order_item_ids){
         /**

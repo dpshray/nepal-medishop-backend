@@ -111,7 +111,7 @@ class AdminOrderAssignController extends Controller
     {
         $AAV_service = (new AssignOrderToVendorService);
         $AAV_service->search = $request->query('search');
-        $atleast_one_order_item_any_vendors = $AAV_service->fetchEligibleVendors($order);
+        $atleast_one_order_item_any_vendors = $AAV_service->vendorsThatCanFulfillOneItem($order);
         $total_items = count($atleast_one_order_item_any_vendors);
         $items = AdminVendorOrderAssignListResource::collection($atleast_one_order_item_any_vendors);
         return $this->apiSuccess('Vendors capable of fulfilling at least part of your order', compact('total_items','items'));
@@ -230,16 +230,24 @@ class AdminOrderAssignController extends Controller
             'order_items_ids.*.exists' => 'The selected order items ids is invalid.'
         ]);
         $vendor = Vendor::where('uuid', $vendor_uuid)->firstOrFail();
-        $order = Order::where('uuid', $order_uuid)->firstOrFail();
         $order_items_ids = $request->order_items_ids;
+        $order = Order::with([
+            'orderItems' => fn($qry) => $qry->whereIn('id', $order_items_ids)
+            ])
+            ->where('uuid', $order_uuid)
+            ->firstOrFail();
+        $items = $order->orderItems->map(fn($OI) => [
+            "item_name" => $OI['item_name'],
+            "item_price" => (float)$OI['price'],
+            "quantity" => $OI['quantity'],
+            "sub_total" => (float)$OI['total'],
+        ]);
         // return $request->all();
-        try {
-            $items = (new AssignOrderToVendorService)->assignOrderToVendor($vendor, $order, $order_items_ids);
-        } catch (\App\Exceptions\AssignOrderException $e) {
-            return $this->apiError($e->getMessage(),422);
-        }catch(\Exception $e){
-            return $this->apiError('Something went wrong while assigning order');
+        $result = (new AssignOrderToVendorService)->canVendorFulfillAllItems($order, $order_items_ids, $vendor);
+        if (!$result['eligible']) {
+            return $this->apiError('Assignment failed: the vendor does not have enough stock for one or more order items.',422, $result['failed_items']);
         }
+        $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id]);
         $vendor_name = $vendor->user->name;
         $vendor_store_name = $vendor->store_name;
         return $this->apiSuccess("Order has been assigned to {$vendor_name}", compact('items','vendor_name','vendor_store_name'));
