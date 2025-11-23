@@ -74,6 +74,10 @@ class Order extends Model
         return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
     } */
 
+    function orderItemProducts() {
+        return $this->hasMany(OrderItemProduct::class);
+    }
+
     function loyalityPoint()
     {
         return $this->hasOne(LoyalityPoint::class);

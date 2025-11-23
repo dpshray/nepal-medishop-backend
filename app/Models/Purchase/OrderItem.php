@@ -79,6 +79,11 @@ class OrderItem extends Model implements HasMedia
         return $this->belongsToMany(VendorProductPrice::class, 'order_item_batch_number')->withPivot(['quantity']);
     }
 
+    function orderItemProducts()
+    {
+        return $this->hasMany(OrderItemProduct::class);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::PRESCRIPTION_IMAGE)->singleFile();
