@@ -17,6 +17,30 @@ class VendorProductPriceDetailResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
+            'product_uuid' => $this->product->uuid,
+            'product_name' => $this->product->name,
+            'is_approved' => $this->is_approved !== null ? (bool) $this->is_approved : null,
+            'product_image' => $this->product->getFirstMedia(Product::PRODUCT_FEATURE)?->getUrl(),
+            'vendor' => $this->whenLoaded('vendor', function () {
+                $vendor = $this->vendor;
+                return [
+                    'id' => $vendor->id,
+                    'name' => $vendor->user->name,
+                    'email' => $vendor->user->email,
+                ];
+            }),
+            'product_variations' => $this->whenLoaded('vendorPrices', function(){
+                return $this->vendorPrices->map(fn($item) => [
+                    'variation_id' => $item->variation->id,
+                    'variation_name' => $item->variation->name,
+                    'variant_stock' => (float) $item->variation->size_value,
+                    'variant_unit' => $item->variation->size_unit,
+                    'units_in_stock' => $item->stock_left,
+                    'price' => (float)$item->price
+                ]);
+            })
+        ];
+        return [
             'id' => $this->id,
             'status' => $this->status !== null ? (bool) $this->status : null,
             'vendor' => $this->whenLoaded('ProductVendor', function () {

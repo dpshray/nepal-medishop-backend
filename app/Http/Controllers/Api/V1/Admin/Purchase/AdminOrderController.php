@@ -178,7 +178,7 @@ class AdminOrderController extends Controller
      * )
     */
     function show(Order $order) {
-        $order->load(['orderItems.assignedVendor', 'orderItems.batchNumbers']);
+        $order->load(['orderItems.assignedVendor', 'orderItems']);
         $order = new AdminOrderDetailResource($order);
         return $this->apiSuccess('Order Detail.', $order);
     }

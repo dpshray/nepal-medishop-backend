@@ -10,6 +10,7 @@ use App\Models\VendorProductPrice;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminVendorProductController extends Controller
 {
@@ -89,12 +90,10 @@ class AdminVendorProductController extends Controller
         $perPage = $request->get('per_page', 10);
         $search = $request->query('search', null);
 
-        $query = VendorProductPrice::with(['variation', 'ProductVendor.vendor']);
+        $query = ProductVendor::with(['vendor', 'vendorPrices','product']);
 
         if ($search) {
-            $query->whereHas('variation.product', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            });
+            $query->whereRelation('product','name', 'like', "%{$search}%");
         }
 
         $paginated = $query->orderBy('id', 'desc')->paginate($perPage);
@@ -105,18 +104,18 @@ class AdminVendorProductController extends Controller
     }
     /**
      * @OA\Patch(
-     *     path="/admin/vendor-product-prices/{id}/approve",
+     *     path="/admin/vendor-product-prices/{uuid}/approve",
      *     summary="Approve or disapprove a vendor product",
      *     description="This endpoint updates the approval status (is_approved) of a vendor product in the VendorProductPrice table.",
      *     tags={"Vendor Products list"},
      *     security={{"sanctum": {}}},
      *
      *     @OA\Parameter(
-     *         name="id",
+     *         name="uuid",
      *         in="path",
      *         required=true,
-     *         description="ID of the vendor product price entry",
-     *         @OA\Schema(type="integer", example=5)
+     *         description="UUID of the vendor product price entry",
+     *         @OA\Schema(type="string", example="")
      *     ),
      *
      *     @OA\RequestBody(
@@ -175,15 +174,14 @@ class AdminVendorProductController extends Controller
      * )
      */
 
-    public function approveVendorProduct(Request $request, $id)
+    public function approveVendorProduct(Request $request, $uuid)
     {
         $validated = $request->validate([
             'is_approved' => 'required|boolean',
         ]);
 
-        $vendorProduct = VendorProductPrice::findOrFail($id);
-        $vendorProduct->status = $validated['is_approved'];
-        $vendorProduct->save();
+        ProductVendor::where('uuid', $uuid)->firstOrFail()
+            ->update(['is_approved' => $validated['is_approved']]);
 
         return $this->apiSuccess(
             $validated['is_approved']
@@ -193,17 +191,17 @@ class AdminVendorProductController extends Controller
     }
     /**
      * @OA\Delete(
-     *     path="/admin/vendor-product-prices/{id}",
+     *     path="/admin/vendor-product-prices/{uuid}",
      *     summary="Delete a vendor product",
-     *     description="Deletes a vendor product by its ID.",
+     *     description="Deletes a vendor product by its UUID.",
      *     tags={"Vendor Products list"},
      *     security={{"sanctum": {}}},
      *
      *     @OA\Parameter(
-     *         name="id",
+     *         name="UUid",
      *         in="path",
      *         required=true,
-     *         description="ID of the vendor product to delete",
+     *         description="UUID of the vendor product to delete",
      *         @OA\Schema(type="integer", example=5)
      *     ),
      *
@@ -222,26 +220,26 @@ class AdminVendorProductController extends Controller
      * )
      */
 
-    public function deleteVendorProduct($id)
+    public function deleteVendorProduct($uuid)
     {
-        $vendorProduct = VendorProductPrice::findOrFail($id);
+        $vendorProduct = ProductVendor::where('uuid', $uuid)->firstOrFail();
         $vendorProduct->delete();
         return $this->apiSuccess('Vendor product deleted successfully.');
     }
     /**
      * @OA\Get(
-     *     path="/admin/vendor-product-prices-detail/{id}",
+     *     path="/admin/vendor-product-prices-detail/{uuid}",
      *     summary="Get vendor product detail",
      *     description="Retrieve detailed information about a specific vendor product, including variation and vendor details.",
      *     tags={"Vendor Products list"},
      *     security={{"sanctum": {}}},
      *
      *     @OA\Parameter(
-     *         name="id",
+     *         name="uuid",
      *         in="path",
      *         required=true,
-     *         description="ID of the vendor product",
-     *         @OA\Schema(type="integer", example=10)
+     *         description="UUID of the vendor product",
+     *         @OA\Schema(type="string", example="98ea8896-e570-4101-a0ca-358157795a0a")
      *     ),
      *
      *     @OA\Response(
@@ -276,9 +274,9 @@ class AdminVendorProductController extends Controller
      *     @OA\Response(response=500, description="Internal Server Error")
      * )
      */
-    public function detail($id)
+    public function detail($uuid)
     {
-        $vendorProduct = VendorProductPrice::with(['variation.product', 'ProductVendor'])->findOrFail($id);
+        $vendorProduct = ProductVendor::with(['product.media', 'vendor.user', 'vendorPrices.variation'])->where('uuid',$uuid)->firstOrFail();
         $data = new VendorProductPriceDetailResource($vendorProduct);
         return $this->apiSuccess('Vendor product detail retrieved successfully.', $data);
     }

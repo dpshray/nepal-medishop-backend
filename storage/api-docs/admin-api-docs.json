@@ -6545,23 +6545,23 @@
                 ]
             }
         },
-        "/admin/vendor-product-prices/{id}/approve": {
+        "/admin/vendor-product-prices/{uuid}/approve": {
             "patch": {
                 "tags": [
                     "Vendor Products list"
                 ],
                 "summary": "Approve or disapprove a vendor product",
                 "description": "This endpoint updates the approval status (is_approved) of a vendor product in the VendorProductPrice table.",
-                "operationId": "4a73c601e4810e1003ae6983815e8175",
+                "operationId": "1cc868327f522b9734b91b40656e8f4c",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "uuid",
                         "in": "path",
-                        "description": "ID of the vendor product price entry",
+                        "description": "UUID of the vendor product price entry",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 5
+                            "type": "string",
+                            "example": ""
                         }
                     }
                 ],
@@ -6660,19 +6660,19 @@
                 ]
             }
         },
-        "/admin/vendor-product-prices/{id}": {
+        "/admin/vendor-product-prices/{uuid}": {
             "delete": {
                 "tags": [
                     "Vendor Products list"
                 ],
                 "summary": "Delete a vendor product",
-                "description": "Deletes a vendor product by its ID.",
-                "operationId": "fd388ebf28f4e3a264245e2d6ef5c22c",
+                "description": "Deletes a vendor product by its UUID.",
+                "operationId": "ff458076b0592bca361e61a1eeace67f",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "UUid",
                         "in": "path",
-                        "description": "ID of the vendor product to delete",
+                        "description": "UUID of the vendor product to delete",
                         "required": true,
                         "schema": {
                             "type": "integer",
@@ -6718,23 +6718,23 @@
                 ]
             }
         },
-        "/admin/vendor-product-prices-detail/{id}": {
+        "/admin/vendor-product-prices-detail/{uuid}": {
             "get": {
                 "tags": [
                     "Vendor Products list"
                 ],
                 "summary": "Get vendor product detail",
                 "description": "Retrieve detailed information about a specific vendor product, including variation and vendor details.",
-                "operationId": "03c22bf956f268b4094eceaef76ea4ab",
+                "operationId": "ccc4bf9c9f8219c7c1409d68d93ac7b6",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "uuid",
                         "in": "path",
-                        "description": "ID of the vendor product",
+                        "description": "UUID of the vendor product",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 10
+                            "type": "string",
+                            "example": "98ea8896-e570-4101-a0ca-358157795a0a"
                         }
                     }
                 ],

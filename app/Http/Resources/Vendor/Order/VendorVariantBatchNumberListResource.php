@@ -18,7 +18,7 @@ class VendorVariantBatchNumberListResource extends JsonResource
         return [
             "batch_number_id" => $this->id,
             "batch_number" => $this->batch_number,
-            "stock_left" => $this->units_in_stock
+            "stock_left" => $this->stockLeft
         ];
     }
 }

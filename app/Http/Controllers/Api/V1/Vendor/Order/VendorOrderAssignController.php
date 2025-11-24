@@ -11,6 +11,7 @@ use App\Http\Resources\Vendor\Order\OrderAssignListResource;
 use App\Http\Resources\Vendor\Order\VendorVariantBatchNumberListResource;
 use App\Models\ProductVariation;
 use App\Models\Purchase\Order;
+use App\Models\Purchase\OrderItemProduct;
 use App\Models\VendorProductPrice;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
@@ -240,7 +241,7 @@ class VendorOrderAssignController extends Controller
             $data = ['status' => $status];
             if ($status === OrderStatusEnum::DELIVERED) {
                 $data = [...$data, ...['payment_status' => PaymentStatusEnum::PAID]];
-                event(new LoyalityPointEvent($order));
+                // event(new LoyalityPointEvent($order));
             }else{
                 $data = [...$data, ...['payment_status' => PaymentStatusEnum::UNPAID]];
             }
@@ -387,8 +388,8 @@ class VendorOrderAssignController extends Controller
             '*.batch_numbers.*.quantity' => 'required|integer|min:1',
         ]);
         $data = collect($requested_data)
-        ->flatMap(function ($item) {
-            return collect($item['batch_numbers'])->map(function ($bn) use ($item) {
+            ->flatMap(function ($item) {
+                return collect($item['batch_numbers'])->map(function ($bn) use ($item) {
                     return [
                         'order_item_product_id' => $item['OIP_ID'],
                         'vendor_product_price_id' => $bn['batch_number_id'],
@@ -397,6 +398,25 @@ class VendorOrderAssignController extends Controller
                 });
             })
             ->values();
+        $temp = $data->groupBy('order_item_product_id')->map(fn($item) => [
+            'order_item_product_id' => $item->first()['order_item_product_id'],
+            'quantity' => $item->sum('quantity')
+        ])->toArray();
+
+        $order_item_products_ids = collect($data)->pluck('order_item_product_id')->all();
+        $order_item_products = OrderItemProduct::whereIn('id', $order_item_products_ids)
+            ->get();
+        $has_enough_quantity = $order_item_products->every(function($item) use($temp){
+                return $item->quantity == $temp[$item->id]['quantity'];
+            });
+        if (!$has_enough_quantity) {
+            return $this->apiError('Some order item does not meet enough quantity.');
+        }
+
+        $does_not_belong_to_same_order = $order_item_products->pluck('order_id')->unique()->count() != 1; 
+        if ($does_not_belong_to_same_order) {
+            return $this->apiError('Some item belongs to different order.');
+        }
         $VPPs = collect($data)->pluck('quantity','vendor_product_price_id')->all();
         $have_sufficient_stock = VendorProductPrice::whereIn('id', array_keys($VPPs))
             ->get()

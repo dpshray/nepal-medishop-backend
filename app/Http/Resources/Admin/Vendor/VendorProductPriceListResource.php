@@ -16,15 +16,16 @@ class VendorProductPriceListResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'id' => $this->id,
-            'status' => $this->status !== null ? (bool) $this->status : null,
-            'vendor' => $this->whenLoaded('ProductVendor', function () {
+            'status' => $this->is_approved !== null ? (bool) $this->is_approved : null,
+            'product_uuid' => $this->uuid,
+            'product_name' => $this->product->name,
+            'vendor' => $this->whenLoaded('vendor', function () {
                 return [
-                    'id' => $this->ProductVendor->id,
-                    'name' => $this->ProductVendor->vendor->name,
+                    'id' => $this->vendor->id,
+                    'name' => $this->vendor->user->name,
                 ];
             }),
-            'product_variation' => $this->whenLoaded('variation', function () {
+            /* 'product_variation' => $this->whenLoaded('variation', function () {
                 return [
                     'id' => $this->variation->id,
                     'variation_name' => $this->variation->name,
@@ -33,8 +34,8 @@ class VendorProductPriceListResource extends JsonResource
                     'size_unit' => $this->variation->size_unit,
                 ];
             }),
-            'price' => (float) $this->price,
-            'units_in_stock' => (int) $this->units_in_stock,
+            'price' => (float) $this->price, */
+            'units_in_stock' => (int) $this->vendorPrices->sum('units_in_stock'),
         ];
     }
 }
