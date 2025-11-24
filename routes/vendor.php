@@ -23,7 +23,7 @@ Route::prefix('vendor')
             });
             Route::apiResource('orders',VendorOrderAssignController::class)->except(['destroy','store'])->scoped(['order' => 'uuid']);
             Route::get('get-variant-batch-numbers/{variant}', [VendorOrderAssignController::class, 'fetchVariantBatchNumbers']);
-            Route::post('order-items/batch-assign', [VendorOrderAssignController::class, 'assignBatchesToOrderItems']);
+            Route::post('order-items/batch-assign/{order:uuid}', [VendorOrderAssignController::class, 'assignBatchesToOrderItems']);
             Route::get('dashboard',[VendorDashboardController::class,'index']);
         });
         Route::post('registration', [VendorAuthController::class, 'registerVendor']);

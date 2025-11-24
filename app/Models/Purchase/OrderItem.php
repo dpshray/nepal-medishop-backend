@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchase;
 
+use App\Enums\Purchase\OrderItemStatusEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Models\Package;
 use App\Models\Product;
@@ -35,6 +36,10 @@ class OrderItem extends Model implements HasMedia
         'created_at',
         'assigned_vendor_id',
         'status'
+    ];
+
+    protected $casts = [
+        'status' => OrderItemStatusEnum::class
     ];
 
     function product(){
@@ -75,8 +80,8 @@ class OrderItem extends Model implements HasMedia
         return $qry->where('status', OrderStatusEnum::DELIVERED);
     }
 
-    function batchNumbers() {
-        return $this->belongsToMany(VendorProductPrice::class, 'order_item_batch_number')->withPivot(['quantity']);
+    function orderItemProductBatchNumbers() {
+        return $this->hasManyThrough(OrderItemProductBatchNumber::class, OrderItemProduct::class);
     }
 
     function orderItemProducts()

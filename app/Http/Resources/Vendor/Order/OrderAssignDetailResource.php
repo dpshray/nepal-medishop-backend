@@ -44,7 +44,7 @@ class OrderAssignDetailResource extends JsonResource
                     'subtotal' => (float) $order_item->total
                 ];
                 if ($order_item->item_type == Product::class) {
-                    $is_prescription_required = (bool) $order_item->product->prescription_required;
+                    $is_prescription_required = (bool) $order_item->item->prescription_required;
                     $data = [...[
                         'type' => 'product',
                         'prescription_required' => $is_prescription_required,
@@ -56,15 +56,18 @@ class OrderAssignDetailResource extends JsonResource
                                 'product_name' => $order_item->item_name,
                                 'required_quantity' => $order_item->orderItemProducts->firstWhere('product_variation_id', $order_item->item_variant_id)->quantity,
                                 'variant_id' => (int) $order_item->item_variant_id,
-                                'batch_numbers' => ($bn = $order_item->orderItemProducts->flatMap(function ($item) {
+                                'assigned_batch_numbers' => ($bn = $order_item->orderItemProducts->flatMap(function ($item) {
                                     return $item->batchNumbers->map(fn($itm) => [
-                                        'product_name' => $itm->vendorProductPrice->variation->product->name,
-                                        'variant_name' => $itm->vendorProductPrice->variation->name,
                                         'variant_id' => $itm->vendorProductPrice->variation->id,
                                         'batch_number' => $itm->vendorProductPrice->batch_number,
                                         'quantity' => $itm->quantity
                                     ]);
-                                }))->isNotEmpty() ? $bn : null
+                                }))->isNotEmpty() ? $bn : null,
+                                'batch_numbers' => $order_item->productVariant->vendorProductPrices->map(fn($vpp) => [
+                                    'batch_number_id' => (int)$vpp->id,
+                                    'quantity' => (int)$vpp->stock_left,
+                                    'batch_number' => $vpp->batch_number
+                                ])
                             ]
                         ]
                     ], ...$data];
@@ -81,12 +84,15 @@ class OrderAssignDetailResource extends JsonResource
                                     'product_name' => $item->variation->product->name,
                                     'variant_name' => $item->variation->name,
                                     'required_quantity' => $item->quantity,
-                                    'batch_numbers' => $item->batchNumbers->isEmpty() ? null : $item->batchNumbers->map(fn($i) => [
-                                        'product_name' => $item->variation->product->name,
-                                        'variant_name' => $item->variation->name,
+                                    'assigned_batch_numbers' => $item->batchNumbers->isEmpty() ? null : $item->batchNumbers->map(fn($i) => [
                                         'variant_id' => $item->variation->id,
                                         'batch_number' => $i->vendorProductPrice->batch_number,
                                         'quantity' => $i->quantity
+                                    ]),
+                                    'batch_numbers' => $item->variation->vendorProductPrices->map(fn($vpp) => [
+                                        'batch_number_id' => (int)$vpp->id,
+                                        'quantity' => (int)$vpp->stock_left,
+                                        'batch_number' => $vpp->batch_number
                                     ])
                                 ];
                             })

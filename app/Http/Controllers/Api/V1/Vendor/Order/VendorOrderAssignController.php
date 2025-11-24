@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Vendor\Order;
 
+use App\Enums\Purchase\OrderItemStatusEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Events\LoyalityPointEvent;
@@ -111,22 +112,21 @@ class VendorOrderAssignController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Order Detail.",
+     *         description="Order detail of an order assigned to this vendor.",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Order Detail."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="order_code", type="string", example="e5YbaY"),
-     *                 @OA\Property(property="user_type", type="string", example="USER"),
-     *                 @OA\Property(property="name", type="string", example="user00"),
-     *                 @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *                 @OA\Property(property="mobile", type="string", example="9819705581"),
-     *                 @OA\Property(property="address", type="string", example="Lazimpat, Kathmandu"),
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Order detail of an order assigned to this vendor."),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="order_code", type="string", example="MuEXEv"),
+     *                 @OA\Property(property="user_type", type="string", example="GUEST"),
+     *                 @OA\Property(property="name", type="string", example="James P. Sullivan"),
+     *                 @OA\Property(property="email", type="string", example="james.sullivan100@example.com"),
+     *                 @OA\Property(property="mobile", type="string", example="9844521125"),
+     *                 @OA\Property(property="address", type="string", example="Kamalpokhari, Kathmandu"),
      *                 @OA\Property(property="latitude", type="string", example="2.52144"),
      *                 @OA\Property(property="longitude", type="string", example="18.21554"),
      *                 @OA\Property(property="description", type="string", example="some description of this order COD LZ"),
-     *                 @OA\Property(property="price", type="number", example=16300),
+     *                 @OA\Property(property="price", type="number", format="float", example=22351.32),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
      *                 @OA\Property(property="status", type="string", example="PENDING"),
@@ -137,40 +137,39 @@ class VendorOrderAssignController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="type", type="string", example="package"),
-     *                         @OA\Property(property="prescription_required", type="boolean", example=false),
-     *                         @OA\Property(property="prescription_image", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="type", type="string", example="product"),
+     *                         @OA\Property(property="prescription_required", type="boolean", example=true),
+     *                         @OA\Property(property="prescription_image", type="string", nullable=true, example="http://example.com/image.jpg"),
      *     
      *                         @OA\Property(
      *                             property="item_products",
      *                             type="array",
      *                             @OA\Items(
      *                                 type="object",
-     *                                 @OA\Property(property="OIP_ID", type="integer", example=20),
-     *                                 @OA\Property(property="variant_id", type="integer", example=7),
-     *                                 @OA\Property(property="product_name", type="string", example="Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."),
-     *                                 @OA\Property(property="variant_name", type="string", example="Variant-5"),
-     *                                 @OA\Property(property="required_quantity", type="integer", example=4),
+     *                                 @OA\Property(property="OIP_ID", type="integer", example=9),
+     *                                 @OA\Property(property="variant_name", type="string", example="Psz"),
+     *                                 @OA\Property(property="product_name", type="string", example="Iste ea minus et dicta consequuntur."),
+     *                                 @OA\Property(property="required_quantity", type="integer", example=3),
+     *                                 @OA\Property(property="variant_id", type="integer", example=15),
+     *                                 @OA\Property(property="assigned_batch_numbers", type="string", nullable=true, example=null),
      *     
      *                                 @OA\Property(
      *                                     property="batch_numbers",
      *                                     type="array",
      *                                     @OA\Items(
      *                                         type="object",
-     *                                         @OA\Property(property="product_name", type="string", example="Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."),
-     *                                         @OA\Property(property="variant_name", type="string", example="Variant-5"),
-     *                                         @OA\Property(property="variant_id", type="integer", example=7),
-     *                                         @OA\Property(property="batch_number", type="string", example="724711506"),
-     *                                         @OA\Property(property="quantity", type="integer", example=4)
+     *                                         @OA\Property(property="batch_number_id", type="integer", example=15),
+     *                                         @OA\Property(property="quantity", type="integer", example=111),
+     *                                         @OA\Property(property="batch_number", type="string", example="459962728")
      *                                     )
      *                                 )
      *                             )
      *                         ),
      *     
-     *                         @OA\Property(property="order_item_id", type="integer", example=110),
-     *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="price", type="number", example=8000),
-     *                         @OA\Property(property="subtotal", type="number", example=16000)
+     *                         @OA\Property(property="order_item_id", type="integer", example=5),
+     *                         @OA\Property(property="quantity", type="integer", example=3),
+     *                         @OA\Property(property="price", type="number", format="float", example=1350.44),
+     *                         @OA\Property(property="subtotal", type="number", format="float", example=4051.32)
      *                     )
      *                 )
      *             ),
@@ -181,12 +180,21 @@ class VendorOrderAssignController extends Controller
      */
     function show(Order $order)
     {
-        $order->load(['orderItems' => fn($qry) => $qry->with(['item', 'orderItemProducts.batchNumbers.vendorProductPrice'])->where('assigned_vendor_id', Auth::user()->vendor->id)]);
+        $order->load(['orderItems' => fn($qry) => $qry->with([
+            'productVariant' => fn($qry) => $qry->with([
+                'product',
+                'vendorProductPrices' => fn($qry) =>$qry->whereRelation('ProductVendor','vendor_id',Auth::user()->vendor->id)
+            ]),
+            'item',
+            'orderItemProducts.batchNumbers',
+            'orderItemProducts.variation.product',
+            'orderItemProducts.variation.vendorProductPrices' => fn($qry) => $qry->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id),
+        ])->where('assigned_vendor_id', Auth::user()->vendor->id)]);
         if ($order->orderItems->isEmpty()) {
             return $this->apiError('No order item has been assigned to you from this order.');
         }
         $order = new OrderAssignDetailResource($order);
-        return $this->apiSuccess('Order Detail.', $order);
+        return $this->apiSuccess('Order detail of an order assigned to this vendor.', $order);
     }
     /** @OA\Put(
      *     path="/vendor/orders/{order}",
@@ -210,7 +218,7 @@ class VendorOrderAssignController extends Controller
      *                 type="string",
      *                 description="Order status",
      *                 enum={"PENDING","SHIPPED","DELIVERED"},
-     *                 example="PENDING"
+     *                 example="DELIVERED"
      *             )
      *         )
      *     ),
@@ -299,10 +307,17 @@ class VendorOrderAssignController extends Controller
     /**
      * @OA\Post(
      *     security={{"sanctum": {}}},
-     *     path="/vendor/order-items/batch-assign",
+     *     path="/vendor/order-items/batch-assign/{uuid}",
      *     summary="Assign batch on order item product.",
      *     description="Assign batch on order item product.",
      *     tags={"Vendor Orders"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="Order UUID",
+     *         @OA\Schema(type="string", example="bc1b2da8-f8a2-4914-83bb-e4437ca655ad")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -354,13 +369,15 @@ class VendorOrderAssignController extends Controller
      *     )
      * )
      */
-    function assignBatchesToOrderItems(Request $request) {
+    function assignBatchesToOrderItems(Order $order, Request $request) {
         $requested_data = $request->validate([
             '*.OIP_ID' => 'required|integer|exists:order_item_products,id',
             '*.batch_numbers' => 'required|array|min:1',
             '*.batch_numbers.*.batch_number_id' => 'required|integer|exists:vendor_product_prices,id',
             '*.batch_numbers.*.quantity' => 'required|integer|min:1',
         ]);
+        // return $requested_data;
+        
         $data = collect($requested_data)
             ->flatMap(function ($item) {
                 return collect($item['batch_numbers'])->map(function ($bn) use ($item) {
@@ -372,10 +389,31 @@ class VendorOrderAssignController extends Controller
                 });
             })
             ->values();
+
+
         $temp = $data->groupBy('order_item_product_id')->map(fn($item) => [
             'order_item_product_id' => $item->first()['order_item_product_id'],
             'quantity' => $item->sum('quantity')
         ])->toArray();
+
+
+        $order_items = $order->orderItems()
+            ->with('orderItemProducts:id,order_item_id')
+            ->where('assigned_vendor_id', Auth::user()->vendor->id)
+            ->get();
+        $is_already_been_assigned = $order_items->where('status', OrderItemStatusEnum::ASSIGNED->value)
+            ->isNotEmpty();
+        if ($is_already_been_assigned) {
+            return $this->apiError('This order has already been assigned.');
+        }
+        $some_order_item_left_to_assign = $order_items->flatMap(fn($item) => $item->orderItemProducts)
+            ->pluck('id')
+            ->diff(array_keys($temp))
+            ->count();
+        if ($some_order_item_left_to_assign) {
+            return $this->apiError('All items of this order must be assigned to continue.');
+        }
+        // return [array_diff($assigned_items_of_this_order, array_keys($temp))];
 
         $order_item_products_ids = collect($data)->pluck('order_item_product_id')->all();
         $order_item_products = OrderItemProduct::whereIn('id', $order_item_products_ids)
@@ -384,9 +422,8 @@ class VendorOrderAssignController extends Controller
                 return $item->quantity == $temp[$item->id]['quantity'];
             });
         if (!$has_enough_quantity) {
-            return $this->apiError('Some order item does not meet enough quantity.');
+            return $this->apiError('Batch number quantity is no equal to required order quantity.');
         }
-
         $does_not_belong_to_same_order = $order_item_products->pluck('order_id')->unique()->count() != 1; 
         if ($does_not_belong_to_same_order) {
             return $this->apiError('Some item belongs to different order.');
@@ -399,7 +436,13 @@ class VendorOrderAssignController extends Controller
             return $this->apiError('Insufficien stock.');
         }
         // return $data->all();
-        DB::table('order_item_product_batch_numbers')->insert($data->all());
-        return $this->apiSuccess('Batch number allocated successfully');
+        DB::transaction(function () use($order,$data){
+            $order->orderItems()
+                ->with('orderItemProducts:id,order_item_id')
+                ->where('assigned_vendor_id', Auth::user()->vendor->id)
+                ->update(['status' => OrderItemStatusEnum::ASSIGNED]);
+            DB::table('order_item_product_batch_numbers')->insert($data->all());
+        });
+        return $this->apiSuccess('Batch number allocated successfully for assigned order item.');
     }
 }
