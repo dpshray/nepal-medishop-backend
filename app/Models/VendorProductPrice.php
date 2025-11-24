@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Purchase\OrderItemProductBatchNumber;
 use Illuminate\Database\Eloquent\Model;
 
 class VendorProductPrice extends Model
@@ -37,6 +38,14 @@ class VendorProductPrice extends Model
     function variation()
     {
         return $this->belongsTo(ProductVariation::class, 'product_variation_id');
+    }
+
+    function orderItemProductBatchNumber(){
+        return $this->hasMany(OrderItemProductBatchNumber::class);
+    }
+
+    function getStockLeftAttribute() {
+        return $this->units_in_stock - $this->orderItemProductBatchNumber->sum('quantity');
     }
 
     function scopeActive($qry) {

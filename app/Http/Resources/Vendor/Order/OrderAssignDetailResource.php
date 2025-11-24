@@ -33,27 +33,46 @@ class OrderAssignDetailResource extends JsonResource
             "payment_status" => $this->payment_status,
             "status" => $this->status,
             "created_at" => $this->created_at->format('Y/m/d'),
-            'ordered_items' => $this->orderItems->map(function ($item) {
-                $is_prescription_required = (bool) $item->product->prescription_required;
+            'ordered_items' => $this->orderItems->map(function ($order_item) {
+                $is_prescription_required = (bool) $order_item->product->prescription_required;
                 $data = [
-                    'item_name' => $item->item_name,
-                    'variant_name' => $item->variant_name,
-                    'variant_size' => $item->variant_size,
-                    'quantity' =>  $item->quantity,
-                    'price' => (float) $item->price,
-                    'subtotal' => (float) $item->total
+                    "order_item_id" => $order_item->id,
+                    // 'item_name' => $order_item->item_name,
+                    // 'variant_name' => $order_item->variant_name,
+                    // 'variant_size' => $order_item->variant_size,
+                    'quantity' =>  $order_item->quantity,
+                    'price' => (float) $order_item->price,
+                    'subtotal' => (float) $order_item->total
                 ];
-                if ($item->item_type == Product::class) {
+                if ($order_item->item_type == Product::class) {
                     $data = [...[
                         'type' => 'product',
                         'prescription_required' => $is_prescription_required,
-                        'prescription_image' => $is_prescription_required ? $item->getFirstMediaUrl(OrderItem::PRESCRIPTION_IMAGE) : null
+                        'prescription_image' => $is_prescription_required ? $order_item->getFirstMediaUrl(OrderItem::PRESCRIPTION_IMAGE) : null,
+                        'item_products' => [
+                            [
+                                'OIP_ID' => $order_item->orderItemProducts->firstWhere('product_variation_id', $order_item->item_variant_id)->id,
+                                'variant_name' => $order_item->variant_name,
+                                'variant_id' => (int) $order_item->item_variant_id,
+                                'product_name' => $order_item->item_name,
+                                'quantity' => $order_item->quantity,
+                            ]
+                        ]
                     ], ...$data];
                 } else {
                     $data = [...[
                         'type' => 'package',
                         'prescription_required' => (bool) false,
-                        'prescription_image' => null
+                        'prescription_image' => null,
+                        'item_products' => $order_item->item->packageProducts->flatMap(fn($PP) => [
+                            [
+                                'OIP_ID' => $order_item->orderItemProducts->firstWhere('product_variation_id', $PP->product_variation_id)->id,
+                                'variant_name' => $PP->variant->name,
+                                'variant_id' => (int)$PP->product_variation_id,
+                                'product_name' => $PP->variant->product->name,
+                                'quantity' => $PP['quantity'] * $order_item->quantity,
+                            ]
+                        ])
                     ], ...$data];
                 }
                 return $data;

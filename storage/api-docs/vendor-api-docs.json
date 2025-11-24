@@ -496,6 +496,54 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Assignment failed: the vendor does not have enough stock for one or more order items.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Assignment failed: the vendor does not have enough stock for one or more order items."
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "variant_name": {
+                                                        "type": "string",
+                                                        "example": "Variant-5"
+                                                    },
+                                                    "product_name": {
+                                                        "type": "string",
+                                                        "example": "Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."
+                                                    },
+                                                    "reason": {
+                                                        "type": "string",
+                                                        "example": "Insufficient stock"
+                                                    },
+                                                    "required_qty": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "available_qty": {
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -574,6 +622,232 @@
                     },
                     "404": {
                         "description": "Order not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/get-variant-batch-numbers/{id}": {
+            "get": {
+                "tags": [
+                    "Vendor Orders"
+                ],
+                "summary": "Get list of batch numbers of a product variant",
+                "operationId": "e7a8580ded2cd6dcf8062035c026ebe4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Variant ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of assigned orders retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of Assign Orders."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 12
+                                                            },
+                                                            "order_code": {
+                                                                "type": "string",
+                                                                "example": "ORD-2025-001"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 2500.75
+                                                            },
+                                                            "user_name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "user_email": {
+                                                                "type": "string",
+                                                                "example": "john@example.com"
+                                                            },
+                                                            "order_items_count": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "pending"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2025-10-20 12:30:00"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/order-items/batch-assign": {
+            "post": {
+                "tags": [
+                    "Vendor Orders"
+                ],
+                "summary": "Assign batch on order item product.",
+                "description": "Assign batch on order item product.",
+                "operationId": "8763734577177eb34786d15ce315b913",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "required": [
+                                        "OIP_ID",
+                                        "batch_numbers"
+                                    ],
+                                    "properties": {
+                                        "OIP_ID": {
+                                            "description": "Order Item Product ID",
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "batch_numbers": {
+                                            "description": "List of batch numbers with quantities",
+                                            "type": "array",
+                                            "items": {
+                                                "required": [
+                                                    "batch_number_id",
+                                                    "quantity"
+                                                ],
+                                                "properties": {
+                                                    "batch_number_id": {
+                                                        "description": "ID of the batch number",
+                                                        "type": "integer",
+                                                        "example": 120
+                                                    },
+                                                    "quantity": {
+                                                        "description": "Quantity taken from this batch number",
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful vendor login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Welcome, vendor00"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "user": {
+                                                    "properties": {
+                                                        "uuid": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "0b831981-5ad1-3bdc-a1bd-b514676b3f98"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "vendor00"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "format": "email",
+                                                            "example": "vendor@gmail.com"
+                                                        },
+                                                        "user_type": {
+                                                            "type": "string",
+                                                            "example": "VENDOR"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "Bearer 4|VzkoJxyMfelFTKdiJlEnN3n3OhqTxS5SKSzDxJ2z61dd765a"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
