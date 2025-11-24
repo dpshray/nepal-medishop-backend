@@ -117,15 +117,15 @@ class Order extends Model
     }
 
     function getCustomerNameAttribute() {
-        return ($this->name) ?? $this->user->name;
+        return empty($this->name) ? $this->user->name : $this->name;
     }
 
     function getMobNoAttribute() {
-        return $this->mobile ?? $this->user->mobile_number;
+        return empty($this->mobile) ? $this->user->mobile_number : $this->mobile;
     }
     
     function getMailAttribute() {
-        return $this->email ?? $this->user->email;
+        return empty($this->email) ? $this->user->email : $this->email;
     }
 
     /* function assignedVendor() {
