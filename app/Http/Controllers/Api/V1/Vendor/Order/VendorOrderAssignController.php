@@ -111,69 +111,70 @@ class VendorOrderAssignController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Order Detail",
+     *         description="Order Detail.",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Order Detail."),
-     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="order_code", type="string", example="K1CB3U895Sa8f83thrxp"),
+     *                 @OA\Property(property="order_code", type="string", example="e5YbaY"),
      *                 @OA\Property(property="user_type", type="string", example="USER"),
-     *                 @OA\Property(property="name", type="string", example="John Doe edi jsdsd"),
+     *                 @OA\Property(property="name", type="string", example="user00"),
      *                 @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *                 @OA\Property(property="mobile", type="string", example="9878776566"),
-     *                 @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
-     *                 @OA\Property(property="latitude", type="string", example="77.52144"),
+     *                 @OA\Property(property="mobile", type="string", example="9819705581"),
+     *                 @OA\Property(property="address", type="string", example="Lazimpat, Kathmandu"),
+     *                 @OA\Property(property="latitude", type="string", example="2.52144"),
      *                 @OA\Property(property="longitude", type="string", example="18.21554"),
-     *                 @OA\Property(property="description", type="string", example="some description of this order COD"),
-     *                 @OA\Property(property="price", type="number", format="float", example=2801.6),
+     *                 @OA\Property(property="description", type="string", example="some description of this order COD LZ"),
+     *                 @OA\Property(property="price", type="number", example=16300),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
      *                 @OA\Property(property="status", type="string", example="PENDING"),
-     *                 @OA\Property(property="created_at", type="string", example="2025/11/10"),
+     *                 @OA\Property(property="created_at", type="string", example="2025/11/24"),
+     *     
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="type", type="string", example="product"),
-     *                         @OA\Property(property="prescription_required", type="boolean", example=true),
+     *                         @OA\Property(property="type", type="string", example="package"),
+     *                         @OA\Property(property="prescription_required", type="boolean", example=false),
+     *                         @OA\Property(property="prescription_image", type="string", nullable=true, example=null),
+     *     
      *                         @OA\Property(
-     *                             property="prescription_image",
-     *                             type="string",
-     *                             format="uri",
-     *                             nullable=true,
-     *                             example="http://192.168.100.23:8008/storage/2680/animal-4855514_1920.jpg"
+     *                             property="item_products",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="OIP_ID", type="integer", example=20),
+     *                                 @OA\Property(property="variant_id", type="integer", example=7),
+     *                                 @OA\Property(property="product_name", type="string", example="Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."),
+     *                                 @OA\Property(property="variant_name", type="string", example="Variant-5"),
+     *                                 @OA\Property(property="required_quantity", type="integer", example=4),
+     *     
+     *                                 @OA\Property(
+     *                                     property="batch_numbers",
+     *                                     type="array",
+     *                                     @OA\Items(
+     *                                         type="object",
+     *                                         @OA\Property(property="product_name", type="string", example="Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."),
+     *                                         @OA\Property(property="variant_name", type="string", example="Variant-5"),
+     *                                         @OA\Property(property="variant_id", type="integer", example=7),
+     *                                         @OA\Property(property="batch_number", type="string", example="724711506"),
+     *                                         @OA\Property(property="quantity", type="integer", example=4)
+     *                                     )
+     *                                 )
+     *                             )
      *                         ),
-     *                         @OA\Property(property="item_name", type="string", example="Debitis quia nulla molestiae."),
-     *                         @OA\Property(property="variant_name", type="string", example="Variant-1"),
-     *                         @OA\Property(property="variant_size", type="string", example="100.00 ml"),
+     *     
+     *                         @OA\Property(property="order_item_id", type="integer", example=110),
      *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="price", type="number", format="float", example=183),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=366)
+     *                         @OA\Property(property="price", type="number", example=8000),
+     *                         @OA\Property(property="subtotal", type="number", example=16000)
      *                     )
      *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Assignment failed: the vendor does not have enough stock for one or more order items.",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Assignment failed: the vendor does not have enough stock for one or more order items."),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="variant_name", type="string", example="Variant-5"),
-     *                     @OA\Property(property="product_name", type="string", example="Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."),
-     *                     @OA\Property(property="reason", type="string", example="Insufficient stock"),
-     *                     @OA\Property(property="required_qty", type="integer", example=2),
-     *                     @OA\Property(property="available_qty", type="integer", example=0)
-     *                 )
      *             ),
-     *             @OA\Property(property="success", type="boolean", example=false)
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
      * )
@@ -265,32 +266,21 @@ class VendorOrderAssignController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of assigned orders retrieved successfully",
+     *         description="List of available variants batch.",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="List of Assign Orders."),
+     *             @OA\Property(property="message", type="string", example="List of available variants batch."),
      *             @OA\Property(
      *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="items", type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer", example=12),
-     *                         @OA\Property(property="order_code", type="string", example="ORD-2025-001"),
-     *                         @OA\Property(property="price", type="number", format="float", example=2500.75),
-     *                         @OA\Property(property="user_name", type="string", example="John Doe"),
-     *                         @OA\Property(property="user_email", type="string", example="john@example.com"),
-     *                         @OA\Property(property="order_items_count", type="integer", example=3),
-     *                         @OA\Property(property="status", type="string", example="pending"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time", example="2025-10-20 12:30:00")
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=5),
-     *                 @OA\Property(property="total_items", type="integer", example=50)
-     *             )
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="batch_number_id", type="integer", example=1),
+     *                     @OA\Property(property="batch_number", type="string", example="776033374"),
+     *                     @OA\Property(property="stock_left", type="integer", example=129)
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
      *         )
-     *     ),
+     *     )
      * )
      */
     function fetchVariantBatchNumbers(Request $request, ProductVariation $variant) {
@@ -355,26 +345,10 @@ class VendorOrderAssignController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful vendor login",
+     *         description="Batch number allocated successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Welcome, vendor00"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="user",
-     *                     type="object",
-     *                     @OA\Property(property="uuid", type="string", format="uuid", example="0b831981-5ad1-3bdc-a1bd-b514676b3f98"),
-     *                     @OA\Property(property="name", type="string", example="vendor00"),
-     *                     @OA\Property(property="email", type="string", format="email", example="vendor@gmail.com"),
-     *                     @OA\Property(property="user_type", type="string", example="VENDOR")
-     *                 ),
-     *                 @OA\Property(
-     *                     property="token",
-     *                     type="string",
-     *                     example="Bearer 4|VzkoJxyMfelFTKdiJlEnN3n3OhqTxS5SKSzDxJ2z61dd765a"
-     *                 )
-     *             ),
+     *             @OA\Property(property="message", type="string", example="Batch number allocated successfully"),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )

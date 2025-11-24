@@ -368,7 +368,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Order Detail",
+                        "description": "Order Detail.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -377,15 +377,11 @@
                                             "type": "string",
                                             "example": "Order Detail."
                                         },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
                                         "data": {
                                             "properties": {
                                                 "order_code": {
                                                     "type": "string",
-                                                    "example": "K1CB3U895Sa8f83thrxp"
+                                                    "example": "e5YbaY"
                                                 },
                                                 "user_type": {
                                                     "type": "string",
@@ -393,7 +389,7 @@
                                                 },
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "John Doe edi jsdsd"
+                                                    "example": "user00"
                                                 },
                                                 "email": {
                                                     "type": "string",
@@ -401,15 +397,15 @@
                                                 },
                                                 "mobile": {
                                                     "type": "string",
-                                                    "example": "9878776566"
+                                                    "example": "9819705581"
                                                 },
                                                 "address": {
                                                     "type": "string",
-                                                    "example": "Shyambhu, Kathmandu"
+                                                    "example": "Lazimpat, Kathmandu"
                                                 },
                                                 "latitude": {
                                                     "type": "string",
-                                                    "example": "77.52144"
+                                                    "example": "2.52144"
                                                 },
                                                 "longitude": {
                                                     "type": "string",
@@ -417,12 +413,11 @@
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "some description of this order COD"
+                                                    "example": "some description of this order COD LZ"
                                                 },
                                                 "price": {
                                                     "type": "number",
-                                                    "format": "float",
-                                                    "example": 2801.6
+                                                    "example": 16300
                                                 },
                                                 "payment_method": {
                                                     "type": "string",
@@ -438,7 +433,7 @@
                                                 },
                                                 "created_at": {
                                                     "type": "string",
-                                                    "example": "2025/11/10"
+                                                    "example": "2025/11/24"
                                                 },
                                                 "ordered_items": {
                                                     "type": "array",
@@ -446,29 +441,76 @@
                                                         "properties": {
                                                             "type": {
                                                                 "type": "string",
-                                                                "example": "product"
+                                                                "example": "package"
                                                             },
                                                             "prescription_required": {
                                                                 "type": "boolean",
-                                                                "example": true
+                                                                "example": false
                                                             },
                                                             "prescription_image": {
                                                                 "type": "string",
-                                                                "format": "uri",
-                                                                "example": "http://192.168.100.23:8008/storage/2680/animal-4855514_1920.jpg",
+                                                                "example": null,
                                                                 "nullable": true
                                                             },
-                                                            "item_name": {
-                                                                "type": "string",
-                                                                "example": "Debitis quia nulla molestiae."
+                                                            "item_products": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "OIP_ID": {
+                                                                            "type": "integer",
+                                                                            "example": 20
+                                                                        },
+                                                                        "variant_id": {
+                                                                            "type": "integer",
+                                                                            "example": 7
+                                                                        },
+                                                                        "product_name": {
+                                                                            "type": "string",
+                                                                            "example": "Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."
+                                                                        },
+                                                                        "variant_name": {
+                                                                            "type": "string",
+                                                                            "example": "Variant-5"
+                                                                        },
+                                                                        "required_quantity": {
+                                                                            "type": "integer",
+                                                                            "example": 4
+                                                                        },
+                                                                        "batch_numbers": {
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                                "properties": {
+                                                                                    "product_name": {
+                                                                                        "type": "string",
+                                                                                        "example": "Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."
+                                                                                    },
+                                                                                    "variant_name": {
+                                                                                        "type": "string",
+                                                                                        "example": "Variant-5"
+                                                                                    },
+                                                                                    "variant_id": {
+                                                                                        "type": "integer",
+                                                                                        "example": 7
+                                                                                    },
+                                                                                    "batch_number": {
+                                                                                        "type": "string",
+                                                                                        "example": "724711506"
+                                                                                    },
+                                                                                    "quantity": {
+                                                                                        "type": "integer",
+                                                                                        "example": 4
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
                                                             },
-                                                            "variant_name": {
-                                                                "type": "string",
-                                                                "example": "Variant-1"
-                                                            },
-                                                            "variant_size": {
-                                                                "type": "string",
-                                                                "example": "100.00 ml"
+                                                            "order_item_id": {
+                                                                "type": "integer",
+                                                                "example": 110
                                                             },
                                                             "quantity": {
                                                                 "type": "integer",
@@ -476,13 +518,11 @@
                                                             },
                                                             "price": {
                                                                 "type": "number",
-                                                                "format": "float",
-                                                                "example": 183
+                                                                "example": 8000
                                                             },
                                                             "subtotal": {
                                                                 "type": "number",
-                                                                "format": "float",
-                                                                "example": 366
+                                                                "example": 16000
                                                             }
                                                         },
                                                         "type": "object"
@@ -490,54 +530,10 @@
                                                 }
                                             },
                                             "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Assignment failed: the vendor does not have enough stock for one or more order items.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Assignment failed: the vendor does not have enough stock for one or more order items."
-                                        },
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "variant_name": {
-                                                        "type": "string",
-                                                        "example": "Variant-5"
-                                                    },
-                                                    "product_name": {
-                                                        "type": "string",
-                                                        "example": "Recusandae consequuntur earum nesciunt facilis cupiditate voluptatum non amet."
-                                                    },
-                                                    "reason": {
-                                                        "type": "string",
-                                                        "example": "Insufficient stock"
-                                                    },
-                                                    "required_qty": {
-                                                        "type": "integer",
-                                                        "example": 2
-                                                    },
-                                                    "available_qty": {
-                                                        "type": "integer",
-                                                        "example": 0
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
                                         },
                                         "success": {
                                             "type": "boolean",
-                                            "example": false
+                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -652,77 +648,38 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of assigned orders retrieved successfully",
+                        "description": "List of available variants batch.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of available variants batch."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "batch_number_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "batch_number": {
+                                                        "type": "string",
+                                                        "example": "776033374"
+                                                    },
+                                                    "stock_left": {
+                                                        "type": "integer",
+                                                        "example": 129
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "List of Assign Orders."
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "items": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 12
-                                                            },
-                                                            "order_code": {
-                                                                "type": "string",
-                                                                "example": "ORD-2025-001"
-                                                            },
-                                                            "price": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 2500.75
-                                                            },
-                                                            "user_name": {
-                                                                "type": "string",
-                                                                "example": "John Doe"
-                                                            },
-                                                            "user_email": {
-                                                                "type": "string",
-                                                                "example": "john@example.com"
-                                                            },
-                                                            "order_items_count": {
-                                                                "type": "integer",
-                                                                "example": 3
-                                                            },
-                                                            "status": {
-                                                                "type": "string",
-                                                                "example": "pending"
-                                                            },
-                                                            "created_at": {
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2025-10-20 12:30:00"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_page": {
-                                                    "type": "integer",
-                                                    "example": 5
-                                                },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 50
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -795,46 +752,19 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful vendor login",
+                        "description": "Batch number allocated successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Welcome, vendor00"
+                                            "example": "Batch number allocated successfully"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "user": {
-                                                    "properties": {
-                                                        "uuid": {
-                                                            "type": "string",
-                                                            "format": "uuid",
-                                                            "example": "0b831981-5ad1-3bdc-a1bd-b514676b3f98"
-                                                        },
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "vendor00"
-                                                        },
-                                                        "email": {
-                                                            "type": "string",
-                                                            "format": "email",
-                                                            "example": "vendor@gmail.com"
-                                                        },
-                                                        "user_type": {
-                                                            "type": "string",
-                                                            "example": "VENDOR"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "Bearer 4|VzkoJxyMfelFTKdiJlEnN3n3OhqTxS5SKSzDxJ2z61dd765a"
-                                                }
-                                            },
-                                            "type": "object"
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
                                         },
                                         "success": {
                                             "type": "boolean",
