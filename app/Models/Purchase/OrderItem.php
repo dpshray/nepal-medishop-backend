@@ -75,9 +75,9 @@ class OrderItem extends Model implements HasMedia
         return $qry->where('status', OrderStatusEnum::DELIVERED);
     }
 
-    /* function batchNumbers() {
+    function batchNumbers() {
         return $this->belongsToMany(VendorProductPrice::class, 'order_item_batch_number')->withPivot(['quantity']);
-    } */
+    }
 
     function orderItemProducts()
     {

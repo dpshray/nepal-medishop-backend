@@ -34,7 +34,6 @@ class OrderAssignDetailResource extends JsonResource
             "status" => $this->status,
             "created_at" => $this->created_at->format('Y/m/d'),
             'ordered_items' => $this->orderItems->map(function ($order_item) {
-                $is_prescription_required = (bool) $order_item->product->prescription_required;
                 $data = [
                     "order_item_id" => $order_item->id,
                     // 'item_name' => $order_item->item_name,
@@ -45,6 +44,7 @@ class OrderAssignDetailResource extends JsonResource
                     'subtotal' => (float) $order_item->total
                 ];
                 if ($order_item->item_type == Product::class) {
+                    $is_prescription_required = (bool) $order_item->product->prescription_required;
                     $data = [...[
                         'type' => 'product',
                         'prescription_required' => $is_prescription_required,
@@ -53,27 +53,46 @@ class OrderAssignDetailResource extends JsonResource
                             [
                                 'OIP_ID' => $order_item->orderItemProducts->firstWhere('product_variation_id', $order_item->item_variant_id)->id,
                                 'variant_name' => $order_item->variant_name,
-                                'variant_id' => (int) $order_item->item_variant_id,
                                 'product_name' => $order_item->item_name,
-                                'quantity' => $order_item->quantity,
+                                'required_quantity' => $order_item->orderItemProducts->firstWhere('product_variation_id', $order_item->item_variant_id)->quantity,
+                                'variant_id' => (int) $order_item->item_variant_id,
+                                'batch_numbers' => $order_item->orderItemProducts->flatMap(function($item) use($order_item){
+                                    return $item->batchNumbers->map(fn($itm) => [
+                                        'product_name' => $itm->vendorProductPrice->variation->product->name,
+                                        'variant_name' => $itm->vendorProductPrice->variation->name,
+                                        'variant_id' => $itm->vendorProductPrice->variation->id,
+                                        'batch_number' => $itm->vendorProductPrice->batch_number, 
+                                        'quantity' => $itm->quantity
+                                    ]);
+                                })
                             ]
                         ]
                     ], ...$data];
                 } else {
-                    $data = [...[
-                        'type' => 'package',
-                        'prescription_required' => (bool) false,
-                        'prescription_image' => null,
-                        'item_products' => $order_item->item->packageProducts->flatMap(fn($PP) => [
-                            [
-                                'OIP_ID' => $order_item->orderItemProducts->firstWhere('product_variation_id', $PP->product_variation_id)->id,
-                                'variant_name' => $PP->variant->name,
-                                'variant_id' => (int)$PP->product_variation_id,
-                                'product_name' => $PP->variant->product->name,
-                                'quantity' => $PP['quantity'] * $order_item->quantity,
-                            ]
-                        ])
-                    ], ...$data];
+                    $data = [
+                        ...[
+                            'type' => 'package',
+                            'prescription_required' => false,
+                            'prescription_image' => null,
+                            'item_products' => $order_item->orderItemProducts->map(function($item){
+                                return [
+                                    'OIP_ID' => $item->id,
+                                    'variant_id' => $item->product_variation_id,
+                                    'product_name' => $item->variation->product->name,
+                                    'variant_name' => $item->variation->name,
+                                    'required_quantity' => $item->quantity,
+                                    'batch_numbers' => $item->batchNumbers->map(fn($i) => [
+                                        'product_name' => $item->variation->product->name,
+                                        'variant_name' => $item->variation->name,
+                                        'variant_id' => $item->variation->id,
+                                        'batch_number' => $i->vendorProductPrice->batch_number,
+                                        'quantity' => $i->quantity
+                                    ])
+                                ];
+                            })
+                        ],
+                        ...$data
+                    ];
                 }
                 return $data;
             })

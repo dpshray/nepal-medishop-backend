@@ -179,7 +179,7 @@ class VendorOrderAssignController extends Controller
      */
     function show(Order $order)
     {
-        $order->load(['orderItems' => fn($qry) => $qry->with(['item', 'orderItemProducts'])->where('assigned_vendor_id', Auth::user()->vendor->id)]);
+        $order->load(['orderItems' => fn($qry) => $qry->with(['item', 'orderItemProducts.batchNumbers.vendorProductPrice'])->where('assigned_vendor_id', Auth::user()->vendor->id)]);
         if ($order->orderItems->isEmpty()) {
             return $this->apiError('No order item has been assigned to you from this order.');
         }
@@ -404,6 +404,7 @@ class VendorOrderAssignController extends Controller
         if (!$have_sufficient_stock) {
             return $this->apiError('Insufficien stock.');
         }
+        // return $data->all();
         DB::table('order_item_product_batch_numbers')->insert($data->all());
         return $this->apiSuccess('Batch number allocated successfully');
     }

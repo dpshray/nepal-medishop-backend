@@ -14,4 +14,8 @@ class OrderItemProduct extends Model
     function variation() {
         return $this->belongsTo(ProductVariation::class,'product_variation_id');
     }
+
+    function batchNumbers() {
+        return $this->hasMany(OrderItemProductBatchNumber::class);
+    }
 }
