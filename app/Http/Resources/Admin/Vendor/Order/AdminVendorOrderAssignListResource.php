@@ -16,14 +16,9 @@ class AdminVendorOrderAssignListResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            "order_uuid" => $this->uuid,
-            'order_code' => $this->order_code,
-            'customer_name' => $this->customer_name,
-            "order_status" => $this->status,
-            "delivery_address" => $this->address,
-            "mobile" => $this->mob_no,
-            "email" => $this->mail,
-            "order_items_count" => (int) $this->order_items_count
+            'vendor_uuid' => $this->uuid,
+            "vendor_location" => $this->location,
+            "store_name" => $this->store_name
         ];
     }
 }
