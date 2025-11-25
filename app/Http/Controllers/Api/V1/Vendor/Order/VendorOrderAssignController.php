@@ -386,7 +386,9 @@ class VendorOrderAssignController extends Controller
             '*.batch_numbers.*.quantity' => 'required|integer|min:1',
         ]);
         // return $requested_data;
-        
+        if ($order->status == OrderStatusEnum::DELIVERED) {
+            return $this->apiError('This prder has already been delivered.');
+        }
         $data = collect($requested_data)
             ->flatMap(function ($item) {
                 return collect($item['batch_numbers'])->map(function ($bn) use ($item) {
@@ -406,22 +408,24 @@ class VendorOrderAssignController extends Controller
         ])->toArray();
 
 
-        $order_items = $order->orderItems()
+        /* $order_items = $order->orderItems()
             ->with('orderItemProducts:id,order_item_id')
             ->where('assigned_vendor_id', Auth::user()->vendor->id)
-            ->get();
-        $is_already_been_assigned = $order_items->where('status', OrderItemStatusEnum::ASSIGNED->value)
+            ->get(); */
+        /* $is_already_been_assigned = $order_items->where('status', OrderItemStatusEnum::ASSIGNED->value)
             ->isNotEmpty();
         if ($is_already_been_assigned) {
             return $this->apiError('This order has already been assigned.');
-        }
+        } */
+        #for bulk order item update
+        /* 
         $some_order_item_left_to_assign = $order_items->flatMap(fn($item) => $item->orderItemProducts)
             ->pluck('id')
             ->diff(array_keys($temp))
             ->count();
         if ($some_order_item_left_to_assign) {
             return $this->apiError('All items of this order must be assigned to continue.');
-        }
+        } */
         // return [array_diff($assigned_items_of_this_order, array_keys($temp))];
 
         $order_item_products_ids = collect($data)->pluck('order_item_product_id')->all();
@@ -446,10 +450,13 @@ class VendorOrderAssignController extends Controller
         }
         // return $data->all();
         DB::transaction(function () use($order,$data, $order_item_products_ids){
-            DB::table('order_item_product_batch_numbers')->whereIn('order_item_product_id', array_unique($order_item_products_ids))->delete();
+            DB::table('order_item_product_batch_numbers')
+                ->whereIn('order_item_product_id', array_unique($order_item_products_ids))
+                ->delete();
             DB::table('order_item_product_batch_numbers')->insert($data->all());
             $order->orderItems()
                 ->where('assigned_vendor_id', Auth::user()->vendor->id)
+                ->whereIn('id', $order_item_products_ids)
                 ->update(['status' => OrderItemStatusEnum::ASSIGNED]);
             $order->refresh();
             $no_pending_order_item_found = $order->orderItems()->where('status',OrderItemStatusEnum::PENDING)->doesntExist();
