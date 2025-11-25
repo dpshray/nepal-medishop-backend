@@ -293,6 +293,70 @@ class AssignOrderToVendorService
         return $combined_products;
     }
 
+    function fetchEligibleVendors(array $order_item_ids, Order $order = null)
+    {
+        $vendor_id = $this->vendor_id;
+        $orders = $this->transformOrderItemsIntoProducts($order_item_ids);
+        $this->product_item_variant_id_w_quantity = $orders;
+        /**
+         * finally finding vendors that are eligible to
+         * assign above order items
+         */
+        /* Log::info($orders);
+        Log::info('**************************'); */
+
+        $matchedVendors = collect(); // final result collection
+        Vendor::with(['vendorProductPrices.ProductVendor.associatedVendor', 'user'])
+            ->when($vendor_id, fn($qry) => $qry->where('id', $vendor_id))
+            ->when($this->search, fn($qry) => $qry->whereLike('store_name', '%' . $this->search . '%'))
+            ->verifiedAndActive()
+            ->chunk(200, function ($vendors) use ($orders, &$matchedVendors) {
+                $filtered = $vendors->filter(function ($vendor) use ($orders) {
+                    return $orders->every(function ($item) use ($vendor) {
+                        $tot_stock = $vendor->vendorProductPrices
+                            ->where('product_variation_id', $item['item_variant_id'])
+                            ->sum('units_in_stock');
+                        $product_used_stock = $vendor->assignedOrders()
+                            ->where('item_type', Product::class)
+                            ->where('item_variant_id', $item['item_variant_id'])
+                            ->sum('quantity');
+                        $package_used_stock = $vendor->assignedOrders()
+                            ->with([
+                                'item'
+                                =>
+                                fn($itm)
+                                =>
+                                $itm->with([
+                                    'packageProducts'
+                                    =>
+                                    fn($i) => $i->where('product_variation_id', $item['item_variant_id'])
+                                ])
+                            ])
+                            ->where('item_type', Package::class)
+                            ->get()
+                            ->sum(function ($item) {
+                                return $item->quantity * $item->item->packageProducts->count();
+                            });
+                        $tot_used_stock = $product_used_stock + $package_used_stock;
+
+                        /* if (in_array($vendor->id,[11,10])) {
+                            Log::info([
+                                'vendor_id' => $vendor->id, 
+                                'variant_id' => $item['item_variant_id'], 
+                                'tot_stock' => $tot_stock , 
+                                'product_used_stock' => $product_used_stock, 
+                                'package_used_stock' => $package_used_stock, 
+                                'qty' => $item['quantity']
+                            ]);
+                        } */
+                        return ($tot_stock - $tot_used_stock) >= $item['quantity'];
+                    });
+                });
+                $matchedVendors = $matchedVendors->merge($filtered);
+            });
+        return $matchedVendors;
+    }
+    
     function assignOrderToVendor($vendor, $order, $order_items_ids) {
         // $order_items_ids = $request->order_items_ids;
         /* if ($order->is_order_completely_assigned) {

@@ -36,10 +36,20 @@ class AdminOrderDetailResource extends JsonResource
             "created_at" => $this->created_at->format('Y/m/d'),
             'ordered_items' => $this->orderItems->map(function ($order_item) {
                 $data = [
+                    // "order_item_id": 1,
+                    // "type": "product",
+                    // "prescription_required": false,
+                    // "prescription_image": null,
+                    // "item_name": "Paracetamol Tablet",
+                    // "variant_name": "500mg",
+                    // "variant_size": "10 tablets",
+                    // "quantity": 2,
+                    // "price": 50.0,
+                    // "subtotal": 100.0,
                     "order_item_id" => $order_item->id,
-                    // 'item_name' => $order_item->item_name,
-                    // 'variant_name' => $order_item->variant_name,
-                    // 'variant_size' => $order_item->variant_size,
+                    'item_name' => $order_item->item_name,
+                    'variant_name' => $order_item->variant_name,
+                    'variant_size' => $order_item->variant_size,
                     'quantity' =>  $order_item->quantity,
                     'price' => (float) $order_item->price,
                     'subtotal' => (float) $order_item->total
@@ -50,6 +60,10 @@ class AdminOrderDetailResource extends JsonResource
                         'type' => 'product',
                         'prescription_required' => $is_prescription_required,
                         'prescription_image' => $is_prescription_required ? $order_item->getFirstMediaUrl(OrderItem::PRESCRIPTION_IMAGE) : null,
+                        "order_item_assigned_to" => $order_item->assignedVendor ? [
+                            'vendor_name' => $order_item->assignedVendor->user->name,
+                            'store_name' => $order_item->assignedVendor->store_name
+                        ] : null,
                         'item_products' => [
                             [
                                 'OIP_ID' => $order_item->orderItemProducts->firstWhere('product_variation_id', $order_item->item_variant_id)->id,
