@@ -7,6 +7,7 @@ use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\PaymentMethodEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Events\LoyalityPointEvent;
+use App\Exceptions\OrderException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Vendor\Order\OrderAssignDetailResource;
 use App\Http\Resources\Vendor\Order\OrderAssignListResource;
@@ -168,20 +169,12 @@ class VendorOrderAssignController extends Controller
      */
     function show(Order $order)
     {
-        $order->load(['orderItems' => fn($qry) => $qry->with([
-            'productVariant' => fn($qry) => $qry->with([
-                'product',
-                'vendorProductPrices' => fn($qry) =>$qry->whereRelation('ProductVendor','vendor_id',Auth::user()->vendor->id)
-            ]),
-            'item',
-            'orderItemProducts.batchNumbers',
-            'orderItemProducts.variation.product',
-            'orderItemProducts.variation.vendorProductPrices' => fn($qry) => $qry->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id),
-        ])->where('assigned_vendor_id', Auth::user()->vendor->id)]);
-        if ($order->orderItems->isEmpty()) {
-            return $this->apiError('No order item has been assigned to you from this order.');
+        try {
+            $order = (new OrderService)->showOrderDetail($order);
+            $order = new OrderAssignDetailResource($order);
+        } catch (OrderException $e) {
+            return $this->apiError($e->getMessage());
         }
-        $order = new OrderAssignDetailResource($order);
         return $this->apiSuccess('Order detail of an order assigned to this vendor.', $order);
     }
     /** @OA\Put(
@@ -385,86 +378,12 @@ class VendorOrderAssignController extends Controller
             '*.batch_numbers.*.batch_number_id' => 'required|integer|exists:vendor_product_prices,id',
             '*.batch_numbers.*.quantity' => 'required|integer|min:1',
         ]);
-        // return $requested_data;
-        if ($order->status == OrderStatusEnum::DELIVERED) {
-            return $this->apiError('This order has already been delivered.');
+        try {
+            (new OrderService)->assignBatchToOrderItemService($order, $requested_data);   
+        } catch (OrderException $e) {
+            return $this->apiError($e->getMessage());
         }
-        $data = collect($requested_data)
-            ->flatMap(function ($item) {
-                return collect($item['batch_numbers'])->map(function ($bn) use ($item) {
-                    return [
-                        'order_item_product_id' => $item['OIP_ID'],
-                        'vendor_product_price_id' => $bn['batch_number_id'],
-                        'quantity'        => $bn['quantity'],
-                    ];
-                });
-            })
-            ->values();
-
-
-        $temp = $data->groupBy('order_item_product_id')->map(fn($item) => [
-            'order_item_product_id' => $item->first()['order_item_product_id'],
-            'quantity' => $item->sum('quantity')
-        ])->toArray();
-
-
-        /* $order_items = $order->orderItems()
-            ->with('orderItemProducts:id,order_item_id')
-            ->where('assigned_vendor_id', Auth::user()->vendor->id)
-            ->get(); */
-        /* $is_already_been_assigned = $order_items->where('status', OrderItemStatusEnum::ASSIGNED->value)
-            ->isNotEmpty();
-        if ($is_already_been_assigned) {
-            return $this->apiError('This order has already been assigned.');
-        } */
-        #for bulk order item update
-        /* 
-        $some_order_item_left_to_assign = $order_items->flatMap(fn($item) => $item->orderItemProducts)
-            ->pluck('id')
-            ->diff(array_keys($temp))
-            ->count();
-        if ($some_order_item_left_to_assign) {
-            return $this->apiError('All items of this order must be assigned to continue.');
-        } */
-        // return [array_diff($assigned_items_of_this_order, array_keys($temp))];
-
-        $order_item_products_ids = collect($data)->pluck('order_item_product_id')->all();
-        $order_item_products = OrderItemProduct::whereIn('id', $order_item_products_ids)
-            ->get();
-        $has_enough_quantity = $order_item_products->every(function($item) use($temp){
-                return $item->quantity == $temp[$item->id]['quantity'];
-            });
-        if (!$has_enough_quantity) {
-            return $this->apiError('Batch number quantity is no equal to required order quantity.');
-        }
-        $does_not_belong_to_same_order = $order_item_products->pluck('order_id')->unique()->count() != 1; 
-        if ($does_not_belong_to_same_order) {
-            return $this->apiError('Some item does not belong to this order.');
-        }
-        $VPPs = collect($data)->pluck('quantity','vendor_product_price_id')->all();
-        $have_sufficient_stock = VendorProductPrice::whereIn('id', array_keys($VPPs))
-            ->get()
-            ->every(fn($item) => $item->stock_left >= $VPPs[$item->id]);
-        if (!$have_sufficient_stock) {
-            return $this->apiError('Insufficien stock.');
-        }
-        // return $data->all();
-        DB::transaction(function () use($order,$data, $order_item_products_ids){
-            DB::table('order_item_product_batch_numbers')
-                ->whereIn('order_item_product_id', array_unique($order_item_products_ids))
-                ->delete();
-            DB::table('order_item_product_batch_numbers')->insert($data->all());
-            $order->orderItems()
-                ->where('assigned_vendor_id', Auth::user()->vendor->id)
-                ->whereIn('id', $order_item_products_ids)
-                ->update(['status' => OrderItemStatusEnum::ASSIGNED]);
-            $order->refresh();
-            $no_pending_order_item_found = $order->orderItems()->where('status',OrderItemStatusEnum::PENDING)->doesntExist();
-            if ($no_pending_order_item_found) {
-                $order->update(['is_order_completely_assigned' => true]);
-            }
-
-        });
         return $this->apiSuccess('Batch number allocated successfully for order item.');
+        
     }
 }

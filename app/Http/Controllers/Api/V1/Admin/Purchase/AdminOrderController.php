@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Purchase;
 
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
+use App\Exceptions\OrderException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Purchase\AdminOrderDetailResource;
 use App\Http\Resources\Admin\Purchase\OrderListResource;
@@ -123,40 +124,29 @@ class AdminOrderController extends Controller
      *         description="UUID of the order",
      *         @OA\Schema(type="string", example="5cc40466-e88d-4ab3-80d8-6274a4ecf4a3")
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
-     *         description="Order Detail Response",
+     *         description="Order detail of an order assigned to this vendor.",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Order Detail."),
+     *             @OA\Property(property="message", type="string", example="Order detail of an order assigned to this vendor."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="order_code", type="string", example="hNdz0Ck2k6E0ioxUH6qH"),
+     *                 @OA\Property(property="order_code", type="string", example="arNtWH"),
      *                 @OA\Property(property="user_type", type="string", example="USER"),
      *                 @OA\Property(property="name", type="string", example="user00"),
      *                 @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *                 @OA\Property(property="mobile", type="string", example="9835064312"),
-     *                 @OA\Property(property="address", type="string", example="Shyambhu, Kathmandu"),
-     *                 @OA\Property(property="latitude", type="string", example="77.52144"),
+     *                 @OA\Property(property="mobile", type="string", example="9882334586"),
+     *                 @OA\Property(property="address", type="string", example="Lazimpat, Kathmandu"),
+     *                 @OA\Property(property="latitude", type="string", example="2.52144"),
      *                 @OA\Property(property="longitude", type="string", example="18.21554"),
-     *                 @OA\Property(property="description", type="string", example="some description of this order COD"),
-     *                 @OA\Property(property="price", type="number", format="float", example=1761.1),
-     *                 @OA\Property(property="gift_wrap", type="boolean", example=true),
-     *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper."),
+     *                 @OA\Property(property="description", type="string", example="some description of this order COD LZ"),
+     *                 @OA\Property(property="price", type="number", example=3825.15),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
      *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
      *                 @OA\Property(property="status", type="string", example="PENDING"),
-     *                 @OA\Property(property="created_at", type="string", example="2025/11/13"),
-     *
-     *                 @OA\Property(
-     *                     property="order_assigned_to",
-     *                     type="object",
-     *                     @OA\Property(property="store_name", type="string", example="Lockman Ltd"),
-     *                     @OA\Property(property="email", type="string", example="vendor@gmail.com")
-     *                 ),
-     *
+     *                 @OA\Property(property="created_at", type="string", example="2025/11/25"),
+    
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
@@ -165,23 +155,61 @@ class AdminOrderController extends Controller
      *                         @OA\Property(property="type", type="string", example="product"),
      *                         @OA\Property(property="prescription_required", type="boolean", example=false),
      *                         @OA\Property(property="prescription_image", type="string", nullable=true, example=null),
-     *                         @OA\Property(property="item_name", type="string", example="Quia velit sed quia repellendus."),
-     *                         @OA\Property(property="variant_name", type="string", example="Variant-1"),
-     *                         @OA\Property(property="variant_size", type="string", example="100.00 IU"),
-     *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="price", type="number", format="float", example=100.7),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=201.4)
+    
+     *                         @OA\Property(
+     *                             property="item_products",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="OIP_ID", type="integer", example=10),
+     *                                 @OA\Property(property="variant_name", type="string", example="aXj"),
+     *                                 @OA\Property(property="product_name", type="string", example="Omnis quod vel tempore dolorem consequatur."),
+     *                                 @OA\Property(property="required_quantity", type="integer", example=3),
+     *                                 @OA\Property(property="variant_id", type="integer", example=6),
+    
+     *                                 @OA\Property(
+     *                                     property="assigned_batch_numbers",
+     *                                     type="array",
+     *                                     @OA\Items(
+     *                                         type="object",
+     *                                         @OA\Property(property="variant_id", type="integer", example=6),
+     *                                         @OA\Property(property="batch_number", type="string", example="348927242"),
+     *                                         @OA\Property(property="quantity", type="integer", example=1)
+     *                                     )
+     *                                 ),
+    
+     *                                 @OA\Property(
+     *                                     property="batch_numbers",
+     *                                     type="array",
+     *                                     @OA\Items(
+     *                                         type="object",
+     *                                         @OA\Property(property="batch_number_id", type="integer", example=6),
+     *                                         @OA\Property(property="quantity", type="integer", example=136),
+     *                                         @OA\Property(property="batch_number", type="string", example="348927242")
+     *                                     )
+     *                                 )
+     *                             )
+     *                         ),
+    
+     *                         @OA\Property(property="order_item_id", type="integer", example=7),
+     *                         @OA\Property(property="quantity", type="integer", example=3),
+     *                         @OA\Property(property="price", type="number", example=193.05),
+     *                         @OA\Property(property="subtotal", type="number", example=579.15)
      *                     )
      *                 )
      *             ),
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
-     *     ),
+     *     )
      * )
-    */
+     */
     function show(Order $order) {
-        $order->load(['orderItems.assignedVendor', 'orderItems']);
-        $order = new AdminOrderDetailResource($order);
+        try {
+            $order = (new OrderService)->showOrderDetail($order);
+            $order = new AdminOrderDetailResource($order);
+        } catch (OrderException $e) {
+            return $this->apiError($e->getMessage());
+        }
         return $this->apiSuccess('Order Detail.', $order);
     }
 
@@ -320,5 +348,86 @@ class AdminOrderController extends Controller
         $pagination = (new OrderService)->getListOfAssignedOrder($request);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminVendorOrderAssignListResource::collection($item))->data;
         return $this->apiSuccess('List of Assign Order Items(To Admin).', $data);
+    }
+
+    /**
+     * @OA\Post(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/order-items/batch-assign/{uuid}",
+     *     summary="Assign batch on order item product(ADMIN).",
+     *     description="Assign batch on order item product(ADMIN).",
+     *     tags={"Order"},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         required=true,
+     *         description="Order UUID",
+     *         @OA\Schema(type="string", example="bc1b2da8-f8a2-4914-83bb-e4437ca655ad")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 required={"OIP_ID", "batch_numbers"},
+     *                 
+     *                 @OA\Property(
+     *                     property="OIP_ID",
+     *                     type="integer",
+     *                     example=10,
+     *                     description="Order Item Product ID"
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="batch_numbers",
+     *                     type="array",
+     *                     description="List of batch numbers with quantities",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         required={"batch_number_id", "quantity"},
+     *
+     *                         @OA\Property(
+     *                             property="batch_number_id",
+     *                             type="integer",
+     *                             example=120,
+     *                             description="ID of the batch number"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="quantity",
+     *                             type="integer",
+     *                             example=2,
+     *                             description="Quantity taken from this batch number"
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Batch number allocated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Batch number allocated successfully"),
+     *             @OA\Property(property="data", type="object", nullable=true, example=null),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function assignBatchesToOrderItemsByAdmin(Request $request, Order $order) {
+        $requested_data = $request->validate([
+            '*.OIP_ID' => 'required|integer|exists:order_item_products,id',
+            '*.batch_numbers' => 'required|array|min:1',
+            '*.batch_numbers.*.batch_number_id' => 'required|integer|exists:vendor_product_prices,id',
+            '*.batch_numbers.*.quantity' => 'required|integer|min:1',
+        ]);
+        // return $order->orderItemProducts;
+        try {
+            (new OrderService)->assignBatchToOrderItemService($order, $requested_data);
+        } catch (OrderException $e) {
+            return $this->apiError($e->getMessage());
+        }
+        return $this->apiSuccess('Batch number allocated successfully for order item(Admin).');
     }
 }
