@@ -15,6 +15,7 @@ use App\Services\OrderService;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class AdminOrderController extends Controller
@@ -207,6 +208,7 @@ class AdminOrderController extends Controller
     function show(Order $order) {
         try {
             $order = (new OrderService)->showOrderDetail($order);
+            Log::info($order);
             $order = new AdminOrderDetailResource($order);
         } catch (OrderException $e) {
             return $this->apiError($e->getMessage());
