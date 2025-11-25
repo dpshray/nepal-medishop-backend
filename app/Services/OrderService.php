@@ -342,10 +342,10 @@ class OrderService
             'orderItemProducts.variation.product',
             'orderItemProducts.variation.vendorProductPrices' => fn($qry) => $qry->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id),
         ])->where('assigned_vendor_id', Auth::user()->vendor->id)]);
-        if ($order->orderItems->isEmpty()) {
+        /* if ($order->orderItems->isEmpty()) {
             throw new OrderException('No order item has been assigned to you from this order.');
             // return $this->apiError('No order item has been assigned to you from this order.');
-        }
+        } */
         return $order;
     }
     function assignBatchToOrderItemService(Order $order, $requested_data) {
