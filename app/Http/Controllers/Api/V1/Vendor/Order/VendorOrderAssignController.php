@@ -465,6 +465,6 @@ class VendorOrderAssignController extends Controller
             }
 
         });
-        return $this->apiSuccess('Batch number allocated successfully for assigned order item.');
+        return $this->apiSuccess('Batch number allocated successfully for order item.');
     }
 }
