@@ -449,9 +449,14 @@ class VendorOrderAssignController extends Controller
             DB::table('order_item_product_batch_numbers')->whereIn('order_item_product_id', array_unique($order_item_products_ids))->delete();
             DB::table('order_item_product_batch_numbers')->insert($data->all());
             $order->orderItems()
-                ->with('orderItemProducts:id,order_item_id')
                 ->where('assigned_vendor_id', Auth::user()->vendor->id)
                 ->update(['status' => OrderItemStatusEnum::ASSIGNED]);
+            $order->refresh();
+            $no_pending_order_item_found = $order->orderItems()->where('status',OrderItemStatusEnum::PENDING)->doesntExist();
+            if ($no_pending_order_item_found) {
+                $order->update(['is_order_completely_assigned' => true]);
+            }
+
         });
         return $this->apiSuccess('Batch number allocated successfully for assigned order item.');
     }
