@@ -63,32 +63,12 @@ class Order extends Model
             }
 
             if ($order->status == OrderStatusEnum::PENDING) {
-                /* foreach ($order->orderItems as $order_item) {
-                    $order->assignedVendor
-                        ->vendor
-                        ->vendorProductPrices()
-                        ->where('product_variation_id', $order_item['item_variant_id'])
-                        ->increment('units_in_stock', $order_item['quantity']);
-                } */
                 $order->loyalityPoint()->delete();
             } elseif ($order->status == OrderStatusEnum::DELIVERED) {
                 if ($user && $order->loyalityPoint()->doesntExist()) {
                     if ($latest_approved_loyality_points) { # if previous approved loyality point exists
                         $balance_after = $latest_approved_loyality_points->balance_after + $earned_points;
                     }
-                    /* Log::info([
-                        $order->loyalityPoint()->doesntExist(),
-                        $user,
-                        $latest_approved_loyality_points,
-                        $balance_after,
-                    ]); */
-                    /* foreach ($order->orderItems as $order_item) {
-                        $order->assignedVendor
-                            ->vendor
-                            ->vendorProductPrices()
-                            ->where('product_variation_id', $order_item['item_variant_id'])
-                            ->decrement('units_in_stock', $order_item['quantity']);
-                    } */
                     if ($user) {
                         $order->loyalityPoint()->create([
                             'user_id' => $order->user_id,

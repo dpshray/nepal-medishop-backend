@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Vendor\Order;
 
 use App\Enums\Purchase\OrderItemStatusEnum;
 use App\Enums\Purchase\OrderStatusEnum;
+use App\Enums\Purchase\PaymentMethodEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Events\LoyalityPointEvent;
 use App\Http\Controllers\Controller;
@@ -244,18 +245,39 @@ class VendorOrderAssignController extends Controller
         $data = $request->validate([
             'status' => ['required',new Enum(OrderStatusEnum::class)]
         ]);
-        DB::transaction(function() use($order, $data){
+        // DB::transaction(function() use($order, $data){
             $status = strtoupper($data['status']);
             $status = OrderStatusEnum::from($status);
             $data = ['status' => $status];
-            if ($status === OrderStatusEnum::DELIVERED) {
-                $data = [...$data, ...['payment_status' => PaymentStatusEnum::PAID]];
-                // event(new LoyalityPointEvent($order));
-            }else{
-                $data = [...$data, ...['payment_status' => PaymentStatusEnum::UNPAID]];
+            $order_items = $order->orderItems;
+            if ($order_items->where('status', OrderItemStatusEnum::DELIVERED->value)->isNotEmpty()) {
+                return $this->apiError('Cannot change order item status(Order items has already been delivered).');
             }
-            $order->update($data);
-        });
+
+            if ($status === OrderStatusEnum::DELIVERED) {
+                // $data = [...$data, ...['payment_status' => PaymentStatusEnum::PAID]];
+                // event(new LoyalityPointEvent($order));
+                $order->orderItems()->update(['status' => OrderItemStatusEnum::DELIVERED]);
+            }
+            /* else{
+                $data = [...$data, ...['payment_status' => PaymentStatusEnum::UNPAID]];
+            } */
+            $order->refresh();
+            $is_all_item_delivered = $order->orderItems
+                ->whereIn('status', [
+                    OrderItemStatusEnum::ASSIGNED->value, 
+                    OrderItemStatusEnum::PENDING->value
+                    ])
+                ->isEmpty();
+            if ($is_all_item_delivered) {
+                if ($order->payment_method == PaymentMethodEnum::CASH_ON_DELIVERY->value) {
+                    $data = [...$data, ...['payment_status' => PaymentStatusEnum::PAID]];
+                    $order->update($data);
+                }else{
+                    $order->update(['status' => OrderStatusEnum::DELIVERED]);
+                }
+            }
+        // });
         return $this->apiSuccess('Order has been changed to: '.strtolower($request->status));
     }
 
