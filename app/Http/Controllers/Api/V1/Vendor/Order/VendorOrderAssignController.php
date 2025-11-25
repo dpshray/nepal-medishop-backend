@@ -387,7 +387,7 @@ class VendorOrderAssignController extends Controller
         ]);
         // return $requested_data;
         if ($order->status == OrderStatusEnum::DELIVERED) {
-            return $this->apiError('This prder has already been delivered.');
+            return $this->apiError('This order has already been delivered.');
         }
         $data = collect($requested_data)
             ->flatMap(function ($item) {
@@ -439,7 +439,7 @@ class VendorOrderAssignController extends Controller
         }
         $does_not_belong_to_same_order = $order_item_products->pluck('order_id')->unique()->count() != 1; 
         if ($does_not_belong_to_same_order) {
-            return $this->apiError('Some item belongs to different order.');
+            return $this->apiError('Some item does not belong to this order.');
         }
         $VPPs = collect($data)->pluck('quantity','vendor_product_price_id')->all();
         $have_sufficient_stock = VendorProductPrice::whereIn('id', array_keys($VPPs))
