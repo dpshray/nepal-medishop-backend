@@ -19,7 +19,7 @@ class VendorProductSeeder extends Seeder
     {
         $product = Product::with('variations:id,product_id')->select('id')->get();
         DB::transaction(function () use ($product){
-            User::FilterByRole(UserTypeEnum::VENDOR)->get()->map(function($user) use($product){
+            User::has('vendor')->get()->map(function($user) use($product){
                 // $random_product = $product->random(1,3);
                 $randomCount = rand(1, min(5, $product->count()));
                 $random_product = $product;
