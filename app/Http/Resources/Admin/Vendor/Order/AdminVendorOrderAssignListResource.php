@@ -21,6 +21,7 @@ class AdminVendorOrderAssignListResource extends JsonResource
             'customer_name' => $this->customer_name,
             "order_status" => $this->status,
             "delivery_address" => $this->address,
+            'price' => (float) $this->price,
             "mobile" => $this->mob_no,
             "email" => $this->mail,
             "order_items_count" => (int) $this->order_items_count
