@@ -332,16 +332,23 @@ class OrderService
     }
 
     function showOrderDetail(Order $order) {
-        $order->load(['orderItems' => fn($qry) => $qry->with([
-            'productVariant' => fn($qry) => $qry->with([
-                'product',
-                'vendorProductPrices' => fn($qry) => $qry->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id)
-            ]),
-            'item',
-            'orderItemProducts.batchNumbers',
-            'orderItemProducts.variation.product',
-            'orderItemProducts.variation.vendorProductPrices' => fn($qry) => $qry->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id),
-        ])->where('assigned_vendor_id', Auth::user()->vendor->id)]);
+        $order->load([
+            'orderItems' => fn($qry) => $qry->with([
+                'productVariant' => fn($qry) => $qry->with([
+                    'product',
+                    'vendorProductPrices' => fn($qry) =>
+                    $qry->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id),
+                ]),
+                'item',
+                'orderItemProducts.batchNumbers',
+                'orderItemProducts.variation.product',
+                'orderItemProducts.variation' => fn($qry) => $qry->with([
+                    'vendorProductPrices' => fn($q) =>
+                    $q->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id),
+                ]),
+            ])
+        ]);
+
         /* if ($order->orderItems->isEmpty()) {
             throw new OrderException('No order item has been assigned to you from this order.');
             // return $this->apiError('No order item has been assigned to you from this order.');
