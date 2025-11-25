@@ -7,6 +7,7 @@ use App\Enums\Purchase\PaymentStatusEnum;
 use App\Exceptions\OrderException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Purchase\AdminOrderDetailResource;
+use App\Http\Resources\Admin\Purchase\AdminOwnAssignedOrderListResource;
 use App\Http\Resources\Admin\Purchase\OrderListResource;
 use App\Http\Resources\Admin\Vendor\Order\AdminVendorOrderAssignListResource;
 use App\Models\Purchase\Order;
@@ -346,7 +347,7 @@ class AdminOrderController extends Controller
     function getAdminAssignedOrder(Request $request)
     {
         $pagination = (new OrderService)->getListOfAssignedOrder($request);
-        $data = $this->makePaginationResponse($pagination, fn($item) => AdminVendorOrderAssignListResource::collection($item))->data;
+        $data = $this->makePaginationResponse($pagination, fn($item) => AdminOwnAssignedOrderListResource::collection($item))->data;
         return $this->apiSuccess('List of Assign Order Items(To Admin).', $data);
     }
 
