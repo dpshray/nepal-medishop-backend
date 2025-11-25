@@ -15,6 +15,7 @@ use App\Models\ProductVariation;
 use App\Models\Purchase\Order;
 use App\Models\Purchase\OrderItemProduct;
 use App\Models\VendorProductPrice;
+use App\Services\OrderService;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -80,21 +81,7 @@ class VendorOrderAssignController extends Controller
      */
     function index(Request $request)
     {
-        $per_page = $request->query('per_page', 10);
-        $search = $request->query('search');
-        $vendor_id = Auth::user()->vendor->id;
-        $pagination = Order::whereRelation('orderItems','assigned_vendor_id', $vendor_id)
-            ->withCount(['orderItems' => fn($qry) => $qry->where('assigned_vendor_id', $vendor_id)])
-            ->when($search, function ($qry) use ($request) {
-                $qry->where(function ($q) use ($request) {
-                    $q->whereLike('name', '%' . $request->search . '%')
-                        ->orWhereLike('email', '%' . $request->search . '%')
-                        ->orWhereLike('mobile', '%' . $request->search . '%')
-                        ->orWhereLike('address', '%' . $request->search . '%');
-                });
-            })
-            ->orderBy('id','DESC')
-            ->paginate($per_page);
+        $pagination = (new OrderService)->getListOfAssignedOrder($request);
         $data = $this->makePaginationResponse($pagination, fn($item) => OrderAssignListResource::collection($item))->data;
         return $this->apiSuccess('List of Assign Order Items.', $data);
     }

@@ -7,7 +7,9 @@ use App\Enums\Purchase\PaymentStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Purchase\AdminOrderDetailResource;
 use App\Http\Resources\Admin\Purchase\OrderListResource;
+use App\Http\Resources\Admin\Vendor\Order\AdminVendorOrderAssignListResource;
 use App\Models\Purchase\Order;
+use App\Services\OrderService;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -258,5 +260,65 @@ class AdminOrderController extends Controller
     function cancelUserOrder(Order $order) {
         $order->update(['status' => OrderStatusEnum::CANCELLED]);
         return $this->apiSuccess('Order has been cancelled.');
+    }
+
+
+
+    /**
+     * @OA\Get(
+     *     path="/admin/admin-assigned-orders",
+     *     summary="Get list of assigned orders of admin",
+     *     tags={"Order"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Number of items per page (default: 10)",
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Search by customer name, email, mobile, or address",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of assigned orders retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="List of Assign Order Items(To Admin)."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="items", type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", example=12),
+     *                         @OA\Property(property="order_code", type="string", example="ORD-2025-001"),
+     *                         @OA\Property(property="price", type="number", format="float", example=2500.75),
+     *                         @OA\Property(property="user_name", type="string", example="John Doe"),
+     *                         @OA\Property(property="user_email", type="string", example="john@example.com"),
+     *                         @OA\Property(property="order_items_count", type="integer", example=3),
+     *                         @OA\Property(property="status", type="string", example="pending"),
+     *                         @OA\Property(property="created_at", type="string", format="date-time", example="2025-10-20 12:30:00")
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=5),
+     *                 @OA\Property(property="total_items", type="integer", example=50)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     * )
+     */
+    function getAdminAssignedOrder(Request $request)
+    {
+        $pagination = (new OrderService)->getListOfAssignedOrder($request);
+        $data = $this->makePaginationResponse($pagination, fn($item) => AdminVendorOrderAssignListResource::collection($item))->data;
+        return $this->apiSuccess('List of Assign Order Items(To Admin).', $data);
     }
 }

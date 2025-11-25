@@ -63,7 +63,7 @@ Route::prefix('admin')
         Route::post('order/{order_uuid}/assign/{vendor_uuid}', [AdminOrderAssignController::class, 'AssignOrder']);
         Route::post('order/{order:uuid}/assign-to-admin', [AdminOrderAssignController::class, 'AssignOrderToAdmin']);
         Route::post('order/{order:uuid}/cancel-assign', [AdminOrderAssignController::class, 'CancelAssignOrder']);
-        
+        Route::get('admin-assigned-orders', [AdminOrderController::class, 'getAdminAssignedOrder']);
         Route::apiResource('banner', AdminBannerController::class)->scoped(['banner' => 'uuid']);
         Route::get('toggle-banner-status/{banner:uuid}', [AdminBannerController::class, 'visibilityToggler']);
         Route::apiResource('kitbag', AdminKitbagOrderController::class)->only(['index','show','destroy'])->scoped(['kitbag' => 'uuid']);
