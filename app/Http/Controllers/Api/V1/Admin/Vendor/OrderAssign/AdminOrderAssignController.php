@@ -315,7 +315,7 @@ class AdminOrderAssignController extends Controller
         $order->load('orderItems.assignedVendor.vendorProductPrices');
         // return $order;
         DB::transaction(function () use($order){
-            $AOTVService = new AssignOrderToVendorService;
+            /* $AOTVService = new AssignOrderToVendorService;
             $order_items = $order->orderItems;
             $products_to_handle = $AOTVService->transformOrderItemsIntoProducts($order_items->pluck('id')->all());
             foreach ($order_items as $OI) {
@@ -324,7 +324,7 @@ class AdminOrderAssignController extends Controller
                     ->vendorProductPrices()
                     ->firstWhere('product_variation_id', $OI->item_variant_id)
                     ->increment('units_in_stock', $qty_to_increase);
-            }
+            } */
             $order->update(['status' => OrderStatusEnum::CANCELLED]);
         });
 
