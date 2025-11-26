@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin\Purchase;
 
 use App\Enums\OrderUserTypeEnum;
 use App\Models\Product;
+use App\Models\Purchase\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

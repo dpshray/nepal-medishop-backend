@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin\Vendor\OrderAssign;
 
+use App\Enums\Purchase\OrderItemStatusEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Enums\UserTypeEnum;
@@ -247,7 +248,16 @@ class AdminOrderAssignController extends Controller
         if (!$result['eligible']) {
             return $this->apiError('Assignment failed: the vendor does not have enough stock for one or more order items.',422, $result['failed_items']);
         }
-        $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id]);
+        DB::transaction(function () use($vendor,$order, $order_items_ids){
+            $order->orderItems()
+                ->whereIn('id', $order_items_ids)
+                ->update(['assigned_vendor_id' => $vendor->id, 'status' => OrderItemStatusEnum::ASSIGNED->value]);
+            $order->refresh();
+            $no_pending_order_item_found = $order->orderItems()->where('status', OrderItemStatusEnum::PENDING->value)->doesntExist();
+            if ($no_pending_order_item_found) {
+                $order->update(['is_order_completely_assigned' => true]);
+            }
+        });
         $vendor_name = $vendor->user->name;
         $vendor_store_name = $vendor->store_name;
         return $this->apiSuccess("Order has been assigned to {$vendor_name}", compact('items','vendor_name','vendor_store_name'));

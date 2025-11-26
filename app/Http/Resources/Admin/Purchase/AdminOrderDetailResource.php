@@ -85,6 +85,10 @@ class AdminOrderDetailResource extends JsonResource
                             'type' => 'package',
                             'prescription_required' => false,
                             'prescription_image' => null,
+                            "order_item_assigned_to" => $order_item->assignedVendor ? [
+                                'vendor_name' => $order_item->assignedVendor->user->name,
+                                'store_name' => $order_item->assignedVendor->store_name
+                            ] : null,
                             'item_products' => $order_item->orderItemProducts->map(function ($item) {
                                 return [
                                     'OIP_ID' => $item->id,

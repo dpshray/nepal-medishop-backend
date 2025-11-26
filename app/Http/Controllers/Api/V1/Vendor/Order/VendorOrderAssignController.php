@@ -22,6 +22,7 @@ use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\UnauthorizedException;
 
@@ -218,46 +219,70 @@ class VendorOrderAssignController extends Controller
      */
     function update(Order $order, Request $request)
     {
+        // return 'DELIVERD';
+        // return Auth::user()->vendor;
         //'in:Processing,Shipped,Delivered'
         $request->merge([
             'status' => strtoupper($request->input('status')) // example modification
         ]);
         $data = $request->validate([
-            'status' => ['required',new Enum(OrderStatusEnum::class)]
+            'status' => ['required',new Enum(OrderItemStatusEnum::class)]
         ]);
-        // DB::transaction(function() use($order, $data){
-            $status = strtoupper($data['status']);
-            $status = OrderStatusEnum::from($status);
-            $data = ['status' => $status];
-            $order_items = $order->orderItems;
-            if ($order_items->where('status', OrderItemStatusEnum::DELIVERED->value)->isNotEmpty()) {
-                return $this->apiError('Cannot change order item status(Order items has already been delivered).');
-            }
-
-            if ($status === OrderStatusEnum::DELIVERED) {
-                // $data = [...$data, ...['payment_status' => PaymentStatusEnum::PAID]];
-                // event(new LoyalityPointEvent($order));
-                $order->orderItems()->update(['status' => OrderItemStatusEnum::DELIVERED]);
-            }
-            /* else{
-                $data = [...$data, ...['payment_status' => PaymentStatusEnum::UNPAID]];
-            } */
-            $order->refresh();
-            $is_all_item_delivered = $order->orderItems
-                ->whereIn('status', [
-                    OrderItemStatusEnum::ASSIGNED->value, 
-                    OrderItemStatusEnum::PENDING->value
-                    ])
-                ->isEmpty();
-            if ($is_all_item_delivered) {
-                if ($order->payment_method == PaymentMethodEnum::CASH_ON_DELIVERY->value) {
-                    $data = [...$data, ...['payment_status' => PaymentStatusEnum::PAID]];
-                    $order->update($data);
-                }else{
-                    $order->update(['status' => OrderStatusEnum::DELIVERED]);
+        try {
+            DB::transaction(function() use($order, $data){
+                $status = strtoupper($data['status']);
+                $status = OrderStatusEnum::from($status);
+                $data = ['status' => $status];
+                $order_items = $order->orderItems;
+                if ($order_items->where('assigned_vendor_id', Auth::user()->vendor->id)->where('status', OrderItemStatusEnum::DELIVERED->value)->isNotEmpty()) {
+                    throw new OrderException('Cannot change order item status(Order items has already been delivered).');
                 }
-            }
-        // });
+    
+                /* Log::info([
+                    $status, 
+                    OrderStatusEnum::DELIVERED,
+                    $status == OrderStatusEnum::DELIVERED
+                ]); */
+                if ($status == OrderStatusEnum::DELIVERED) {
+                    $order->orderItems()
+                        ->where('assigned_vendor_id', Auth::user()->vendor->id)
+                        ->update(['status' => OrderItemStatusEnum::DELIVERED]);
+                    $order->refresh();
+                    $tot_no_of_orders = $order->orderItems->count();
+                    $delivered_orders_items = $order->orderItems->where('status', OrderItemStatusEnum::DELIVERED)->count();
+                    if ($tot_no_of_orders == $delivered_orders_items) {
+                        $temp = ['status' => OrderStatusEnum::DELIVERED];
+                        if ($order->payment_method == PaymentMethodEnum::CASH_ON_DELIVERY->value) {
+                            $temp = [...['payment_status' => PaymentStatusEnum::PAID], ...$temp];
+                        }
+                        $order->update($temp);
+                    }else{
+                        $order->update(['status' => OrderStatusEnum::PARTIALLY_DELIVERED]);
+                    }
+                }else if ($status == OrderItemStatusEnum::PROCESSING->value) {
+                    $order->update(['status' => OrderItemStatusEnum::PROCESSING]);
+                }
+                /* else{
+                    $data = [...$data, ...['payment_status' => PaymentStatusEnum::UNPAID]];
+                } */
+                /* $is_all_item_delivered = $order->orderItems
+                    ->whereIn('status', [
+                        OrderItemStatusEnum::ASSIGNED->value, 
+                        OrderItemStatusEnum::PENDING->value
+                        ])
+                    ->isEmpty();
+                if ($is_all_item_delivered) {
+                    if ($order->payment_method == PaymentMethodEnum::CASH_ON_DELIVERY->value) {
+                        $data = [...$data, ...['payment_status' => PaymentStatusEnum::PAID]];
+                        $order->update($data);
+                    }else{
+                        $order->update(['status' => OrderStatusEnum::DELIVERED]);
+                    }
+                } */
+            });
+        } catch (OrderException $e) {
+            return $this->apiError($e->getMessage());
+        }
         return $this->apiSuccess('Order has been changed to: '.strtolower($request->status));
     }
 

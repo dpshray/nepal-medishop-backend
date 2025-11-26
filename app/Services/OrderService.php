@@ -436,7 +436,7 @@ class OrderService
             $order->orderItems()
                 ->where('assigned_vendor_id', Auth::user()->vendor->id)
                 ->whereIn('id', $order_item_products_ids)
-                ->update(['status' => OrderItemStatusEnum::ASSIGNED]);
+                ->update(['status' => OrderItemStatusEnum::PROCESSING]);
             $order->refresh();
             $no_pending_order_item_found = $order->orderItems()->where('status', OrderItemStatusEnum::PENDING)->doesntExist();
             if ($no_pending_order_item_found) {
