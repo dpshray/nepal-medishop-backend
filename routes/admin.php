@@ -55,6 +55,7 @@ Route::prefix('admin')
         Route::delete('vendor-product-prices/{id}', [AdminVendorProductController::class, 'deleteVendorProduct']);
         Route::get('vendor-product-prices-detail/{id}', [AdminVendorProductController::class, 'detail']);
         Route::apiResource('user-order', AdminOrderController::class)->parameters(['user-order' => 'order'])->scoped(['order' => 'uuid'])->except(['store']);
+        Route::get('fetch-my-assigned-order-detail/{order:uuid}', [AdminOrderController::class, 'getMyAssignedOrderDetail']);
         Route::get('orders/{order:uuid}/cancel-order', [AdminOrderController::class, 'cancelUserOrder']);
         Route::post('order-items/batch-assign/{order:uuid}', [AdminOrderController::class, 'assignBatchesToOrderItemsByAdmin']);
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
