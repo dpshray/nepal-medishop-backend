@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Vendor\Order;
+namespace App\Http\Resources\Admin\Purchase;
 
 use App\Enums\OrderUserTypeEnum;
 use App\Models\Product;
-use App\Models\Purchase\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class OrderAssignDetailResource extends JsonResource
+class AdminMyAssignedOrderDetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -32,13 +31,16 @@ class OrderAssignDetailResource extends JsonResource
             "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
             "status" => $this->status,
+            "gift_wrap" => $this->gift_wrap,
+            "gift_wrap_remarks" => $this->gift_wrap_remark,
+            "gift_wrap_charge" => $this->gift_wrap_charge,
             "created_at" => $this->created_at->format('Y/m/d'),
             'ordered_items' => $this->orderItems->map(function ($order_item) {
                 $data = [
                     "order_item_id" => $order_item->id,
-                    // 'item_name' => $order_item->item_name,
-                    // 'variant_name' => $order_item->variant_name,
-                    // 'variant_size' => $order_item->variant_size,
+                    'item_name' => $order_item->item_name,
+                    'variant_name' => $order_item->variant_name,
+                    'variant_size' => $order_item->variant_size,
                     'quantity' =>  $order_item->quantity,
                     'price' => (float) $order_item->price,
                     'subtotal' => (float) $order_item->total
@@ -49,6 +51,10 @@ class OrderAssignDetailResource extends JsonResource
                         'type' => 'product',
                         'prescription_required' => $is_prescription_required,
                         'prescription_image' => $is_prescription_required ? $order_item->getFirstMediaUrl(OrderItem::PRESCRIPTION_IMAGE) : null,
+                        "order_item_assigned_to" => $order_item->assignedVendor ? [
+                            'vendor_name' => $order_item->assignedVendor->user->name,
+                            'store_name' => $order_item->assignedVendor->store_name
+                        ] : null,
                         'item_products' => [
                             [
                                 'OIP_ID' => $order_item->orderItemProducts->firstWhere('product_variation_id', $order_item->item_variant_id)->id,
@@ -77,7 +83,7 @@ class OrderAssignDetailResource extends JsonResource
                             'type' => 'package',
                             'prescription_required' => false,
                             'prescription_image' => null,
-                            'item_products' => $order_item->orderItemProducts->map(function($item){
+                            'item_products' => $order_item->orderItemProducts->map(function ($item) {
                                 return [
                                     'OIP_ID' => $item->id,
                                     'variant_id' => $item->product_variation_id,

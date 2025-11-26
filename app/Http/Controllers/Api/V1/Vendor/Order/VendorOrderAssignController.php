@@ -170,7 +170,7 @@ class VendorOrderAssignController extends Controller
     function show(Order $order)
     {
         try {
-            $order = (new OrderService)->showOrderDetail($order);
+            $order = (new OrderService)->showOrderDetail($order,true);
             $order = new OrderAssignDetailResource($order);
         } catch (OrderException $e) {
             return $this->apiError($e->getMessage());

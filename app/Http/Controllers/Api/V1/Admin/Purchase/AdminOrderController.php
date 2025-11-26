@@ -6,6 +6,7 @@ use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Exceptions\OrderException;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\Purchase\AdminMyAssignedOrderDetailResource;
 use App\Http\Resources\Admin\Purchase\AdminOrderDetailResource;
 use App\Http\Resources\Admin\Purchase\AdminOwnAssignedOrderListResource;
 use App\Http\Resources\Admin\Purchase\OrderListResource;
@@ -530,7 +531,7 @@ class AdminOrderController extends Controller
     function getMyAssignedOrderDetail(Order $order) {
         try {
             $order = (new OrderService)->showOrderDetail($order,true);
-            $order = new AdminOrderDetailResource($order);
+            $order = new AdminMyAssignedOrderDetailResource($order);
         } catch (OrderException $e) {
             return $this->apiError($e->getMessage());
         }

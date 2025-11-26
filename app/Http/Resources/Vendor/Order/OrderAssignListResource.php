@@ -5,6 +5,7 @@ namespace App\Http\Resources\Vendor\Order;
 use App\Enums\OrderUserTypeEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class OrderAssignListResource extends JsonResource
 {
@@ -24,6 +25,8 @@ class OrderAssignListResource extends JsonResource
             "delivery_address" => $this->address,
             "mobile" => $this->mob_no,
             "email" => $this->mail,
+            "gift_wrap" => $this->gift_wrap,
+            'price' => $this->orderItems->where('assigned_vendor_id', Auth::user()->vendor->id)->sum('total'),
             "order_items_count" => (int) $this->order_items_count
         ];
     }

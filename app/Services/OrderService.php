@@ -331,7 +331,7 @@ class OrderService
         return $pagination;
     }
 
-    function showOrderDetail(Order $order) {
+    function showOrderDetail(Order $order, bool $only_my_assigned_detail = false) {
         $order->load([
             'orderItems' => fn($qry) => $qry->with([
                 'productVariant' => fn($qry) => $qry->with([
@@ -346,7 +346,7 @@ class OrderService
                     'vendorProductPrices' => fn($q) =>
                     $q->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id),
                 ]),
-            ])
+            ])->when($only_my_assigned_detail, fn($qry) => $qry->where('assigned_vendor_id', Auth::user()->vendor->id))
         ]);
 
         /* if ($order->orderItems->isEmpty()) {
