@@ -228,22 +228,26 @@ class VendorOrderAssignController extends Controller
         $data = $request->validate([
             'status' => ['required',new Enum(OrderItemStatusEnum::class)]
         ]);
+        // return 'OK';
         try {
             DB::transaction(function() use($order, $data){
                 $status = strtoupper($data['status']);
-                $status = OrderStatusEnum::from($status);
+                $status = OrderItemStatusEnum::from($status);
                 $data = ['status' => $status];
                 $order_items = $order->orderItems;
                 if ($order_items->where('assigned_vendor_id', Auth::user()->vendor->id)->where('status', OrderItemStatusEnum::DELIVERED->value)->isNotEmpty()) {
                     throw new OrderException('Cannot change order item status(Order items has already been delivered).');
                 }
-    
+                // Log::info(Auth::user()->vendor);
+                /* Log::info($order_items
+                    ->where('assigned_vendor_id', Auth::user()->vendor->id)
+                    ->where('status', OrderItemStatusEnum::DELIVERED->value)); */
                 /* Log::info([
                     $status, 
                     OrderStatusEnum::DELIVERED,
                     $status == OrderStatusEnum::DELIVERED
                 ]); */
-                if ($status == OrderStatusEnum::DELIVERED) {
+                if ($status == OrderItemStatusEnum::DELIVERED) {
                     $order->orderItems()
                         ->where('assigned_vendor_id', Auth::user()->vendor->id)
                         ->update(['status' => OrderItemStatusEnum::DELIVERED]);
@@ -259,8 +263,10 @@ class VendorOrderAssignController extends Controller
                     }else{
                         $order->update(['status' => OrderStatusEnum::PARTIALLY_DELIVERED]);
                     }
-                }else if ($status == OrderItemStatusEnum::PROCESSING->value) {
-                    $order->update(['status' => OrderItemStatusEnum::PROCESSING]);
+                }else if ($status == OrderItemStatusEnum::PROCESSING) {
+                    $order->orderItems()
+                        ->where('assigned_vendor_id', Auth::user()->vendor->id)
+                        ->update(['status' => OrderItemStatusEnum::PROCESSING]);
                 }
                 /* else{
                     $data = [...$data, ...['payment_status' => PaymentStatusEnum::UNPAID]];
