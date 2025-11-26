@@ -386,7 +386,7 @@ class AssignOrderToVendorService
             throw new AssignOrderException('Assignment failed: vendor inventory is insufficient for these items.');
         }
         DB::transaction(function () use ($order, $order_items_ids, $vendor, $product_item_variant_id_w_quantity) {
-            $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id]);
+            $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id, 'status' => OrderItemStatusEnum::ASSIGNED]);
             $order->refresh();
             $all_order_hasBeen_assigned = $order->orderItems->whereNull('assigned_vendor_id')->isEmpty();
             if ($all_order_hasBeen_assigned) {
