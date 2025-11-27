@@ -1456,6 +1456,153 @@
                 ]
             }
         },
+        "/admin/prescription": {
+            "get": {
+                "tags": [
+                    "Prescriptions"
+                ],
+                "summary": "Get list of prescriptions",
+                "description": "Returns paginated list of prescriptions. Can search by user name or email.",
+                "operationId": "getPrescriptions",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search by user name or email",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Prescription list"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Eye prescription"
+                                                    },
+                                                    "prescription_image": {
+                                                        "type": "string",
+                                                        "example": "https://example.com/image.png"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2025-11-27 09:00:00"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "example": "2025-11-27 09:00:00"
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "john@example.com"
+                                                            },
+                                                            "mobile_number": {
+                                                                "type": "string",
+                                                                "example": "+9779812345678"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/prescription/{id}": {
+            "delete": {
+                "tags": [
+                    "Prescriptions"
+                ],
+                "summary": "Delete a prescription",
+                "description": "Deletes a prescription by ID.",
+                "operationId": "deletePrescription",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the prescription",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Prescription deleted successfully"
+                    },
+                    "404": {
+                        "description": "Prescription not found"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/package": {
             "get": {
                 "tags": [
@@ -7699,6 +7846,10 @@
         {
             "name": "Feedback",
             "description": "Feedback"
+        },
+        {
+            "name": "Prescriptions",
+            "description": "Prescriptions"
         },
         {
             "name": "Package",

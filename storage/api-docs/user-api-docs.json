@@ -2198,6 +2198,172 @@
                 ]
             }
         },
+        "/user/prescription": {
+            "get": {
+                "tags": [
+                    "Prescriptions"
+                ],
+                "summary": "Get user's prescription list",
+                "description": "Returns paginated list of prescriptions for authenticated user",
+                "operationId": "c97630f558f51fa1e9b0d8b9c4f248a8",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Prescription list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "your prescription list"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Headache issue"
+                                                    },
+                                                    "image_url": {
+                                                        "type": "string",
+                                                        "example": "https://example.com/prescription.png"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "2025-01-10 12:00:00"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Prescriptions"
+                ],
+                "summary": "Store new prescription",
+                "description": "Upload prescription image and optional description",
+                "operationId": "5450e99a065d0a3cde7fb23b26e2f71f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Prescription for eye checkup"
+                                    },
+                                    "prescription_image": {
+                                        "description": "PNG/JPG file",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Prescription saved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "your prescription has been stored"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/user/prescription/{prescription}": {
+            "delete": {
+                "tags": [
+                    "Prescriptions"
+                ],
+                "summary": "Delete a prescription",
+                "description": "Delete prescription by ID",
+                "operationId": "fe38aa69cbb27e014fb6f93f2c59a4d1",
+                "parameters": [
+                    {
+                        "name": "prescription",
+                        "in": "path",
+                        "description": "ID of the prescription",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Prescription deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "your prescription has been deleted"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/user/profile": {
             "get": {
                 "tags": [
@@ -4699,6 +4865,10 @@
         {
             "name": "User",
             "description": "User"
+        },
+        {
+            "name": "Prescriptions",
+            "description": "Prescriptions"
         },
         {
             "name": "Coupon",
