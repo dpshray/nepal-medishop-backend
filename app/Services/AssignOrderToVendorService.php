@@ -363,16 +363,19 @@ class AssignOrderToVendorService
         /* if ($order->is_order_completely_assigned) {
             throw new AssignOrderException('This order has already been assigned');
         } */
-
+        $order_item_not_exists_in_order = $order->orderItems->whereIn('id', $order_items_ids)->count() != count($order_items_ids);
+        if ($order_item_not_exists_in_order) {
+            throw new AssignOrderException('Order item does not belong to this order.');
+        }
         /**
          * verifying that wether all incoming order_items_is belongs to this order
          */
         $order_qry = $order->orderItems();
         $order_items = $order_qry->whereIn('id', $order_items_ids)
             ->get();
-        if ($order_items->count() != count($order_items_ids)) {
+        /* if ($order_items->count() != count($order_items_ids)) {
             throw new AssignOrderException('Order items does not exists in this order');
-        }
+        } */
 
         // $AAV_service = new AssignOrderToVendorService;
         $this->vendor_id = $vendor->id;
@@ -386,10 +389,18 @@ class AssignOrderToVendorService
             throw new AssignOrderException('Assignment failed: vendor inventory is insufficient for these items.');
         }
         DB::transaction(function () use ($order, $order_items_ids, $vendor, $product_item_variant_id_w_quantity) {
-            $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id, 'status' => OrderItemStatusEnum::ASSIGNED]);
+            /* $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id, 'status' => OrderItemStatusEnum::ASSIGNED]);
             $order->refresh();
             $all_order_hasBeen_assigned = $order->orderItems->whereNull('assigned_vendor_id')->isEmpty();
             if ($all_order_hasBeen_assigned) {
+                $order->update(['is_order_completely_assigned' => true]);
+            } */
+            $order->orderItems()
+                ->whereIn('id', $order_items_ids)
+                ->update(['assigned_vendor_id' => $vendor->id, 'status' => OrderItemStatusEnum::ASSIGNED->value]);
+            $order->refresh();
+            $no_pending_order_item_found = $order->orderItems()->where('status', OrderItemStatusEnum::PENDING->value)->doesntExist();
+            if ($no_pending_order_item_found) {
                 $order->update(['is_order_completely_assigned' => true]);
             }
         });

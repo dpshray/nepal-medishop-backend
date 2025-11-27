@@ -6,6 +6,7 @@ use App\Enums\Purchase\OrderItemStatusEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Enums\UserTypeEnum;
+use App\Exceptions\AssignOrderException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Vendor\Order\AdminVendorAssignabilityList;
 use App\Http\Resources\Admin\Vendor\Order\AdminVendorOrderAssignListResource;
@@ -230,34 +231,26 @@ class AdminOrderAssignController extends Controller
         ],[
             'order_items_ids.*.exists' => 'The selected order items ids is invalid.'
         ]);
-        $vendor = Vendor::where('uuid', $vendor_uuid)->firstOrFail();
         $order_items_ids = $request->order_items_ids;
         $order = Order::with([
-            'orderItems' => fn($qry) => $qry->whereIn('id', $order_items_ids)
+            'orderItems'
+            //  => fn($qry) => $qry->whereIn('id', $order_items_ids)
             ])
             ->where('uuid', $order_uuid)
             ->firstOrFail();
-        $items = $order->orderItems->map(fn($OI) => [
-            "item_name" => $OI['item_name'],
-            "item_price" => (float)$OI['price'],
-            "quantity" => $OI['quantity'],
-            "sub_total" => (float)$OI['total'],
-        ]);
-        // return $request->all();
+        
+        $vendor = Vendor::where('uuid', $vendor_uuid)->firstOrFail();
         $result = (new AssignOrderToVendorService)->canVendorFulfillAllItems($order, $order_items_ids, $vendor);
         if (!$result['eligible']) {
             return $this->apiError('Assignment failed: the vendor does not have enough stock for one or more order items.',422, $result['failed_items']);
         }
-        DB::transaction(function () use($vendor,$order, $order_items_ids){
-            $order->orderItems()
-                ->whereIn('id', $order_items_ids)
-                ->update(['assigned_vendor_id' => $vendor->id, 'status' => OrderItemStatusEnum::ASSIGNED->value]);
-            $order->refresh();
-            $no_pending_order_item_found = $order->orderItems()->where('status', OrderItemStatusEnum::PENDING->value)->doesntExist();
-            if ($no_pending_order_item_found) {
-                $order->update(['is_order_completely_assigned' => true]);
-            }
-        });
+        try {
+            $items = (new AssignOrderToVendorService)->assignOrderToVendor($vendor, $order, $order_items_ids);
+        } catch (AssignOrderException $e) {
+            return $this->apiError($e->getMessage(), 422);
+        } catch (\Exception $e) {
+            return $this->apiError('Something went wrong while assigning order');
+        }
         $vendor_name = $vendor->user->name;
         $vendor_store_name = $vendor->store_name;
         return $this->apiSuccess("Order has been assigned to {$vendor_name}", compact('items','vendor_name','vendor_store_name'));
@@ -438,7 +431,7 @@ class AdminOrderAssignController extends Controller
         // return $request->all();
         try {
             $items = (new AssignOrderToVendorService)->assignOrderToVendor($vendor, $order, $order_items_ids);
-        } catch (\App\Exceptions\AssignOrderException $e) {
+        } catch (AssignOrderException $e) {
             return $this->apiError($e->getMessage(), 422);
         } catch (\Exception $e) {
             return $this->apiError('Something went wrong while assigning order');
