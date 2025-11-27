@@ -17,6 +17,7 @@ use App\Models\Purchase\OrderItem;
 use App\Models\Purchase\OrderItemProduct;
 use App\Models\Setting;
 use App\Models\VendorProductPrice;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -331,7 +332,7 @@ class OrderService
         return $pagination;
     }
 
-    function showOrderDetail(Order $order) {
+    function showOrderDetail(Order $order, bool $only_my_assigned_detail = false) {
         $order->load([
             'orderItems' => fn($qry) => $qry->with([
                 'productVariant' => fn($qry) => $qry->with([
@@ -346,7 +347,7 @@ class OrderService
                     'vendorProductPrices' => fn($q) =>
                     $q->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id),
                 ]),
-            ])
+            ])->when($only_my_assigned_detail, fn($qry) => $qry->where('assigned_vendor_id', Auth::user()->vendor->id))
         ]);
 
         /* if ($order->orderItems->isEmpty()) {
@@ -355,11 +356,10 @@ class OrderService
         } */
         return $order;
     }
+
     function assignBatchToOrderItemService(Order $order, $requested_data) {
-        // return $requested_data;
         if ($order->status == OrderStatusEnum::DELIVERED || $order->status == OrderStatusEnum::SHIPPED) {
             throw new OrderException('This order has already been shipped/delivered.');
-            // return $this->apiError('This order has already been delivered.');
         }
         $data = collect($requested_data)
             ->flatMap(function ($item) {
@@ -378,46 +378,25 @@ class OrderService
             'order_item_product_id' => $item->first()['order_item_product_id'],
             'quantity' => $item->sum('quantity')
         ])->toArray();
-
-
-        /* $order_items = $order->orderItems()
-                    ->with('orderItemProducts:id,order_item_id')
-                    ->where('assigned_vendor_id', Auth::user()->vendor->id)
-                    ->get(); */
-        /* $is_already_been_assigned = $order_items->where('status', OrderItemStatusEnum::ASSIGNED->value)
-                    ->isNotEmpty();
-                if ($is_already_been_assigned) {
-                    return $this->apiError('This order has already been assigned.');
-                } */
-        #for bulk order item update
-        /* 
-                $some_order_item_left_to_assign = $order_items->flatMap(fn($item) => $item->orderItemProducts)
-                    ->pluck('id')
-                    ->diff(array_keys($temp))
-                    ->count();
-                if ($some_order_item_left_to_assign) {
-                    return $this->apiError('All items of this order must be assigned to continue.');
-                } */
-        // return [array_diff($assigned_items_of_this_order, array_keys($temp))];
         
         $order_item_products_ids = collect($data)->pluck('order_item_product_id')->all();
-        $order->orderItemProducts->pluck('id')->diff($order_item_products_ids);
-        // $some_item_missing_from
-        // return 'OK';
         
-        $order_item_products = OrderItemProduct::whereIn('id', $order_item_products_ids)
+        $order_item_products = OrderItemProduct::whereRelation('orderItem','assigned_vendor_id', Auth::user()->vendor->id)
+            ->whereIn('id', $order_item_products_ids)
             ->get();
+        if ($order_item_products->count() == 0) {
+            throw new OrderException('You are not authorized to batch this order item.');
+        }
+
         $has_enough_quantity = $order_item_products->every(function ($item) use ($temp) {
             return $item->quantity == $temp[$item->id]['quantity'];
         });
         if (!$has_enough_quantity) {
             throw new OrderException('Batch number quantity is no equal to required order quantity.');
-            // return $this->apiError('Batch number quantity is no equal to required order quantity.');
         }
         $does_not_belong_to_same_order = $order_item_products->pluck('order_id')->unique()->count() != 1;
         if ($does_not_belong_to_same_order) {
             throw new OrderException('Some item does not belong to this order.');
-            // return $this->apiError('Some item does not belong to this order.');
         }
         $VPPs = collect($data)->pluck('quantity', 'vendor_product_price_id')->all();
         $have_sufficient_stock = VendorProductPrice::whereIn('id', array_keys($VPPs))
@@ -425,18 +404,25 @@ class OrderService
             ->every(fn($item) => $item->stock_left >= $VPPs[$item->id]);
         if (!$have_sufficient_stock) {
             throw new OrderException('Insufficien stock.');
-            // return $this->apiError('Insufficien stock.');
         }
-        // return $data->all();
         DB::transaction(function () use ($order, $data, $order_item_products_ids) {
+            $order_item_products_ids = array_unique($order_item_products_ids);
             DB::table('order_item_product_batch_numbers')
-                ->whereIn('order_item_product_id', array_unique($order_item_products_ids))
+                ->whereIn('order_item_product_id', $order_item_products_ids)
                 ->delete();
+
             DB::table('order_item_product_batch_numbers')->insert($data->all());
+            $order_item_id_to_mark_as_batched = DB::table('order_item_products')->whereIn('id', $order_item_products_ids)
+                ->get()
+                ->pluck('order_item_id')
+                ->unique()
+                ->all();
+
             $order->orderItems()
                 ->where('assigned_vendor_id', Auth::user()->vendor->id)
-                ->whereIn('id', $order_item_products_ids)
-                ->update(['status' => OrderItemStatusEnum::ASSIGNED]);
+                ->whereIn('id', $order_item_id_to_mark_as_batched)
+                ->update(['batch_assignment_status' => true]);
+
             $order->refresh();
             $no_pending_order_item_found = $order->orderItems()->where('status', OrderItemStatusEnum::PENDING)->doesntExist();
             if ($no_pending_order_item_found) {

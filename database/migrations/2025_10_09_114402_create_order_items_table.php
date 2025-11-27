@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Order::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedBigInteger('assigned_vendor_id')->nullable();
             $table->foreign('assigned_vendor_id')->references('id')->on('vendors')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->boolean('batch_assignment_status')->default(false);
             $table->string('item_type');
             $table->string('item_id');
             $table->string('item_name')->nullable();
