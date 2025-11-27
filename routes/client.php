@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Client\Feedback\ClientFeedbackController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
 use App\Http\Controllers\Api\V1\Client\Password\ClientPasswordController;
+use App\Http\Controllers\Api\V1\Client\Prescription\ClientPrescriptionController;
 use App\Http\Controllers\Api\V1\Client\Profile\ClientProfileController;
 use App\Http\Controllers\Api\V1\Client\Promocode\ClientPromoCodeController;
 use App\Http\Controllers\Api\V1\Client\Purchase\ClientCartController;
@@ -73,3 +74,4 @@ Route::middleware(['auth:sanctum'])->controller(ClientOrderController::class)->g
     Route::get('my-order-detail/{order:uuid}', 'orderDetail');
 });
 Route::post('check-coupon',[ClientPromoCodeController::class,'checkcode']);
+Route::apiResource('user/prescription',ClientPrescriptionController::class)->only(['index','store','destroy']);
