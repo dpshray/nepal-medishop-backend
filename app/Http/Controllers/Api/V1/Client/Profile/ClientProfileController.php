@@ -55,7 +55,7 @@ class ClientProfileController extends Controller
         $user = Auth::user();
         if (!$user)
         {
-            return $this->apiError('Login to access this resource',401);
+            return $this->apiError('You must be logged in to access this resource',401);
         }
         return $this->apiSuccess('user detail', new UserProfileResource($user));
     }

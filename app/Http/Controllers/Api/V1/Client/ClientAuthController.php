@@ -135,6 +135,12 @@ class ClientAuthController extends ClientController
             $formData = $request->validated();
             $STS = new SanctumTokenService();
             ['user' => $user, 'token' => $token] = $STS->check($formData)->make();
+            if(!empty($request->fcm_token))
+            {
+                $user->update([
+                    'fcm_token'=>$request->fcm_token,
+                ]);
+            }
             return $this->apiSuccess("Welcome, $user->name", [
                 'user' => new UserLoginResource($user),
                 'token' => $token

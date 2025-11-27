@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Admin\Banner\AdminBannerController;
 use App\Http\Controllers\Api\V1\Admin\ClientFeedback\AdminFeedbackController;
+use App\Http\Controllers\Api\V1\Admin\ClientPrescription\AdminPrescriptionController;
 use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Point\AdminCouponPointController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
@@ -75,4 +76,5 @@ Route::prefix('admin')
         // Route::apiResource('coupon-point', AdminCouponPointController::class);
         Route::apiResource('generic-product-name', AdminGenericProductNameController::class)->scoped(['generic_product_name' => 'slug']);
         Route::apiResource('coupon',AdminPromoCodeControlller::class)->scoped(['coupon'=>'uuid']);
+        Route::apiResource('prescription',AdminPrescriptionController::class)->only(['index','destroy']);
 });
