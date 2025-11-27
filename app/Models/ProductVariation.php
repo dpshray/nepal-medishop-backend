@@ -57,8 +57,10 @@ class ProductVariation extends Model
     {
         return $this->hasMany(VendorProductPrice::class, 'product_variation_id');
     }
+    
     function vendorProductPrice()
     {
         return $this->hasOne(VendorProductPrice::class, 'product_variation_id');
     }
+
 }

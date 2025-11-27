@@ -12,4 +12,5 @@ Route::prefix('v1')->group(function(){
     require __DIR__ . '/admin.php';
     require __DIR__ . '/vendor.php';
     require __DIR__ . '/client.php';
+    require __DIR__ . '/bulk_upload.php';
 });

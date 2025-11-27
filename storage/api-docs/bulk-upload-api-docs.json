@@ -1,0 +1,233 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Medishop",
+        "description": "Medishop Project",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.medishop.dworklabs.com/api/v1",
+            "description": "Live API Server"
+        },
+        {
+            "url": "http://192.168.100.23:8008/api/v1",
+            "description": "Localhost API Server 1"
+        },
+        {
+            "url": "http://127.0.0.1:8000/api/v1",
+            "description": "Localhost API Server 2"
+        },
+        {
+            "url": "http://192.168.100.18:8000/api/v1",
+            "description": "Localhost API Server 3"
+        }
+    ],
+    "paths": {
+        "/admin/bulk-upload/product": {
+            "post": {
+                "tags": [
+                    "BulkUpload"
+                ],
+                "summary": "Store a product tag",
+                "description": "Store a product tag.",
+                "operationId": "BulkProductUpload",
+                "requestBody": {
+                    "description": "Upload file",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "file file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tag bulk upload response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "'Tag upload completed.'"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/bulk-upload/tag": {
+            "post": {
+                "tags": [
+                    "BulkUpload"
+                ],
+                "summary": "Bulk upload a product tag.",
+                "description": "Bulk upload a product tag.",
+                "operationId": "BulkTagUpload",
+                "requestBody": {
+                    "description": "Upload file",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "file file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tag create response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tag added successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/bulk-upload/category": {
+            "post": {
+                "tags": [
+                    "BulkUpload"
+                ],
+                "summary": "Store a product category",
+                "description": "Store a product category.",
+                "operationId": "BulkCategoryUpload",
+                "requestBody": {
+                    "description": "Upload file",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "file file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tag bulk upload response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "'Tag upload completed.'"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "BulkUpload",
+            "description": "BulkUpload"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}

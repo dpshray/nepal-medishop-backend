@@ -12,6 +12,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "opcodesio/log-viewer": "^3.19",
+        "phpoffice/phpspreadsheet": "^5.3",
         "spatie/laravel-medialibrary": "^11.14"
     },
     "require-dev": {
