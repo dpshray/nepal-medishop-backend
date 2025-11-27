@@ -417,8 +417,7 @@
                                                 },
                                                 "price": {
                                                     "type": "number",
-                                                    "format": "float",
-                                                    "example": 22351.32
+                                                    "example": 4051.32
                                                 },
                                                 "payment_method": {
                                                     "type": "string",
@@ -426,11 +425,15 @@
                                                 },
                                                 "payment_status": {
                                                     "type": "string",
-                                                    "example": "UNPAID"
+                                                    "example": "PAID"
                                                 },
                                                 "status": {
                                                     "type": "string",
-                                                    "example": "PENDING"
+                                                    "example": "DELIVERED"
+                                                },
+                                                "order_item_status": {
+                                                    "type": "string",
+                                                    "example": "DELIVERED"
                                                 },
                                                 "created_at": {
                                                     "type": "string",
@@ -450,8 +453,7 @@
                                                             },
                                                             "prescription_image": {
                                                                 "type": "string",
-                                                                "example": "http://example.com/image.jpg",
-                                                                "nullable": true
+                                                                "example": "http://example.com/prescription.jpg"
                                                             },
                                                             "item_products": {
                                                                 "type": "array",
@@ -460,6 +462,10 @@
                                                                         "OIP_ID": {
                                                                             "type": "integer",
                                                                             "example": 9
+                                                                        },
+                                                                        "variant_id": {
+                                                                            "type": "integer",
+                                                                            "example": 15
                                                                         },
                                                                         "variant_name": {
                                                                             "type": "string",
@@ -473,14 +479,25 @@
                                                                             "type": "integer",
                                                                             "example": 3
                                                                         },
-                                                                        "variant_id": {
-                                                                            "type": "integer",
-                                                                            "example": 15
-                                                                        },
                                                                         "assigned_batch_numbers": {
-                                                                            "type": "string",
-                                                                            "example": null,
-                                                                            "nullable": true
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                                "properties": {
+                                                                                    "variant_id": {
+                                                                                        "type": "integer",
+                                                                                        "example": 15
+                                                                                    },
+                                                                                    "batch_number": {
+                                                                                        "type": "string",
+                                                                                        "example": "459962728"
+                                                                                    },
+                                                                                    "quantity": {
+                                                                                        "type": "integer",
+                                                                                        "example": 1
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            }
                                                                         },
                                                                         "batch_numbers": {
                                                                             "type": "array",
@@ -492,7 +509,7 @@
                                                                                     },
                                                                                     "quantity": {
                                                                                         "type": "integer",
-                                                                                        "example": 111
+                                                                                        "example": 110
                                                                                     },
                                                                                     "batch_number": {
                                                                                         "type": "string",
@@ -516,12 +533,10 @@
                                                             },
                                                             "price": {
                                                                 "type": "number",
-                                                                "format": "float",
                                                                 "example": 1350.44
                                                             },
                                                             "subtotal": {
                                                                 "type": "number",
-                                                                "format": "float",
                                                                 "example": 4051.32
                                                             }
                                                         },

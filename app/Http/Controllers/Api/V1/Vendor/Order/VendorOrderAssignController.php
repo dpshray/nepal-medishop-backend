@@ -104,9 +104,12 @@ class VendorOrderAssignController extends Controller
      *         response=200,
      *         description="Order detail of an order assigned to this vendor.",
      *         @OA\JsonContent(
-     *             type="object",
      *             @OA\Property(property="message", type="string", example="Order detail of an order assigned to this vendor."),
-     *             @OA\Property(property="data", type="object",
+     *             
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *     
      *                 @OA\Property(property="order_code", type="string", example="MuEXEv"),
      *                 @OA\Property(property="user_type", type="string", example="GUEST"),
      *                 @OA\Property(property="name", type="string", example="James P. Sullivan"),
@@ -116,10 +119,11 @@ class VendorOrderAssignController extends Controller
      *                 @OA\Property(property="latitude", type="string", example="2.52144"),
      *                 @OA\Property(property="longitude", type="string", example="18.21554"),
      *                 @OA\Property(property="description", type="string", example="some description of this order COD LZ"),
-     *                 @OA\Property(property="price", type="number", format="float", example=22351.32),
+     *                 @OA\Property(property="price", type="number", example=4051.32),
      *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
-     *                 @OA\Property(property="payment_status", type="string", example="UNPAID"),
-     *                 @OA\Property(property="status", type="string", example="PENDING"),
+     *                 @OA\Property(property="payment_status", type="string", example="PAID"),
+     *                 @OA\Property(property="status", type="string", example="DELIVERED"),
+     *                 @OA\Property(property="order_item_status", type="string", example="DELIVERED"),
      *                 @OA\Property(property="created_at", type="string", example="2025/11/24"),
      *     
      *                 @OA\Property(
@@ -127,21 +131,33 @@ class VendorOrderAssignController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
+     *     
      *                         @OA\Property(property="type", type="string", example="product"),
      *                         @OA\Property(property="prescription_required", type="boolean", example=true),
-     *                         @OA\Property(property="prescription_image", type="string", nullable=true, example="http://example.com/image.jpg"),
+     *                         @OA\Property(property="prescription_image", type="string", example="http://example.com/prescription.jpg"),
      *     
      *                         @OA\Property(
      *                             property="item_products",
      *                             type="array",
      *                             @OA\Items(
      *                                 type="object",
+     *     
      *                                 @OA\Property(property="OIP_ID", type="integer", example=9),
+     *                                 @OA\Property(property="variant_id", type="integer", example=15),
      *                                 @OA\Property(property="variant_name", type="string", example="Psz"),
      *                                 @OA\Property(property="product_name", type="string", example="Iste ea minus et dicta consequuntur."),
      *                                 @OA\Property(property="required_quantity", type="integer", example=3),
-     *                                 @OA\Property(property="variant_id", type="integer", example=15),
-     *                                 @OA\Property(property="assigned_batch_numbers", type="string", nullable=true, example=null),
+     *     
+     *                                 @OA\Property(
+     *                                     property="assigned_batch_numbers",
+     *                                     type="array",
+     *                                     @OA\Items(
+     *                                         type="object",
+     *                                         @OA\Property(property="variant_id", type="integer", example=15),
+     *                                         @OA\Property(property="batch_number", type="string", example="459962728"),
+     *                                         @OA\Property(property="quantity", type="integer", example=1)
+     *                                     )
+     *                                 ),
      *     
      *                                 @OA\Property(
      *                                     property="batch_numbers",
@@ -149,7 +165,7 @@ class VendorOrderAssignController extends Controller
      *                                     @OA\Items(
      *                                         type="object",
      *                                         @OA\Property(property="batch_number_id", type="integer", example=15),
-     *                                         @OA\Property(property="quantity", type="integer", example=111),
+     *                                         @OA\Property(property="quantity", type="integer", example=110),
      *                                         @OA\Property(property="batch_number", type="string", example="459962728")
      *                                     )
      *                                 )
@@ -158,11 +174,12 @@ class VendorOrderAssignController extends Controller
      *     
      *                         @OA\Property(property="order_item_id", type="integer", example=5),
      *                         @OA\Property(property="quantity", type="integer", example=3),
-     *                         @OA\Property(property="price", type="number", format="float", example=1350.44),
-     *                         @OA\Property(property="subtotal", type="number", format="float", example=4051.32)
+     *                         @OA\Property(property="price", type="number", example=1350.44),
+     *                         @OA\Property(property="subtotal", type="number", example=4051.32)
      *                     )
      *                 )
      *             ),
+     *     
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
