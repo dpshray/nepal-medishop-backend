@@ -18,6 +18,7 @@ class AdminMyAssignedOrderDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
+        $order_item_status = null;
         $data = [
             "order_code" => $this->order_code,
             'user_type' => $this->user_type,
@@ -36,7 +37,8 @@ class AdminMyAssignedOrderDetailResource extends JsonResource
             "gift_wrap_remarks" => $this->gift_wrap_remark,
             "gift_wrap_charge" => $this->gift_wrap_charge,
             "created_at" => $this->created_at->format('Y/m/d'),
-            'ordered_items' => $this->orderItems->map(function ($order_item) {
+            'ordered_items' => $this->orderItems->map(function ($order_item)  use (&$order_item_status){
+                $order_item_status = $order_item->status;
                 $data = [
                     "order_item_id" => $order_item->id,
                     'item_name' => $order_item->item_name,
@@ -119,6 +121,7 @@ class AdminMyAssignedOrderDetailResource extends JsonResource
             ]];
         }
         $data['price'] = collect($data['ordered_items'])->sum('subtotal');
+        $data['order_item_status'] = $order_item_status;
         return $data;
     }
 }

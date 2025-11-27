@@ -18,6 +18,7 @@ class OrderAssignDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
+        $order_item_status = null;
         $data = [
             "order_code" => $this->order_code,
             'user_type' => $this->user_type,
@@ -32,8 +33,10 @@ class OrderAssignDetailResource extends JsonResource
             "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
             "status" => $this->status,
+            'order_item_status' => '',
             "created_at" => $this->created_at->format('Y/m/d'),
-            'ordered_items' => $this->orderItems->map(function ($order_item) {
+            'ordered_items' => $this->orderItems->map(function ($order_item) use(&$order_item_status){
+                $order_item_status = $order_item->status;
                 $data = [
                     "order_item_id" => $order_item->id,
                     // 'item_name' => $order_item->item_name,
@@ -112,6 +115,7 @@ class OrderAssignDetailResource extends JsonResource
             ]];
         }
         $data['price'] = collect($data['ordered_items'])->sum('subtotal');
+        $data['order_item_status'] = $order_item_status;
         return $data;
     }
 }
