@@ -25,6 +25,7 @@ class UserLoginRequest extends FormRequest
             //
             'email' => 'required|string|email|exists:users,email|max:255',
             'password' => 'required|string|min:8',
+            'fcm_token'=>'sometimes|nullable|string'
         ];
     }
 }

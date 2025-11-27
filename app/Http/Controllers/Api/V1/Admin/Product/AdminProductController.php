@@ -511,7 +511,13 @@ class AdminProductController extends Controller
     function productVendors(Request $request, Product $product)
     {
         $per_page = $request->query('per_page', $product->productVendors->count());
-        $pagination = $product->productVendors()->with(['associatedVendor.user','vendorPrices'])->paginate($per_page);
+        $pagination = $product->productVendors()->with([
+            'associatedVendor.user',
+            'vendorPrices',
+            'vendorPrices.product',
+            'vendorPrices.variation',
+            ])
+            ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => VendorProductAssociationListResource::collection($items))->data;
         return $this->apiSuccess('Vendor list associated with this product', $data);
     }

@@ -74,4 +74,7 @@ Route::middleware(['auth:sanctum'])->controller(ClientOrderController::class)->g
     Route::get('my-order-detail/{order:uuid}', 'orderDetail');
 });
 Route::post('check-coupon',[ClientPromoCodeController::class,'checkcode']);
-Route::apiResource('user/prescription',ClientPrescriptionController::class)->only(['index','store','destroy']);
+Route::middleware(['auth:sanctum'])->group(function ()
+{
+    Route::apiResource('user/prescription',ClientPrescriptionController::class)->only(['index','store','destroy']);
+});

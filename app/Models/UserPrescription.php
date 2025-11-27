@@ -20,4 +20,8 @@ class UserPrescription extends Model implements HasMedia
     {
         $this->addMediaCollection(self::PRESCRIPTION_IMAGE)->singleFile();
     }
+    function user()
+    {
+        return $this->belongsTo(User::class,'user_id');
+    }
 }

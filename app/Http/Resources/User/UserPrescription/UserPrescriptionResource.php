@@ -20,6 +20,7 @@ class UserPrescriptionResource extends JsonResource
             'id'=>$this->id,
             'prescription_image'=>$this->getFirstMediaUrl(UserPrescription::PRESCRIPTION_IMAGE),
             'description'=>$this->description,
+            'created_at'=>$this->created_at,
         ];
     }
 }

@@ -34,21 +34,27 @@ class VendorProductPrice extends Model
     {
         return $this->belongsTo(ProductVendor::class);
     }
-
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
     function variation()
     {
         return $this->belongsTo(ProductVariation::class, 'product_variation_id');
     }
 
-    function orderItemProductBatchNumber(){
+    function orderItemProductBatchNumber()
+    {
         return $this->hasMany(OrderItemProductBatchNumber::class);
     }
 
-    function getStockLeftAttribute() {
+    function getStockLeftAttribute()
+    {
         return $this->units_in_stock - $this->orderItemProductBatchNumber->sum('quantity');
     }
 
-    function scopeActive($qry) {
-        return $qry->where('status',1);
+    function scopeActive($qry)
+    {
+        return $qry->where('status', 1);
     }
 }

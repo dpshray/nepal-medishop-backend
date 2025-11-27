@@ -42,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         'password',
         'user_type',
         'mobile_number',
+        'fcm_token'
     ];
 
     /**
@@ -89,8 +90,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
 
     function isVendor()
     {
-        return $this->user_type == UserTypeEnum::VENDOR->value 
-        || 
+        return $this->user_type == UserTypeEnum::VENDOR->value
+        ||
         !empty($this->vendor); #for admin is a vendor
     }
 
