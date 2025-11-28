@@ -361,7 +361,8 @@ class OrderService
         if ($order->status == OrderStatusEnum::DELIVERED || $order->status == OrderStatusEnum::SHIPPED) {
             throw new OrderException('This order has already been shipped/delivered.');
         }
-        $data = collect($requested_data)
+
+        $incoming_order_items = collect($requested_data)
             ->flatMap(function ($item) {
                 return collect($item['batch_numbers'])->map(function ($bn) use ($item) {
                     return [
@@ -373,45 +374,58 @@ class OrderService
             })
             ->values();
 
+        // Log::info($incoming_order_items->toArray());
 
-        $temp = $data->groupBy('order_item_product_id')->map(fn($item) => [
-            'order_item_product_id' => $item->first()['order_item_product_id'],
-            'quantity' => $item->sum('quantity')
-        ])->toArray();
-        
-        $order_item_products_ids = collect($data)->pluck('order_item_product_id')->all();
-        
-        $order_item_products = OrderItemProduct::whereRelation('orderItem','assigned_vendor_id', Auth::user()->vendor->id)
-            ->whereIn('id', $order_item_products_ids)
-            ->get();
-        if ($order_item_products->count() == 0) {
+        $vendor_id = Auth::user()->vendor->id;
+        $assigned_order_items_of_vendor = $order->load([
+            'orderItems' => fn($qry) => $qry->select(['id','order_id', 'assigned_vendor_id'])->with([
+                'orderItemProducts'
+                //  => fn($OIP) => $OIP->whereIn('id', $incoming_order_items->pluck('order_item_product_id')->all())
+            ])
+            // ->withCount(['orderItemProducts' => fn($OIP) => $OIP->whereIn('id', $incoming_order_items->pluck('order_item_product_id')->all())])
+            ->where('assigned_vendor_id', $vendor_id)
+        ]);
+        $all_order_item_product = $assigned_order_items_of_vendor->orderItems
+            ->flatMap(fn($OI) => $OI->orderItemProducts);
+        // Log::info($all_order_item_product);
+        $requested_OIP_ids = $incoming_order_items->pluck('order_item_product_id'); 
+        // Log::info($vendor_all_order_items);
+        $not_authorized_to_batch_item_orders = $requested_OIP_ids->diff($all_order_item_product->pluck('id')->toArray())->count() != 0;
+        if ($not_authorized_to_batch_item_orders) {
             throw new OrderException('You are not authorized to batch this order item.');
         }
+        /* $order_item_products = $assigned_order_items_of_vendor->orderItems
+            ->flatMap(fn($OI) => $OI->orderItemProducts); */
+        $grouping_OIP_by_its_order_id = $all_order_item_product->whereIn('id', $requested_OIP_ids->all())
+            ->groupBy('order_item_id'); 
+        // Log::info($grouping_OIP_by_its_order_id);
+        if ($grouping_OIP_by_its_order_id->count() != 1) {
+            throw new OrderException('Only one order item can be batched at a time.');
+        }
+        $order_item_id_of_OIP = $grouping_OIP_by_its_order_id->keys()->first();
+        // Log::info($order_item_id);
+        $grouped_all_order_item_product_by_order_item_id = $all_order_item_product->groupBy('order_item_id')[$order_item_id_of_OIP];
+        $some_order_item_missing_for_batching = count($grouped_all_order_item_product_by_order_item_id) != $requested_OIP_ids->count();
+        if ($some_order_item_missing_for_batching) {
+            throw new OrderException('Some order item is missing for batching process.');
+        }
 
-        $has_enough_quantity = $order_item_products->every(function ($item) use ($temp) {
-            return $item->quantity == $temp[$item->id]['quantity'];
-        });
-        if (!$has_enough_quantity) {
-            throw new OrderException('Batch number quantity is no equal to required order quantity.');
-        }
-        $does_not_belong_to_same_order = $order_item_products->pluck('order_id')->unique()->count() != 1;
-        if ($does_not_belong_to_same_order) {
-            throw new OrderException('Some item does not belong to this order.');
-        }
-        $VPPs = collect($data)->pluck('quantity', 'vendor_product_price_id')->all();
+        $VPPs = $incoming_order_items->pluck('quantity', 'vendor_product_price_id')->all();
         $have_sufficient_stock = VendorProductPrice::whereIn('id', array_keys($VPPs))
             ->get()
             ->every(fn($item) => $item->stock_left >= $VPPs[$item->id]);
         if (!$have_sufficient_stock) {
             throw new OrderException('Insufficien stock.');
         }
-        DB::transaction(function () use ($order, $data, $order_item_products_ids) {
+
+        DB::transaction(function () use ($order, $incoming_order_items, $requested_OIP_ids) {
+            $order_item_products_ids = $requested_OIP_ids->toArray();
             $order_item_products_ids = array_unique($order_item_products_ids);
             DB::table('order_item_product_batch_numbers')
                 ->whereIn('order_item_product_id', $order_item_products_ids)
                 ->delete();
 
-            DB::table('order_item_product_batch_numbers')->insert($data->all());
+            DB::table('order_item_product_batch_numbers')->insert($incoming_order_items->all());
             $order_item_id_to_mark_as_batched = DB::table('order_item_products')->whereIn('id', $order_item_products_ids)
                 ->get()
                 ->pluck('order_item_id')
