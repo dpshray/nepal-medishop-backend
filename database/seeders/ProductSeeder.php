@@ -21,7 +21,7 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            for ($i = 1; $i <= 200; $i++) {
+            for ($i = 1; $i <= 100; $i++) {
                 $apply_discount = fake()->boolean(50);
 
                 $product = [
