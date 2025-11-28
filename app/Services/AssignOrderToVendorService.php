@@ -224,9 +224,6 @@ class AssignOrderToVendorService
         ];
     }
 
-
-
-
     public function transformOrderItemsIntoProducts($order_item_ids){
         /**
          * exrtacting product from package and
