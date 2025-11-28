@@ -30,6 +30,7 @@ class BulkUploadMainController extends Controller
     private function getExcelRowInArray(UploadedFile $file, bool $in_chunk = true) {
         $spreadsheet = IOFactory::load($file->getPathname());
         $rows = $spreadsheet->getActiveSheet()->toArray();
+        Log::info($rows[0]);
         array_shift($rows);
         return $in_chunk ? array_chunk($rows, 100) : $rows;
     }
