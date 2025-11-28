@@ -64,31 +64,31 @@ class ProductSeeder extends Seeder
 
                 $variations = [
                     [
-                        "name" => "Variant-1",
+                        "name" => "Variant-".str()->random(3),
                         "size_value" => 100,
                         "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[0],
                     ],
                     [
-                        "name" => "Variant-2",
+                        "name" => "Variant-".str()->random(3),
                         "size_value" => 200,
                         "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[1],
                     ],
                     [
-                        "name" => "Variant-5",
+                        "name" => "Variant-".str()->random(3),
                         "size_value" => 500,
                         "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[2],
                     ],
                     [
-                        "name" => "Variant-6",
+                        "name" => "Variant-".str()->random(3),
                         "size_value" => 650,
                         "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[3],
                     ],
                     [
-                        "name" => "Variant-8",
+                        "name" => "Variant-".str()->random(3),
                         "size_value" => 800,
                         "size_unit" => $randomUnit,
                         'platform_price' => $platform_prices[4],

@@ -20,7 +20,6 @@ class UserSeeder extends Seeder
         // User::factory(10)->create();
         $faker = Faker::create();
         $user = 1;
-        $just_once = true;
         while ($user <= 10) {
             $name = 'vendor' . $user.$faker->randomNumber();
             $new_user = [
@@ -33,10 +32,6 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'email_verified_at' => now(),
             ];
-            if ($just_once) {
-                $new_user['name'] = 'vendor00'; 
-                $new_user['email'] = 'vendor@gmail.com'; 
-            }
             $vendor = User::create($new_user)
             ->vendor()
             ->create([
@@ -58,7 +53,6 @@ class UserSeeder extends Seeder
             clone($vendor)->addMedia($image)->preservingOriginal()->toMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
             clone($vendor)->addMedia($image)->preservingOriginal()->toMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
             $user++;
-            $just_once = false;
         }
         $user = 1;
         while ($user <= 10) {
