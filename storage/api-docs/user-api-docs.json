@@ -2216,6 +2216,16 @@
                             "type": "integer",
                             "example": 10
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
                     }
                 ],
                 "responses": {
