@@ -20,6 +20,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class BulkUploadMainController extends Controller
 {
     use ResponseTrait;
+    private string $base_url = '';
+
+    public function __construct()
+    {
+        $this->base_url = public_path('medishop_img');
+    }
 
     private function getExcelRowInArray(UploadedFile $file, bool $in_chunk = true) {
         $spreadsheet = IOFactory::load($file->getPathname());
@@ -79,28 +85,26 @@ class BulkUploadMainController extends Controller
                     foreach ($chunk as $row) {
                         $productData = [
                             'status' => true,
-                            'product_id' => $row[0],
-                            'is_featured' => filter_var($row[1], FILTER_VALIDATE_BOOLEAN),
-                            'brand_id' => $row[2],
-                            'generic_product_name_id' => $row[3],
-                            'name' => $row[4],
-                            'description' => $row[5],
-                            'discount_percent' => is_numeric($row[6]) ? (float)$row[6] : null,
-                            'prescription_required' => filter_var($row[7], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+                            'is_featured' => filter_var($row[0], FILTER_VALIDATE_BOOLEAN),
+                            'brand_id' => $row[1],
+                            'generic_product_name_id' => $row[2],
+                            'name' => $row[3],
+                            'description' => $row[4],
+                            'discount_percent' => is_numeric($row[5]) ? (float)$row[5] : null,
+                            'prescription_required' => filter_var($row[6], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
                             'added_by' => Auth::id()
                         ];
 
                         $product = Product::create($productData);
 
-                        $categories = json_decode($row[8], true) ?: [];
-                        $tags = json_decode($row[9], true) ?: [];
-                        $featuredImageFile = trim($row[10]);
-                        $galleryFiles = json_decode($row[11], true) ?: [];
-                        $healthConditions = json_decode($row[12], true) ?: [];
-                        $variations = json_decode($row[13], true) ?: [];
+                        $categories = json_decode($row[7], true) ?: [];
+                        $tags = json_decode($row[8], true) ?: [];
+                        $featuredImageFile = trim($row[9]);
+                        $galleryFiles = json_decode($row[10], true) ?: [];
+                        $healthConditions = json_decode($row[11], true) ?: [];
+                        $variations = json_decode($row[12], true) ?: [];
                         // dd(json_decode($row[11]));
-                        $baseUrl = public_path('medishop_img');
-                        // Log::info($baseUrl . '/' . $featuredImageFile);
+                        $baseUrl = $this->base_url.'/product';
                         if ($featuredImageFile) {
                             $product->addMedia($baseUrl . '/' . $featuredImageFile)->preservingOriginal()->toMediaCollection(Product::PRODUCT_FEATURE);
                         }
@@ -122,6 +126,11 @@ class BulkUploadMainController extends Controller
                         }
 
                         if (!empty($variations)) {
+                            $product_vendor = $product->productVendors()->create([
+                                'status' => true,
+                                'is_approved' => true,
+                                'vendor_id' => Auth::user()->vendor->id
+                            ]);
                             foreach ($variations as $variation) {
                                 // dd($variation);
                                 $variation_data = [
@@ -130,9 +139,7 @@ class BulkUploadMainController extends Controller
                                     "size_unit" => $variation['size_unit'],
                                     "platform_price" => $variation['platform_price'],
                                 ];
-                                $product_variation = $product->variations()
-                                    ->create($variation_data);
-                                // dd($variation);
+                                $product_variation = $product->variations()->create($variation_data);
                                 $vendor_price = [
                                     "units_in_stock" => $variation['units_in_stock'],
                                     "batch_number" => $variation['batch_number'],
@@ -141,15 +148,10 @@ class BulkUploadMainController extends Controller
                                     'product_variation_id' => $product_variation->id,
                                     "price" => $variation['platform_price']
                                 ];
-                                // Log::info($vendor_price);
-                                $product->productVendors()->create([
-                                    'status' => true,
-                                    'is_approved' => true,
-                                    'vendor_id' => Auth::user()->vendor->id
-                                ])
-                                    ->vendorPrices()
-                                    ->create($vendor_price);
+                                $product_vendor->vendorPrices()->create($vendor_price);
+
                             }
+                            // Log::info($vendor_price);
                         }
                     }
                 }
@@ -272,7 +274,7 @@ class BulkUploadMainController extends Controller
                             'name' => $row[0],
                             'discount_percent' => $row[1]
                         ];
-                        $baseUrl = public_path('medishop_img/category');
+                        $baseUrl = $this->base_url. '/category';
                         Category::create($categoryData)
                             ->addMedia($baseUrl . '/' . $row[2])
                             ->preservingOriginal()
@@ -395,7 +397,7 @@ class BulkUploadMainController extends Controller
                             'is_featured' => filter_var($row[1], FILTER_VALIDATE_BOOLEAN),
                             'is_popular' => filter_var($row[2], FILTER_VALIDATE_BOOLEAN)
                         ];
-                        $baseUrl = public_path('medishop_img/brand');
+                        $baseUrl = $this->base_url. '/brand';
                         Brand::create($brandData)
                             ->addMedia($baseUrl . '/' . $row[3])
                             ->preservingOriginal()
@@ -463,7 +465,7 @@ class BulkUploadMainController extends Controller
                             'status' => filter_var($row[1], FILTER_VALIDATE_BOOLEAN),
                             'description' => $row[2]
                         ];
-                        $baseUrl = public_path('medishop_img/health_condition');
+                        $baseUrl = $this->base_url.'/health_condition';
                         HealthCondition::create($health_condition_image)
                             ->addMedia($baseUrl . '/' . $row[3])
                             ->preservingOriginal()
