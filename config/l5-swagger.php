@@ -3,23 +3,6 @@
 return [
     'default' => 'client',
     'documentations' => [
-        'bulk_upload' => [
-            'api' => [
-                'title' => 'Bulk Upload API Doc',
-            ],
-            'routes' => [
-                'api'              => 'bulk/doc', // Swagger UI
-                'docs'             => 'bulk/docs',          // JSON endpoint
-                'oauth2_callback'  => 'bulk/oauth2-callback', // OAuth2 redirect URL
-            ],
-            'paths' => [
-                'use_absolute_path' => true,
-                'docs_json' => 'bulk-upload-api-docs.json',
-                'annotations' => [
-                    base_path('app/Http/Controllers/Api/V1/BulkUpload'),
-                ],
-            ],
-        ],
         'client' => [
             'api' => [
                 'title' => 'User API Doc',
@@ -70,6 +53,24 @@ return [
                 'docs_json' => 'admin-api-docs.json',
                 'annotations' => [
                     base_path('app/Http/Controllers/Api/V1/Admin'),
+                ],
+            ],
+        ],
+        
+        'bulk_upload' => [
+            'api' => [
+                'title' => 'Bulk Upload API Doc',
+            ],
+            'routes' => [
+                'api'              => 'bulk/doc', // Swagger UI
+                'docs'             => 'bulk/docs',          // JSON endpoint
+                'oauth2_callback'  => 'bulk/oauth2-callback', // OAuth2 redirect URL
+            ],
+            'paths' => [
+                'use_absolute_path' => true,
+                'docs_json' => 'bulk-upload-api-docs.json',
+                'annotations' => [
+                    base_path('app/Http/Controllers/Api/V1/BulkUpload'),
                 ],
             ],
         ],

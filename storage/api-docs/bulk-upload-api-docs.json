@@ -55,19 +55,18 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Tag bulk upload response",
+                        "description": "Bulk upload success response",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "'Tag upload completed.'"
+                                            "example": "Bulk upload completed with 0 errors"
                                         },
                                         "data": {
-                                            "type": "object",
-                                            "example": null,
-                                            "nullable": true
+                                            "type": "null",
+                                            "example": null
                                         },
                                         "success": {
                                             "type": "boolean",
@@ -181,19 +180,205 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Tag bulk upload response",
+                        "description": "Bulk upload success response",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "'Tag upload completed.'"
+                                            "example": "Bulk upload completed with 0 errors"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/bulk-upload/generic-product-name": {
+            "post": {
+                "tags": [
+                    "BulkUpload"
+                ],
+                "summary": "Bulk upload a product generic name.",
+                "description": "Bulk upload a product generic name.",
+                "operationId": "BulkProductGenericNameUpload",
+                "requestBody": {
+                    "description": "Upload file",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "file file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tag create response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Generic product name upload completed."
                                         },
                                         "data": {
                                             "type": "object",
                                             "example": null,
                                             "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/bulk-upload/brand": {
+            "post": {
+                "tags": [
+                    "BulkUpload"
+                ],
+                "summary": "Store a product brand",
+                "description": "Store a product brand.",
+                "operationId": "BulkBrandUpload",
+                "requestBody": {
+                    "description": "Upload file",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "file file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bulk upload success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bulk upload completed with 0 errors"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/bulk-upload/health-condition": {
+            "post": {
+                "tags": [
+                    "BulkUpload"
+                ],
+                "summary": "Store a product health condition",
+                "description": "Store a product health condition.",
+                "operationId": "BulkHealthConditionUpload",
+                "requestBody": {
+                    "description": "Upload file",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "file file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bulk upload success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bulk upload completed with 0 errors"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
                                         },
                                         "success": {
                                             "type": "boolean",

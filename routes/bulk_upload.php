@@ -16,5 +16,8 @@ Route::prefix('admin/bulk-upload')
 
     Route::post('product', 'productBulkUpload');
     Route::post('tag', 'tagBulkUpload');
+    Route::post('generic-product-name', 'genericProductNameBulkUpload');
     Route::post('category', 'categoryBulkUpload');
+    Route::post('brand', 'brandBulkUpload');
+    Route::post('health-condition', 'healthConditionBulkUpload');
 });
