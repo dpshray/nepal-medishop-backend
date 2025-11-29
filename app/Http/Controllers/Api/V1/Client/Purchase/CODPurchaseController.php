@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Client\Purchase;
 
 use App\Enums\Purchase\OrderTypeEnum;
+use App\Exceptions\OrderException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Purchase\CODRequest;
 use App\Http\Requests\Client\Purchase\KitbagRequest;
@@ -103,7 +104,11 @@ class CODPurchaseController extends Controller
         if (!$request->hasAny(['products', 'packages'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }
-        $response = (new OrderService)->saveOrder($request, OrderTypeEnum::REGULAR);
+        try {
+            $response = (new OrderService)->saveOrder($request, OrderTypeEnum::REGULAR);
+        } catch (OrderException $e) {
+            return $this->apiError($e->getMessage());
+        }
 
         return $this->apiSuccess("Your order has been placed successfully.", $response);
     }
@@ -191,9 +196,11 @@ class CODPurchaseController extends Controller
         if (!$request->hasAny(['products'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }
-
-        $response = (new OrderService)->saveOrder($request, OrderTypeEnum::KITBAG);
-
+        try {
+            $response = (new OrderService)->saveOrder($request, OrderTypeEnum::KITBAG);
+        } catch (OrderException $e) {
+            return $this->apiError($e->getMessage());
+        }
         return $this->apiSuccess("Your kitbag order has been placed successfully.", $response);
     }
 }

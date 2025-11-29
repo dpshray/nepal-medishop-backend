@@ -47,7 +47,10 @@ class OrderService
 
                 $product = $products[$item['product_slug']];
                 $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
-
+                if(empty($product_variant)){
+                    throw new OrderException('Variation does not belong to ordered product item.');
+                    
+                }
                 $product_variant_price = $product_variant->platform_price;
                 $stock = $product_variant->vendorProductPrice->units_in_stock;
                 $product_discount_percent = $product['discount_percent'];
@@ -374,15 +377,10 @@ class OrderService
             })
             ->values();
 
-        // Log::info($incoming_order_items->toArray());
-
         $vendor_id = Auth::user()->vendor->id;
         $assigned_order_items_of_vendor = $order->load([
-            'orderItems' => fn($qry) => $qry->select(['id','order_id', 'assigned_vendor_id'])->with([
-                'orderItemProducts'
-                //  => fn($OIP) => $OIP->whereIn('id', $incoming_order_items->pluck('order_item_product_id')->all())
-            ])
-            // ->withCount(['orderItemProducts' => fn($OIP) => $OIP->whereIn('id', $incoming_order_items->pluck('order_item_product_id')->all())])
+            'orderItems' => fn($qry) => $qry->select(['id','order_id', 'assigned_vendor_id'])->with(['orderItemProducts'])
+            ->whereIn('status', OrderItemStatusEnum::ASSIGNED)
             ->where('assigned_vendor_id', $vendor_id)
         ]);
         $all_order_item_product = $assigned_order_items_of_vendor->orderItems
@@ -394,8 +392,7 @@ class OrderService
         if ($not_authorized_to_batch_item_orders) {
             throw new OrderException('You are not authorized to batch this order item.');
         }
-        /* $order_item_products = $assigned_order_items_of_vendor->orderItems
-            ->flatMap(fn($OI) => $OI->orderItemProducts); */
+
         $grouping_OIP_by_its_order_id = $all_order_item_product->whereIn('id', $requested_OIP_ids->all())
             ->groupBy('order_item_id'); 
         // Log::info($grouping_OIP_by_its_order_id);
