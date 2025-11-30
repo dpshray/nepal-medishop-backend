@@ -54,7 +54,7 @@ class AssignOrderToVendorService
                 // preload only relevant reserved items (already assigned to a vendor)
                 'orderItemProducts' => function ($q) use ($required_variations) {
                     $q->whereIn('product_variation_id', $required_variations)
-                        ->whereRelation('orderItem', 'assigned_vendor_id', '<>', null);
+                        ->whereRelation('orderItem', 'assigned_vendor_id', '<>', null); #later needed to calc reserved stock
                 }
             ])
             ->when(
