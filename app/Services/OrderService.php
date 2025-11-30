@@ -380,7 +380,7 @@ class OrderService
         $vendor_id = Auth::user()->vendor->id;
         $assigned_order_items_of_vendor = $order->load([
             'orderItems' => fn($qry) => $qry->select(['id','order_id', 'assigned_vendor_id'])->with(['orderItemProducts'])
-            ->whereIn('status', OrderItemStatusEnum::ASSIGNED)
+            ->whereIn('status', [OrderItemStatusEnum::ASSIGNED])
             ->where('assigned_vendor_id', $vendor_id)
         ]);
         $all_order_item_product = $assigned_order_items_of_vendor->orderItems
@@ -402,9 +402,20 @@ class OrderService
         $order_item_id_of_OIP = $grouping_OIP_by_its_order_id->keys()->first();
         // Log::info($order_item_id);
         $grouped_all_order_item_product_by_order_item_id = $all_order_item_product->groupBy('order_item_id')[$order_item_id_of_OIP];
+        // Log::info($grouped_all_order_item_product_by_order_item_id);
+        // Log::info("------------------------");
+        // Log::info($incoming_order_items);
         $some_order_item_missing_for_batching = count($grouped_all_order_item_product_by_order_item_id) != $requested_OIP_ids->count();
         if ($some_order_item_missing_for_batching) {
             throw new OrderException('Some order item is missing for batching process.');
+        }
+
+        $qty_does_not_match = $grouped_all_order_item_product_by_order_item_id->every(function($item) use($incoming_order_items){
+            $order_item_product = $incoming_order_items->firstWhere('order_item_product_id', $item['id']);
+            return $order_item_product && $order_item_product['quantity'] ==  $item['quantity'];
+        });
+        if (!$qty_does_not_match) {
+            throw new OrderException('Quantity does not match.');
         }
 
         $VPPs = $incoming_order_items->pluck('quantity', 'vendor_product_price_id')->all();
