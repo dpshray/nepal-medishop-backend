@@ -5,7 +5,7 @@ namespace App\Http\Resources\Admin\Product\Service;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdminServiceTagListResource extends JsonResource
+class AdminServiceListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,10 @@ class AdminServiceTagListResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'id' => $this->id,
+            'is_active' => (bool)$this->is_active,
             'name' => $this->name,
-            'slug' => $this->slug
+            'slug' => $this->slug,
+            'price' => (float)$this->price 
         ];
     }
 }

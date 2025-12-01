@@ -68,6 +68,7 @@ class AdminServiceTagController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=1),
      *                         @OA\Property(property="name", type="string", example="ST TEST 123"),
      *                         @OA\Property(property="slug", type="string", example="st-test-123")
      *                     )

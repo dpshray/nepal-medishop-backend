@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_active')->default(true);
-            $table->string('uuid');
             $table->string('name');
             $table->string('slug');
             $table->text('description');
             $table->text('test_requirements');
             $table->decimal('price', 10, 2);
+            $table->decimal('discount_percent', 5, 2)->nullable();
             $table->timestamps();
         });
     }
