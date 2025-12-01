@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Product\Service;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Product\Service\AdminServiceCategoryRequest;
 use App\Http\Requests\Admin\Product\Service\AdminServiceRequest;
-use App\Http\Resources\Admin\Product\AdminServiceCategoryListResource;
+use App\Http\Resources\Admin\Product\Service\AdminServiceCategoryListResource;
 use App\Models\Product\Service\ServiceCategory;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
@@ -21,8 +21,8 @@ class AdminServiceCategoryController extends Controller
      * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/admin/service-category",
-     *     summary="Get all active/inactive service categories",
-     *     description="Get all active/inactive service categories.",
+     *     summary="Get all service categories",
+     *     description="Get all service categories.",
      *     operationId="ServiceCategoryList",
      *     tags={"ServiceCategory"},
      *     @OA\Parameter(
