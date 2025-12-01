@@ -26,7 +26,7 @@ class AdminServiceRequest extends FormRequest
         if ($this->service) {
             $id = $this->service->id;
         }
-        return [
+        $rules = [
             'is_active' => 'sometimes|nullable|boolean',
             'name' => 'required|string|max:255|unique:services,name,'.$id,
             'description' => 'required|string',
@@ -37,8 +37,13 @@ class AdminServiceRequest extends FormRequest
             'category_id.*' => 'required|integer|exists:service_categories,id',
             'tag_id' => 'required|array',
             'tag_id.*' => 'required|integer|exists:service_tags,id',
-            'image' => 'required|image'
+            'image' => 'image'
         ];
+        $rules['image'] = 'required|image';
+        if ($id) {
+            $rules['image'] = 'sometimes|nullable|image';
+        }
+        return $rules;
     }
 
     function messages() {
