@@ -149,7 +149,7 @@ class AdminServiceCategoryController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Showing tag",
+     *         description="Showing service category",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="message", type="string", example="Service category fetched successfully."),
