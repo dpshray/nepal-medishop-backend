@@ -5336,6 +5336,354 @@
                 ]
             }
         },
+        "/admin/service-category": {
+            "get": {
+                "tags": [
+                    "ServiceCategory"
+                ],
+                "summary": "Get all service categories",
+                "description": "Get all service categories.",
+                "operationId": "ServiceCategoryList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page.(empty to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Service category name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service Category List",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "service category lists"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "SC TEST 123"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "sc-test-123"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "ServiceCategory"
+                ],
+                "summary": "Store a service category",
+                "description": "Store a service category.",
+                "operationId": "StoreServiceCategory",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Category create response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service category added successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/service-category/{slug}": {
+            "get": {
+                "tags": [
+                    "ServiceCategory"
+                ],
+                "summary": "Show an service category",
+                "description": "Show an service category.",
+                "operationId": "ServiceCategoryShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of service category",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Showing tag",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service category fetched successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "sun-pharma"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Sun Pharma"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "ServiceCategory"
+                ],
+                "summary": "Delete a service category.",
+                "description": "Delete a service category.",
+                "operationId": "ServiceCategoryDelete",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "slug of the service category to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service category has been deleted successfully."
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "ServiceCategory"
+                ],
+                "summary": "Update service category based on ID",
+                "description": "Update service category based on ID",
+                "operationId": "ServiceCategoryUpdate",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "slug of a service category",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Service category update response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service category updated successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/coupon": {
             "get": {
                 "tags": [
@@ -7913,6 +8261,10 @@
         {
             "name": "Tag",
             "description": "Tag"
+        },
+        {
+            "name": "ServiceCategory",
+            "description": "ServiceCategory"
         },
         {
             "name": "Admin Promo Code",
