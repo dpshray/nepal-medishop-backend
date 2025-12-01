@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminHealthConditionController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceCategoryController;
+use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceTagController;
 use App\Http\Controllers\Api\V1\Admin\PromoCode\AdminPromoCodeControlller;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminKitbagOrderController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
@@ -72,6 +73,7 @@ Route::prefix('admin')
         Route::get('admin-assigned-orders', [AdminOrderController::class, 'getAdminAssignedOrder']);
         /*----------  Service  ----------*/
         Route::apiResource('service-category', AdminServiceCategoryController::class)->scoped(['service_category' => 'slug']);
+        Route::apiResource('service-tag', AdminServiceTagController::class)->scoped(['service_tag' => 'slug']);
         /*----------  User Side  ----------*/
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
         Route::apiResource('banner', AdminBannerController::class);
