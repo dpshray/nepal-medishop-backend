@@ -24,8 +24,8 @@ class AdminServiceDetailResource extends JsonResource
             "test_requirements" => $this->test_requirements,
             "price" => (float)$this->price,
             "created_at" => $this->created_at->format('Y/m/d'),
-            "categories" => $this->categories->map(fn($category) => ['name' => $category->name]),
-            "tags" => $this->tags->map(fn($tag) => ['name' => $tag->name]),
+            "categories" => $this->categories->map(fn($category) => ['id' => $category->id, 'name' => $category->name]),
+            "tags" => $this->tags->map(fn($tag) => ['id' => $tag->id, 'name' => $tag->name]),
             "image" => $this->getFirstMediaUrl(Service::SERVICE_MEDIA)
           ];
     }

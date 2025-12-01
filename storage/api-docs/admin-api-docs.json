@@ -5965,6 +5965,10 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
                                                             "name": {
                                                                 "type": "string",
                                                                 "example": "service category"
@@ -5977,6 +5981,10 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
                                                             "name": {
                                                                 "type": "string",
                                                                 "example": "service tag a"

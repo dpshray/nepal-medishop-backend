@@ -196,6 +196,7 @@ class AdminServiceController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=1),
      *                         @OA\Property(property="name", type="string", example="service category")
      *                     )
      *                 ),
@@ -205,6 +206,7 @@ class AdminServiceController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=1),
      *                         @OA\Property(property="name", type="string", example="service tag a")
      *                     )
      *                 ),
