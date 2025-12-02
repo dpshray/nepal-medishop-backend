@@ -811,6 +811,347 @@
                 ]
             }
         },
+        "/vendor/service": {
+            "get": {
+                "tags": [
+                    "VendorService"
+                ],
+                "summary": "Get all service list.",
+                "description": "Get all service list.",
+                "operationId": "VendorServiceList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page.(empty to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Vendor service name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service list response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service list lists"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "service_id": {
+                                                                "type": "integer",
+                                                                "example": 14
+                                                            },
+                                                            "is_made_available_by_admin": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "is_vendor_already_priced": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "vendor_service_status": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "service_name": {
+                                                                "type": "string",
+                                                                "example": "Complete Blood Count (CBC)"
+                                                            },
+                                                            "service_slug": {
+                                                                "type": "string",
+                                                                "example": "complete-blood-count-cbc"
+                                                            },
+                                                            "admin_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 5000
+                                                            },
+                                                            "admin_discount_percent": {
+                                                                "type": "number",
+                                                                "example": 2
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 7
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "VendorService"
+                ],
+                "summary": "register/update a service by vendor.",
+                "description": "register/update a service by vendor.",
+                "operationId": "VendorServiceStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "is_available",
+                                    "service_id",
+                                    "price"
+                                ],
+                                "properties": {
+                                    "is_available": {
+                                        "type": "boolean"
+                                    },
+                                    "service_id": {
+                                        "type": "integer"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "service register response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service registered successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/service/{slug}": {
+            "get": {
+                "tags": [
+                    "VendorService"
+                ],
+                "summary": "Show an service details",
+                "description": "Show an service details.",
+                "operationId": "VendorServiceShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of service",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "omega-3"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service detail response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Showing service detail"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "service_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "is_made_available_by_admin": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "is_vendor_already_applied": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "vendor_service_status": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Skin TEST"
+                                                },
+                                                "service_slug": {
+                                                    "type": "string",
+                                                    "example": "skin-test"
+                                                },
+                                                "admin_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 8500
+                                                },
+                                                "admin_discount_percent": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "added_by_admin_at": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025/12/01"
+                                                },
+                                                "vendor_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 6500
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "VendorService"
+                ],
+                "summary": "Delete a vendor registered service.",
+                "description": "Delete a vendor registered service.",
+                "operationId": "VendorServiceDelete",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of service to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registered service successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Registered service removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/vendor/registration": {
             "post": {
                 "tags": [
@@ -1612,6 +1953,10 @@
         {
             "name": "Vendor Orders",
             "description": "Vendor Orders"
+        },
+        {
+            "name": "VendorService",
+            "description": "VendorService"
         },
         {
             "name": "Vendor",

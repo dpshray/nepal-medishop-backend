@@ -3,6 +3,7 @@
 namespace App\Models\Product\Service;
 
 use App\Models\Traits\SlugTrait;
+use App\Models\Vendor;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -22,12 +23,20 @@ class Service extends Model implements HasMedia
         "discount_percent"
     ];
 
+    function scopeIsActive($qry) {
+        return $qry->where('is_active',true);
+    }
+
     function categories() {
         return $this->belongsToMany(ServiceCategory::class,'category_service');
     }
 
     function tags() {
         return $this->belongsToMany(ServiceTag::class,'service_tag');
+    }
+
+    function vendors() {
+        return $this->belongsToMany(Vendor::class)->withPivot(['price', 'is_available']);
     }
 
     public function registerMediaCollections(): void

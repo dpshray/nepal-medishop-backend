@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Constants\VendorContants;
+use App\Models\Product\Service\Service;
 use App\Models\Purchase\OrderItem;
 use App\Models\Purchase\OrderItemProduct;
 use App\Models\Traits\UuidModelTrait;
@@ -56,6 +57,10 @@ class Vendor extends Model implements HasMedia
     function orderItemProducts()
     {
         return $this->hasManyThrough(OrderItemProduct::class,OrderItem::class,'assigned_vendor_id');
+    }
+
+    function services() {
+        return $this->belongsToMany(Service::class)->withPivot(['price', 'is_available']);
     }
 
     public function registerMediaCollections(): void

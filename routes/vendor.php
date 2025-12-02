@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Vendor\Dashboard\VendorDashboardController;
 use App\Http\Controllers\Api\V1\Vendor\Notification\OrderAssignNotificationController;
 use App\Http\Controllers\Api\V1\Vendor\Order\VendorOrderAssignController;
+use App\Http\Controllers\Api\V1\Vendor\Service\VendorServiceController;
 use App\Http\Controllers\Api\V1\Vendor\VendorAuthController;
 use App\Http\Controllers\Api\V1\Vendor\VendorProductController;
 use App\Http\Middleware\AdminMiddleware;
@@ -24,6 +25,7 @@ Route::prefix('vendor')
             Route::apiResource('orders',VendorOrderAssignController::class)->except(['destroy','store'])->scoped(['order' => 'uuid']);
             Route::get('get-variant-batch-numbers/{variant}', [VendorOrderAssignController::class, 'fetchVariantBatchNumbers']);
             Route::post('order-items/batch-assign/{order:uuid}', [VendorOrderAssignController::class, 'assignBatchesToOrderItems']);
+            Route::apiResource('service', VendorServiceController::class)->except(['update'])->scoped(['service' => 'slug']);
             Route::get('dashboard',[VendorDashboardController::class,'index']);
         });
         Route::post('registration', [VendorAuthController::class, 'registerVendor']);
