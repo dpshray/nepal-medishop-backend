@@ -52,6 +52,7 @@ class DatabaseSeeder extends Seeder
             FlashSaleSeeder::class,
             SettingSeeder::class,
             CouponCodeSeeder::class,
+            ServiceSeeder::class
         ]);
     }
 
