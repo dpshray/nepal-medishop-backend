@@ -899,6 +899,240 @@
                 ]
             }
         },
+        "/get-services": {
+            "get": {
+                "tags": [
+                    "ClientService"
+                ],
+                "summary": "Get services",
+                "description": "Get services.",
+                "operationId": "ClientServiceList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search product using name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of services",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of services"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "image": {
+                                                                "type": "string",
+                                                                "example": "http://example.com/image.png",
+                                                                "nullable": true
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Skin TEST"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "skin-test"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 8500
+                                                            },
+                                                            "previous_price": {
+                                                                "type": "number",
+                                                                "example": 9000,
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/get-services/{slug}": {
+            "get": {
+                "tags": [
+                    "ClientService"
+                ],
+                "summary": "Show service details",
+                "description": "Show services details.",
+                "operationId": "ClientServiceShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of service",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sun-pharma"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "service details"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "image": {
+                                                    "type": "string",
+                                                    "example": "http://example.com/image.png",
+                                                    "nullable": true
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Skin TEST"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "skin-test"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 8500
+                                                },
+                                                "previous_price": {
+                                                    "type": "number",
+                                                    "example": 9000,
+                                                    "nullable": true
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Full body skin checkup"
+                                                },
+                                                "test_requirements": {
+                                                    "type": "string",
+                                                    "example": "shower before checkup"
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "service-category"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "service category"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "tags": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "service-tag-a"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "service tag a"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/user/feedback": {
             "post": {
                 "tags": [
@@ -4851,6 +5085,10 @@
         {
             "name": "Kitbag",
             "description": "Kitbag"
+        },
+        {
+            "name": "ClientService",
+            "description": "ClientService"
         },
         {
             "name": "User Feedback",

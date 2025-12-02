@@ -26,6 +26,10 @@ class Service extends Model implements HasMedia
     function scopeIsActive($qry) {
         return $qry->where('is_active',true);
     }
+    
+    function scopeActive($qry) {
+        return $qry->where('is_active',true);
+    }
 
     function categories() {
         return $this->belongsToMany(ServiceCategory::class,'category_service');

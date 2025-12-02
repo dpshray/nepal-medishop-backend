@@ -4,6 +4,7 @@ use App\Enums\ItemTypeEnum;
 use App\Http\Controllers\Api\V1\Client\Address\ClientAddressController;
 use App\Http\Controllers\Api\V1\Client\ClientBannerController;
 use App\Http\Controllers\Api\V1\Client\ClientKitbagController;
+use App\Http\Controllers\Api\V1\Client\ClientServiceController;
 use App\Http\Controllers\Api\V1\Client\Feedback\ClientFeedbackController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
@@ -64,6 +65,11 @@ Route::apiResource('user/address',ClientAddressController::class)->except(['show
 Route::apiResource('user/feedback',ClientFeedbackController::class)->except(['show','update','destroy','index']);
 
 
+/*=====  Services  ======*/
+Route::middleware(['auth:sanctum'])->controller(ClientServiceController::class)->group(function(){
+    Route::get('get-services', 'index');
+    Route::get('get-services/{service:slug}', 'show');
+});
 /*=====  Purchase Part  ======*/
 Route::controller(CODPurchaseController::class)->group(function(){
     Route::post('orders', 'regularOrder');
