@@ -1133,6 +1133,84 @@
                 ]
             }
         },
+        "/book-service/{slug}": {
+            "post": {
+                "tags": [
+                    "ClientService"
+                ],
+                "summary": "Book a service using service slug.",
+                "description": "Book a service using service slug.",
+                "operationId": "ClientServiceBooking",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of service",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "complete-blood-count-cbc"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "appointment_datetime"
+                                ],
+                                "properties": {
+                                    "appointment_datetime": {
+                                        "description": "Appointment date and time in ISO 8601 format",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-12-01 10:30:00"
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "some service booking message"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Service booked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service booked successfully"
+                                        },
+                                        "data": {
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/user/feedback": {
             "post": {
                 "tags": [

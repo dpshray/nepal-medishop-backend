@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Client;
 
+use App\Enums\Purchase\ServiceBookingStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\Product\Service\ClientServiceDetailResource;
 use App\Http\Resources\User\Product\Service\ClientServiceListResource;
@@ -9,6 +10,7 @@ use App\Models\Product\Service\Service;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientServiceController extends Controller
 {
@@ -165,5 +167,85 @@ class ClientServiceController extends Controller
         ]);
         $data = new ClientServiceDetailResource($service);
         return $this->apiSuccess('Service details', $data);
+    }
+
+    /**
+     * @OA\Post(
+     *     security={{"sanctum": {}}},
+     *     path="/book-service/{slug}",
+     *     summary="Book a service using service slug.",
+     *     description="Book a service using service slug.",
+     *     operationId="ClientServiceBooking",
+     *     tags={"ClientService"},
+     *     @OA\Parameter(
+     *         name="slug",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of service",
+     *         @OA\Schema(type="string", example="complete-blood-count-cbc")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/x-www-form-urlencoded",
+     *             @OA\Schema(
+     *                 required={"appointment_datetime"},
+     *     
+     *                 @OA\Property(
+     *                     property="appointment_datetime",
+     *                     type="string",
+     *                     format="date-time",
+     *                     example="2025-12-01 10:30:00",
+     *                     description="Appointment date and time in ISO 8601 format"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="message",
+     *                     type="string",
+     *                     example="some service booking message"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Service booked successfully",
+     *     
+     *         @OA\JsonContent(
+     *             type="object",
+     *     
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Service booked successfully"
+     *             ),
+     *     
+     *             @OA\Property(
+     *                 property="data",
+     *                 nullable=true,
+     *                 example=null
+     *             ),
+     *     
+     *             @OA\Property(
+     *                 property="success",
+     *                 type="boolean",
+     *                 example=true
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    function serviceBooking(Request $request, Service $service) {
+        $form_data = $request->validate([
+            'appointment_datetime' => 'required|date_format:Y-m-d H:i:s',
+            'message' => 'sometimes|nullable'
+        ]);
+        $data = [
+            'status' => ServiceBookingStatusEnum::PENDING,
+            'appointment_at' => $form_data['appointment_datetime'],
+            'message' => array_key_exists('message', $form_data) ? $form_data['message'] : null,
+            'service_id' => $service->id 
+        ];
+        Auth::user()->serviceBookings()->create($data);
+        return $this->apiSuccess('Service booked successfully.');
     }
 }

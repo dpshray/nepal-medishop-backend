@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\LoyalityPoint\LoyalityPointStatusEnum;
 use App\Enums\UserTypeEnum;
+use App\Models\Product\Service\ServiceBooking;
 use App\Models\Purchase\Cart;
 use App\Models\Purchase\Order;
 use App\Models\Purchase\OrderItem;
@@ -115,6 +116,11 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     {
         return $this->hasOne(Order::class)->latest();
     }
+
+    function serviceBookings() {
+        return $this->hasMany(ServiceBooking::class);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::USER_PROFILE)

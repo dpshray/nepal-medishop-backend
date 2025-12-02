@@ -69,6 +69,7 @@ Route::apiResource('user/feedback',ClientFeedbackController::class)->except(['sh
 Route::middleware(['auth:sanctum'])->controller(ClientServiceController::class)->group(function(){
     Route::get('get-services', 'index');
     Route::get('get-services/{service:slug}', 'show');
+    Route::post('book-service/{service:slug}', 'serviceBooking');
 });
 /*=====  Purchase Part  ======*/
 Route::controller(CODPurchaseController::class)->group(function(){
