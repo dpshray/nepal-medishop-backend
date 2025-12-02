@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('service_vendor', function (Blueprint $table) {
             $table->id();
+            $table->boolean('is_approved')->default(false);
             $table->boolean('is_available')->default(true);
             $table->foreignIdFor(Service::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(Vendor::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
