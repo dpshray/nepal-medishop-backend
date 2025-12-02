@@ -15,15 +15,17 @@ class VendorServiceDetailResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
-        $vendor = $vendor_price = $vendor_service_status = null;
+        $vendor = $vendor_price = $vendor_service_status = $is_approved_by_admin = null;
         if (count($this->vendors)) {
             $vendor = $this->vendors->first();
             $vendor_price = (float)$vendor->pivot->price;
             $vendor_service_status = (bool)$vendor->pivot->is_available;
+            $is_approved_by_admin = (bool)$vendor->pivot->is_approved;
         }
         return [
             "service_id" => $this->id,
             "is_made_available_by_admin" => (bool)$this->is_active,
+            "is_approved_by_admin" => (bool)$is_approved_by_admin,
             "is_vendor_already_applied" => (bool) ($vendor),
             'vendor_service_status' => (bool)$vendor_service_status,
             "service_name" => $this->name,

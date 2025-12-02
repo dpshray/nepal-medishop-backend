@@ -876,6 +876,10 @@
                                                                 "type": "boolean",
                                                                 "example": true
                                                             },
+                                                            "is_approved_by_admin": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
                                                             "is_vendor_already_priced": {
                                                                 "type": "boolean",
                                                                 "example": true
@@ -1043,6 +1047,10 @@
                                                     "example": 3
                                                 },
                                                 "is_made_available_by_admin": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "is_approved_by_admin": {
                                                     "type": "boolean",
                                                     "example": true
                                                 },
