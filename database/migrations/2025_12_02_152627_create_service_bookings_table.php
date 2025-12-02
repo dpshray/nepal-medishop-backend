@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('service_bookings', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
             $table->string('status');
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(Service::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
