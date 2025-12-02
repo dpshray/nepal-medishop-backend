@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceTagController;
+use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminVendorServiceController;
 use App\Http\Controllers\Api\V1\Admin\PromoCode\AdminPromoCodeControlller;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminKitbagOrderController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
@@ -76,6 +77,7 @@ Route::prefix('admin')
         Route::apiResource('service-category', AdminServiceCategoryController::class)->scoped(['service_category' => 'slug']);
         Route::apiResource('service-tag', AdminServiceTagController::class)->scoped(['service_tag' => 'slug']);
         Route::apiResource('service', AdminServiceController::class)->scoped(['service' => 'slug']);
+        Route::apiResource('service.vendor', AdminVendorServiceController::class)->except(['delete'])->scoped(['service' => 'slug', 'vendor' => 'uuid']);
         /*----------  User Side  ----------*/
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
         Route::apiResource('banner', AdminBannerController::class);

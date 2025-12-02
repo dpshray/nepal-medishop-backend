@@ -71,6 +71,7 @@ class VendorServiceController extends Controller
      *     
      *                         @OA\Property(property="service_id", type="integer", example=14),
      *                         @OA\Property(property="is_made_available_by_admin", type="boolean", example=true),
+     *                         @OA\Property(property="is_approved_by_admin", type="boolean", example=true),
      *                         @OA\Property(property="is_vendor_already_priced", type="boolean", example=true),
      *                         @OA\Property(property="vendor_service_status", type="boolean", example=true),
      *                         @OA\Property(property="service_name", type="string", example="Complete Blood Count (CBC)"),
@@ -132,6 +133,7 @@ class VendorServiceController extends Controller
      *     
      *                 @OA\Property(property="service_id", type="integer", example=3),
      *                 @OA\Property(property="is_made_available_by_admin", type="boolean", example=true),
+     *                 @OA\Property(property="is_approved_by_admin", type="boolean", example=true),
      *                 @OA\Property(property="is_vendor_already_applied", type="boolean", example=true),
      *                 @OA\Property(property="vendor_service_status", type="boolean", example=false),
      *                 @OA\Property(property="service_name", type="string", example="Skin TEST"),

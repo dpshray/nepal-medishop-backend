@@ -6529,6 +6529,325 @@
                 ]
             }
         },
+        "/admin/service/{slug}/vendor": {
+            "get": {
+                "tags": [
+                    "AdminVendorService"
+                ],
+                "summary": "Get all vendor list registered on a service.",
+                "description": "Get all vendor list registered on a service.",
+                "operationId": "AdminVendorServiceList",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a service",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page.(empty to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Service tag name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendors registered for a service",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor list registered on this service."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "is_approved_by_admin": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "vendor_service_status": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            },
+                                                            "vendor_uuid": {
+                                                                "type": "string",
+                                                                "example": "f6ffcc6e-2aea-46ce-b9b0-8a5ecc005709"
+                                                            },
+                                                            "vendor_name": {
+                                                                "type": "string",
+                                                                "example": "vendor2881776"
+                                                            },
+                                                            "service_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 6500
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "service_slug": {
+                                                    "type": "string",
+                                                    "example": "skin-test"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/service/{slug}/vendor/{uuid}": {
+            "get": {
+                "tags": [
+                    "AdminVendorService"
+                ],
+                "summary": "Show a vendor service detail",
+                "description": "Show a vendor service detail.",
+                "operationId": "AdminVendorServiceShow",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of service",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of service vendor",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendor Service detail fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor service detail fetched successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "is_approved_by_admin": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "vendor_service_status": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Skin TEST"
+                                                },
+                                                "service_slug": {
+                                                    "type": "string",
+                                                    "example": "skin-test"
+                                                },
+                                                "service_description": {
+                                                    "type": "string",
+                                                    "example": "Full body skin checkup"
+                                                },
+                                                "test_requirements": {
+                                                    "type": "string",
+                                                    "example": "shower before checkup"
+                                                },
+                                                "admin_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 8500
+                                                },
+                                                "discount_percent": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "vendor_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 6500
+                                                },
+                                                "vendor_detail": {
+                                                    "properties": {
+                                                        "vendor_name": {
+                                                            "type": "string",
+                                                            "example": "vendor2881776"
+                                                        },
+                                                        "store_name": {
+                                                            "type": "string",
+                                                            "example": "Bechtelar-Stehr"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "vendor2881776@gmail.com"
+                                                        },
+                                                        "email_verified_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-11-28T10:15:49.000000Z"
+                                                        },
+                                                        "mobile_number": {
+                                                            "type": "string",
+                                                            "example": "9834127218"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "AdminVendorService"
+                ],
+                "summary": "Approve/Disapprove vendor service based on service slug and vendor UUID",
+                "description": "Approve/Disapprove vendor service based on service slug and vendor UUID",
+                "operationId": "AdminVendorServiceApproveToggle",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of service",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of service vendor",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service tag update response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor service has been approved successfully."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/coupon": {
             "get": {
                 "tags": [
@@ -9118,6 +9437,10 @@
         {
             "name": "ServiceTag",
             "description": "ServiceTag"
+        },
+        {
+            "name": "AdminVendorService",
+            "description": "AdminVendorService"
         },
         {
             "name": "Admin Promo Code",

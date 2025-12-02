@@ -60,7 +60,7 @@ class Vendor extends Model implements HasMedia
     }
 
     function services() {
-        return $this->belongsToMany(Service::class)->withPivot(['price', 'is_available']);
+        return $this->belongsToMany(Service::class)->withPivot(['is_approved','price', 'is_available']);
     }
 
     public function registerMediaCollections(): void
