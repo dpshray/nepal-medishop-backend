@@ -2,7 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Product\Service\Service;
+use App\Models\Product\Service\ServiceCategory;
+use App\Models\Product\Service\ServiceTag;
+use App\Models\Tag;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +18,24 @@ class ServiceSeeder extends Seeder
      */
     public function run(): void
     {
+        $categories = [
+            'Blood Tests',
+            'Heart Tests',
+            'Imaging & Scans',
+            'Hormone Tests',
+            'General Health Checkup'
+        ];
+
+
+
+        $tags = [
+            'Fasting Required',
+            'Home Sample Collection',
+            'Doctor Recommended',
+            'Quick Report',
+            'Popular Test'
+        ];
+        
         $services = [
             [
                 'name' => 'Complete Blood Count (CBC)',
@@ -89,7 +111,16 @@ class ServiceSeeder extends Seeder
                 'discount_percent' => rand(1, 2)
             ]
         ];
-        DB::transaction(function () use($services){ 
+        DB::transaction(function () use($services,$categories,$tags){
+
+            foreach ($categories as $category) {
+                ServiceCategory::firstOrCreate(['name' => $category]);
+            }
+
+            foreach ($tags as $tag) {
+                ServiceTag::firstOrCreate(['name' => $tag]);
+            }
+
             foreach ($services as $service) {
                 $data = [
                     'name' => $service['name'],
@@ -98,9 +129,17 @@ class ServiceSeeder extends Seeder
                     'price' => $service['price'],
                     'discount_percent' => array_key_exists('discount_percent', $service) ? $service['discount_percent'] : null
                 ];
-                Service::create($data)->addMedia($service['image'])
+                
+                $svc = Service::create($data);
+                $svc->addMedia($service['image'])
                     ->preservingOriginal()
                     ->toMediaCollection(Service::SERVICE_MEDIA);
+                $svc->categories()->attach(
+                    ServiceCategory::inRandomOrder()->limit(2)->pluck('id')
+                );
+                $svc->tags()->attach(
+                    ServiceTag::inRandomOrder()->limit(2)->pluck('id')
+                );
             }
         });
     }
