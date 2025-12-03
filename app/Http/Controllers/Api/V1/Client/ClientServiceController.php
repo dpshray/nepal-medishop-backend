@@ -87,13 +87,9 @@ class ClientServiceController extends Controller
         $search = $request->query('search');
         $services = Service::active()
             ->when($search, fn($qry) => $qry->whereLike('name','%'.$search.'%'));
-        if ($per_page) {
-            $pagination = $services->paginate($per_page);
-            $data= $this->makePaginationResponse($pagination, fn($item) => ClientServiceListResource::collection($item))->data;
-        }else{
-            $data = $services->get();
-            $data = ClientServiceListResource::collection($data);
-        }
+        $per_page = $per_page ? $per_page : Service::active()->count();
+        $pagination = $services->paginate($per_page);
+        $data= $this->makePaginationResponse($pagination, fn($item) => ClientServiceListResource::collection($item))->data;
         return $this->apiSuccess('List of services', $data);
     }
 
