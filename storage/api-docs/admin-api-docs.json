@@ -5336,6 +5336,380 @@
                 ]
             }
         },
+        "/admin/service-booking": {
+            "get": {
+                "tags": [
+                    "AdminServiceBooking"
+                ],
+                "summary": "Fetch all service booking list.",
+                "description": "Fetch all service booking list.",
+                "operationId": "AdminServiceBookingList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page.(empty to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Service tag name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of service bookings",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of service bookings"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "booking_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "dc5c31b2-bba5-423b-8cf2-53507ea3ef78"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "PENDING"
+                                                            },
+                                                            "ordered_by": {
+                                                                "type": "string",
+                                                                "example": "user1211"
+                                                            },
+                                                            "service_name": {
+                                                                "type": "string",
+                                                                "example": "Complete Blood Count (CBC)"
+                                                            },
+                                                            "service_slug": {
+                                                                "type": "string",
+                                                                "example": "complete-blood-count-cbc"
+                                                            },
+                                                            "assigned_vendor": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "appointment_at": {
+                                                                "type": "string",
+                                                                "example": "2025/12/01 10:30:00"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "example": "2025/12/02"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/service-booking/{uuid}": {
+            "get": {
+                "tags": [
+                    "AdminServiceBooking"
+                ],
+                "summary": "Fetch details of service booking.",
+                "description": "Fetch details of service booking.",
+                "operationId": "AdminServiceBookingShow",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a booking",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service booking details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service booking details"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "CONFIRMED"
+                                                },
+                                                "user": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "user02"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "user02@gmail.com"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "assigned_vendor": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "vendor163786"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "vendor163786@gmail.com"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Lipid Profile"
+                                                },
+                                                "service_price": {
+                                                    "type": "number",
+                                                    "example": 1600
+                                                },
+                                                "service_discount_percent": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "service_description": {
+                                                    "type": "string",
+                                                    "example": "Measures cholesterol and triglycerides to evaluate heart disease risk."
+                                                },
+                                                "test_requirements": {
+                                                    "type": "string",
+                                                    "example": "Fast for 9–12 hours before test."
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "some service booking message for lipid-profile"
+                                                },
+                                                "appointment_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-12-10 04:30:00"
+                                                },
+                                                "service_created_at": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-12-03"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/assign-booking/{booking_uuid}/vendor/{vendor_uuid}": {
+            "get": {
+                "tags": [
+                    "AdminServiceBooking"
+                ],
+                "summary": "Assign a service to a vendor.",
+                "description": "Assign a service to a vendor.",
+                "operationId": "AdminServiceBookingAssign",
+                "parameters": [
+                    {
+                        "name": "booking_uuid",
+                        "in": "path",
+                        "description": "UUID of a booking",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "vendor_uuid",
+                        "in": "path",
+                        "description": "UUID of vendor",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendor Service detail fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor service detail fetched successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "is_approved_by_admin": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "vendor_service_status": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Skin TEST"
+                                                },
+                                                "service_slug": {
+                                                    "type": "string",
+                                                    "example": "skin-test"
+                                                },
+                                                "service_description": {
+                                                    "type": "string",
+                                                    "example": "Full body skin checkup"
+                                                },
+                                                "test_requirements": {
+                                                    "type": "string",
+                                                    "example": "shower before checkup"
+                                                },
+                                                "admin_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 8500
+                                                },
+                                                "discount_percent": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "vendor_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 6500
+                                                },
+                                                "vendor_detail": {
+                                                    "properties": {
+                                                        "vendor_name": {
+                                                            "type": "string",
+                                                            "example": "vendor2881776"
+                                                        },
+                                                        "store_name": {
+                                                            "type": "string",
+                                                            "example": "Bechtelar-Stehr"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "vendor2881776@gmail.com"
+                                                        },
+                                                        "email_verified_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-11-28T10:15:49.000000Z"
+                                                        },
+                                                        "mobile_number": {
+                                                            "type": "string",
+                                                            "example": "9834127218"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/service-category": {
             "get": {
                 "tags": [
@@ -9425,6 +9799,10 @@
         {
             "name": "Tag",
             "description": "Tag"
+        },
+        {
+            "name": "AdminServiceBooking",
+            "description": "AdminServiceBooking"
         },
         {
             "name": "ServiceCategory",

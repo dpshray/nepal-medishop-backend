@@ -26,6 +26,7 @@ Route::prefix('vendor')
             Route::get('get-variant-batch-numbers/{variant}', [VendorOrderAssignController::class, 'fetchVariantBatchNumbers']);
             Route::post('order-items/batch-assign/{order:uuid}', [VendorOrderAssignController::class, 'assignBatchesToOrderItems']);
             Route::apiResource('service', VendorServiceController::class)->except(['update'])->scoped(['service' => 'slug']);
+            Route::get('registered-services', [VendorServiceController::class, 'getRegisteredServices']);
             Route::get('dashboard',[VendorDashboardController::class,'index']);
         });
         Route::post('registration', [VendorAuthController::class, 'registerVendor']);

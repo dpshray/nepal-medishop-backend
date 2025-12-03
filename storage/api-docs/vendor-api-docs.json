@@ -853,14 +853,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Service list response",
+                        "description": "List of available services",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Service list lists"
+                                            "example": "List of available services"
                                         },
                                         "data": {
                                             "properties": {
@@ -868,41 +868,25 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "service_id": {
+                                                            "id": {
                                                                 "type": "integer",
-                                                                "example": 14
+                                                                "example": 57
                                                             },
-                                                            "is_made_available_by_admin": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "is_approved_by_admin": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "is_vendor_already_priced": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "vendor_service_status": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "service_name": {
+                                                            "name": {
                                                                 "type": "string",
-                                                                "example": "Complete Blood Count (CBC)"
+                                                                "example": "Electrocardiogram (ECG)"
                                                             },
-                                                            "service_slug": {
+                                                            "slug": {
                                                                 "type": "string",
-                                                                "example": "complete-blood-count-cbc"
+                                                                "example": "electrocardiogram-ecg"
                                                             },
                                                             "admin_price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 5000
+                                                                "example": 900
                                                             },
                                                             "admin_discount_percent": {
-                                                                "type": "number",
+                                                                "type": "integer",
                                                                 "example": 2
                                                             }
                                                         },
@@ -915,11 +899,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 1
+                                                    "example": 10
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 7
+                                                    "example": 10
                                                 }
                                             },
                                             "type": "object"
@@ -1145,6 +1129,121 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Registered service removed successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/registered-services": {
+            "get": {
+                "tags": [
+                    "VendorService"
+                ],
+                "summary": "Get all registered service list.",
+                "description": "Get all registered service list.",
+                "operationId": "VendorRegisteredServiceList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page.(empty to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Vendor service name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of available services",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of available services"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 57
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Electrocardiogram (ECG)"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "electrocardiogram-ecg"
+                                                            },
+                                                            "admin_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 900
+                                                            },
+                                                            "admin_discount_percent": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"

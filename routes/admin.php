@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\AdminGenericProductNameController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminHealthConditionController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
+use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceBookingController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceTagController;
@@ -77,7 +78,10 @@ Route::prefix('admin')
         Route::apiResource('service-category', AdminServiceCategoryController::class)->scoped(['service_category' => 'slug']);
         Route::apiResource('service-tag', AdminServiceTagController::class)->scoped(['service_tag' => 'slug']);
         Route::apiResource('service', AdminServiceController::class)->scoped(['service' => 'slug']);
-        Route::apiResource('service.vendor', AdminVendorServiceController::class)->except(['delete'])->scoped(['service' => 'slug', 'vendor' => 'uuid']);
+        Route::apiResource('service.vendor', AdminVendorServiceController::class)->except(['destroy','store'])->scoped(['service' => 'slug', 'vendor' => 'uuid']);
+        /*----------  Service Booking and Assign  ----------*/
+        Route::apiResource('service-booking', AdminServiceBookingController::class)->only(['index','show'])->scoped(['service_booking' => 'uuid']);
+        Route::get('assign-booking/{service_booking:uuid}/vendor/{uuid}', [AdminServiceBookingController::class, 'assignServiceBookingToVendor']);
         /*----------  User Side  ----------*/
         Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
         Route::apiResource('banner', AdminBannerController::class);

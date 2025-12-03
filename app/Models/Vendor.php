@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Constants\VendorContants;
 use App\Models\Product\Service\Service;
+use App\Models\Product\Service\ServiceBooking;
 use App\Models\Purchase\OrderItem;
 use App\Models\Purchase\OrderItemProduct;
 use App\Models\Traits\UuidModelTrait;
@@ -61,6 +62,10 @@ class Vendor extends Model implements HasMedia
 
     function services() {
         return $this->belongsToMany(Service::class)->withPivot(['is_approved','price', 'is_available']);
+    }
+
+    function assignedServiceBookings(){
+        return $this->hasMany(ServiceBooking::class,'assigned_vendor_id');
     }
 
     public function registerMediaCollections(): void
