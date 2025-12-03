@@ -811,6 +811,199 @@
                 ]
             }
         },
+        "/vendor/assigned-service-bookings": {
+            "get": {
+                "tags": [
+                    "VendorServiceBooking"
+                ],
+                "summary": "Get all booking service assigned to vendor.",
+                "description": "Get all booking service assigned to vendor.",
+                "operationId": "VendorServiceAssignedBookingList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page.(empty to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Vendor service name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of available services",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of available services"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 57
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Electrocardiogram (ECG)"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "electrocardiogram-ecg"
+                                                            },
+                                                            "admin_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 900
+                                                            },
+                                                            "admin_discount_percent": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/vendor/update-booking-status/{uuid}": {
+            "post": {
+                "tags": [
+                    "VendorServiceBooking"
+                ],
+                "summary": "Update booking status of a assigned service.status are(CONFIRMED | IN_PROGRESS | COMPLETED | CANCELLED)",
+                "description": "Update booking status of a assigned service.",
+                "operationId": "VendorServiceStatus",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Service booking UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "report": {
+                                        "description": "Report file of a service(when completed)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vendor added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service booking status has been changed to : COMPLETED."
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/vendor/service": {
             "get": {
                 "tags": [
@@ -1015,7 +1208,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Service detail response",
+                        "description": "Showing service detail",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1028,50 +1221,42 @@
                                             "properties": {
                                                 "service_id": {
                                                     "type": "integer",
-                                                    "example": 3
-                                                },
-                                                "is_made_available_by_admin": {
-                                                    "type": "boolean",
-                                                    "example": true
+                                                    "example": 57
                                                 },
                                                 "is_approved_by_admin": {
                                                     "type": "boolean",
-                                                    "example": true
-                                                },
-                                                "is_vendor_already_applied": {
-                                                    "type": "boolean",
-                                                    "example": true
+                                                    "example": false
                                                 },
                                                 "vendor_service_status": {
                                                     "type": "boolean",
-                                                    "example": false
+                                                    "example": true
                                                 },
                                                 "service_name": {
                                                     "type": "string",
-                                                    "example": "Skin TEST"
+                                                    "example": "Electrocardiogram (ECG)"
                                                 },
                                                 "service_slug": {
                                                     "type": "string",
-                                                    "example": "skin-test"
+                                                    "example": "electrocardiogram-ecg"
                                                 },
                                                 "admin_price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 8500
+                                                    "example": 900
                                                 },
                                                 "admin_discount_percent": {
                                                     "type": "integer",
-                                                    "example": 0
+                                                    "example": 2
                                                 },
                                                 "added_by_admin_at": {
                                                     "type": "string",
                                                     "format": "date",
-                                                    "example": "2025/12/01"
+                                                    "example": "2025/12/02"
                                                 },
                                                 "vendor_price": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 6500
+                                                    "example": 800
                                                 }
                                             },
                                             "type": "object"
@@ -2060,6 +2245,10 @@
         {
             "name": "Vendor Orders",
             "description": "Vendor Orders"
+        },
+        {
+            "name": "VendorServiceBooking",
+            "description": "VendorServiceBooking"
         },
         {
             "name": "VendorService",

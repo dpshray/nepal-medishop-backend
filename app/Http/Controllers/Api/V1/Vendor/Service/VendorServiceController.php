@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Api\V1\Vendor\Service;
 
+use App\Enums\Purchase\ServiceBookingStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\Product\Service\VendorServiceStoreRequest;
 use App\Http\Resources\Vendor\Product\Service\VendorRegisteredServiceListResource;
 use App\Http\Resources\Vendor\Product\Service\VendorServiceDetailResource;
 use App\Http\Resources\Vendor\Product\Service\VendorServiceListResource;
 use App\Models\Product\Service\Service;
+use App\Models\Product\Service\ServiceBooking;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 class VendorServiceController extends Controller
 {
@@ -114,30 +117,23 @@ class VendorServiceController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Service detail response",
-     *     
+     *         description="Showing service detail",
      *         @OA\JsonContent(
      *             type="object",
-     *     
      *             @OA\Property(property="message", type="string", example="Showing service detail"),
-     *     
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *     
-     *                 @OA\Property(property="service_id", type="integer", example=3),
-     *                 @OA\Property(property="is_made_available_by_admin", type="boolean", example=true),
-     *                 @OA\Property(property="is_approved_by_admin", type="boolean", example=true),
-     *                 @OA\Property(property="is_vendor_already_applied", type="boolean", example=true),
-     *                 @OA\Property(property="vendor_service_status", type="boolean", example=false),
-     *                 @OA\Property(property="service_name", type="string", example="Skin TEST"),
-     *                 @OA\Property(property="service_slug", type="string", example="skin-test"),
-     *                 @OA\Property(property="admin_price", type="number", format="float", example=8500),
-     *                 @OA\Property(property="admin_discount_percent", type="integer", example=0),
-     *                 @OA\Property(property="added_by_admin_at", type="string", format="date", example="2025/12/01"),
-     *                 @OA\Property(property="vendor_price", type="number", format="float", example=6500)
+     *                 @OA\Property(property="service_id", type="integer", example=57),
+     *                 @OA\Property(property="is_approved_by_admin", type="boolean", example=false),
+     *                 @OA\Property(property="vendor_service_status", type="boolean", example=true),
+     *                 @OA\Property(property="service_name", type="string", example="Electrocardiogram (ECG)"),
+     *                 @OA\Property(property="service_slug", type="string", example="electrocardiogram-ecg"),
+     *                 @OA\Property(property="admin_price", type="number", format="float", example=900),
+     *                 @OA\Property(property="admin_discount_percent", type="integer", example=2),
+     *                 @OA\Property(property="added_by_admin_at", type="string", format="date", example="2025/12/02"),
+     *                 @OA\Property(property="vendor_price", type="number", format="float", example=800)
      *             ),
-     *     
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )

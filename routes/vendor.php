@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Vendor\Dashboard\VendorDashboardController;
 use App\Http\Controllers\Api\V1\Vendor\Notification\OrderAssignNotificationController;
 use App\Http\Controllers\Api\V1\Vendor\Order\VendorOrderAssignController;
+use App\Http\Controllers\Api\V1\Vendor\Service\VendorServiceBookingController;
 use App\Http\Controllers\Api\V1\Vendor\Service\VendorServiceController;
 use App\Http\Controllers\Api\V1\Vendor\VendorAuthController;
 use App\Http\Controllers\Api\V1\Vendor\VendorProductController;
@@ -27,6 +28,8 @@ Route::prefix('vendor')
             Route::post('order-items/batch-assign/{order:uuid}', [VendorOrderAssignController::class, 'assignBatchesToOrderItems']);
             Route::apiResource('service', VendorServiceController::class)->except(['update'])->scoped(['service' => 'slug']);
             Route::get('registered-services', [VendorServiceController::class, 'getRegisteredServices']);
+            Route::get('assigned-service-bookings', [VendorServiceBookingController::class, 'servicesAssignedToVendor']);
+            Route::post('update-booking-status/{service_booking:uuid}', [VendorServiceBookingController::class, 'bookingStatusUpdate']);
             Route::get('dashboard',[VendorDashboardController::class,'index']);
         });
         Route::post('registration', [VendorAuthController::class, 'registerVendor']);

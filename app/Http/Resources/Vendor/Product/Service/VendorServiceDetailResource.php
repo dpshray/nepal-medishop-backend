@@ -24,9 +24,9 @@ class VendorServiceDetailResource extends JsonResource
         }
         return [
             "service_id" => $this->id,
-            "is_made_available_by_admin" => (bool)$this->is_active,
+            // "is_made_available_by_admin" => (bool)$this->is_active,
             "is_approved_by_admin" => (bool)$is_approved_by_admin,
-            "is_vendor_already_applied" => (bool) ($vendor),
+            // "is_vendor_already_applied" => (bool) ($vendor),
             'vendor_service_status' => (bool)$vendor_service_status,
             "service_name" => $this->name,
             "service_slug" => $this->slug,

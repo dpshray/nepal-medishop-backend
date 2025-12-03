@@ -7,10 +7,15 @@ use App\Models\Traits\UuidModelTrait;
 use App\Models\User;
 use App\Models\Vendor;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ServiceBooking extends Model
+class ServiceBooking extends Model implements HasMedia
 {
-    use UuidModelTrait;
+    use UuidModelTrait, InteractsWithMedia;
+
+    const SERVICE_BOOKING_REPORT = 'SERVICE_BOOKING_REPORT';
     
     protected $fillable = [
         'status',
@@ -35,5 +40,10 @@ class ServiceBooking extends Model
 
     function service() {
         return $this->belongsTo(Service::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(self::SERVICE_BOOKING_REPORT)->singleFile();
     }
 }
