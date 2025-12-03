@@ -28,8 +28,8 @@ return new class extends Migration
             $table->string('address');
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->decimal('discount_percent', 5, 2)->nullable()->after('message');
-            $table->decimal('price', 10, 2)->after('message');
+            $table->decimal('discount_percent', 5, 2)->nullable();
+            $table->decimal('price', 10, 2);
             $table->text('message')->nullable();
             $table->dateTime('appointment_at');
             $table->string('payment_method');
