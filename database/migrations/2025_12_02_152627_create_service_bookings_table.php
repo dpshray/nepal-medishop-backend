@@ -22,14 +22,16 @@ return new class extends Migration
             $table->foreignIdFor(Service::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedBigInteger('assigned_vendor_id')->nullable();
             $table->foreign('assigned_vendor_id')->references('id')->on('vendors')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->unsignedBigInteger('used_coupon_code_id')->nullable();
+            $table->foreign('used_coupon_code_id')->references('id')->on('coupon_codes')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
             $table->string('email');
             $table->string('mobile');
             $table->string('address');
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->decimal('discount_percent', 5, 2)->nullable()->after('message');
-            $table->decimal('price', 10, 2)->after('message');
+            $table->decimal('discount_percent', 5, 2)->nullable();
+            $table->decimal('price', 10, 2);
             $table->text('message')->nullable();
             $table->dateTime('appointment_at');
             $table->string('payment_method');
