@@ -1122,8 +1122,8 @@
                 "tags": [
                     "VendorService"
                 ],
-                "summary": "register/update a service by vendor.",
-                "description": "register/update a service by vendor.",
+                "summary": "register a service by vendor(if already exists it gets updated | if updated when price is different is_approved_by_admin will auto be false).",
+                "description": "register a service by vendor(if already exists it gets updated | if updated when price is different is_approved_by_admin will auto be false).",
                 "operationId": "VendorServiceStore",
                 "requestBody": {
                     "required": true,

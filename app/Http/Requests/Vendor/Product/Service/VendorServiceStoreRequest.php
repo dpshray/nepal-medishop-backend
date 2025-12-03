@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Vendor\Product\Service;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class VendorServiceStoreRequest extends FormRequest
 {
@@ -23,7 +24,10 @@ class VendorServiceStoreRequest extends FormRequest
     {
         return [
             'is_available' => 'required|boolean',
-            'service_id' => 'required|exists:services,id',
+            'service_id' => [
+                'required', 
+                Rule::exists('services','id')->where('is_active', true)
+            ],
             'price' => 'required|numeric'
         ];
     }

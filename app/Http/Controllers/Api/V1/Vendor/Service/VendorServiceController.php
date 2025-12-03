@@ -14,7 +14,7 @@ use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\DB;
 
 class VendorServiceController extends Controller
 {
@@ -152,8 +152,8 @@ class VendorServiceController extends Controller
      * @OA\Post(
      *     security={{"sanctum": {}}},
      *     path="/vendor/service",
-     *     summary="register/update a service by vendor.",
-     *     description="register/update a service by vendor.",
+     *     summary="register a service by vendor(if already exists it gets updated | if updated when price is different is_approved_by_admin will auto be false).",
+     *     description="register a service by vendor(if already exists it gets updated | if updated when price is different is_approved_by_admin will auto be false).",
      *     operationId="VendorServiceStore",
      *     tags={"VendorService"},
      *     @OA\RequestBody(
@@ -183,13 +183,21 @@ class VendorServiceController extends Controller
      */
     public function store(VendorServiceStoreRequest $request)
     {
-        // return $request->validated();
-        Auth::user()->vendor->services()->syncWithoutDetaching([
-            $request->service_id => [
+        DB::transaction(function () use($request){
+            $data = [
                 'price' => $request->price,
                 'is_available' => $request->is_available,
-            ]
-        ]);        // VendorService::create($request->validated());
+            ];
+            $previous_service = Auth::user()->vendor
+                ->services
+                ->firstWhere('pivot.service_id',$request->service_id);
+            if ($previous_service && $previous_service->pivot->price != $request->price) {
+                $data['is_approved'] = false;
+            }
+            Auth::user()->vendor->services()->syncWithoutDetaching([
+                $request->service_id => $data
+            ]);
+        });
         return $this->apiSuccess('Service registered successfully.');
     }
 
