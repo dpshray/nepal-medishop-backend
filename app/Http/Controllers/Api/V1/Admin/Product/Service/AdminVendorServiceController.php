@@ -102,10 +102,7 @@ class AdminVendorServiceController extends Controller
             ->when($search, fn($qry) => $qry->whereRelation('user','name','like', '%'.$search.'%'))
             ->orderBy('id', 'DESC')
             ->paginate($per_page);
-        $data = $this->makePaginationResponse(
-            $pagination, 
-            fn($item) => AdminVendorServiceListResource::collection($item), 
-            ['service_slug' => $service->slug])->data;
+        $data = $this->makePaginationResponse($pagination, fn($item) => AdminVendorServiceListResource::collection($item))->data;
         return $this->apiSuccess("Vendor list registered on this service.", $data);
     }
 
@@ -149,12 +146,9 @@ class AdminVendorServiceController extends Controller
             ->vendors()
             ->wherePivot('vendor_id', $vendor->id)
             ->first();
-
-        $current = $vendorService->pivot->is_available ?? 0;
-
-        // Toggle
+        // return [$vendor->services()->wherePivot('service_id', $service->id)->doesntExist()];
+        $current = $vendorService->pivot->is_approved ?? 0;
         $newStatus = !$current;
-
         $service->vendors()->syncWithoutDetaching([
             $vendor->id => ['is_approved' => $newStatus]
         ]);
