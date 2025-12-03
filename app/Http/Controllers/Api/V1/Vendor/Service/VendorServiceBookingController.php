@@ -49,13 +49,10 @@ class VendorServiceBookingController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of available services",
-     *     
+     *         description="List of service bookings assigned",
      *         @OA\JsonContent(
      *             type="object",
-     *     
-     *             @OA\Property(property="message", type="string", example="List of available services"),
-     *     
+     *             @OA\Property(property="message", type="string", example="List of service bookings assigned"),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -63,23 +60,22 @@ class VendorServiceBookingController extends Controller
      *                 @OA\Property(
      *                     property="items",
      *                     type="array",
-     *     
      *                     @OA\Items(
      *                         type="object",
-     *     
-     *                         @OA\Property(property="id", type="integer", example=57),
-     *                         @OA\Property(property="name", type="string", example="Electrocardiogram (ECG)"),
-     *                         @OA\Property(property="slug", type="string", example="electrocardiogram-ecg"),
-     *                         @OA\Property(property="admin_price", type="number", format="float", example=900),
-     *                         @OA\Property(property="admin_discount_percent", type="integer", example=2)
+     *                         @OA\Property(property="booking_uuid", type="string", format="uuid", example="e7591a49-d1af-41c8-90c3-66f7a2891f55"),
+     *                         @OA\Property(property="status", type="string", example="PENDING"),
+     *                         @OA\Property(property="user_name", type="string", example="user00"),
+     *                         @OA\Property(property="service_name", type="string", example="Lipid Profile"),
+     *                         @OA\Property(property="service_slug", type="string", example="lipid-profile"),
+     *                         @OA\Property(property="message", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="appointment_at", type="string", format="date-time", example="2025/12/10 14:30:00")
      *                     )
      *                 ),
      *     
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=10),
-     *                 @OA\Property(property="total_items", type="integer", example=10)
+     *                 @OA\Property(property="total_page", type="integer", example=1),
+     *                 @OA\Property(property="total_items", type="integer", example=1)
      *             ),
-     *     
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )

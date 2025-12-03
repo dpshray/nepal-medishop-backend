@@ -45,7 +45,7 @@ class AdminServiceBookingController extends Controller
      *         name="search",
      *         in="query",
      *         required=false,
-     *         description="Service tag name to search",
+     *         description="Booking search based on ordered user name, service name, vendor name",
      *         @OA\Schema(type="string", example="")
      *     ),
      *     @OA\Response(
@@ -269,6 +269,9 @@ class AdminServiceBookingController extends Controller
         $booking_service = $service_booking->service;
         $vendor_service = $vendor->services()->firstWhere('services.id', $booking_service->id);
 
+        if (!(bool)$vendor_service->is_active) {
+            return $this->apiError('This service is not active at the moment.');
+        }
         if (empty($vendor_service)) {
             return $this->apiError('Service is not registered to this vendor yet.');
         }
@@ -276,7 +279,7 @@ class AdminServiceBookingController extends Controller
             return $this->apiError('Service is not made available by the vendor at the moment.');
         }
         if (!(bool)$vendor_service->pivot->is_approved) {
-            return $this->apiError('Service is not approved by admin.');
+            return $this->apiError('Vendor service is not approved by admin.');
         }
         if ($service_booking->status != ServiceBookingStatusEnum::PENDING) {
             return $this->apiError('Cannot assign service booking(This service booking status is : '.$service_booking->status->value.')');

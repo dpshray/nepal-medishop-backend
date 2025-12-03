@@ -853,14 +853,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "List of available services",
+                        "description": "List of service bookings assigned",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "List of available services"
+                                            "example": "List of service bookings assigned"
                                         },
                                         "data": {
                                             "properties": {
@@ -868,26 +868,36 @@
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 57
-                                                            },
-                                                            "name": {
+                                                            "booking_uuid": {
                                                                 "type": "string",
-                                                                "example": "Electrocardiogram (ECG)"
+                                                                "format": "uuid",
+                                                                "example": "e7591a49-d1af-41c8-90c3-66f7a2891f55"
                                                             },
-                                                            "slug": {
+                                                            "status": {
                                                                 "type": "string",
-                                                                "example": "electrocardiogram-ecg"
+                                                                "example": "PENDING"
                                                             },
-                                                            "admin_price": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 900
+                                                            "user_name": {
+                                                                "type": "string",
+                                                                "example": "user00"
                                                             },
-                                                            "admin_discount_percent": {
-                                                                "type": "integer",
-                                                                "example": 2
+                                                            "service_name": {
+                                                                "type": "string",
+                                                                "example": "Lipid Profile"
+                                                            },
+                                                            "service_slug": {
+                                                                "type": "string",
+                                                                "example": "lipid-profile"
+                                                            },
+                                                            "message": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "appointment_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2025/12/10 14:30:00"
                                                             }
                                                         },
                                                         "type": "object"
@@ -899,11 +909,11 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 10
+                                                    "example": 1
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 10
+                                                    "example": 1
                                                 }
                                             },
                                             "type": "object"

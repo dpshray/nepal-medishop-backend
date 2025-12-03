@@ -16,7 +16,7 @@ class VendorAssignedBookingSericeListResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            "uuid" => $this->uuid,
+            "booking_uuid" => $this->uuid,
             "status" => $this->status,
             "user_name" => $this->orderedBy->name,
             "service_name" => $this->service->name,

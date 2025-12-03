@@ -22,8 +22,8 @@ class AdminVendorServiceController extends Controller
      * @OA\Get(
      *     security={{"sanctum": {}}},
      *     path="/admin/service/{slug}/vendor",
-     *     summary="Get all vendor list registered on a service.",
-     *     description="Get all vendor list registered on a service.",
+     *     summary="Get vendor associates with this service.",
+     *     description="Get vendor associates with this service.",
      *     operationId="AdminVendorServiceList",
      *     tags={"AdminVendorService"},
      *     @OA\Parameter(
