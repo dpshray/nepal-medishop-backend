@@ -115,13 +115,16 @@ class ClientServiceBookingController extends Controller
             'appointment_datetime' => 'required|date_format:Y-m-d H:i:s',
             'message' => 'sometimes|nullable'
         ]);
+        if (!(bool)$service->is_active) {
+            return $this->apiError('Service is not active at the moment.');
+        }
         ['price' => $price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($service->price, $service->discount_percent);
         $data = [
             'status' => ServiceBookingStatusEnum::PENDING,
             'appointment_at' => $form_data['appointment_datetime'],
             'message' => array_key_exists('message', $form_data) ? $form_data['message'] : null,
             'service_id' => $service->id,
-            'price' => empty($previous_price) ? $price : $previous_price,
+            'price' => $price,
             'discount_percent' => $service->discount_percent,
             'payment_method' => $form_data['payment_method'],
             'name' => $form_data['name'],
