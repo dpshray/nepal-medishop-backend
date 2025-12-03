@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Vendor\Service;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\Product\Service\VendorServiceStoreRequest;
+use App\Http\Resources\Vendor\Product\Service\VendorRegisteredServiceListResource;
 use App\Http\Resources\Vendor\Product\Service\VendorServiceDetailResource;
 use App\Http\Resources\Vendor\Product\Service\VendorServiceListResource;
 use App\Models\Product\Service\Service;
@@ -47,16 +48,12 @@ class VendorServiceController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Service list response",
+     *         description="List of available services",
      *     
      *         @OA\JsonContent(
      *             type="object",
      *     
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Service list lists"
-     *             ),
+     *             @OA\Property(property="message", type="string", example="List of available services"),
      *     
      *             @OA\Property(
      *                 property="data",
@@ -69,21 +66,17 @@ class VendorServiceController extends Controller
      *                     @OA\Items(
      *                         type="object",
      *     
-     *                         @OA\Property(property="service_id", type="integer", example=14),
-     *                         @OA\Property(property="is_made_available_by_admin", type="boolean", example=true),
-     *                         @OA\Property(property="is_approved_by_admin", type="boolean", example=true),
-     *                         @OA\Property(property="is_vendor_already_priced", type="boolean", example=true),
-     *                         @OA\Property(property="vendor_service_status", type="boolean", example=true),
-     *                         @OA\Property(property="service_name", type="string", example="Complete Blood Count (CBC)"),
-     *                         @OA\Property(property="service_slug", type="string", example="complete-blood-count-cbc"),
-     *                         @OA\Property(property="admin_price", type="number", format="float", example=5000),
-     *                         @OA\Property(property="admin_discount_percent", type="number", example=2),
+     *                         @OA\Property(property="id", type="integer", example=57),
+     *                         @OA\Property(property="name", type="string", example="Electrocardiogram (ECG)"),
+     *                         @OA\Property(property="slug", type="string", example="electrocardiogram-ecg"),
+     *                         @OA\Property(property="admin_price", type="number", format="float", example=900),
+     *                         @OA\Property(property="admin_discount_percent", type="integer", example=2)
      *                     )
      *                 ),
      *     
      *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=1),
-     *                 @OA\Property(property="total_items", type="integer", example=7)
+     *                 @OA\Property(property="total_page", type="integer", example=10),
+     *                 @OA\Property(property="total_items", type="integer", example=10)
      *             ),
      *     
      *             @OA\Property(property="success", type="boolean", example=true)
@@ -96,11 +89,12 @@ class VendorServiceController extends Controller
         $per_page = $request->query('per_page', Service::count());
         $search = $request->query('search');
         $pagination = Service::with(['vendors' => fn($qry) => $qry->wherePivot('vendor_id', Auth::user()->vendor->id)])
+            ->active()
             ->when($search, fn($qry) => $qry->whereLike('name', '%' . $search . '%'))
             ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => VendorServiceListResource::collection($item))->data;
-        return $this->apiSuccess("Service list lists", $data);
+        return $this->apiSuccess("List of available services", $data);
     }
 
     /**
@@ -234,5 +228,81 @@ class VendorServiceController extends Controller
         
         $service->vendors()->detach(Auth::user()->vendor->id);
         return $this->apiSuccess('Registered service removed successfully.');
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/vendor/registered-services",
+     *     summary="Get all registered service list.",
+     *     description="Get all registered service list.",
+     *     operationId="VendorRegisteredServiceList",
+     *     tags={"VendorService"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Page number of list",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),     
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Items on each page.(empty to fetch all data)",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Vendor service name to search",
+     *         @OA\Schema(type="string", example="")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of available services",
+     *     
+     *         @OA\JsonContent(
+     *             type="object",
+     *     
+     *             @OA\Property(property="message", type="string", example="List of available services"),
+     *     
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *     
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *     
+     *                     @OA\Items(
+     *                         type="object",
+     *     
+     *                         @OA\Property(property="id", type="integer", example=57),
+     *                         @OA\Property(property="name", type="string", example="Electrocardiogram (ECG)"),
+     *                         @OA\Property(property="slug", type="string", example="electrocardiogram-ecg"),
+     *                         @OA\Property(property="admin_price", type="number", format="float", example=900),
+     *                         @OA\Property(property="admin_discount_percent", type="integer", example=2)
+     *                     )
+     *                 ),
+     *     
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=10),
+     *                 @OA\Property(property="total_items", type="integer", example=10)
+     *             ),
+     *     
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function getRegisteredServices(Request $request) {
+        $per_page = $request->query('per_page');
+        $pagination = Auth::user()->vendor
+            ->services()
+            ->paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($item) => VendorRegisteredServiceListResource::collection($item))->data;
+        return $this->apiSuccess('List of serivces that vendor have registered.', $data);
     }
 }
