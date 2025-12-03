@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->boolean('is_active')->default(true);
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->text('description');
             $table->text('test_requirements');
             $table->decimal('price', 10, 2);
             $table->decimal('discount_percent', 5, 2)->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
