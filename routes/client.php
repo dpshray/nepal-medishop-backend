@@ -4,7 +4,7 @@ use App\Enums\ItemTypeEnum;
 use App\Http\Controllers\Api\V1\Client\Address\ClientAddressController;
 use App\Http\Controllers\Api\V1\Client\ClientBannerController;
 use App\Http\Controllers\Api\V1\Client\ClientKitbagController;
-use App\Http\Controllers\Api\V1\Client\ClientServiceController;
+use App\Http\Controllers\Api\V1\Client\Service\ClientServiceController;
 use App\Http\Controllers\Api\V1\Client\Feedback\ClientFeedbackController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\V1\Client\Purchase\ClientOrderController;
 use App\Http\Controllers\Api\V1\Client\Purchase\CODPurchaseController;
 use App\Http\Controllers\Api\V1\Client\Review\PackageReviewController;
 use App\Http\Controllers\Api\V1\Client\Review\ProductReviewController;
+use App\Http\Controllers\Api\V1\Client\Service\ClientServiceBookingController;
 use App\Http\Controllers\Api\V1\Client\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -65,11 +66,16 @@ Route::apiResource('user/address',ClientAddressController::class)->except(['show
 Route::apiResource('user/feedback',ClientFeedbackController::class)->except(['show','update','destroy','index']);
 
 
-/*=====  Services  ======*/
-Route::middleware(['auth:sanctum'])->controller(ClientServiceController::class)->group(function(){
-    Route::get('get-services', 'index');
-    Route::get('get-services/{service:slug}', 'show');
-    Route::post('book-service/{service:slug}', 'serviceBooking');
+/*=====  Services and Booking  ======*/
+Route::middleware(['auth:sanctum'])->group(function(){
+    Route::controller(ClientServiceController::class)->group(function(){
+        Route::get('get-services', 'index');
+        Route::get('get-services/{service:slug}', 'show');
+    });
+    Route::controller(ClientServiceBookingController::class)->group(function(){
+        Route::post('book-service/{service:slug}', 'serviceBooking');
+        Route::get('fetch-service-booking-history', 'index');
+    });
 });
 /*=====  Purchase Part  ======*/
 Route::controller(CODPurchaseController::class)->group(function(){

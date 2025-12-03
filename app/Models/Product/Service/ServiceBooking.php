@@ -22,7 +22,16 @@ class ServiceBooking extends Model implements HasMedia
         'assigned_vendor_id',
         'appointment_at',
         'service_id',
-        'message'
+        'message',
+        'price',
+        'discount_percent',
+        'name',
+        'email',
+        'mobile',
+        'address',
+        'latitude',
+        'longitude',
+        'payment_method'
     ];
 
     protected $casts = [
