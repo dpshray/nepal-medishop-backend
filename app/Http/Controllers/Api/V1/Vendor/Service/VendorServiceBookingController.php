@@ -135,12 +135,17 @@ class VendorServiceBookingController extends Controller
     {
         $required_status = ServiceBookingStatusEnum::exceptPending();
         $form_data = $request->validate([
-            'status' => ['required', Rule::in($required_status)]
+            'status' => ['required', Rule::in($required_status)],
+            'report' => [
+                Rule::requiredIf($request->status === ServiceBookingStatusEnum::COMPLETED->value),
+                'file',
+                'mimes:jpg,jpeg,png,gif,pdf']
         ]);
+        // return 'OK';
         $status = $form_data['status'];
-        if ($status == ServiceBookingStatusEnum::COMPLETED->value && !$request->hasFile('report')) {
+        /* if ($status == ServiceBookingStatusEnum::COMPLETED->value && !$request->hasFile('report')) {
             return $this->apiError('Report must be uploaded to make it as completed.');
-        }
+        } */
         // RETURN [$service_booking->isNot(Auth::user()->vendor)];
         if ($service_booking->assignedVendor->isNot(Auth::user()->vendor)) {
             throw new UnauthorizedException();
