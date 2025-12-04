@@ -31,7 +31,9 @@ class ServiceBooking extends Model implements HasMedia
         'address',
         'latitude',
         'longitude',
-        'payment_method'
+        'payment_method',
+        'used_coupon_code_id',
+        'order_code'
     ];
 
     protected $casts = [
@@ -49,6 +51,20 @@ class ServiceBooking extends Model implements HasMedia
 
     function service() {
         return $this->belongsTo(Service::class);
+    }
+
+    function discounts() {
+        return $this->hasMany(ServiceBookingDiscount::class);
+    }
+
+    function getIsBookingExpiredAttribute() {
+        return (
+            $this->status != ServiceBookingStatusEnum::COMPLETED
+            &&
+            $this->status != ServiceBookingStatusEnum::CANCELLED
+            &&
+            $this->appointment_at->lt(now()) 
+        );
     }
 
     public function registerMediaCollections(): void
