@@ -79,6 +79,7 @@ Route::prefix('admin')
         Route::apiResource('service-tag', AdminServiceTagController::class)->scoped(['service_tag' => 'slug']);
         Route::apiResource('service', AdminServiceController::class)->scoped(['service' => 'slug']);
         Route::apiResource('service.vendor', AdminVendorServiceController::class)->except(['destroy','store'])->scoped(['service' => 'slug', 'vendor' => 'uuid']);
+        Route::get('fetch-all-service-vendor', [AdminVendorServiceController::class, 'allServiceVendor']);
         /*----------  Service Booking and Assign  ----------*/
         Route::apiResource('service-booking', AdminServiceBookingController::class)->only(['index','show'])->scoped(['service_booking' => 'uuid']);
         Route::get('assign-booking/{service_booking:uuid}/vendor/{uuid}', [AdminServiceBookingController::class, 'assignServiceBookingToVendor']);

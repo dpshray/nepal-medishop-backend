@@ -151,6 +151,10 @@
                                                     "type": "string",
                                                     "example": "Kathmandu, Nepal"
                                                 },
+                                                "label": {
+                                                    "type": "string",
+                                                    "example": "Lazimpat-kathmandu"
+                                                },
                                                 "latitude": {
                                                     "type": "string",
                                                     "example": "27.7172"
@@ -4670,6 +4674,10 @@
                                     "message": {
                                         "type": "string",
                                         "example": ""
+                                    },
+                                    "coupon_code": {
+                                        "type": "string",
+                                        "example": ""
                                     }
                                 },
                                 "type": "object"
@@ -4686,11 +4694,313 @@
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Service booked successfully"
+                                            "example": "Service booked successfully."
                                         },
                                         "data": {
-                                            "example": null,
-                                            "nullable": true
+                                            "properties": {
+                                                "previous_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 350
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 346.5
+                                                },
+                                                "order_number": {
+                                                    "type": "string",
+                                                    "example": "HUR4M"
+                                                },
+                                                "payment_method": {
+                                                    "type": "string",
+                                                    "example": "Cash on Delivery"
+                                                },
+                                                "appointment_date": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-12-01 10:30:00"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Roger"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "roger@gmail.com"
+                                                },
+                                                "mobile": {
+                                                    "type": "string",
+                                                    "example": "954778541"
+                                                },
+                                                "delivery_address": {
+                                                    "type": "string",
+                                                    "example": "Lagankhel, Kathmandu"
+                                                },
+                                                "latitude": {
+                                                    "type": "string",
+                                                    "example": "78.05646"
+                                                },
+                                                "longitude": {
+                                                    "type": "string",
+                                                    "example": "15.456454"
+                                                },
+                                                "promo_code": {
+                                                    "type": "string",
+                                                    "example": "test0"
+                                                },
+                                                "promo_discount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 3.5
+                                                },
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Urine Routine Examination"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/fetch-service-booking-history": {
+            "get": {
+                "tags": [
+                    "ClientServiceBooking"
+                ],
+                "summary": "Get client booking history.",
+                "description": "Get client booking history.",
+                "operationId": "ClientServiceHistoryList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "search service booking using order code, name, address, service name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Item per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Api page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Client all service booking history list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Client all service booking history list"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "booking_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "26d9b72c-9133-4ca9-9758-ecf5fa256720"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "COMPLETED"
+                                                            },
+                                                            "order_code": {
+                                                                "type": "string",
+                                                                "example": "g54ww5"
+                                                            },
+                                                            "client_name": {
+                                                                "type": "string",
+                                                                "example": "Sophia"
+                                                            },
+                                                            "service_name": {
+                                                                "type": "string",
+                                                                "example": "Complete Blood Count (CBC)"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/129/Complete-Blood-Count-CBC.jpeg"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1200
+                                                            },
+                                                            "appointment_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2025/12/01 10:30:00"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/fetch-service-booking-detail/{uuid}": {
+            "get": {
+                "tags": [
+                    "ClientServiceBooking"
+                ],
+                "summary": "Get client booking detail.",
+                "description": "Get client booking detail.",
+                "operationId": "ClientServiceDetailList",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of a service booking",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Client all service booking history list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Client all service booking history list"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "booking_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "26d9b72c-9133-4ca9-9758-ecf5fa256720"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "COMPLETED"
+                                                            },
+                                                            "order_code": {
+                                                                "type": "string",
+                                                                "example": "g54ww5"
+                                                            },
+                                                            "client_name": {
+                                                                "type": "string",
+                                                                "example": "Sophia"
+                                                            },
+                                                            "service_name": {
+                                                                "type": "string",
+                                                                "example": "Complete Blood Count (CBC)"
+                                                            },
+                                                            "image": {
+                                                                "type": "string",
+                                                                "format": "url",
+                                                                "example": "http://192.168.100.23:8008/storage/129/Complete-Blood-Count-CBC.jpeg"
+                                                            },
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 1200
+                                                            },
+                                                            "appointment_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2025/12/01 10:30:00"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "success": {
                                             "type": "boolean",

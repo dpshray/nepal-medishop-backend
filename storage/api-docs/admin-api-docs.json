@@ -5501,6 +5501,10 @@
                                         },
                                         "data": {
                                             "properties": {
+                                                "booking_uuid": {
+                                                    "type": "string",
+                                                    "example": "26d9b72c-9133-4ca9-9758-ecf5fa256720"
+                                                },
                                                 "status": {
                                                     "type": "string",
                                                     "example": "CONFIRMED"
@@ -5535,6 +5539,10 @@
                                                     "type": "string",
                                                     "example": "Lipid Profile"
                                                 },
+                                                "service_slug": {
+                                                    "type": "string",
+                                                    "example": "lipid-profile"
+                                                },
                                                 "service_price": {
                                                     "type": "number",
                                                     "example": 1600
@@ -5559,6 +5567,10 @@
                                                     "type": "string",
                                                     "format": "date-time",
                                                     "example": "2025-12-10 04:30:00"
+                                                },
+                                                "is_appointment_expired": {
+                                                    "type": "boolean",
+                                                    "example": false
                                                 },
                                                 "service_created_at": {
                                                     "type": "string",
@@ -7203,6 +7215,135 @@
                                             "type": "object",
                                             "example": null,
                                             "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/fetch-all-service-vendor": {
+            "get": {
+                "tags": [
+                    "AdminVendorService"
+                ],
+                "summary": "Get vendor associates with this service.",
+                "description": "Get vendor associates with this service.",
+                "operationId": "AdminVendorServiceAll",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "Slug of a service",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page.(empty to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Service tag name to search",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vendors registered for a service",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor list registered on this service."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "is_approved_by_admin": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "vendor_service_status": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            },
+                                                            "vendor_uuid": {
+                                                                "type": "string",
+                                                                "example": "f6ffcc6e-2aea-46ce-b9b0-8a5ecc005709"
+                                                            },
+                                                            "vendor_name": {
+                                                                "type": "string",
+                                                                "example": "vendor2881776"
+                                                            },
+                                                            "service_price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 6500
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "service_slug": {
+                                                    "type": "string",
+                                                    "example": "skin-test"
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "success": {
                                             "type": "boolean",
