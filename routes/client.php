@@ -75,6 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::controller(ClientServiceBookingController::class)->group(function(){
         Route::post('book-service/{service:slug}', 'serviceBooking');
         Route::get('fetch-service-booking-history', 'index');
+        Route::get('fetch-service-booking-detail/{service_booking:uuid}', 'show');
     });
 });
 /*=====  Purchase Part  ======*/
