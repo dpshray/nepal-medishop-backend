@@ -166,6 +166,7 @@ class AdminServiceBookingController extends Controller
      *                 property="data",
      *                 type="object",
      *                 
+     *                 @OA\Property(property="booking_uuid", type="string", example="26d9b72c-9133-4ca9-9758-ecf5fa256720"),
      *                 @OA\Property(property="status", type="string", example="CONFIRMED"),
      *                 
      *                 @OA\Property(
@@ -183,12 +184,14 @@ class AdminServiceBookingController extends Controller
      *                 ),
      *     
      *                 @OA\Property(property="service_name", type="string", example="Lipid Profile"),
+     *                 @OA\Property(property="service_slug", type="string", example="lipid-profile"),
      *                 @OA\Property(property="service_price", type="number", example=1600),
      *                 @OA\Property(property="service_discount_percent", type="integer", example=1),
      *                 @OA\Property(property="service_description", type="string", example="Measures cholesterol and triglycerides to evaluate heart disease risk."),
      *                 @OA\Property(property="test_requirements", type="string", example="Fast for 9–12 hours before test."),
      *                 @OA\Property(property="message", type="string", example="some service booking message for lipid-profile"),
      *                 @OA\Property(property="appointment_at", type="string", format="date-time", example="2025-12-10 04:30:00"),
+     *                 @OA\Property(property="is_appointment_expired", type="boolean", example=false),
      *                 @OA\Property(property="service_created_at", type="string", format="date", example="2025-12-03")
      *             )
      *         )

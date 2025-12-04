@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Product\Service\Booking;
 
+use App\Enums\Purchase\ServiceBookingStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,8 +19,10 @@ class AdminServiceBookingDetailResource extends JsonResource
         $user = $this->orderedBy;
         $service = $this->service;
         $vendor = $this->assignedVendor;
+        $is_appointment_expired = $this->is_booking_expired;
         return [
-            "status" => $this->status,
+            "booking_uuid" => $this->uuid,
+            "status" => $is_appointment_expired ? ServiceBookingStatusEnum::EXPIRED : $this->status,
             "user" => $user ? [
                 "name" => $user->name,
                 "email" => $user->email,
@@ -29,12 +32,14 @@ class AdminServiceBookingDetailResource extends JsonResource
                 'email' => $vendor->user->email
             ] : null,
             "service_name" => $service->name,
+            "service_slug" => $service->slug,
             "service_price" => (float)$service->price,
             "service_discount_percent" => (float)$service->discount_percent,
             "service_description" => $service->description,
             "test_requirements" => $service->test_requirements,
             "message" => $this->message,
             "appointment_at" => $this->appointment_at->format('Y/m/d H:i:s'),
+            "is_appointment_expired" => $this->appointment_at->lt(now()),
             "service_created_at" => $this->created_at->format('Y/m/d'),
         ];
     }
