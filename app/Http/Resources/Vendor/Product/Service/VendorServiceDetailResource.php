@@ -31,9 +31,11 @@ class VendorServiceDetailResource extends JsonResource
             "service_name" => $this->name,
             "service_slug" => $this->slug,
             "admin_price" => (float)$this->price,
-            "admin_discount_percent" => (float)$this->discount_percent,
+            // "admin_discount_percent" => (float)$this->discount_percent,
             'added_by_admin_at' => $this->created_at->format('Y/m/d'),
             'vendor_price' => $vendor_price,
+            'categories' => $this->categories->map(fn($category) => ['name' => $category->name, 'slug' => $category->slug]),
+            'tags' => $this->tags->map(fn($tag) => ['name' => $tag->name, 'slug' => $tag->slug]),
         ];
     }
 }

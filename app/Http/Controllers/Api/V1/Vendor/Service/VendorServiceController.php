@@ -141,7 +141,7 @@ class VendorServiceController extends Controller
      */
     public function show(Service $service)
     {
-        $service->load(['vendors' => fn($qry) => $qry->wherePivot('vendor_id', Auth::user()->vendor->id)]);
+        $service->load(['categories','tags','vendors' => fn($qry) => $qry->wherePivot('vendor_id', Auth::user()->vendor->id)]);
         return $this->apiSuccess('Showing service detail', new VendorServiceDetailResource($service));
     }
 
@@ -192,7 +192,7 @@ class VendorServiceController extends Controller
                 ->services
                 ->firstWhere('pivot.service_id',$request->service_id);
             if ($previous_service && $previous_service->pivot->price != $request->price) {
-                $data['is_approved'] = false;
+                $data['is_approved'] = null;
             }
             Auth::user()->vendor->services()->syncWithoutDetaching([
                 $request->service_id => $data
