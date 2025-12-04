@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\V1\Admin\Product\Service;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\Product\Service\Vendor\AdminVendorAllRegisteredServiceListResource;
 use App\Http\Resources\Admin\Product\Service\Vendor\AdminVendorServiceDetailResource;
 use App\Http\Resources\Admin\Product\Service\Vendor\AdminVendorServiceListResource;
 use App\Models\Product\Service\Service;
+use App\Models\Product\Service\ServiceVendor;
 use App\Models\Vendor;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
@@ -92,10 +94,11 @@ class AdminVendorServiceController extends Controller
      *         )
      *     )
      * )
-     */
+    */
     public function index(Request $request, Service $service)
     {
-        $per_page = $request->query('per_page',100);
+        $per_page = $request->query('per_page');
+        $per_page = empty($per_page) ? $service->vendors->count() : $per_page;
         $search = $request->query('search');
         $pagination = $service->vendors()
             ->with('user')
@@ -230,5 +233,88 @@ class AdminVendorServiceController extends Controller
         ]);
         $data = new AdminVendorServiceDetailResource($service);
         return $this->apiSuccess('Vendor service detail fetched successfully.', $data);
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/fetch-all-service-vendor",
+     *     summary="Get vendor associates with this service.",
+     *     description="Get vendor associates with this service.",
+     *     operationId="AdminVendorServiceAll",
+     *     tags={"AdminVendorService"},
+     *     @OA\Parameter(
+     *         name="slug",
+     *         in="path",
+     *         required=true,
+     *         description="Slug of a service",
+     *         @OA\Schema(type="string", example="")
+     *     ),     
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Page number of list",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),     
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Items on each page.(empty to fetch all data)",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         required=false,
+     *         description="Service tag name to search",
+     *         @OA\Schema(type="string", example="")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Vendors registered for a service",
+     *     
+     *         @OA\JsonContent(
+     *             type="object",
+     *     
+     *             @OA\Property(property="message", type="string", example="Vendor list registered on this service."),
+     *     
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *     
+     *                 @OA\Property(
+     *                     property="items",
+     *                     type="array",
+     *     
+     *                     @OA\Items(
+     *                         type="object",
+     *     
+     *                         @OA\Property(property="is_approved_by_admin", type="boolean", example=true),
+     *                         @OA\Property(property="vendor_service_status", type="boolean", example=false),
+     *                         @OA\Property(property="vendor_uuid", type="string", example="f6ffcc6e-2aea-46ce-b9b0-8a5ecc005709"),
+     *                         @OA\Property(property="vendor_name", type="string", example="vendor2881776"),
+     *                         @OA\Property(property="service_price", type="number", format="float", example=6500)
+     *                     )
+     *                 ),
+     *     
+     *                 @OA\Property(property="page", type="integer", example=1),
+     *                 @OA\Property(property="total_page", type="integer", example=1),
+     *                 @OA\Property(property="total_items", type="integer", example=1),
+     *                 @OA\Property(property="service_slug", type="string", example="skin-test")
+     *             ),
+     *     
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function allServiceVendor(Request $request) {
+        $per_page = $request->query('per_page');
+        $per_page = $per_page ? $per_page : ServiceVendor::count();
+        $pagination = ServiceVendor::with(['service','vendor'])->paginate($per_page);
+        $data = $this->makePaginationResponse($pagination, fn($item) => AdminVendorAllRegisteredServiceListResource::collection($item));
+        return $this->apiSuccess('All vendors registered list.', $data);
     }
 }

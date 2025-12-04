@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Product\Service\Booking;
 
+use App\Enums\Purchase\ServiceBookingStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,9 +16,10 @@ class AdminServiceBookingListResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
+        $status = $this->is_booking_expired ? ServiceBookingStatusEnum::EXPIRED : $this->status;
         return [
             "booking_uuid" => $this->uuid,
-            "status" => $this->status,
+            "status" => $status,
             "ordered_by" => $this->orderedBy->name,
             "service_name" => $this->service->name,
             "service_slug" => $this->service->slug,
