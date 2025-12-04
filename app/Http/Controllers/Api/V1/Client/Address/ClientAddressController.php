@@ -40,6 +40,7 @@ class ClientAddressController extends Controller
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="user_id", type="integer", example=5),
      *                 @OA\Property(property="address", type="string", example="Kathmandu, Nepal"),
+     *                 @OA\Property(property="label", type="string", example="Lazimpat-kathmandu"),
      *                 @OA\Property(property="latitude", type="string", example="27.7172"),
      *                 @OA\Property(property="longitude", type="string", example="85.3240")
      *             )
@@ -60,6 +61,7 @@ class ClientAddressController extends Controller
         $user = Auth::user();
         $data = $request->validate([
             'address' => 'required|string',
+            'label' => 'required|string|max:255',
             'latitude' => 'sometimes|string|nullable',
             'longitude' => 'sometimes|string|nullable',
         ]);
@@ -153,6 +155,7 @@ class ClientAddressController extends Controller
     {
         $data = $request->validate([
             'address' => 'required|string',
+            'label' => 'required|string|max:255',
             'latitude' => 'sometimes|string|nullable',
             'longitude' => 'sometimes|string|nullable',
         ]);

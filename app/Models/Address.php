@@ -11,6 +11,7 @@ class Address extends Model
         'address',
         'user_id',
         'latitude',
-        'longitude'
+        'longitude',
+        'label'
     ];
 }
