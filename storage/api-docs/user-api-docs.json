@@ -4932,72 +4932,130 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Client all service booking history list",
+                        "description": "Service booking detail",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Client all service booking history list"
+                                            "example": "Service booking detail"
                                         },
                                         "data": {
                                             "properties": {
-                                                "items": {
+                                                "order_code": {
+                                                    "type": "string",
+                                                    "example": "WQDCB"
+                                                },
+                                                "order_status": {
+                                                    "type": "string",
+                                                    "example": "COMPLETED"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 1746.36
+                                                },
+                                                "service_name": {
+                                                    "type": "string",
+                                                    "example": "Thyroid Function Test"
+                                                },
+                                                "service_image": {
+                                                    "type": "string",
+                                                    "format": "url",
+                                                    "example": "http://192.168.100.23:8008/storage/130/Thyroid-Function-Test.jpg"
+                                                },
+                                                "service_description": {
+                                                    "type": "string",
+                                                    "example": "Checks thyroid hormone levels (T3, T4, TSH) to diagnose thyroid disorders."
+                                                },
+                                                "test_requirements": {
+                                                    "type": "string",
+                                                    "example": "Fasting not required. Morning sample preferred."
+                                                },
+                                                "service_categories": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "booking_uuid": {
+                                                            "name": {
                                                                 "type": "string",
-                                                                "format": "uuid",
-                                                                "example": "26d9b72c-9133-4ca9-9758-ecf5fa256720"
-                                                            },
-                                                            "status": {
-                                                                "type": "string",
-                                                                "example": "COMPLETED"
-                                                            },
-                                                            "order_code": {
-                                                                "type": "string",
-                                                                "example": "g54ww5"
-                                                            },
-                                                            "client_name": {
-                                                                "type": "string",
-                                                                "example": "Sophia"
-                                                            },
-                                                            "service_name": {
-                                                                "type": "string",
-                                                                "example": "Complete Blood Count (CBC)"
-                                                            },
-                                                            "image": {
-                                                                "type": "string",
-                                                                "format": "url",
-                                                                "example": "http://192.168.100.23:8008/storage/129/Complete-Blood-Count-CBC.jpeg"
-                                                            },
-                                                            "price": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 1200
-                                                            },
-                                                            "appointment_at": {
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2025/12/01 10:30:00"
+                                                                "example": "Blood Tests"
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
                                                 },
-                                                "page": {
-                                                    "type": "integer",
-                                                    "example": 1
+                                                "service_tags": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Doctor Recommended"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
                                                 },
-                                                "total_page": {
-                                                    "type": "integer",
-                                                    "example": 1
+                                                "payment_method": {
+                                                    "type": "string",
+                                                    "example": "Cash on Delivery"
                                                 },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 1
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "user00"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "user@gmail.com"
+                                                },
+                                                "mobile": {
+                                                    "type": "string",
+                                                    "example": "9886825298"
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "M8FV+V53 Koteshwor Kathmandu Bagmati Province Nepal"
+                                                },
+                                                "latitude": {
+                                                    "type": "string",
+                                                    "example": "27.6748152"
+                                                },
+                                                "longitude": {
+                                                    "type": "string",
+                                                    "example": "85.3430236"
+                                                },
+                                                "user_name": {
+                                                    "type": "string",
+                                                    "example": "user00"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "appointment_at": {
+                                                    "type": "string",
+                                                    "example": "2025/12/04 12:59:00"
+                                                },
+                                                "report_document": {
+                                                    "type": "string",
+                                                    "format": "url",
+                                                    "example": "http://192.168.100.23:8008/storage/143/SAMPLE-MEDICAL-REPORT.pdf"
+                                                },
+                                                "coupon_code": {
+                                                    "type": "string",
+                                                    "example": "test0"
+                                                },
+                                                "coupon_code_discount_amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 17.64
+                                                },
+                                                "service_discount_amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 36
                                                 }
                                             },
                                             "type": "object"

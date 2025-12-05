@@ -150,12 +150,19 @@ class AdminVendorServiceController extends Controller
             ->wherePivot('vendor_id', $vendor->id)
             ->first();
         // return [$vendor->services()->wherePivot('service_id', $service->id)->doesntExist()];
-        $current = $vendorService->pivot->is_approved ?? 0;
-        $newStatus = !$current;
+        if ($vendorService->pivot->is_approved == null) {
+            $current = true;
+        }elseif ((bool)($vendorService->pivot->is_approved) == true) {
+            $current = false;
+        }else{
+            $current = false;
+        }
+        // return [$current];
+        // $newStatus = $current;
         $service->vendors()->syncWithoutDetaching([
-            $vendor->id => ['is_approved' => $newStatus]
+            $vendor->id => ['is_approved' => $current]
         ]);
-        $approve_status = $newStatus ? 'approved' : 'disapproved';
+        $approve_status = $current ? 'approved' : 'disapproved';
         return $this->apiSuccess("Vendor service has been {$approve_status} successfully.");
     }
 
@@ -242,14 +249,7 @@ class AdminVendorServiceController extends Controller
      *     summary="Get vendor associates with this service.",
      *     description="Get vendor associates with this service.",
      *     operationId="AdminVendorServiceAll",
-     *     tags={"AdminVendorService"},
-     *     @OA\Parameter(
-     *         name="slug",
-     *         in="path",
-     *         required=true,
-     *         description="Slug of a service",
-     *         @OA\Schema(type="string", example="")
-     *     ),     
+     *     tags={"AdminVendorService"},   
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -268,43 +268,32 @@ class AdminVendorServiceController extends Controller
      *         name="search",
      *         in="query",
      *         required=false,
-     *         description="Service tag name to search",
+     *         description="Search list based on vendor name, service name",
      *         @OA\Schema(type="string", example="")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Vendors registered for a service",
-     *     
+     *         description="All vendors registered list.",
      *         @OA\JsonContent(
-     *             type="object",
-     *     
-     *             @OA\Property(property="message", type="string", example="Vendor list registered on this service."),
-     *     
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *     
-     *                 @OA\Property(
-     *                     property="items",
-     *                     type="array",
-     *     
-     *                     @OA\Items(
-     *                         type="object",
-     *     
-     *                         @OA\Property(property="is_approved_by_admin", type="boolean", example=true),
-     *                         @OA\Property(property="vendor_service_status", type="boolean", example=false),
-     *                         @OA\Property(property="vendor_uuid", type="string", example="f6ffcc6e-2aea-46ce-b9b0-8a5ecc005709"),
-     *                         @OA\Property(property="vendor_name", type="string", example="vendor2881776"),
-     *                         @OA\Property(property="service_price", type="number", format="float", example=6500)
-     *                     )
+     *             @OA\Property(property="message", type="string", example="All vendors registered list."),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="data", type="object",
+     *                     @OA\Property(property="items", type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="is_approved_by_admin", type="boolean", nullable=true, example=null),
+     *                             @OA\Property(property="vendor_service_status", type="boolean", example=true),
+     *                             @OA\Property(property="vendor_name", type="string", example="vendor00"),
+     *                             @OA\Property(property="vendor_uuid", type="string", example="fa749b9a-cff1-495f-bcb0-d54a6c6eba11"),
+     *                             @OA\Property(property="service_name", type="string", example="Bibek"),
+     *                             @OA\Property(property="service_slug", type="string", example="bibek"),
+     *                             @OA\Property(property="vendor_service_price", type="number", format="float", example="5000.01"),
+     *                         )
+     *                     ),
+     *                     @OA\Property(property="page", type="integer", example=1),
+     *                     @OA\Property(property="total_page", type="integer", example=2),
+     *                     @OA\Property(property="total_items", type="integer", example=2),
      *                 ),
-     *     
-     *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=1),
-     *                 @OA\Property(property="total_items", type="integer", example=1),
-     *                 @OA\Property(property="service_slug", type="string", example="skin-test")
      *             ),
-     *     
      *             @OA\Property(property="success", type="boolean", example=true)
      *         )
      *     )
@@ -313,7 +302,13 @@ class AdminVendorServiceController extends Controller
     function allServiceVendor(Request $request) {
         $per_page = $request->query('per_page');
         $per_page = $per_page ? $per_page : ServiceVendor::count();
-        $pagination = ServiceVendor::with(['service','vendor'])->paginate($per_page);
+        $search = $request->query('search');
+        $pagination = ServiceVendor::with(['service','vendor.user'])
+            ->when($search, function($q) use($search){
+                $q->whereRelation('service','name','like','%'.$search.'%')
+                    ->orWherehas('vendor', fn($qr) => $qr->whereRelation('user','name','like','%'.$search.'%'));
+            })
+            ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminVendorAllRegisteredServiceListResource::collection($item));
         return $this->apiSuccess('All vendors registered list.', $data);
     }

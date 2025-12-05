@@ -7244,16 +7244,6 @@
                 "operationId": "AdminVendorServiceAll",
                 "parameters": [
                     {
-                        "name": "slug",
-                        "in": "path",
-                        "description": "Slug of a service",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": ""
-                        }
-                    },
-                    {
                         "name": "page",
                         "in": "query",
                         "description": "Page number of list",
@@ -7276,7 +7266,7 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "Service tag name to search",
+                        "description": "Search list based on vendor name, service name",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -7286,61 +7276,71 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Vendors registered for a service",
+                        "description": "All vendors registered list.",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "message": {
                                             "type": "string",
-                                            "example": "Vendor list registered on this service."
+                                            "example": "All vendors registered list."
                                         },
                                         "data": {
                                             "properties": {
-                                                "items": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "is_approved_by_admin": {
-                                                                "type": "boolean",
-                                                                "example": true
-                                                            },
-                                                            "vendor_service_status": {
-                                                                "type": "boolean",
-                                                                "example": false
-                                                            },
-                                                            "vendor_uuid": {
-                                                                "type": "string",
-                                                                "example": "f6ffcc6e-2aea-46ce-b9b0-8a5ecc005709"
-                                                            },
-                                                            "vendor_name": {
-                                                                "type": "string",
-                                                                "example": "vendor2881776"
-                                                            },
-                                                            "service_price": {
-                                                                "type": "number",
-                                                                "format": "float",
-                                                                "example": 6500
+                                                "data": {
+                                                    "properties": {
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "is_approved_by_admin": {
+                                                                        "type": "boolean",
+                                                                        "example": null,
+                                                                        "nullable": true
+                                                                    },
+                                                                    "vendor_service_status": {
+                                                                        "type": "boolean",
+                                                                        "example": true
+                                                                    },
+                                                                    "vendor_name": {
+                                                                        "type": "string",
+                                                                        "example": "vendor00"
+                                                                    },
+                                                                    "vendor_uuid": {
+                                                                        "type": "string",
+                                                                        "example": "fa749b9a-cff1-495f-bcb0-d54a6c6eba11"
+                                                                    },
+                                                                    "service_name": {
+                                                                        "type": "string",
+                                                                        "example": "Bibek"
+                                                                    },
+                                                                    "service_slug": {
+                                                                        "type": "string",
+                                                                        "example": "bibek"
+                                                                    },
+                                                                    "vendor_service_price": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": "5000.01"
+                                                                    }
+                                                                },
+                                                                "type": "object"
                                                             }
                                                         },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "total_items": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "service_slug": {
-                                                    "type": "string",
-                                                    "example": "skin-test"
+                                                        "page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "total_page": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "total_items": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"

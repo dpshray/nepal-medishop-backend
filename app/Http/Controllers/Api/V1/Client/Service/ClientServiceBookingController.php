@@ -16,6 +16,7 @@ use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\UnauthorizedException;
 
@@ -143,7 +144,6 @@ class ClientServiceBookingController extends Controller
 
         // return [$price, $discount_percent];
         ['price' => $current_service_price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($service->price, $service->discount_percent);
-        $original_service_price = $current_service_price;
         if ($previous_price) {
             $service_discounts[] = [
                 'type' => DiscountEnum::SERVICE_DISCOUNT,
@@ -189,7 +189,7 @@ class ClientServiceBookingController extends Controller
         });
 
         $data_for_response = [
-            "previous_price" => (float)$original_service_price ,
+            "previous_price" => (float)$service->price ,
             "amount" => (float)$current_service_price,
             "order_number" => $data['order_code'],
             "payment_method" => $data['payment_method'],
@@ -307,48 +307,64 @@ class ClientServiceBookingController extends Controller
      *         description="UUID of a service booking",
      *         @OA\Schema(type="string", example="")
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Client all service booking history list",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             
-     *             @OA\Property(property="message", type="string", example="Client all service booking history list"),
-     *     
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *     
-     *                 @OA\Property(
-     *                     property="items",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="object",
-     *                         @OA\Property(property="booking_uuid", type="string", format="uuid", example="26d9b72c-9133-4ca9-9758-ecf5fa256720"),
-     *                         @OA\Property(property="status", type="string", example="COMPLETED"),
-     *                         @OA\Property(property="order_code", type="string", example="g54ww5"),
-     *                         @OA\Property(property="client_name", type="string", example="Sophia"),
-     *                         @OA\Property(property="service_name", type="string", example="Complete Blood Count (CBC)"),
-     *                         @OA\Property(property="image", type="string", format="url", example="http://192.168.100.23:8008/storage/129/Complete-Blood-Count-CBC.jpeg"),
-     *                         @OA\Property(property="price", type="number", format="float", example=1200),
-     *                         @OA\Property(property="appointment_at", type="string", format="date-time", example="2025/12/01 10:30:00")
-     *                     )
-     *                 ),
-     *     
-     *                 @OA\Property(property="page", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=1),
-     *                 @OA\Property(property="total_items", type="integer", example=1)
-     *             ),
-     *     
-     *             @OA\Property(property="success", type="boolean", example=true)
-     *         )
-     *     )
+     *      @OA\Response(
+     *          response=200,
+     *          description="Service booking detail",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="Service booking detail"),
+     *              @OA\Property(property="data", type="object",
+     *                  @OA\Property(property="order_code", type="string", example="WQDCB"),
+     *                  @OA\Property(property="order_status", type="string", example="COMPLETED"),
+     *                  @OA\Property(property="price", type="number", format="float", example=1746.36),
+     *                  @OA\Property(property="service_name", type="string", example="Thyroid Function Test"),
+     *                  @OA\Property(property="service_image", type="string", format="url", example="http://192.168.100.23:8008/storage/130/Thyroid-Function-Test.jpg"),
+     *                  @OA\Property(property="service_description", type="string", example="Checks thyroid hormone levels (T3, T4, TSH) to diagnose thyroid disorders."),
+     *                  @OA\Property(property="test_requirements", type="string", example="Fasting not required. Morning sample preferred."),
+     *
+     *                  @OA\Property(
+     *                      property="service_categories",
+     *                      type="array",
+     *                      @OA\Items(
+     *                          @OA\Property(property="name", type="string", example="Blood Tests")
+     *                      )
+     *                  ),
+     *
+             *                  @OA\Property(
+     *                      property="service_tags",
+     *                      type="array",
+     *                      @OA\Items(
+     *                          @OA\Property(property="name", type="string", example="Doctor Recommended")
+     *                      )
+     *                  ),
+     *
+     *                  @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
+     *                  @OA\Property(property="name", type="string", example="user00"),
+     *                  @OA\Property(property="email", type="string", example="user@gmail.com"),
+     *                  @OA\Property(property="mobile", type="string", example="9886825298"),
+     *                  @OA\Property(property="address", type="string", example="M8FV+V53 Koteshwor Kathmandu Bagmati Province Nepal"),
+     *                  @OA\Property(property="latitude", type="string", example="27.6748152"),
+     *                  @OA\Property(property="longitude", type="string", example="85.3430236"),
+     *                  @OA\Property(property="user_name", type="string", example="user00"),
+     *                  @OA\Property(property="message", type="string", nullable=true, example=null),
+     *
+     *                  @OA\Property(property="appointment_at", type="string", example="2025/12/04 12:59:00"),
+     *
+     *                  @OA\Property(property="report_document", type="string", format="url", example="http://192.168.100.23:8008/storage/143/SAMPLE-MEDICAL-REPORT.pdf"),
+     *
+     *                  @OA\Property(property="coupon_code", type="string", example="test0"),
+     *                  @OA\Property(property="coupon_code_discount_amount", type="number", format="float", example=17.64),
+     *                  @OA\Property(property="service_discount_amount", type="number", format="float", example=36)
+     *              ),
+     *              @OA\Property(property="success", type="boolean", example=true)
+     *          )
+     *      )
      * )
      */
     function show(ServiceBooking $service_booking) {
-        // if ($service_booking->orderedBy->isNot(Auth::id())) {
-        //     throw new UnauthorizedException();
-        // }
+        // Log::info([Auth::id()]);
+        if ($service_booking->orderedBy->isNot(Auth::user())) {
+            throw new UnauthorizedException();
+        }
         $service_booking->load([
             'media',
             'service' => fn($q) => $q->with(['categories','tags']),

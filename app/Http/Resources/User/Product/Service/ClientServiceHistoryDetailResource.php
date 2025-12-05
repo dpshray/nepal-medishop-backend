@@ -23,6 +23,7 @@ class ClientServiceHistoryDetailResource extends JsonResource
         $data = [
             'order_code' => $this->order_code,
             'order_status' => $status,
+            'price' => (float)$this->price,
             'service_name' => $this->service->name,
             'service_image' => $this->service->getFirstMediaUrl(Service::SERVICE_MEDIA),
             'service_description' => $this->service->description,
@@ -39,7 +40,10 @@ class ClientServiceHistoryDetailResource extends JsonResource
             "user_name" => $this->orderedBy->name,
             "message" => $this->message,
             "appointment_at" => $this->appointment_at->format('Y/m/d H:i:s'),
-            "report_document" => $this->getFirstMediaUrl(ServiceBooking::SERVICE_BOOKING_REPORT)
+            "report_document" => $this->getFirstMediaUrl(ServiceBooking::SERVICE_BOOKING_REPORT),
+            'coupon_code' => null,
+            'coupon_code_discount_amount' => null,
+            'service_discount_amount' => null
         ];
         if ($this->discounts->isNotEmpty()) {
             foreach ($this->discounts as $discount) {
