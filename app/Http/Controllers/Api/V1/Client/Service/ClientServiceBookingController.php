@@ -144,6 +144,7 @@ class ClientServiceBookingController extends Controller
 
         // return [$price, $discount_percent];
         ['price' => $current_service_price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($service->price, $service->discount_percent);
+        $service_price_after_service_discount = $current_service_price; 
         if ($previous_price) {
             $service_discounts[] = [
                 'type' => DiscountEnum::SERVICE_DISCOUNT,
@@ -189,7 +190,7 @@ class ClientServiceBookingController extends Controller
         });
 
         $data_for_response = [
-            "previous_price" => (float)$service->price ,
+            "previous_price" => (float)$service_price_after_service_discount, #this is the amount after service discount(if any)
             "amount" => (float)$current_service_price,
             "order_number" => $data['order_code'],
             "payment_method" => $data['payment_method'],
