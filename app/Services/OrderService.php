@@ -406,17 +406,17 @@ class OrderService
         // Log::info("------------------------");
         // Log::info($incoming_order_items);
         $some_order_item_missing_for_batching = count($grouped_all_order_item_product_by_order_item_id) != $requested_OIP_ids->count();
-        if ($some_order_item_missing_for_batching) {
-            throw new OrderException('Some order item is missing for batching process.');
-        }
+        // if ($some_order_item_missing_for_batching) {
+        //     throw new OrderException('Some order item is missing for batching process.');
+        // }
 
         $qty_does_not_match = $grouped_all_order_item_product_by_order_item_id->every(function($item) use($incoming_order_items){
             $order_item_product = $incoming_order_items->firstWhere('order_item_product_id', $item['id']);
             return $order_item_product && $order_item_product['quantity'] ==  $item['quantity'];
         });
-        if (!$qty_does_not_match) {
-            throw new OrderException('Quantity does not match.');
-        }
+        // if (!$qty_does_not_match) {
+        //     throw new OrderException('Quantity does not match.');
+        // }
 
         $VPPs = $incoming_order_items->pluck('quantity', 'vendor_product_price_id')->all();
         $have_sufficient_stock = VendorProductPrice::whereIn('id', array_keys($VPPs))

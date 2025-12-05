@@ -90,7 +90,8 @@ class AdminVendorProductController extends Controller
         $perPage = $request->get('per_page', 10);
         $search = $request->query('search', null);
 
-        $query = ProductVendor::with(['vendor', 'vendorPrices','product']);
+        $query = ProductVendor::with(['vendor', 'vendorPrices','product'])
+            ->has('product'); #if product is deleted
 
         if ($search) {
             $query->whereRelation('product','name', 'like', "%{$search}%");

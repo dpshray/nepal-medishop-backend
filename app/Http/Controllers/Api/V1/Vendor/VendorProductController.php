@@ -234,6 +234,7 @@ class VendorProductController extends Controller
         $pagination = Auth::user()->vendor
             ->vendorProducts()
             ->with(['product.brand', 'vendorPrices.variation'])
+            ->has('product') #if product is deleted
             ->when($search, fn($qry) => $qry->wherehas('product', fn($qry) => $qry->whereLike('name', '%'.$search.'%')))
             ->latest('updated_at')
             ->orderBy('id','DESC')
