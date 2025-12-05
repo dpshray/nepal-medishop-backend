@@ -67,11 +67,11 @@ Route::apiResource('user/feedback',ClientFeedbackController::class)->except(['sh
 
 
 /*=====  Services and Booking  ======*/
+Route::controller(ClientServiceController::class)->group(function(){
+    Route::get('get-services', 'index');
+    Route::get('get-services/{service:slug}', 'show');
+});
 Route::middleware(['auth:sanctum'])->group(function(){
-    Route::controller(ClientServiceController::class)->group(function(){
-        Route::get('get-services', 'index');
-        Route::get('get-services/{service:slug}', 'show');
-    });
     Route::controller(ClientServiceBookingController::class)->group(function(){
         Route::post('book-service/{service:slug}', 'serviceBooking');
         Route::get('fetch-service-booking-history', 'index');
