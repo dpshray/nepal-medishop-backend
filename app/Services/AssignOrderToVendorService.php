@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\Purchase\OrderItemStatusEnum;
+use App\Enums\Purchase\OrderStatusEnum;
 use App\Exceptions\AssignOrderException;
 use App\Models\Package;
 use App\Models\Product;
@@ -15,346 +16,170 @@ use Illuminate\Support\Facades\Log;
 class AssignOrderToVendorService
 {
     public $order = null;
-    public $vendor_id = null; public $search = null;
+    public $vendor_id = null;
+    public $search = null;
     public $product_item_variant_id_w_quantity = null;
 
-    function vendorsThatCanFulfillOneItem(Order $order)
-    {
+    /**
+     * null = check entire order
+     * null = check all vendors
+     * false = ANY, true = ALL
+    */
+    function checkVendorFulfillment(Order $order, array|null $order_item_ids = null, Vendor|null $specificVendor = null, bool $mustFulfillAll = false) {
         /** ---------------------------------------------------
-         * STEP 1: Build required variations (required_qty per variant)
+         * STEP 1: Build required variations (required qty per variant)
          * ----------------------------------------------------*/
-        $data_to_watch = $order->orderItemProducts
+        $query = $order->orderItemProducts();
+
+        if ($order_item_ids) {
+            $query->whereIn('order_item_id', $order_item_ids);
+        }
+
+        $ordered_items = $query->with('variation.product')
+            ->get()
             ->groupBy('product_variation_id')
             ->map(fn($items) => [
-                'variant_id'     => $items->first()->product_variation_id,   // which variant
-                'required_qty'   => $items->sum('quantity'),                // total qty needed for this order
+                'variant_id'   => $items->first()->product_variation_id,
+                'required_qty' => $items->sum('quantity'),
+                'variant_name' => optional($items->first()->variation)->name,
+                'product_name' => optional(optional($items->first()->variation)->product)->name,
             ])
             ->values();
 
-        /** Extract just the variant IDs */
-        $required_variations = $data_to_watch->pluck('variant_id')->all();
-
+        $required_variations = $ordered_items->pluck('variant_id')->all();
 
 
         /** ---------------------------------------------------
-         * STEP 2: Select vendors who SELL these variations 
-         * (but DO NOT load all — we will process using chunk)
+         * STEP 2: Prepare Vendor Query (all vendors or only one)
          * ----------------------------------------------------*/
         $vendorQuery = Vendor::verifiedAndActive()
-            ->whereHas('vendorProductPrices', function ($q) use ($required_variations) {
-                // vendor must sell at least one required variation
-                $q->whereIn('product_variation_id', $required_variations);
-            })
+            ->whereHas(
+                'vendorProductPrices',
+                fn($q) =>
+                $q->whereIn('product_variation_id', $required_variations)
+            )
             ->with([
-                // preload vendor's stock data for only required variants
-                'vendorProductPrices' => function ($q) use ($required_variations) {
-                    $q->whereIn('product_variation_id', $required_variations)->whereRelation('ProductVendor','is_approved',true);
-                },
+                'vendorProductPrices' => fn($q) =>
+                $q->with(['orderItemProductBatchNumber','orders'])
+                    ->whereIn('product_variation_id', $required_variations)
+                    ->whereRelation('ProductVendor', 'is_approved', true),
 
-                // preload only relevant reserved items (already assigned to a vendor)
-                'orderItemProducts' => function ($q) use ($required_variations) {
-                    $q->whereIn('product_variation_id', $required_variations)
-                        ->whereRelation('orderItem', 'assigned_vendor_id', '<>', null); #later needed to calc reserved stock
-                }
-            ])
-            ->when(
-                $this->search,
-                fn($qry) =>
-                $qry->whereLike('store_name', '%' . $this->search . '%')
-            );
+                'orderItemProducts' => fn($q) =>
+                $q->whereIn('product_variation_id', $required_variations)
+                    ->whereRelation('orderItem', 'assigned_vendor_id', '<>', null)
+                    ->whereRelation('order','status', '<>',OrderStatusEnum::CANCELLED),
+            ]);
 
+        if ($specificVendor) {
+            $vendorQuery->where('id', $specificVendor->id);
+        }
 
 
         /** ---------------------------------------------------
-         * STEP 3: Chunk and filter (vendor can supply ANY one variant)
+         * MODE: Single Vendor (must fulfill ALL items)
          * ----------------------------------------------------*/
-        $vendors_any = collect(); // we will collect passing vendors here
+        if ($specificVendor && $mustFulfillAll) {
 
-        $vendorQuery->chunk(200, function ($vendors) use (&$vendors_any, $data_to_watch) {
+            $vendor = $vendorQuery->first();
+            if (!$vendor) {
+                return ['eligible' => false, 'failed_items' => []];
+            }
+
+            $reserved_by_variant = $vendor->orderItemProducts
+                ->groupBy('product_variation_id')->map->sum('quantity');
+
+            $failed_items = [];
+
+            foreach ($ordered_items as $order_item) {
+
+                $variant_id   = $order_item['variant_id'];
+                $required_qty = $order_item['required_qty'];
+
+                $variant_stock = $vendor->vendorProductPrices
+                    ->where('product_variation_id', $variant_id);
+
+                if ($variant_stock->isEmpty()) {
+                    $failed_items[] = [
+                        'variant_name'    => $order_item['variant_name'],
+                        'product_name'    => $order_item['product_name'],
+                        'reason'        => 'Vendor does not sell this variant',
+                        'required_qty'  => $required_qty,
+                        'available_qty' => 0,
+                    ];
+                    continue;
+                }
+
+                $reserved = $reserved_by_variant[$variant_id] ?? 0;
+                $actual_units = $variant_stock->sum('units_in_stock') - $reserved;
+
+                if ($actual_units < $required_qty) {
+                    $failed_items[] = [
+                        'variant_name'    => $order_item['variant_name'],
+                        'product_name'    => $order_item['product_name'],
+                        'reason'        => 'Insufficient stock',
+                        'required_qty'  => $required_qty,
+                        'available_qty' => $actual_units,
+                    ];
+                }
+            }
+
+            return [
+                'eligible'     => empty($failed_items),
+                'failed_items' => $failed_items,
+            ];
+        }
+
+
+        /** ---------------------------------------------------
+         * MODE: Check all vendors (ANY one variant must be available)
+         * ----------------------------------------------------*/
+        $passing_vendors = collect();
+
+        $vendorQuery->chunk(200, function ($vendors) use (&$passing_vendors, $ordered_items) {
 
             foreach ($vendors as $vendor) {
 
-                /** 
-                 * Pre-calculate how much stock is already reserved
-                 * Group reserved items by variant, then sum quantities
-                 */
                 $reserved_by_variant = $vendor->orderItemProducts
-                    ->groupBy('product_variation_id')
-                    ->map->sum('quantity');
+                    ->groupBy('product_variation_id')->map->sum('quantity');
 
-                /** Check if vendor can supply AT LEAST ONE required variant */
                 $can_supply_any = false;
 
-                foreach ($data_to_watch as $dtw) {
+                foreach ($ordered_items as $order_item) {
 
-                    $variant_id   = $dtw['variant_id'];      // required variant
-                    $required_qty = $dtw['required_qty'];    // required qty
+                    $variant_id   = $order_item['variant_id'];
+                    $required_qty = $order_item['required_qty'];
 
-                    // vendor's pricing + stock for this variant
-                    $variant_price = $vendor->vendorProductPrices
+                    $variant_stock = $vendor->vendorProductPrices
                         ->where('product_variation_id', $variant_id);
 
-                    // vendor does not sell this variant
-                    if ($variant_price->isEmpty()) {
+                    if ($variant_stock->isEmpty()) {
                         continue;
                     }
 
-                    // total reserved stock for this vendor's variant
                     $reserved = $reserved_by_variant[$variant_id] ?? 0;
+                    $actual_units = $variant_stock->sum('units_in_stock') - $reserved;
+                    /* if ($vendor->id == 2) {                        
+                        Log::info([
+                            $variant_stock->sum('units_in_stock'),
+                            $reserved
+                        ]);
+                    } */
 
-                    // actual stock = units_in_stock - reserved
-                    $actual_units = $variant_price->sum('units_in_stock') - $reserved;
-
-                    // vendor meets requirement for ONE item → success
                     if ($actual_units >= $required_qty) {
                         $can_supply_any = true;
-                        break; // no need to check other variants
+                        break;
                     }
                 }
 
                 if ($can_supply_any) {
-                    $vendors_any->push($vendor); // add passing vendor to final result
+                    $passing_vendors->push($vendor);
                 }
             }
         });
 
-        return $vendors_any->values();
+        return $passing_vendors->values();
     }
 
-    function canVendorFulfillAllItems(Order $order, array $order_item_ids, Vendor $vendor)
-    {
-        /** ---------------------------------------------------
-         * STEP 1: Build required variations (required qty per variant)
-         * ----------------------------------------------------*/
-        $data_to_watch = $order->orderItemProducts()
-            ->with('variation.product')
-            ->whereIn('order_item_id', $order_item_ids)
-            ->get()
-            ->groupBy('product_variation_id')
-            ->map(fn($items) => [
-                'variant_id'     => $items->first()->product_variation_id,
-                'required_qty'   => $items->sum('quantity'),
-                'variant_name' => $items->first()->variation->name,
-                'product_name' => $items->first()->variation->product->name,
-            ])
-            ->values();
-
-        $required_variations = $data_to_watch->pluck('variant_id')->all();
-
-
-        /** ---------------------------------------------------
-         * STEP 2: Load ONLY this vendor’s relevant stock + reserved items
-         * ----------------------------------------------------*/
-        $vendor->load([
-            'vendorProductPrices' => function ($q) use ($required_variations) {
-                $q->whereIn('product_variation_id', $required_variations)
-                    ->whereRelation('ProductVendor', 'is_approved', true);
-            },
-            'orderItemProducts' => function ($q) use ($required_variations) {
-                $q->whereIn('product_variation_id', $required_variations)
-                    ->whereRelation('orderItem', 'assigned_vendor_id', '<>', null);
-            }
-        ]);
-
-
-        /** ---------------------------------------------------
-         * STEP 3: Pre-calc reserved stock for this vendor
-         * ----------------------------------------------------*/
-        $reserved_by_variant = $vendor->orderItemProducts
-            ->groupBy('product_variation_id')
-            ->map->sum('quantity');
-
-
-        /** ---------------------------------------------------
-         * STEP 4: Check if vendor can fulfill ALL required items
-         * ----------------------------------------------------*/
-        $failed_items = [];
-
-        foreach ($data_to_watch as $dtw) {
-
-            $variant_id   = $dtw['variant_id'];
-            $required_qty = $dtw['required_qty'];
-            $variant_name = $dtw['variant_name'];
-            $product_name = $dtw['product_name'];
-
-            // vendor’s stock entry
-            $variant_stock = $vendor->vendorProductPrices
-                ->where('product_variation_id', $variant_id);
-
-            // vendor does NOT sell this variant → FAIL
-            if ($variant_stock->isEmpty()) {
-
-                $failed_items[] = [
-                    'variant_name'    => $variant_name,
-                    'product_name'    => $product_name,
-                    'reason'        => 'Vendor does not sell this variant',
-                    'required_qty'  => $required_qty,
-                    'available_qty' => 0,
-                ];
-
-                continue;
-            }
-
-            // reserved stock
-            $reserved = $reserved_by_variant[$variant_id] ?? 0;
-
-            // actual stock = stock - reserved
-            $actual_units = $variant_stock->sum('units_in_stock') - $reserved;
-
-            // vendor does NOT have enough → FAIL
-            if ($actual_units < $required_qty) {
-
-                $failed_items[] = [
-                    'variant_name'    => $variant_name,
-                    'product_name'    => $product_name,
-                    'reason'        => 'Insufficient stock',
-                    'required_qty'  => $required_qty,
-                    'available_qty' => $actual_units,
-                ];
-            }
-        }
-
-
-        /** ---------------------------------------------------
-         * STEP 5: Return Result
-         * ----------------------------------------------------*/
-        return [
-            'eligible'      => empty($failed_items),
-            'failed_items'  => $failed_items,
-        ];
-    }
-
-    public function transformOrderItemsIntoProducts($order_item_ids){
-        /**
-         * exrtacting product from package and
-         * transforming them in array into this format...
-         * [
-         *      'item_variant_id' => '.....',
-         *      'quantity' => '.....',
-         * ]
-         */
-        $package = OrderItem::with(['item.packageProducts'])
-            ->whereIn('id', $order_item_ids)
-            ->where('item_type', Package::class)
-            ->get()
-            ->map(function ($order_item) {
-                return $order_item->item->packageProducts->map(function ($pkg_pdt) use ($order_item) {
-                    return [
-                        'quantity' => $order_item->quantity * $pkg_pdt->quantity,
-                        'item_variant_id' => $pkg_pdt->product_variation_id
-                    ];
-                });
-            })
-            ->flatten(1)
-            ->groupBy('item_variant_id')
-            ->map(function ($group) {
-                return [
-                    'item_variant_id' => $group->first()['item_variant_id'],
-                    'quantity' => $group->sum('quantity'),
-                ];
-            })
-            ->values();
-            // Log::info($package);
-
-        /**
-         * transforming ordered product item in array into this format...
-         * [
-         *      'item_variant_id' => '.....',
-         *      'quantity' => '.....',
-         * ]
-         */
-        $product = OrderItem::whereIn('id', $order_item_ids)
-            ->where('item_type', Product::class)
-            ->get()
-            ->map(fn($item) => [
-                'quantity' => $item->quantity,
-                'item_variant_id' => $item->item_variant_id
-            ]);
-        $combined_products = $package;
-
-        /**
-         * finally combining both transformed package and product
-         * and returning then in type collection
-         */
-        if (count($product)) {
-            $combined_products = $product->merge($package->toArray())
-                ->groupBy('item_variant_id')
-                ->map(function ($group) {
-                    return [
-                        'item_variant_id' => (int)$group->first()['item_variant_id'],
-                        'quantity' => $group->sum('quantity'),
-                    ];
-                })
-                ->values();
-            
-        }
-        return $combined_products;
-    }
-
-    function fetchEligibleVendors(array $order_item_ids, Order $order = null)
-    {
-        $vendor_id = $this->vendor_id;
-        $orders = $this->transformOrderItemsIntoProducts($order_item_ids);
-        $this->product_item_variant_id_w_quantity = $orders;
-        /**
-         * finally finding vendors that are eligible to
-         * assign above order items
-         */
-        /* Log::info($orders);
-        Log::info('**************************'); */
-
-        $matchedVendors = collect(); // final result collection
-        Vendor::with(['vendorProductPrices.ProductVendor.associatedVendor', 'user'])
-            ->when($vendor_id, fn($qry) => $qry->where('id', $vendor_id))
-            ->when($this->search, fn($qry) => $qry->whereLike('store_name', '%' . $this->search . '%'))
-            ->verifiedAndActive()
-            ->chunk(200, function ($vendors) use ($orders, &$matchedVendors) {
-                $filtered = $vendors->filter(function ($vendor) use ($orders) {
-                    return $orders->every(function ($item) use ($vendor) {
-                        $tot_stock = $vendor->vendorProductPrices
-                            ->where('product_variation_id', $item['item_variant_id'])
-                            ->sum('units_in_stock');
-                        $product_used_stock = $vendor->assignedOrders()
-                            ->where('item_type', Product::class)
-                            ->where('item_variant_id', $item['item_variant_id'])
-                            ->sum('quantity');
-                        $package_used_stock = $vendor->assignedOrders()
-                            ->with([
-                                'item'
-                                =>
-                                fn($itm)
-                                =>
-                                $itm->with([
-                                    'packageProducts'
-                                    =>
-                                    fn($i) => $i->where('product_variation_id', $item['item_variant_id'])
-                                ])
-                            ])
-                            ->where('item_type', Package::class)
-                            ->get()
-                            ->sum(function ($item) {
-                                return $item->quantity * $item->item->packageProducts->count();
-                            });
-                        $tot_used_stock = $product_used_stock + $package_used_stock;
-
-                        /* if (in_array($vendor->id,[11,10])) {
-                            Log::info([
-                                'vendor_id' => $vendor->id, 
-                                'variant_id' => $item['item_variant_id'], 
-                                'tot_stock' => $tot_stock , 
-                                'product_used_stock' => $product_used_stock, 
-                                'package_used_stock' => $package_used_stock, 
-                                'qty' => $item['quantity']
-                            ]);
-                        } */
-                        return ($tot_stock - $tot_used_stock) >= $item['quantity'];
-                    });
-                });
-                $matchedVendors = $matchedVendors->merge($filtered);
-            });
-        return $matchedVendors;
-    }
-    
     function assignOrderToVendor($vendor, $order, $order_items_ids) {
         // $order_items_ids = $request->order_items_ids;
         /* if ($order->is_order_completely_assigned) {
@@ -377,15 +202,15 @@ class AssignOrderToVendorService
         // $AAV_service = new AssignOrderToVendorService;
         $this->vendor_id = $vendor->id;
         // return $request->order_items_ids;
-        $res = $this->fetchEligibleVendors($order_items_ids);
-        $product_item_variant_id_w_quantity = $this->product_item_variant_id_w_quantity;
+        $res = $this->checkVendorFulfillment($order, $order_items_ids, $vendor, true);
+        // $product_item_variant_id_w_quantity = $this->product_item_variant_id_w_quantity;
         /**
          * rechecking that this vendor have sufficient stock to meet this order items
          */
         if (count($res) <= 0) {
             throw new AssignOrderException('Assignment failed: vendor inventory is insufficient for these items.');
         }
-        DB::transaction(function () use ($order, $order_items_ids, $vendor, $product_item_variant_id_w_quantity) {
+        DB::transaction(function () use ($order, $order_items_ids, $vendor, /* $product_item_variant_id_w_quantity */) {
             /* $order->orderItems()->whereIn('id', $order_items_ids)->update(['assigned_vendor_id' => $vendor->id, 'status' => OrderItemStatusEnum::ASSIGNED]);
             $order->refresh();
             $all_order_hasBeen_assigned = $order->orderItems->whereNull('assigned_vendor_id')->isEmpty();

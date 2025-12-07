@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderItemProduct extends Model
 {
+    function order() {
+        return $this->belongsTo(Order::class);
+    }
+    
     function orderItem() {
         return $this->belongsTo(OrderItem::class);
     }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Purchase\OrderStatusEnum;
+use App\Models\Purchase\Order;
 use App\Models\Purchase\OrderItemProductBatchNumber;
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,9 +50,13 @@ class VendorProductPrice extends Model
         return $this->hasMany(OrderItemProductBatchNumber::class);
     }
 
+    function orders() {
+        return $this->belongsToMany(Order::class,'order_item_products','product_variation_id','order_id');
+    }
+
     function getStockLeftAttribute()
     {
-        return $this->units_in_stock - $this->orderItemProductBatchNumber->sum('quantity');
+        return $this->units_in_stock - ($this->orderItemProductBatchNumber->sum('quantity') - $this->orders->where('status', OrderStatusEnum::CANCELLED)->count());
     }
 
     function scopeActive($qry)

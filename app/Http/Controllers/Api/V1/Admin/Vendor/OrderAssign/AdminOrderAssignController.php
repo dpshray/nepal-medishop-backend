@@ -113,7 +113,7 @@ class AdminOrderAssignController extends Controller
     {
         $AAV_service = (new AssignOrderToVendorService);
         $AAV_service->search = $request->query('search');
-        $atleast_one_order_item_any_vendors = $AAV_service->vendorsThatCanFulfillOneItem($order);
+        $atleast_one_order_item_any_vendors = $AAV_service->checkVendorFulfillment($order);
         $total_items = count($atleast_one_order_item_any_vendors);
         $items = AdminVendorOrderAssignListResource::collection($atleast_one_order_item_any_vendors);
         return $this->apiSuccess('Vendors capable of fulfilling at least part of your order', compact('total_items','items'));
@@ -240,7 +240,7 @@ class AdminOrderAssignController extends Controller
             ->firstOrFail();
         
         $vendor = Vendor::where('uuid', $vendor_uuid)->firstOrFail();
-        $result = (new AssignOrderToVendorService)->canVendorFulfillAllItems($order, $order_items_ids, $vendor);
+        $result = (new AssignOrderToVendorService)->checkVendorFulfillment($order, $order_items_ids, $vendor, true);
         if (!$result['eligible']) {
             return $this->apiError('Assignment failed: the vendor does not have enough stock for one or more order items.',422, $result['failed_items']);
         }
@@ -308,16 +308,6 @@ class AdminOrderAssignController extends Controller
         $order->load('orderItems.assignedVendor.vendorProductPrices');
         // return $order;
         DB::transaction(function () use($order){
-            /* $AOTVService = new AssignOrderToVendorService;
-            $order_items = $order->orderItems;
-            $products_to_handle = $AOTVService->transformOrderItemsIntoProducts($order_items->pluck('id')->all());
-            foreach ($order_items as $OI) {
-                $qty_to_increase = $products_to_handle->firstWhere('item_variant_id', $OI->item_variant_id)['quantity'];
-                $OI->assignedVendor
-                    ->vendorProductPrices()
-                    ->firstWhere('product_variation_id', $OI->item_variant_id)
-                    ->increment('units_in_stock', $qty_to_increase);
-            } */
             $order->update(['status' => OrderStatusEnum::CANCELLED]);
         });
 
