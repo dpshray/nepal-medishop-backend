@@ -400,6 +400,8 @@ class VendorOrderAssignController extends Controller
             '*.batch_numbers' => 'required|array|min:1',
             '*.batch_numbers.*.batch_number_id' => 'required|integer|exists:vendor_product_prices,id',
             '*.batch_numbers.*.quantity' => 'required|integer|min:1',
+        ],[
+            '*.batch_numbers.required' => 'Batch number and its quantity is required.'
         ]);
         try {
             (new OrderService)->assignBatchToOrderItemService($order, $requested_data);   
