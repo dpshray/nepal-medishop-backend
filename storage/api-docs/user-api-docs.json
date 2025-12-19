@@ -3844,6 +3844,292 @@
                 ]
             }
         },
+        "/user/grievance": {
+            "get": {
+                "tags": [
+                    "Grievance"
+                ],
+                "summary": "Get user submitted grievance list.",
+                "description": "Get user submitted grievance list.",
+                "operationId": "GrievanceList",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "no of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": "1"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number of pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": "1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of user grievances",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of user grievances"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "d87d24ba-0d29-4d11-aff9-7794c0627375"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "PENDING"
+                                                            },
+                                                            "subject": {
+                                                                "type": "string",
+                                                                "example": "Delivery delay"
+                                                            },
+                                                            "submitted_at": {
+                                                                "type": "string",
+                                                                "example": "2025-12-19"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Grievance"
+                ],
+                "summary": "Store a user grievance",
+                "description": "Store a user grievance.",
+                "operationId": "ClientGrievance",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "subject",
+                                    "detail"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "subject": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "detail": {
+                                        "type": "string"
+                                    },
+                                    "images": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        },
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Item reviewed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Your grievance has been submitted successfully."
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/user/grievance/{uuid}": {
+            "get": {
+                "tags": [
+                    "Grievance"
+                ],
+                "summary": "Fetch user grievance detail.",
+                "description": "Fetch user grievance detail.",
+                "operationId": "GrievanceShow",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of grievance",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Grievance detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Grievance detail"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "uuid": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "fcdcb8a7-0fe0-46a3-b3f0-e9c335981b7d"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "PENDING",
+                                                        "IN_REVIEW",
+                                                        "RESOLVED"
+                                                    ],
+                                                    "example": "PENDING"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "grievance no image"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "techno@example.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "9854112547"
+                                                },
+                                                "subject": {
+                                                    "type": "string",
+                                                    "example": "grievance no image subject"
+                                                },
+                                                "detail": {
+                                                    "type": "string",
+                                                    "example": "grievance no image detail"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-12-19T10:49:34.000000Z"
+                                                },
+                                                "images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "https://example.com/storage/grievances/image1.jpg"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/package/{slug}/review": {
             "get": {
                 "tags": [
@@ -5685,6 +5971,10 @@
         {
             "name": "Cart",
             "description": "Cart"
+        },
+        {
+            "name": "Grievance",
+            "description": "Grievance"
         },
         {
             "name": "PackageReview",

@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\Client\Promocode\ClientPromoCodeController;
 use App\Http\Controllers\Api\V1\Client\Purchase\ClientCartController;
 use App\Http\Controllers\Api\V1\Client\Purchase\ClientOrderController;
 use App\Http\Controllers\Api\V1\Client\Purchase\CODPurchaseController;
+use App\Http\Controllers\Api\V1\Client\Review\ClientGrievanceController;
 use App\Http\Controllers\Api\V1\Client\Review\PackageReviewController;
 use App\Http\Controllers\Api\V1\Client\Review\ProductReviewController;
 use App\Http\Controllers\Api\V1\Client\Service\ClientServiceBookingController;
@@ -51,6 +52,10 @@ Route::middleware(['auth:sanctum'])->group(function() {
     });
     Route::apiResource('kitbag', ClientKitbagController::class)->except(['show','update','destroy'])->scoped(['kitbag' => 'uuid']);
     Route::delete('kitbag', [ClientKitbagController::class, 'destroy']);
+    
+    Route::post('user/grievance', [ClientGrievanceController::class, 'store']);
+    Route::get('user/grievance', [ClientGrievanceController::class, 'index']);
+    Route::get('user/grievance/{grievance:uuid}', [ClientGrievanceController::class, 'show']);
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);
 Route::get('fetch-product-ratings/{product:slug}', [ProductReviewController::class, 'getProductRatingsByAllUser']);
@@ -65,7 +70,6 @@ Route::apiResource('user/address',ClientAddressController::class)->except(['show
 
 //feedback for client
 Route::apiResource('user/feedback',ClientFeedbackController::class)->except(['show','update','destroy','index']);
-
 
 /*=====  Services and Booking  ======*/
 Route::controller(ClientServiceController::class)->group(function(){
