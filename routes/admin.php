@@ -2,6 +2,7 @@
 
 use App\Enums\AdminUrlParamEnum;
 use App\Enums\RouteParamEnum;
+use App\Http\Controllers\Api\V1\Admin\AdminPushNotificationController;
 use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Admin\Banner\AdminBannerController;
@@ -95,4 +96,6 @@ Route::prefix('admin')
         Route::apiResource('generic-product-name', AdminGenericProductNameController::class)->scoped(['generic_product_name' => 'slug']);
         Route::apiResource('coupon',AdminPromoCodeControlller::class)->scoped(['coupon'=>'uuid']);
         Route::apiResource('prescription',AdminPrescriptionController::class)->only(['index','destroy']);
+        /*----------  Nofification  ----------*/
+        Route::post('notify/client', [AdminPushNotificationController::class, 'pushNotifiyClient']);
 });

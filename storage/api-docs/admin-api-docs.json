@@ -24,6 +24,75 @@
         }
     ],
     "paths": {
+        "/admin/notify/client": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Send notification to student(verified) based on ther exam type.",
+                "description": "Send notification to student(verified) based on ther exam type.",
+                "operationId": "BulkNotification",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "body"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "This is a title."
+                                    },
+                                    "body": {
+                                        "type": "string",
+                                        "example": "This is a description."
+                                    },
+                                    "send_and_store": {
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Notification response data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification send with 1 success and 0 failure"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/vendor": {
             "get": {
                 "tags": [
@@ -9893,6 +9962,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Notification",
+            "description": "Notification"
+        },
         {
             "name": "Vendor",
             "description": "Vendor"

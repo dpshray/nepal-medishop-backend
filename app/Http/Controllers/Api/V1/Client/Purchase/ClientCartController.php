@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\UnauthorizedException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ClientCartController extends Controller
 {
@@ -75,8 +76,20 @@ class ClientCartController extends Controller
     {
         $cart = [];
         if ($request->has(["slug", "variant_id", "quantity"])) { #Product
-            $product_w_variant = Product::with(['brand', 'variations' => fn($qry) => $qry->where('id', $request->variant_id), 'media','variations.vendorProductPrice'])
-                ->where('slug', $request->slug)->firstOrFail();
+            $product_w_variant = Product::with([
+                'brand', 
+                'variations' => fn($qry) => $qry->where('id', $request->variant_id), 
+                'media',
+                'variations'
+                ])
+                ->whereRelation('variations','id',$request->variant_id)
+                ->has('variations')
+                ->has('brand')
+                ->where('slug', $request->slug)
+                ->firstOr(function () {
+                    throw new NotFoundHttpException('The selected item is no longer available for purchase.');
+                    
+                });
             $product_variation = $product_w_variant->variations->first();
             $product_actual_price = $product_variation->platform_price;
             $product_discount = $product_w_variant->discount_percent;
@@ -117,7 +130,12 @@ class ClientCartController extends Controller
             ])->all();
         } else { #A product w. default item
             $product_w_variant = Product::with(['brand', 'cheapestVariation', 'media'])
-                ->where('slug', $request->slug)->firstOrFail();
+                ->has('variations')
+                ->has('brand')
+                ->where('slug', $request->slug)
+                ->firstOr(function () {
+                    throw new NotFoundHttpException('The selected item is no longer available for purchase.');
+                });
             $product_variation = $product_w_variant->variations->first();
             $product_actual_price = $product_variation->platform_price;
             $product_discount = $product_w_variant->discount_percent;

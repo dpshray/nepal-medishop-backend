@@ -273,9 +273,10 @@ class MasterDataController extends Controller
             'brand',
             'cheapestVariation',
             'likes' => fn($qry) => $qry->where('user_id', Auth::id()),
-            'variations.vendorProductPrice'
+            'variations'
             ])
             ->active()
+            ->has('variations')
             ->whereRelation('brand','status',true)
             ->when($search, fn($qry,$search) => $qry->whereLike('name', "%$search%"))
             ->when($category_slug, fn($qry) => $qry->whereRelation('categories', 'slug', $category_slug)->latest('id'))
@@ -362,7 +363,16 @@ class MasterDataController extends Controller
         if ($product->brand?->status != 1) {
             return $this->apiError('This product is not available because the brand is inactive.', 404);
         }
-        $product->loadMissing(['genericProductName', 'healthConditions','media', 'categories','tags','variations.vendorProductPrice','variations','brand','likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
+        $product->loadMissing([
+            'genericProductName', 
+            'healthConditions',
+            'media', 
+            'categories',
+            'tags',
+            'variations',
+            'brand',
+            'likes' => fn($qry) => $qry->where('user_id', Auth::id())
+        ]);
         $data = new ProductDetailResource($product);
         return $this->apiSuccess("Product detail fetched successfully.", $data);
     }
