@@ -24,7 +24,7 @@ class ProfileUpdateRequest extends FormRequest
         return [
             //
             'name'=>'sometimes|string',
-            'mobile_number'=>'sometimes|string',
+            'mobile_number'=>'sometimes|nullable|string',
             'image'=>'sometimes|file|mimes:png,jpg'
         ];
     }
