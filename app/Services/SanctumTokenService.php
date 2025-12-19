@@ -62,7 +62,7 @@ class SanctumTokenService
     public function make($user = null)
     {
         if ($this->user == null && $user == null) {
-            throw new \Exception("$user parameter cannot be null.");
+            throw new LoginException("$user parameter cannot be null.");
         }
         $user = $this->user ?? $user;
         // $user = Auth::guard('api')->user();

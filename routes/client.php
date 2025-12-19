@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Client\Service\ClientServiceController;
 use App\Http\Controllers\Api\V1\Client\Feedback\ClientFeedbackController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
+use App\Http\Controllers\Api\V1\Client\OAuthController;
 use App\Http\Controllers\Api\V1\Client\Password\ClientPasswordController;
 use App\Http\Controllers\Api\V1\Client\Prescription\ClientPrescriptionController;
 use App\Http\Controllers\Api\V1\Client\Profile\ClientProfileController;
@@ -92,3 +93,5 @@ Route::middleware(['auth:sanctum'])->group(function ()
 {
     Route::apiResource('user/prescription',ClientPrescriptionController::class)->only(['index','store','destroy']);
 });
+/*=====  OAUTH Login  ======*/
+Route::post('login/google', OAuthController::class);

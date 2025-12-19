@@ -2110,6 +2110,84 @@
                 }
             }
         },
+        "/login/google": {
+            "post": {
+                "tags": [
+                    "Google"
+                ],
+                "summary": "Google Login",
+                "description": "Google Login",
+                "operationId": "GoogleLogin",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "fcm_token": {
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Lilly Lee"
+                                                },
+                                                "dob": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2082-01-25"
+                                                },
+                                                "gender": {
+                                                    "type": "boolean",
+                                                    "example": "FEMALE"
+                                                },
+                                                "media": {
+                                                    "type": "string",
+                                                    "example": "http://127.0.0.1:8000/storage/36/conversions/flowers-7382926_1920-thumbnail.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Infant information has been updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/user/change-password": {
             "post": {
                 "tags": [
@@ -5583,6 +5661,10 @@
         {
             "name": "Setting",
             "description": "Setting"
+        },
+        {
+            "name": "Google",
+            "description": "Google"
         },
         {
             "name": "User",
