@@ -32,19 +32,15 @@ class ProductCardResource extends JsonResource
             'feature_image' => $this->whenLoaded('media', fn() => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)),
             'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false),
             'discount_percent' => (float) $discount_percent,
-            'variations' => $this->whenLoaded('variations', fn() => $this->variations->map(function ($item) {
-                ['price' => $price, 'previous_price' => $previous_price] = $item->original_price;
-
-                return [
-                    'variation_id' => $item->id,
-                    'name' => $item->name,
-                    'size_value' => (float)$item->size_value,
-                    'size_unit' => $item->size_unit,
-                    'price' => $price,
-                    'previous_price' => $previous_price,
-                    'stock' => $item->vendorProductPrices->sum('units_in_stock'),
-                ];
-            }))
+            'variations' => $this->whenLoaded('cheapestVariation', fn() => [
+                'variation_id' => $item->id,
+                'name' => $item->name,
+                'size_value' => (float)$item->size_value,
+                'size_unit' => $item->size_unit,
+                'price' => $price,
+                'previous_price' => $previous_price,
+                'stock' => $item->vendorProductPrices->sum(fn($vpp) => $vpp->stock_left),
+            ])
         ];
     }
 }

@@ -36,10 +36,12 @@ class VendorProductPrice extends Model
     {
         return $this->belongsTo(ProductVendor::class);
     }
+
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
+    
     function variation()
     {
         return $this->belongsTo(ProductVariation::class, 'product_variation_id');

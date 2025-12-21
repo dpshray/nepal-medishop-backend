@@ -215,8 +215,10 @@ class MasterDataController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful response",
+     *         description="All product lists",
      *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="All product lists."),
      *             @OA\Property(
      *                 property="data",
@@ -226,38 +228,35 @@ class MasterDataController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="name", type="string", example="Sit quas consequatur dignissimos voluptatem."),
-     *                         @OA\Property(property="slug", type="string", example="sit-quas-consequatur-dignissimos-voluptatem"),
-     *                         @OA\Property(property="brand", type="string", example="Roche"),
-     *                         @OA\Property(property="isPrescriptionRequired", type="boolean", example=true),
-     *                         @OA\Property(property="rating", type="number", format="float", example=3.5),
-     *                         @OA\Property(property="price", type="number", format="float", example=137),
-     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=null),
-     *                         @OA\Property(property="feature_image", type="string", example="http://192.168.100.23:8008/storage/2061/tablets.jpg"),
+     *                         @OA\Property(property="name", type="string", example="Ipsam eos et iste sit."),
+     *                         @OA\Property(property="slug", type="string", example="ipsam-eos-et-iste-sit"),
+     *                         @OA\Property(property="brand", type="string", example="AstraZeneca"),
+     *                         @OA\Property(property="isPrescriptionRequired", type="boolean", example=false),
+     *                         @OA\Property(property="rating", type="number", format="float", example=4.5),
+     *                         @OA\Property(property="price", type="number", format="float", example=2208.75),
+     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=2325),
+     *                         @OA\Property(property="feature_image", type="string", format="url", example="http://example.com/image.jpg"),
      *                         @OA\Property(property="liked", type="boolean", example=false),
-     *                         @OA\Property(property="discount_percent", type="number", format="float", example=5),
+     *                         @OA\Property(property="discount_percent", type="integer", example=5),
      *                         @OA\Property(
      *                             property="variations",
-     *                             type="array",
-     *                             @OA\Items(
-     *                                 type="object",
-     *                                 @OA\Property(property="variation_id", type="integer", example=1154),
-     *                                 @OA\Property(property="name", type="string", example="Variant-1"),
-     *                                 @OA\Property(property="size_value", type="integer", example=100),
-     *                                 @OA\Property(property="size_unit", type="string", example="patch"),
-     *                                 @OA\Property(property="price", type="number", format="float", example=137),
-     *                                 @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=null)
-     *                             )
+     *                             type="object",
+     *                             @OA\Property(property="variation_id", type="integer", example=6),
+     *                             @OA\Property(property="name", type="string", example="Variant-pIb"),
+     *                             @OA\Property(property="size_value", type="integer", example=500),
+     *                             @OA\Property(property="size_unit", type="string", example="capsule"),
+     *                             @OA\Property(property="price", type="number", format="float", example=2208.75),
+     *                             @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=2325),
+     *                             @OA\Property(property="stock", type="integer", example=721)
      *                         )
      *                     )
      *                 ),
      *                 @OA\Property(property="page_no", type="integer", example=1),
-     *                 @OA\Property(property="total_page", type="integer", example=51),
-     *                 @OA\Property(property="total_items", type="integer", example=501)
-     *             ),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *                 @OA\Property(property="total_page", type="integer", example=1),
+     *                 @OA\Property(property="total_items", type="integer", example=5)
+     *             )
      *         )
-     *     ),
+     *     )
      * )
      */
     function fetchProducts(Request $request){
@@ -271,12 +270,13 @@ class MasterDataController extends Controller
         $query = Product::with([
             'media',
             'brand',
-            'cheapestVariation',
+            'cheapestVariation.product.categories',
+            'cheapestVariation.vendorProductPrices' => fn($q) => $q->with(['orderItemProductBatchNumber', 'orders']),
             'likes' => fn($qry) => $qry->where('user_id', Auth::id()),
-            'variations'
             ])
             ->active()
             ->has('variations')
+            ->has('brand')
             ->whereRelation('brand','status',true)
             ->when($search, fn($qry,$search) => $qry->whereLike('name', "%$search%"))
             ->when($category_slug, fn($qry) => $qry->whereRelation('categories', 'slug', $category_slug)->latest('id'))
@@ -312,47 +312,77 @@ class MasterDataController extends Controller
      *         response=200,
      *         description="Product detail fetched successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Product detail fetched successfully."),
+     *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Product detail fetched successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="name", type="string", example="Placeat earum iusto iste perspiciatis vel."),
-     *                 @OA\Property(property="slug", type="string", example="placeat-earum-iusto-iste-perspiciatis-vel"),
-     *                 @OA\Property(property="brand", type="string", example="Bristol-Myers Squibb"),
-     *                 @OA\Property(property="description", type="string", example="<p>Omnis corporis aut a aut et ut sunt...</p>"),
-     *                 @OA\Property(property="added_date", type="string", format="date", example="2025-09-22"),
-     *                 @OA\Property(property="isPrescriptionRequired", type="boolean", example=true),
-     *                 @OA\Property(property="rating", type="number", format="float", example=3.8),
+     *                 @OA\Property(property="name", type="string", example="Ipsam eos et iste sit."),
+     *                 @OA\Property(property="slug", type="string", example="ipsam-eos-et-iste-sit"),
+     *                 @OA\Property(property="brand", type="string", example="AstraZeneca"),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     type="string",
+     *                     example="<p>Numquam est cum et repudiandae nemo iste magni.</p>"
+     *                 ),
+     *                 @OA\Property(property="added_date", type="string", format="date", example="2025-12-05"),
+     *                 @OA\Property(property="generic", type="string", example="Simvastatin"),
+     *     
+     *                 @OA\Property(
+     *                     property="health_conditions",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="name", type="string", example="Hormonal Care")
+     *                     )
+     *                 ),
+     *     
+     *                 @OA\Property(property="isPrescriptionRequired", type="boolean", example=false),
+     *                 @OA\Property(property="rating", type="number", format="float", example=4.5),
+     *     
      *                 @OA\Property(
      *                     property="categories",
      *                     type="array",
-     *                     @OA\Items(type="string", example="Weight Management")
+     *                     @OA\Items(type="string", example="Pain Relief")
      *                 ),
+     *     
      *                 @OA\Property(
      *                     property="tags",
      *                     type="array",
-     *                     @OA\Items(type="string", example="Sunscreen")
+     *                     @OA\Items(type="string", example="Ciprofloxacin")
      *                 ),
+     *     
+     *                 @OA\Property(property="discount_percent", type="integer", example=5),
+     *     
      *                 @OA\Property(
      *                     property="variations",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="variation_id", type="integer", example=1132),
-     *                         @OA\Property(property="name", type="string", example="Variant-1"),
-     *                         @OA\Property(property="size_value", type="integer", example=100),
-     *                         @OA\Property(property="size_unit", type="string", example="ml"),
-     *                         @OA\Property(property="price", type="number", format="float", example=167),
-     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=null)
+     *                         @OA\Property(property="variation_id", type="integer", example=6),
+     *                         @OA\Property(property="name", type="string", example="Variant-pIb"),
+     *                         @OA\Property(property="size_value", type="integer", example=500),
+     *                         @OA\Property(property="size_unit", type="string", example="capsule"),
+     *                         @OA\Property(property="price", type="number", format="float", example=2208.75),
+     *                         @OA\Property(property="previous_price", type="number", format="float", nullable=true, example=2325),
+     *                         @OA\Property(property="stock", type="integer", example=721)
      *                     )
      *                 ),
-     *                 @OA\Property(property="featured_image", type="string", format="url", example="http://192.168.100.23:8008/storage/1881/syrup.jpg"),
+     *     
+     *                 @OA\Property(
+     *                     property="featured_image",
+     *                     type="string",
+     *                     format="url",
+     *                     example="http://example.com/featured.jpg"
+     *                 ),
+     *     
      *                 @OA\Property(
      *                     property="gallery_images",
      *                     type="array",
-     *                     @OA\Items(type="string", format="url", example="http://192.168.100.23:8008/storage/1882/tablets.jpg")
+     *                     @OA\Items(type="string", format="url")
      *                 ),
+     *     
      *                 @OA\Property(property="liked", type="boolean", example=false)
      *             )
      *         )
@@ -360,9 +390,6 @@ class MasterDataController extends Controller
      * )
      */
     function fetchProductDetail(Product $product){
-        if ($product->brand?->status != 1) {
-            return $this->apiError('This product is not available because the brand is inactive.', 404);
-        }
         $product->loadMissing([
             'genericProductName', 
             'healthConditions',

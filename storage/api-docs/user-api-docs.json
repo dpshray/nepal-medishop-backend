@@ -1501,11 +1501,15 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful response",
+                        "description": "All product lists",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "All product lists."
@@ -1518,83 +1522,84 @@
                                                         "properties": {
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Sit quas consequatur dignissimos voluptatem."
+                                                                "example": "Ipsam eos et iste sit."
                                                             },
                                                             "slug": {
                                                                 "type": "string",
-                                                                "example": "sit-quas-consequatur-dignissimos-voluptatem"
+                                                                "example": "ipsam-eos-et-iste-sit"
                                                             },
                                                             "brand": {
                                                                 "type": "string",
-                                                                "example": "Roche"
+                                                                "example": "AstraZeneca"
                                                             },
                                                             "isPrescriptionRequired": {
                                                                 "type": "boolean",
-                                                                "example": true
+                                                                "example": false
                                                             },
                                                             "rating": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 3.5
+                                                                "example": 4.5
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 137
+                                                                "example": 2208.75
                                                             },
                                                             "previous_price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": null,
+                                                                "example": 2325,
                                                                 "nullable": true
                                                             },
                                                             "feature_image": {
                                                                 "type": "string",
-                                                                "example": "http://192.168.100.23:8008/storage/2061/tablets.jpg"
+                                                                "format": "url",
+                                                                "example": "http://example.com/image.jpg"
                                                             },
                                                             "liked": {
                                                                 "type": "boolean",
                                                                 "example": false
                                                             },
                                                             "discount_percent": {
-                                                                "type": "number",
-                                                                "format": "float",
+                                                                "type": "integer",
                                                                 "example": 5
                                                             },
                                                             "variations": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "properties": {
-                                                                        "variation_id": {
-                                                                            "type": "integer",
-                                                                            "example": 1154
-                                                                        },
-                                                                        "name": {
-                                                                            "type": "string",
-                                                                            "example": "Variant-1"
-                                                                        },
-                                                                        "size_value": {
-                                                                            "type": "integer",
-                                                                            "example": 100
-                                                                        },
-                                                                        "size_unit": {
-                                                                            "type": "string",
-                                                                            "example": "patch"
-                                                                        },
-                                                                        "price": {
-                                                                            "type": "number",
-                                                                            "format": "float",
-                                                                            "example": 137
-                                                                        },
-                                                                        "previous_price": {
-                                                                            "type": "number",
-                                                                            "format": "float",
-                                                                            "example": null,
-                                                                            "nullable": true
-                                                                        }
+                                                                "properties": {
+                                                                    "variation_id": {
+                                                                        "type": "integer",
+                                                                        "example": 6
                                                                     },
-                                                                    "type": "object"
-                                                                }
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Variant-pIb"
+                                                                    },
+                                                                    "size_value": {
+                                                                        "type": "integer",
+                                                                        "example": 500
+                                                                    },
+                                                                    "size_unit": {
+                                                                        "type": "string",
+                                                                        "example": "capsule"
+                                                                    },
+                                                                    "price": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 2208.75
+                                                                    },
+                                                                    "previous_price": {
+                                                                        "type": "number",
+                                                                        "format": "float",
+                                                                        "example": 2325,
+                                                                        "nullable": true
+                                                                    },
+                                                                    "stock": {
+                                                                        "type": "integer",
+                                                                        "example": 721
+                                                                    }
+                                                                },
+                                                                "type": "object"
                                                             }
                                                         },
                                                         "type": "object"
@@ -1606,18 +1611,14 @@
                                                 },
                                                 "total_page": {
                                                     "type": "integer",
-                                                    "example": 51
+                                                    "example": 1
                                                 },
                                                 "total_items": {
                                                     "type": "integer",
-                                                    "example": 501
+                                                    "example": 5
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
                                         }
                                     },
                                     "type": "object"
@@ -1660,59 +1661,79 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Product detail fetched successfully."
-                                        },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product detail fetched successfully."
                                         },
                                         "data": {
                                             "properties": {
                                                 "name": {
                                                     "type": "string",
-                                                    "example": "Placeat earum iusto iste perspiciatis vel."
+                                                    "example": "Ipsam eos et iste sit."
                                                 },
                                                 "slug": {
                                                     "type": "string",
-                                                    "example": "placeat-earum-iusto-iste-perspiciatis-vel"
+                                                    "example": "ipsam-eos-et-iste-sit"
                                                 },
                                                 "brand": {
                                                     "type": "string",
-                                                    "example": "Bristol-Myers Squibb"
+                                                    "example": "AstraZeneca"
                                                 },
                                                 "description": {
                                                     "type": "string",
-                                                    "example": "<p>Omnis corporis aut a aut et ut sunt...</p>"
+                                                    "example": "<p>Numquam est cum et repudiandae nemo iste magni.</p>"
                                                 },
                                                 "added_date": {
                                                     "type": "string",
                                                     "format": "date",
-                                                    "example": "2025-09-22"
+                                                    "example": "2025-12-05"
+                                                },
+                                                "generic": {
+                                                    "type": "string",
+                                                    "example": "Simvastatin"
+                                                },
+                                                "health_conditions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Hormonal Care"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
                                                 },
                                                 "isPrescriptionRequired": {
                                                     "type": "boolean",
-                                                    "example": true
+                                                    "example": false
                                                 },
                                                 "rating": {
                                                     "type": "number",
                                                     "format": "float",
-                                                    "example": 3.8
+                                                    "example": 4.5
                                                 },
                                                 "categories": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "string",
-                                                        "example": "Weight Management"
+                                                        "example": "Pain Relief"
                                                     }
                                                 },
                                                 "tags": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "string",
-                                                        "example": "Sunscreen"
+                                                        "example": "Ciprofloxacin"
                                                     }
+                                                },
+                                                "discount_percent": {
+                                                    "type": "integer",
+                                                    "example": 5
                                                 },
                                                 "variations": {
                                                     "type": "array",
@@ -1720,30 +1741,34 @@
                                                         "properties": {
                                                             "variation_id": {
                                                                 "type": "integer",
-                                                                "example": 1132
+                                                                "example": 6
                                                             },
                                                             "name": {
                                                                 "type": "string",
-                                                                "example": "Variant-1"
+                                                                "example": "Variant-pIb"
                                                             },
                                                             "size_value": {
                                                                 "type": "integer",
-                                                                "example": 100
+                                                                "example": 500
                                                             },
                                                             "size_unit": {
                                                                 "type": "string",
-                                                                "example": "ml"
+                                                                "example": "capsule"
                                                             },
                                                             "price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": 167
+                                                                "example": 2208.75
                                                             },
                                                             "previous_price": {
                                                                 "type": "number",
                                                                 "format": "float",
-                                                                "example": null,
+                                                                "example": 2325,
                                                                 "nullable": true
+                                                            },
+                                                            "stock": {
+                                                                "type": "integer",
+                                                                "example": 721
                                                             }
                                                         },
                                                         "type": "object"
@@ -1752,14 +1777,13 @@
                                                 "featured_image": {
                                                     "type": "string",
                                                     "format": "url",
-                                                    "example": "http://192.168.100.23:8008/storage/1881/syrup.jpg"
+                                                    "example": "http://example.com/featured.jpg"
                                                 },
                                                 "gallery_images": {
                                                     "type": "array",
                                                     "items": {
                                                         "type": "string",
-                                                        "format": "url",
-                                                        "example": "http://192.168.100.23:8008/storage/1882/tablets.jpg"
+                                                        "format": "url"
                                                     }
                                                 },
                                                 "liked": {
