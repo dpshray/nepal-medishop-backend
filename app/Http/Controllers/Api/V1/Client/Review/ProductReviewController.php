@@ -90,7 +90,7 @@ class ProductReviewController extends ClientController
      */
     function index(Request $request, Product $product) {
         $per_page = $request->query('per_page', 10);
-        $pagination = $product->reviews()->with(['user'])->latest()->paginate($per_page);
+        $pagination = $product->reviews()->with(['user.media'])->latest()->paginate($per_page);
         
         $reviews = $this->makePaginationResponse($pagination, fn($item) => ProductReviewListResource::collection($item))->data;
         return $this->apiSuccess('Review fetched successfully.', $reviews);

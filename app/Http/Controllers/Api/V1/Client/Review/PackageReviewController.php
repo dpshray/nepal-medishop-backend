@@ -90,7 +90,7 @@ class PackageReviewController extends Controller
     function index(Request $request, Package $package)
     {
         $per_page = $request->query('per_page', 10);
-        $pagination = $package->reviews()->with(['user'])->latest()->paginate($per_page);
+        $pagination = $package->reviews()->with(['user.media'])->latest()->paginate($per_page);
 
         $reviews = $this->makePaginationResponse($pagination, fn($item) => PackageReviewListResource::collection($item))->data;
         return $this->apiSuccess('Review fetched successfully.', $reviews);

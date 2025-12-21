@@ -538,7 +538,8 @@ class MasterDataController extends Controller
             'packageProducts.variant.product.media',
             'packageProducts.variant.product.categories',
             'packageProducts.variant.product.brand',
-            'likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
+            // 'likes' => fn($qry) => $qry->where('user_id', Auth::id())
+        ]);
         $data = new PackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);
     }
