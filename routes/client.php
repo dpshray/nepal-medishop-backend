@@ -56,17 +56,18 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::post('user/grievance', [ClientGrievanceController::class, 'store']);
     Route::get('user/grievance', [ClientGrievanceController::class, 'index']);
     Route::get('user/grievance/{grievance:uuid}', [ClientGrievanceController::class, 'show']);
+    
+    Route::apiResource('user/address',ClientAddressController::class)->except(['show']);
+    Route::get('user/profile', [ClientProfileController::class, 'index']);
+    Route::put('user/profile', [ClientProfileController::class, 'update']);
+    Route::post('user/change-password',[ClientPasswordController::class,'ChangePassword']);
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);
 Route::get('fetch-product-ratings/{product:slug}', [ProductReviewController::class, 'getProductRatingsByAllUser']);
 Route::apiResource('package.review', PackageReviewController::class)->except(['show'])->scoped(['package' => 'slug', 'review' => 'uuid']);
 Route::get('fetch-package-ratings/{package:slug}', [PackageReviewController::class, 'getPackageRatingsByAllUser']);
 // Route::apiResource('profile', ClientProfileController::class)->except(['show']);
-Route::get('user/profile', [ClientProfileController::class, 'index']);
-Route::put('user/profile', [ClientProfileController::class, 'update']);
 Route::get('banner', ClientBannerController::class);
-Route::post('user/change-password',[ClientPasswordController::class,'ChangePassword']);
-Route::apiResource('user/address',ClientAddressController::class)->except(['show']);
 
 //feedback for client
 Route::apiResource('user/feedback',ClientFeedbackController::class)->except(['show','update','destroy','index']);
