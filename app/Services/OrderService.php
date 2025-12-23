@@ -8,6 +8,7 @@ use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\OrderTypeEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Enums\SettingEnum;
+use App\Enums\UserTypeEnum;
 use App\Exceptions\OrderException;
 use App\Models\Package;
 use App\Models\Point\CouponCode;
@@ -16,7 +17,9 @@ use App\Models\Purchase\Order;
 use App\Models\Purchase\OrderItem;
 use App\Models\Purchase\OrderItemProduct;
 use App\Models\Setting;
+use App\Models\User;
 use App\Models\VendorProductPrice;
+use App\Notifications\UserOrderNotification;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,9 +50,8 @@ class OrderService
 
                 $product = $products[$item['product_slug']];
                 $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
-                if(empty($product_variant)){
+                if (empty($product_variant)) {
                     throw new OrderException('Variation does not belong to ordered product item.');
-                    
                 }
                 $product_variant_price = $product_variant->platform_price;
                 $stock = $product_variant->vendorProductPrice->units_in_stock;
@@ -102,12 +104,12 @@ class OrderService
         if ($request->has('packages')) {
             $product_slug = $request->collect('packages')->pluck('package_slug');
             $packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')
-                ->with(['media','packageProducts'])
+                ->with(['media', 'packageProducts'])
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
 
-                    // dd($order_item_products);
+            // dd($order_item_products);
             $packages_ordered = $request->collect('packages')->map(function ($item) use ($packages) {
                 $package = $packages[$item['package_slug']];
                 $actual_package_price = $package['price'];
@@ -128,10 +130,11 @@ class OrderService
                     'image' => $packages[$item['package_slug']]->getFirstMediaUrl(Package::PACKAGE_FEATURED),
                 ];
             });
-            $order_item_products = $packages->mapWithKeys(fn($pkg,$k) => 
+            $order_item_products = $packages->mapWithKeys(
+                fn($pkg, $k) =>
                 [
                     $k =>
-                $pkg->packageProducts->map(fn($pkg_pdt) => [
+                    $pkg->packageProducts->map(fn($pkg_pdt) => [
                         'product_variation_id' => $pkg_pdt['product_variation_id'],
                         'quantity' => $pkg_pdt['quantity'] * $packages_ordered->firstWhere('item_slug', $k)['quantity']
                     ])
@@ -211,7 +214,7 @@ class OrderService
         DB::transaction(function () use ($request, $order_detail, $order_items, $order_code, &$order_item_products, $order_type) {
             $user = Auth::user();
             // Log::info('$order_item_products');
-
+            $order_ins = null;
             if ($user) {
                 $order = array_merge(
                     $request->only(['address', 'description']),
@@ -222,8 +225,8 @@ class OrderService
                         'user_id' => $user
                     ]
                 );
-
-                $order_items_ins = $user->orders()->create($order)->orderItems();
+                $order_ins = $user->orders()->create($order);
+                $order_items_ins = $order_ins->orderItems();
                 /* foreach ($order_items as $item) {
                     $created_order_items = $order_items_ins->create($item);                 
                     if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
@@ -244,8 +247,8 @@ class OrderService
                         'order_code' => $order_code
                     ]
                 );
-
-                $order_items_ins = Order::create($order)->orderItems();
+                $order_ins = Order::create($order);
+                $order_items_ins = $order_ins->orderItems();
 
                 /* foreach ($order_items as $item) {
                     $created_order_items = $order_items_ins->create($item);
@@ -267,6 +270,7 @@ class OrderService
             }
             // dd(($order_item_products));
             DB::table('order_item_products')->insert(array_merge(...array_values($order_item_products)));
+            User::filterByRole(UserTypeEnum::ADMIN)->first()->notify(new UserOrderNotification($order_ins));
         });
         $order = Order::where('order_code', $order_code)->firstOrFail();
         $order_items = $order

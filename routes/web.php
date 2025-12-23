@@ -7,20 +7,18 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::get('test', function(){
-    $res = Order::find(3)->orderItems;
-    $res->load('orderItemProducts');
-    $val = [8];
-    dd($res->pluck('orderItemProducts')->flatten()->toArray());
+    $result = Order::with(['orderItems.item'])->first()->orderItems;
+    dd($result);
 });
 
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
 
 Route::get('/logs/laravel', function () {
     $path = storage_path('logs/laravel.log');

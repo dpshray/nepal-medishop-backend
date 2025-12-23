@@ -1976,6 +1976,212 @@
                 ]
             }
         },
+        "/admin/notification": {
+            "get": {
+                "tags": [
+                    "AdminNotification"
+                ],
+                "summary": "Admin notification list",
+                "description": "Get grievance list.",
+                "operationId": "AdminNotificationList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search vendor based on user name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Admin notification list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Admin notification list"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "example": "1b4148ae-4899-4344-8e64-8a5ed5aa0ec1"
+                                                            },
+                                                            "subject": {
+                                                                "type": "string",
+                                                                "example": "New Order Received – Order #r4c2x7"
+                                                            },
+                                                            "date": {
+                                                                "type": "string",
+                                                                "example": "2025/12/23"
+                                                            },
+                                                            "read_at": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "type": {
+                                                                "type": "string",
+                                                                "example": "Order"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/notification/{uuid}": {
+            "get": {
+                "tags": [
+                    "AdminNotification"
+                ],
+                "summary": "Admin notification detail",
+                "description": "Get grievance detail.",
+                "operationId": "AdminNotificationDetail",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "UUID of notification",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Admin notification list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Admin notification list"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "example": "1b4148ae-4899-4344-8e64-8a5ed5aa0ec1"
+                                                            },
+                                                            "subject": {
+                                                                "type": "string",
+                                                                "example": "New Order Received – Order #r4c2x7"
+                                                            },
+                                                            "date": {
+                                                                "type": "string",
+                                                                "example": "2025/12/23"
+                                                            },
+                                                            "read_at": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/package": {
             "get": {
                 "tags": [
@@ -10289,6 +10495,10 @@
         {
             "name": "Prescriptions",
             "description": "Prescriptions"
+        },
+        {
+            "name": "AdminNotification",
+            "description": "AdminNotification"
         },
         {
             "name": "Package",
