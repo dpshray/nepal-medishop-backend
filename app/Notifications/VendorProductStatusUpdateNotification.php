@@ -7,19 +7,20 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class UserOrderNotification extends Notification
+class VendorProductStatusUpdateNotification extends Notification
 {
     use Queueable;
     private $subject = null;
     /**
      * Create a new notification instance.
      */
-    public function __construct(public $order)
+    public function __construct(public $product_vendor)
     {
-        $order_code = $order->order_code;
-        $customer_name = $order->customer_name;
-        $order_price = $order->price;
-        $this->subject = "A new order of order code $order_code has been placed by $customer_name with a total amount of $order_price.";
+        $product_name = $this->product_vendor->product->name;
+        $this->subject = "Your product $product_name has been approved by the admin and is now live for customers.";
+        if ($this->product_vendor->is_approved) {
+            $this->subject = "Your product $product_name has been rejected by the admin. Please review the details and resubmit.";
+        }
     }
 
     /**
@@ -35,10 +36,13 @@ class UserOrderNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail($notifiable)
+    public function toMail(object $notifiable): MailMessage
     {
+
         return (new MailMessage)->subject($this->subject)
-            ->view('mail.admin.order-placed', ['order' => $this->order]);
+            ->view('mail.admin.vendor-product-approval', [
+                'product_vendor' => $this->product_vendor
+            ]);
     }
 
     /**
@@ -49,15 +53,8 @@ class UserOrderNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'subject' => $this->subject,
-            'order_id' => $this->order->id
+            "subject" => $this->subject,
+            'product_vendor_id' => $this->product_vendor->id
         ];
-    }
-
-    protected function productList(): array
-    {
-        return $this->order->orderItems->map(function ($OI) {
-            return "{$OI->item->name} (Qty: {$OI->quantity}) - Rs. {$OI->price}";
-        })->toArray();
     }
 }

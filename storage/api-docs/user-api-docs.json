@@ -2110,6 +2110,111 @@
                 }
             }
         },
+        "/notification": {
+            "get": {
+                "tags": [
+                    "UserNotification"
+                ],
+                "summary": "User notification list",
+                "description": "User notification list",
+                "operationId": "UserNotificationList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Admin notification list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Admin notification list"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "example": "1b4148ae-4899-4344-8e64-8a5ed5aa0ec1"
+                                                            },
+                                                            "subject": {
+                                                                "type": "string",
+                                                                "example": "New Order Received – Order #r4c2x7"
+                                                            },
+                                                            "date": {
+                                                                "type": "string",
+                                                                "example": "2025/12/23"
+                                                            },
+                                                            "read_at": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "type": {
+                                                                "type": "string",
+                                                                "example": "VENDOR_PRODUCT_APPROVAL"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/login/google": {
             "post": {
                 "tags": [
@@ -5955,6 +6060,10 @@
         {
             "name": "Setting",
             "description": "Setting"
+        },
+        {
+            "name": "UserNotification",
+            "description": "UserNotification"
         },
         {
             "name": "Google",

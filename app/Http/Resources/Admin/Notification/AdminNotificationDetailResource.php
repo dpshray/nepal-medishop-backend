@@ -2,7 +2,10 @@
 
 namespace App\Http\Resources\Admin\Notification;
 
+use App\Enums\NotificationTypeEnum;
+use App\Models\ProductVendor;
 use App\Models\Purchase\Order;
+use App\Notifications\AdminVendorProductStatusUpdateNotification;
 use App\Notifications\UserOrderNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,9 +21,9 @@ class AdminNotificationDetailResource extends JsonResource
     {
         // return parent::toArray($request);
         $type = match ($this->type) {
-            UserOrderNotification::class => 'Order'
+            UserOrderNotification::class => NotificationTypeEnum::ORDER->value,
         };
-        if ($type == 'Order') {
+        if ($type == NotificationTypeEnum::ORDER->value) {
             return $this->orderNotificationDetails($this);
         }
     }

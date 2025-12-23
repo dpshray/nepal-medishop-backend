@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Admin\Notification;
+namespace App\Http\Resources\Vendor\Notification;
 
 use App\Enums\NotificationTypeEnum;
-use App\Notifications\AdminVendorProductStatusUpdateNotification;
-use App\Notifications\UserOrderNotification;
+use App\Notifications\VendorProductStatusUpdateNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Notifications\Notification;
 
-class AdminNotificationListResource extends JsonResource
+class VendorNotificationListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,7 +19,7 @@ class AdminNotificationListResource extends JsonResource
         // return parent::toArray($request);
         $data = $this->data;
         $type = match ($this->type) {
-            UserOrderNotification::class => NotificationTypeEnum::ORDER->value,
+            VendorProductStatusUpdateNotification::class => NotificationTypeEnum::VendorProductApproval->value,
         };
         return [
             'uuid' => $this->id,

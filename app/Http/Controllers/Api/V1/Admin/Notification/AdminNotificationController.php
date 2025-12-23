@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Notification;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Notification\AdminNotificationDetailResource;
 use App\Http\Resources\Admin\Notification\AdminNotificationListResource;
+use App\Notifications\VendorProductStatusUpdateNotification;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -75,7 +76,10 @@ class AdminNotificationController extends Controller
     {
         $per_page = $request->query('per_page');
         $per_page = $per_page ? $per_page : Auth::user()->notifications->count(); 
-        $pagination = Auth::user()->notifications()->paginate($per_page);
+        $pagination = Auth::user()->notifications()
+            ->whereNotIn('type', [VendorProductStatusUpdateNotification::class])
+            ->latest()
+            ->paginate($per_page);
         $notifications = $this->makePaginationResponse($pagination, fn($item) => AdminNotificationListResource::collection($item))->data;
         return $this->apiSuccess('Admin notification list', $notifications);
     }

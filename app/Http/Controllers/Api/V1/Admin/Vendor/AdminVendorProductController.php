@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers\Api\V1\Admin\Vendor;
 
+use App\Enums\UserTypeEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Vendor\VendorProductPriceDetailResource;
 use App\Http\Resources\Admin\Vendor\VendorProductPriceListResource;
 use App\Models\ProductVendor;
+use App\Models\User;
 use App\Models\VendorProductPrice;
+use App\Notifications\AdminVendorProductStatusUpdateNotification;
+use App\Notifications\VendorProductStatusUpdateNotification;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminVendorProductController extends Controller
 {
@@ -181,8 +186,13 @@ class AdminVendorProductController extends Controller
             'is_approved' => 'required|boolean',
         ]);
 
-        ProductVendor::where('uuid', $uuid)->firstOrFail()
-            ->update(['is_approved' => $validated['is_approved']]);
+        DB::transaction(function () use($validated,$uuid){            
+            $product_vendor = ProductVendor::with(['product','vendorPrices'])
+                ->where('uuid', $uuid)->firstOrFail();
+            $product_vendor->update(['is_approved' => $validated['is_approved']]);
+            $product_vendor->vendor->user->notify(new VendorProductStatusUpdateNotification($product_vendor));
+        });
+
 
         return $this->apiSuccess(
             $validated['is_approved']

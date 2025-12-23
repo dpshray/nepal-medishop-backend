@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Client\Service\ClientServiceController;
 use App\Http\Controllers\Api\V1\Client\Feedback\ClientFeedbackController;
 use App\Http\Controllers\Api\V1\Client\LikeController;
 use App\Http\Controllers\Api\V1\Client\MasterDataController;
+use App\Http\Controllers\Api\V1\Client\Notification\ClientNotificationController;
 use App\Http\Controllers\Api\V1\Client\OAuthController;
 use App\Http\Controllers\Api\V1\Client\Password\ClientPasswordController;
 use App\Http\Controllers\Api\V1\Client\Prescription\ClientPrescriptionController;
@@ -56,6 +57,8 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::post('user/grievance', [ClientGrievanceController::class, 'store']);
     Route::get('user/grievance', [ClientGrievanceController::class, 'index']);
     Route::get('user/grievance/{grievance:uuid}', [ClientGrievanceController::class, 'show']);
+
+    Route::apiResource('notification', ClientNotificationController::class)->only(['index']);
 });
 Route::apiResource('product.review', ProductReviewController::class)->except(['show'])->scoped(['product' => 'slug', 'review' => 'uuid']);
 Route::get('fetch-product-ratings/{product:slug}', [ProductReviewController::class, 'getProductRatingsByAllUser']);

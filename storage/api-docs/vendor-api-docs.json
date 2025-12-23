@@ -90,67 +90,93 @@
                 ]
             }
         },
-        "/vendor/notifications": {
+        "/vendor/notification": {
             "get": {
                 "tags": [
-                    "Vendor Notifications"
+                    "VendorNotification"
                 ],
-                "summary": "Get all vendor notifications",
-                "description": "Fetch all notifications for the authenticated vendor, including the unseen notification count.",
-                "operationId": "1bf087d5c562b431bea1f1ee8e5981cc",
+                "summary": "Vendor notification list",
+                "description": "Vendor notification list",
+                "operationId": "VendorNotificationList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "List of vendor notifications retrieved successfully",
+                        "description": "Admin notification list",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Admin notification list"
+                                        },
                                         "success": {
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Vendor notifications fetched successfully"
-                                        },
                                         "data": {
                                             "properties": {
-                                                "unseen_count": {
-                                                    "type": "integer",
-                                                    "example": 3
-                                                },
-                                                "notifications": {
+                                                "items": {
                                                     "type": "array",
                                                     "items": {
                                                         "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 12
-                                                            },
-                                                            "vendor_id": {
-                                                                "type": "integer",
-                                                                "example": 5
-                                                            },
-                                                            "title": {
+                                                            "uuid": {
                                                                 "type": "string",
-                                                                "example": "Order Assigned"
+                                                                "example": "1b4148ae-4899-4344-8e64-8a5ed5aa0ec1"
                                                             },
-                                                            "message": {
+                                                            "subject": {
                                                                 "type": "string",
-                                                                "example": "You have been assigned a new order #ORD-12345"
+                                                                "example": "New Order Received – Order #r4c2x7"
                                                             },
-                                                            "is_seen": {
-                                                                "type": "boolean",
-                                                                "example": false
-                                                            },
-                                                            "created_at": {
+                                                            "date": {
                                                                 "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2025-10-24T12:45:30Z"
+                                                                "example": "2025/12/23"
+                                                            },
+                                                            "read_at": {
+                                                                "type": "string",
+                                                                "example": null,
+                                                                "nullable": true
+                                                            },
+                                                            "type": {
+                                                                "type": "string",
+                                                                "example": "VENDOR_PRODUCT_APPROVAL"
                                                             }
                                                         },
                                                         "type": "object"
                                                     }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 1
                                                 }
                                             },
                                             "type": "object"
@@ -160,64 +186,6 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized - Invalid or missing token"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/vendor/notifications/{id}/seen": {
-            "post": {
-                "tags": [
-                    "Vendor Notifications"
-                ],
-                "summary": "Mark a vendor notification as seen",
-                "description": "Mark a specific notification as seen for the authenticated vendor.",
-                "operationId": "807e167c6702ee6c77cc867529d7e141",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Notification ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 10
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Notification marked as seen successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Notification marked as seen"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Notification not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized - Invalid or missing token"
                     }
                 },
                 "security": [
@@ -2249,8 +2217,8 @@
             "description": "Vendor Dashboard"
         },
         {
-            "name": "Vendor Notifications",
-            "description": "Vendor Notifications"
+            "name": "VendorNotification",
+            "description": "VendorNotification"
         },
         {
             "name": "Vendor Orders",
