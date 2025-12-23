@@ -22,7 +22,8 @@ class Grievance extends Model implements HasMedia
         'phone',
         'subject',
         'detail',
-        'image'
+        'image',
+        'remarks'
     ];
 
     protected function casts(): array
@@ -38,5 +39,9 @@ class Grievance extends Model implements HasMedia
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('image')->nonQueued();
             });
+    }
+
+    function user() {
+        return $this->belongsTo(User::class);
     }
 }

@@ -24,6 +24,310 @@
         }
     ],
     "paths": {
+        "/admin/grievance": {
+            "get": {
+                "tags": [
+                    "Grievance"
+                ],
+                "summary": "grievance list",
+                "description": "Get grievance list.",
+                "operationId": "AdminGrievanceList",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of list",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Items on each page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search vendor based on user name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All vendor lists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All vendor lists"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "user_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "42f9e1a0-0699-425e-af15-2b7485206e68"
+                                                            },
+                                                            "vendor_uuid": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "64cc5e61-c98f-41f7-997c-2b4fbedbf4dc"
+                                                            },
+                                                            "account_status": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "email_verified": {
+                                                                "type": "boolean",
+                                                                "example": true
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "vendor30956945"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "format": "email",
+                                                                "example": "vendor30956945@gmail.com"
+                                                            },
+                                                            "mobile_number": {
+                                                                "type": "string",
+                                                                "example": "9808096921"
+                                                            },
+                                                            "store_name": {
+                                                                "type": "string",
+                                                                "example": "Oberbrunner PLC"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "total_page": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 30
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/grievance/{uuid}": {
+            "get": {
+                "tags": [
+                    "Grievance"
+                ],
+                "summary": "Grievance show",
+                "description": "Grievance show.",
+                "operationId": "GrievanceShow",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "User(vendor) uuid",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "c80dbce7-a3b5-476f-a618-4f59d4c8bdae"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User grievance details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User grievance details"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "uuid": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "d87d24ba-0d29-4d11-aff9-7794c0627375"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "PENDING"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "some name"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "user@example.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "9841XXXXXX"
+                                                },
+                                                "subject": {
+                                                    "type": "string",
+                                                    "example": "some subject"
+                                                },
+                                                "detail": {
+                                                    "type": "string",
+                                                    "example": "some details"
+                                                },
+                                                "submitted_by": {
+                                                    "type": "string",
+                                                    "example": "user00 oo"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2025/12/19"
+                                                },
+                                                "images": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "format": "uri",
+                                                        "example": "http://example.com/storage/image.jpg"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Grievance"
+                ],
+                "summary": "Update grievance status(status: PENDING, UNDER_PROCESS, RESOLVED)",
+                "description": "Update grievance status(status: PENDING, UNDER_PROCESS, RESOLVED).",
+                "operationId": "UpdateGrievance",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Grievance uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "example": "UNDER_PROCESS"
+                                    },
+                                    "remarks": {
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Grievance status updated successfully.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "grievance status updated to RESOLVED"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/notify/client": {
             "post": {
                 "tags": [
@@ -9962,6 +10266,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Grievance",
+            "description": "Grievance"
+        },
         {
             "name": "Notification",
             "description": "Notification"

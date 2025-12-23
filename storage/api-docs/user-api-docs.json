@@ -3911,6 +3911,10 @@
                                                             "submitted_at": {
                                                                 "type": "string",
                                                                 "example": "2025-12-19"
+                                                            },
+                                                            "remarks": {
+                                                                "type": "string",
+                                                                "example": "some remarks"
                                                             }
                                                         },
                                                         "type": "object"
@@ -4112,6 +4116,10 @@
                                                         "type": "string",
                                                         "example": "https://example.com/storage/grievances/image1.jpg"
                                                     }
+                                                },
+                                                "remarks": {
+                                                    "type": "string",
+                                                    "example": "some remarks"
                                                 }
                                             },
                                             "type": "object"

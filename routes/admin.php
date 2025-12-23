@@ -2,6 +2,7 @@
 
 use App\Enums\AdminUrlParamEnum;
 use App\Enums\RouteParamEnum;
+use App\Http\Controllers\Api\V1\Admin\AdminGrievanceController;
 use App\Http\Controllers\Api\V1\Admin\AdminPushNotificationController;
 use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
@@ -98,4 +99,5 @@ Route::prefix('admin')
         Route::apiResource('prescription',AdminPrescriptionController::class)->only(['index','destroy']);
         /*----------  Nofification  ----------*/
         Route::post('notify/client', [AdminPushNotificationController::class, 'pushNotifiyClient']);
+        Route::apiResource('grievance', AdminGrievanceController::class)->scoped(['grievance' => 'uuid']);
 });
