@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\UserTypeEnum;
 use App\Http\Controllers\Controller;
+use App\Notifications\SavePushNotification;
 use App\Services\PushNotificationService;
+use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use Illuminate\Http\ResponseTrait;
 use Illuminate\Support\Facades\DB;
 
 class AdminPushNotificationController extends Controller
@@ -59,12 +60,11 @@ class AdminPushNotificationController extends Controller
             ->whereNotNull('fcm_token')
             ->where('status', 1)
             ->distinct()
-            ->pluck('fcm_token')
-            ->all();
+            ->get();
         [
             'successes' => $success,
             'failures' => $failure
         ] = $PNS->notify($fcm_tokens);
-        return $this->apiSucess("Notification sent with $success success and $failure");
+        return $this->apiSuccess("Notification sent with $success success and $failure");
     }
 }

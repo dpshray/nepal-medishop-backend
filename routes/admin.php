@@ -2,12 +2,14 @@
 
 use App\Enums\AdminUrlParamEnum;
 use App\Enums\RouteParamEnum;
+use App\Http\Controllers\Api\V1\Admin\AdminGrievanceController;
 use App\Http\Controllers\Api\V1\Admin\AdminPushNotificationController;
 use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Admin\Banner\AdminBannerController;
 use App\Http\Controllers\Api\V1\Admin\ClientFeedback\AdminFeedbackController;
 use App\Http\Controllers\Api\V1\Admin\ClientPrescription\AdminPrescriptionController;
+use App\Http\Controllers\Api\V1\Admin\Notification\AdminNotificationController;
 use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Point\AdminCouponPointController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
@@ -98,4 +100,6 @@ Route::prefix('admin')
         Route::apiResource('prescription',AdminPrescriptionController::class)->only(['index','destroy']);
         /*----------  Nofification  ----------*/
         Route::post('notify/client', [AdminPushNotificationController::class, 'pushNotifiyClient']);
+        Route::apiResource('notification', AdminNotificationController::class)->only(['index','show']);
+        Route::apiResource('grievance', AdminGrievanceController::class)->scoped(['grievance' => 'uuid']);
 });

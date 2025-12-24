@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('subject');
             $table->text('detail');
+            $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }

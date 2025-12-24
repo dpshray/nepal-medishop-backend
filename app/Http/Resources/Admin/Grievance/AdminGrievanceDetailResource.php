@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\User\Review\Grievance;
+namespace App\Http\Resources\Admin\Grievance;
 
 use App\Models\Grievance;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserGrievanceListResource extends JsonResource
+class AdminGrievanceDetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,9 +24,9 @@ class UserGrievanceListResource extends JsonResource
             "phone" => $this->phone,
             "subject" => $this->subject,
             "detail" => $this->detail,
-            "submitted_at" => $this->created_at->format('Y-m-d'),
+            'submitted_by' => $this->user->name,
+            "created_at" => $this->created_at->format('Y/m/d'),
             'images' => $this->whenLoaded('media', fn() => $this->getMedia(Grievance::GRIEVANCE_IMAGE)->map(fn($item) => $item->getUrl())),
-            'remarks' => $this->remarks
         ];
     }
 }

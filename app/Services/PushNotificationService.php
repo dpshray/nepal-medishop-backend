@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\InfantVaccine;
+use App\Notifications\SavePushNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
@@ -15,7 +17,7 @@ class PushNotificationService
     private $send_and_store = false;
     public function __construct(public string $title, public string $body) {}
 
-    function notify(array $fcm_token)
+    function notify($fcm_token)
     {
         $factory = (new Factory())->withServiceAccount(
             base_path('nepal-medishop-firebase-adminsdk-fbsvc-cee90ff9d5.json')
@@ -28,6 +30,9 @@ class PushNotificationService
         $successCount = 0;
         $failureCount = 0;
         $errors = [];
+        if ($this->send_and_store) {
+            Auth::user()->notify(new SavePushNotification($this->title, $this->body));
+        }
 
         foreach ($fcm_token as $row) {
             try {
@@ -47,7 +52,7 @@ class PushNotificationService
                 ]);
 
                 if ($response->successes()->count() > 0) {
-                    if ($this->send_and_store) {                        
+                    /* if ($this->send_and_store) {                        
                         DB::table('notifications')->insert([
                             'notified_at' => now(),
                             'data' => json_encode([
@@ -55,7 +60,7 @@ class PushNotificationService
                                 'body' => $body,
                             ]),
                         ]);
-                    }
+                    } */
                     $successCount++;
                 } else {
                     $failureCount++;

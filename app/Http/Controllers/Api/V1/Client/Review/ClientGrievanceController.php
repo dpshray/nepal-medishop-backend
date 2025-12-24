@@ -83,6 +83,11 @@ class ClientGrievanceController extends Controller
      *                             property="submitted_at",
      *                             type="string",
      *                             example="2025-12-19"
+     *                         ),
+     *                         @OA\Property(
+     *                             property="remarks",
+     *                             type="string",
+     *                             example="some remarks"
      *                         )
      *                     )
      *                 ),
@@ -110,7 +115,7 @@ class ClientGrievanceController extends Controller
     {
         $per_page = $request->query('per_page');
         $per_page = $per_page ? $per_page : Auth::user()->grievances()->count();
-        $pagination = Auth::user()->grievances()->latest()->paginate($per_page);
+        $pagination = Auth::user()->grievances()->with(['media'])->latest()->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => UserGrievanceListResource::collection($item))->data;
         return $this->apiSuccess('List of user grievances', $data);
     }
@@ -289,6 +294,11 @@ class ClientGrievanceController extends Controller
      *                         type="string",
      *                         example="https://example.com/storage/grievances/image1.jpg"
      *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                    property="remarks",
+     *                    type="string",
+     *                    example="some remarks"
      *                 )
      *             )
      *         )

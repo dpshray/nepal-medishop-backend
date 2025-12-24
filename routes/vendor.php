@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Vendor\Dashboard\VendorDashboardController;
 use App\Http\Controllers\Api\V1\Vendor\Notification\OrderAssignNotificationController;
+use App\Http\Controllers\Api\V1\Vendor\Notification\VendorNotificationController;
 use App\Http\Controllers\Api\V1\Vendor\Order\VendorOrderAssignController;
 use App\Http\Controllers\Api\V1\Vendor\Service\VendorServiceBookingController;
 use App\Http\Controllers\Api\V1\Vendor\Service\VendorServiceController;
@@ -31,8 +32,7 @@ Route::prefix('vendor')
             Route::get('assigned-service-bookings', [VendorServiceBookingController::class, 'servicesAssignedToVendor']);
             Route::post('update-booking-status/{service_booking:uuid}', [VendorServiceBookingController::class, 'bookingStatusUpdate']);
             Route::get('dashboard',[VendorDashboardController::class,'index']);
+            Route::apiResource('notification', VendorNotificationController::class)->only(['index','show']);
         });
         Route::post('registration', [VendorAuthController::class, 'registerVendor']);
-        Route::get('notifications',[OrderAssignNotificationController::class,'getNotification']);
-        Route::post('notifications/{id}/seen',[OrderAssignNotificationController::class,'seennotification']);
     });
