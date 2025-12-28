@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\OrderUserTypeEnum;
+use App\Enums\Purchase\DiscountEnum;
 use App\Enums\Purchase\OrderItemStatusEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\OrderTypeEnum;
@@ -34,123 +35,127 @@ class OrderService
     {
         $order_item_products = [];
         $products_ordered = [];
-        $promocode = CouponCode::where('code', $request->code)->where('is_active', true)->first();
 
         if ($request->has('products')) {
             $product_slug = $request->collect('products')->pluck('product_slug');
-            $products = Product::select('id', 'slug', 'discount_percent', 'name', 'slug', 'prescription_required')
-                ->with(['variations.vendorProductPrice', 'media'])
+            $DB_products = Product::select('id', 'slug', 'discount_percent', 'name', 'slug', 'prescription_required')
+                ->with(['variations.vendorProductPrices', 'media'])
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
             // Log::info($request->products);
-
-            $products_ordered = array_map(function ($item) use ($products) {
-                // Log::info($item);
-
-                $product = $products[$item['product_slug']];
-                $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
+            foreach ($request->products as $item) {
+                $src_product = $DB_products[$item['product_slug']];
+                $product_variant = collect($src_product['variations'])->firstWhere('id', $item['variant_id']);
                 if (empty($product_variant)) {
                     throw new OrderException('Variation does not belong to ordered product item.');
                 }
-                $product_variant_price = $product_variant->platform_price;
-                $stock = $product_variant->vendorProductPrice->units_in_stock;
-                $product_discount_percent = $product['discount_percent'];
-                $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
+                [
+                    'price' => $price,
+                    'previous_price' => $original_price,
+                    'discount_percent' => $discount_percent,
+                    'discount_source' => $discount_source,
+                ] = $product_variant->original_price;
+                $total_stock_left = $product_variant->vendorProductPrices->sum(fn($q) => $q->stock_left);
+                // $product_discount_percent = $src_product['discount_percent'];
+                // $price = empty($product_discount_percent) ? $product_variant_price : ($product_variant_price - ($product_variant_price * $product_discount_percent) / 100);
                 // Log::info($stock);
                 $quantity = $item['quantity'];
-                if ($quantity > $stock) {
+                if ($quantity > $total_stock_left) {
                     throw ValidationException::withMessages([
                         'products' => [
-                            'Requested quantity (' . $item['quantity'] . ') exceeds available stock (' . $stock . ') for: ' . $product->name
+                            'Requested quantity (' . $item['quantity'] . ') exceeds available stock (' . $total_stock_left . ') for: ' . $src_product->name
                         ],
                     ]);
                 }
-                if ($product->prescription_required && empty($item['prescription_image'])) {
+                if ($src_product->prescription_required && empty($item['prescription_image'])) {
                     throw ValidationException::withMessages([
                         'products' => [
-                            'Requested quantity (' . $item['quantity'] . ') exceeds available stock (' . $stock . ') for: ' . $product->name
+                            'Prescription is required for product : ' . $src_product->name
                         ],
                     ]);
                 }
 
-                return [
+                $order_item_products[$item['product_slug']][] = [
+                    'product_variation_id' => $item['variant_id'],
+                    'quantity' => $quantity
+                ];
+
+                $products_ordered[] = [
                     'status' => OrderStatusEnum::PENDING->value,
                     'item_type' => Product::class,
-                    'item_id' => $products[$item['product_slug']]->id,
-                    'item_name' => $products[$item['product_slug']]->name,
+                    'item_id' => $src_product->id,
+                    'item_name' => $src_product->name,
                     'item_slug' => $item['product_slug'],
-                    'status' => OrderStatusEnum::PENDING->value,
                     'item_variant_id' => $item['variant_id'],
                     'variant_name' => $product_variant->name,
                     'variant_size' => $product_variant->size_value . ' ' . $product_variant->size_unit,
                     'quantity' => $quantity,
                     'price' => $price,
+                    'original_price' => $original_price ?? $price,
+                    'discount_percent' => $discount_percent,
+                    'discount_source' => $discount_source,
                     'total' => $price * $quantity,
-                    'image' => $product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
+                    'image' => $src_product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
                     'prescription_image' => array_key_exists('prescription_image', $item) ? $item['prescription_image'] : null
                 ];
-            }, $request->products);
+            }
         }
-        foreach ($products_ordered as $PO) {
-            $order_item_products[$PO['item_slug']][] = [
-                'product_variation_id' => $PO['item_variant_id'],
-                'quantity' => $PO['quantity']
-            ];
-            // Log::info($order_item_products);
-        }
+
         // dd($order_item_products);
         $packages_ordered = [];
         if ($request->has('packages')) {
             $product_slug = $request->collect('packages')->pluck('package_slug');
-            $packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')
+            $DB_packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')
                 ->with(['media', 'packageProducts'])
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
 
             // dd($order_item_products);
-            $packages_ordered = $request->collect('packages')->map(function ($item) use ($packages) {
-                $package = $packages[$item['package_slug']];
-                $actual_package_price = $package['price'];
-                $package_discount_precent = $package['discount_percent'];
-                $package_price = empty($package_discount_precent) ? $actual_package_price : ($actual_package_price - ($actual_package_price * $package_discount_precent) / 100);
+            foreach ($request->packages as $item) {
+
+                $src_package = $DB_packages[$item['package_slug']];
+                $actual_package_price = $src_package['price'];
+                $package_discount_percent = $src_package['discount_percent'];
+                $package_price = empty($package_discount_percent) ? $actual_package_price : ($actual_package_price - ($actual_package_price * $package_discount_percent) / 100);
                 $package_quantity = $item['quantity'];
 
-                return [
+                $order_item_products[$item['package_slug']] = $src_package->packageProducts->map(fn($PP) => [
+                    'product_variation_id' => $PP->product_variation_id,
+                    'quantity' => $item['quantity'] * $PP->quantity
+                ])->all();
+                $packages_ordered[] = [
                     'status' => OrderStatusEnum::PENDING->value,
                     'item_type' => Package::class,
-                    'item_name' => $packages[$item['package_slug']]->name,
+                    'item_id' => $src_package->id,
+                    'item_name' => $src_package->name,
                     'item_slug' => $item['package_slug'],
-                    'item_id' => $packages[$item['package_slug']]->id,
+                    'item_variant_id' => null,
+                    'variant_name' => null,
+                    'variant_size' => null,
                     'quantity' => $package_quantity,
-                    'status' => OrderStatusEnum::PENDING->value,
                     'price' => $package_price,
+                    'original_price' => $src_package->price,
+                    'discount_percent' => $package_discount_percent,
+                    'discount_source' => empty($package_discount_percent) ? null : DiscountEnum::PACKAGE_DISCOUNT,
                     'total' => $package_quantity * $package_price,
-                    'image' => $packages[$item['package_slug']]->getFirstMediaUrl(Package::PACKAGE_FEATURED),
+                    'image' => $src_package->getFirstMediaUrl(Package::PACKAGE_FEATURED),
+                    'prescription_image' => null
                 ];
-            });
-            $order_item_products = $packages->mapWithKeys(
-                fn($pkg, $k) =>
-                [
-                    $k =>
-                    $pkg->packageProducts->map(fn($pkg_pdt) => [
-                        'product_variation_id' => $pkg_pdt['product_variation_id'],
-                        'quantity' => $pkg_pdt['quantity'] * $packages_ordered->firstWhere('item_slug', $k)['quantity']
-                    ])
-                ]
-            )->merge($order_item_products)->toArray();
+            }
         }
-        // Log::info($order_item_products);
         $order_items = [...$products_ordered, ...$packages_ordered];
-        $price = collect($order_items)->sum('total');
+        $price = collect($order_items)->sum('total'); #this is total final price of a cart
+
         $previous_price = $price;
         // =====================================================
         // === PROMOCODE SECTION START ====
         // =====================================================
         $promo_discount = 0;
 
-        if ($promocode) {
+        if (!empty($request->code)) {
+            $promocode = CouponCode::where('code', $request->code)->where('is_active', true)->first();
             $now = now();
 
             if ($promocode->start_date && $promocode->start_date > $now) {
@@ -167,6 +172,7 @@ class OrderService
 
             // Calculate discount
             $promo_discount = ($price * $promocode->discount_percent) / 100;
+            $promo_discount = (float)round($promo_discount,2);
             if ($promo_discount > $price) {
                 $promo_discount = $price;
             }
@@ -184,17 +190,17 @@ class OrderService
             if ($gift_wrap_charge) {
                 $gift_wrap_charge = $gift_wrap_charge->value;
                 $price += $gift_wrap_charge;
-                $previous_price += $gift_wrap_charge;
+                // $previous_price += $gift_wrap_charge;
             }
         }
 
 
         $order_detail = [
-            'previous_price' => $previous_price,
-            'price' => $price,
-            'promo_code' => $promocode?->code,          // <-- Added
+            'previous_price' => (float)round($previous_price,2),
+            'price' => (float)round($price,2),
+            'promo_code' => $request->code,          // <-- Added
             'promo_discount' => $promo_discount,        // <-- Added
-            'used_coupon_code_id' => $promocode?->id,
+            // 'used_coupon_code_id' => $promocode?->id,
             'payment_method' => $request->payment_method,
             'payment_status' => PaymentStatusEnum::UNPAID->value,
             'status' => OrderStatusEnum::PENDING->value,
@@ -207,14 +213,13 @@ class OrderService
             'created_at' => now()
         ];
 
-        $response = null;
-        $order_code = Str::random(6);
-        // dd($order_item_products);
-
-        DB::transaction(function () use ($request, $order_detail, $order_items, $order_code, &$order_item_products, $order_type) {
+        // $response = null;
+        // dd($order_items);
+        
+        return DB::transaction(function () use ($request, $order_detail, $order_items, &$order_item_products) {
+            $order_code = Str::random(6);
             $user = Auth::user();
             // Log::info('$order_item_products');
-            $order_ins = null;
             if ($user) {
                 $order = array_merge(
                     $request->only(['address', 'description']),
@@ -225,19 +230,7 @@ class OrderService
                         'user_id' => $user
                     ]
                 );
-                $order_ins = $user->orders()->create($order);
-                $order_items_ins = $order_ins->orderItems();
-                /* foreach ($order_items as $item) {
-                    $created_order_items = $order_items_ins->create($item);                 
-                    if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
-                        $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
-                    }
-                } */
-
-                $item_slugs = $request->collect('packages')->pluck('package_slug')
-                    ->merge($request->collect('products')->pluck('product_slug'));
-
-                $user->cart()->whereIn('item_slug', $item_slugs)->delete();
+                $user->cart()->whereIn('item_slug', array_keys($order_item_products))->delete();
             } else {
                 $order = array_merge(
                     $request->only(['name', 'email', 'mobile', 'address', 'description']),
@@ -247,77 +240,53 @@ class OrderService
                         'order_code' => $order_code
                     ]
                 );
-                $order_ins = Order::create($order);
-                $order_items_ins = $order_ins->orderItems();
-
-                /* foreach ($order_items as $item) {
-                    $created_order_items = $order_items_ins->create($item);
-                    if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
-                        $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
-                    }
-                } */
             }
+
+            $order = Order::create($order);
+
             foreach ($order_items as $item) {
-                $created_order_items = $order_items_ins->create($item);
+                $created_order_items = $order->orderItems()->create($item);
                 foreach ($order_item_products[$created_order_items->item_slug] as &$items) {
                     $items['order_item_id'] = $created_order_items->id;
                     $items['order_id'] = $created_order_items->order_id;
                 }
                 unset($items);
                 if (array_key_exists('prescription_image', $item) && $item['prescription_image']) {
-                    $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
+                    $image  = $created_order_items->addMedia($item['prescription_image'])->toMediaCollection(OrderItem::PRESCRIPTION_IMAGE);
+                    $item['prescription_image'] = $image->getUrl();
+                    // dd($item['prescription_image']);
                 }
             }
-            // dd(($order_item_products));
             DB::table('order_item_products')->insert(array_merge(...array_values($order_item_products)));
-            User::filterByRole(UserTypeEnum::ADMIN)->first()->notify(new UserOrderNotification($order_ins));
+            // User::filterByRole(UserTypeEnum::ADMIN)->first()->notify(new UserOrderNotification($order));
+            // dd($order_items);
+            return [
+                'previous_price' => $order_detail['previous_price'], #total cart item total
+                'amount' => (float) $order->price,
+                'order_number' => $order->order_code,
+                'payment_method' => $order->payment_method,
+                'date' => $order->created_at->format('Y/m/d'),
+                'delivery_address' => $order->address,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'gift_wrap' => $request->gift_wrap,
+                'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
+                'gift_wrap_charge' => (float) $order_detail['gift_wrap_charge'],
+                'promo_code' => $order_detail['promo_code'],                 // <-- Added
+                'promo_discount' => (float) $order_detail['promo_discount'],       // <-- Added
+                'ordered_items' => array_map(fn($OI) => [
+                    "item_name" => $OI['item_name'],
+                    "variant_name" => $OI['variant_name'],
+                    "quantity" => (int)$OI['quantity'],
+                    "price" => (float)$OI['price'],
+                    "total" => (float)$OI['total'],
+                    "prescription_image" => $order->orderItems
+                        ->firstWhere('item_slug', $OI['item_slug'])
+                        ?->getFirstMediaUrl(OrderItem::PRESCRIPTION_IMAGE) ?: null,
+            
+                ], $order_items),
+            ];
         });
-        $order = Order::where('order_code', $order_code)->firstOrFail();
-        $order_items = $order
-            ->orderItems()
-            ->with(['package', 'product.variations'])
-            ->get()
-            ->map(function ($item) {
-                if ($item->item_type == Product::class) {
-                    return [
-                        'item_name' => $item->product->name,
-                        'variant_name' => $item->product->variations->firstWhere('id', $item->item_variant_id)->name,
-                        'quantity' => (int) $item->quantity,
-                        'price' => (float) $item->price,
-                        'total' => (float) $item->total,
-                        'prescription_image' => $item->getFirstMediaUrl(OrderItem::PRESCRIPTION_IMAGE)
-                    ];
-                } elseif ($item->item_type == Package::class) {
-                    return [
-                        'item_name' => $item->package->name,
-                        'variant_name' => null,
-                        'quantity' => (int) $item->quantity,
-                        'price' => (float) $item->price,
-                        'total' => (float) $item->total
-                    ];
-                }
-            });
-        // Log::info($order_items);
-        $response = [
-            'previous_price' => $previous_price,
-            'amount' => (float) $order->price,
-            'order_number' => $order->order_code,
-            'payment_method' => $order->payment_method,
-            'date' => $order->created_at->format('Y/m/d'),
-            'delivery_address' => $order->address,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'gift_wrap' => $request->gift_wrap,
-            'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
-            'gift_wrap_charge' => (float) $gift_wrap_charge,
-
-            'promo_code' => $promocode?->code,                 // <-- Added
-            'promo_discount' => (float) $promo_discount,       // <-- Added
-
-            'ordered_items' => $order_items,
-        ];
-
-        return $response;
     }
 
     function getListOfAssignedOrder(Request $request) {

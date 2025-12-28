@@ -40,6 +40,7 @@ class CODRequest extends FormRequest
             'packages.*.prescription_image' => 'sometimes|nullable|image',
             'gift_wrap' => 'required|boolean',
             'gift_wrap_remarks' => 'nullable',
+            'code' => 'sometimes|nullable|exists:coupon_codes,code'
         ];
         if (!Auth::user()) {
             $rules = [...$rules, ...[

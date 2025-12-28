@@ -105,7 +105,6 @@ class CODPurchaseController extends Controller
         if (!$request->hasAny(['products', 'packages'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }
-        Log::info($request->all());
         try {
             $response = (new OrderService)->saveOrder($request, OrderTypeEnum::REGULAR);
         } catch (OrderException $e) {

@@ -59,21 +59,21 @@ class DatabaseSeeder extends Seeder
     private function essentialsSeeders(){
 
         $categories = [
-            ['id' => 1, 'name' => 'Pain Relief', 'slug' => str()->slug('Pain Relief')],
-            ['id' => 2, 'name' => 'Antibiotics', 'slug' => str()->slug('Antibiotics')],
-            ['id' => 3, 'name' => 'Vitamins & Supplements', 'slug' => str()->slug('Vitamins & Supplements')],
-            ['id' => 4, 'name' => 'Cough & Cold', 'slug' => str()->slug('Cough & Cold')],
-            ['id' => 5, 'name' => 'Skin Care', 'slug' => str()->slug('Skin Care')],
-            ['id' => 6, 'name' => 'Diabetes Care', 'slug' => str()->slug('Diabetes Care')],
-            ['id' => 7, 'name' => 'Heart Care', 'slug' => str()->slug('Heart Care')],
-            ['id' => 8, 'name' => 'Digestive Health', 'slug' => str()->slug('Digestive Health')],
-            ['id' => 9, 'name' => 'Eye Care', 'slug' => str()->slug('Eye Care')],
-            ['id' => 10, 'name' => 'Ear, Nose & Throat', 'slug' => str()->slug('Ear, Nose & Throat')],
-            ['id' => 11, 'name' => 'Immunity Boosters', 'slug' => str()->slug('Immunity Boosters')],
-            ['id' => 12, 'name' => 'Neurological Care', 'slug' => str()->slug('Neurological Care')],
-            ['id' => 13, 'name' => 'Weight Management', 'slug' => str()->slug('Weight Management')],
-            ['id' => 14, 'name' => 'Hormonal Care', 'slug' => str()->slug('Hormonal Care')],
-            ['id' => 15, 'name' => 'Kidney & Liver Care', 'slug' => str()->slug('Kidney & Liver Care')],
+            ['id' => 1, 'name' => 'Pain Relief', 'slug' => str()->slug('Pain Relief'), 'discount_percent' => null],
+            ['id' => 2, 'name' => 'Antibiotics', 'slug' => str()->slug('Antibiotics'), 'discount_percent' => null],
+            ['id' => 3, 'name' => 'Vitamins & Supplements', 'slug' => str()->slug('Vitamins & Supplements'), 'discount_percent' => 2],
+            ['id' => 4, 'name' => 'Cough & Cold', 'slug' => str()->slug('Cough & Cold'), 'discount_percent' => null],
+            ['id' => 5, 'name' => 'Skin Care', 'slug' => str()->slug('Skin Care'), 'discount_percent' => null],
+            ['id' => 6, 'name' => 'Diabetes Care', 'slug' => str()->slug('Diabetes Care'), 'discount_percent' => 3],
+            ['id' => 7, 'name' => 'Heart Care', 'slug' => str()->slug('Heart Care'), 'discount_percent' => null],
+            ['id' => 8, 'name' => 'Digestive Health', 'slug' => str()->slug('Digestive Health'), 'discount_percent' => null],
+            ['id' => 9, 'name' => 'Eye Care', 'slug' => str()->slug('Eye Care'), 'discount_percent' => null],
+            ['id' => 10, 'name' => 'Ear, Nose & Throat', 'slug' => str()->slug('Ear, Nose & Throat'), 'discount_percent' => null],
+            ['id' => 11, 'name' => 'Immunity Boosters', 'slug' => str()->slug('Immunity Boosters'), 'discount_percent' => 5],
+            ['id' => 12, 'name' => 'Neurological Care', 'slug' => str()->slug('Neurological Care'), 'discount_percent' => null],
+            ['id' => 13, 'name' => 'Weight Management', 'slug' => str()->slug('Weight Management'), 'discount_percent' => null],
+            ['id' => 14, 'name' => 'Hormonal Care', 'slug' => str()->slug('Hormonal Care'), 'discount_percent' => 1],
+            ['id' => 15, 'name' => 'Kidney & Liver Care', 'slug' => str()->slug('Kidney & Liver Care'), 'discount_percent' => null],
         ];
 
         DB::table('categories')->insert($categories);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Purchase\DiscountEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -40,17 +41,25 @@ class ProductVariation extends Model
         $price = $this->platform_price;
         $previous_price = null;
         $discount_percent = null;
+        $discount_src = null;
         if ($product->discount_percent > 0) { #first product discount
             $discount_percent = $product->discount_percent;
             $previous_price = $price;
             $price =  ($price - (($product->discount_percent * $price) / 100));
+            $discount_src = DiscountEnum::PRODUCT_DISCOUNT;
         } elseif ($product->categories->firstWhere('discount_percent', '>', 0)) { #second category discount
             $discount_percent = $product->categories->firstWhere('discount_percent', '>', 0)->discount_percent;
             $previous_price = $price;
             $price = ($price - (($discount_percent * $price) / 100));
+            $discount_src = DiscountEnum::CATEGORY_DISCOUNT;
         }
         $previous_price = empty($previous_price) ? $previous_price : (float) round($previous_price, 2);
-        return ['price' => (float) round($price, 2), 'previous_price' => $previous_price, 'discount_percent' => (float) $discount_percent];
+        return [
+            'price' => (float) round($price, 2), 
+            'previous_price' => $previous_price, 
+            'discount_percent' => (float) $discount_percent,
+            'discount_source' => $discount_src
+        ];
     }
 
     function vendorProductPrices()

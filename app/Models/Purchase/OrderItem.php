@@ -2,6 +2,7 @@
 
 namespace App\Models\Purchase;
 
+use App\Enums\Purchase\DiscountEnum;
 use App\Enums\Purchase\OrderItemStatusEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Models\Package;
@@ -35,11 +36,15 @@ class OrderItem extends Model implements HasMedia
         'total',
         'created_at',
         'assigned_vendor_id',
-        'status'
+        'status',
+        'original_price',
+        'discount_percent',
+        'discount_source',
     ];
 
     protected $casts = [
-        'status' => OrderItemStatusEnum::class
+        'status' => OrderItemStatusEnum::class,
+        'discount_source' => DiscountEnum::class
     ];
 
     function product(){
