@@ -35,7 +35,7 @@ class VendorProductPriceListResource extends JsonResource
                 ];
             }),
             'price' => (float) $this->price, */
-            'units_in_stock' => (int) $this->vendorPrices->sum('units_in_stock'),
+            'units_in_stock' => (int) $this->vendorPrices->sum(fn($item) => $item->stock_left),
         ];
     }
 }

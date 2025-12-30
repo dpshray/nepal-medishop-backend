@@ -9,4 +9,5 @@ enum OrderItemStatusEnum:string
     case PROCESSING = 'PROCESSING';
     case DELIVERED = 'DELIVERED';
     case NOT_COMPLETELY_BATCHED = 'NOT_COMPLETELY_BATCHED';
+    case CANCELLED = 'CANCELLED';
 }

@@ -49,7 +49,7 @@ class ProductDetailResource extends JsonResource
                     'size_unit' => $item->size_unit,
                     'price' => $price,
                     'previous_price' => $previous_price,
-                    'stock' => $item->vendorProductPrices->sum('units_in_stock'),
+                    'stock' => $item->vendorProductPrices->sum(fn($q) => $q->stock_left),
                 ];
             })),
             'featured_image' => $this->whenLoaded('media', fn() => $this->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()),

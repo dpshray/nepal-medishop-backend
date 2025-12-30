@@ -44,7 +44,7 @@ class UserLikeResource extends JsonResource
                         'size_unit' => $item->size_unit,
                         'price' => $v_price,
                         'previous_price' => $v_previous_price,
-                        'stock' => $item->vendorProductPrices->sum('units_in_stock'),
+                        'stock' => $item->vendorProductPrices->sum(fn($q) => $q->stock_left),
                     ];
                 }
             )

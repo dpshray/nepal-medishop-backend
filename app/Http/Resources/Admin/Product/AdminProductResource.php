@@ -27,7 +27,7 @@ class AdminProductResource extends JsonResource
                 ]);
             }),
             'lowest_variant_price' => $this->whenLoaded('cheapestVariation', fn() => (float)$this->cheapestVariation->platform_price),
-            'total_stock' => $this->whenLoaded('productVendorPrices', fn() => (int)$this->productVendorPrices()->sum('units_in_stock')),
+            'total_stock' => $this->whenLoaded('productVendorPrices', fn() => (int)$this->productVendorPrices->sum(fn($q) => $q->stock_left)),
             'variations' => $this->whenLoaded('variations', function () {
                 return $this->variations->map(fn($item) => [
                     'id'         => $item->id,
