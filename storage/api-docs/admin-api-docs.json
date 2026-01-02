@@ -8976,7 +8976,7 @@
                 "tags": [
                     "Order"
                 ],
-                "summary": "Get list of assigned orders of admin",
+                "summary": "Get list of assigned orders of admin itself",
                 "operationId": "3eed5d0515592c88488e4ec06d699190",
                 "parameters": [
                     {

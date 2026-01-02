@@ -114,7 +114,7 @@ class OrderAssignDetailResource extends JsonResource
                 'mobile' => $user->mobile_number
             ]];
         }
-        $data['price'] = collect($data['ordered_items'])->sum('subtotal');
+        $data['price'] = round(collect($data['ordered_items'])->sum('subtotal'),2);
         $data['order_item_status'] = $order_item_status;
         return $data;
     }

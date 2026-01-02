@@ -298,7 +298,7 @@ class AdminOrderController extends Controller
     /**
      * @OA\Get(
      *     path="/admin/admin-assigned-orders",
-     *     summary="Get list of assigned orders of admin",
+     *     summary="Get list of assigned orders of admin itself",
      *     tags={"Order"},
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(

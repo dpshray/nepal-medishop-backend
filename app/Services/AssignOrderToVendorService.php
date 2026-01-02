@@ -25,7 +25,11 @@ class AssignOrderToVendorService
      * null = check all vendors
      * false = ANY, true = ALL
     */
-    function checkVendorFulfillment(Order $order, array|null $order_item_ids = null, Vendor|null $specificVendor = null, bool $mustFulfillAll = false) {
+    function checkVendorFulfillment(
+        Order $order, 
+        array|null $order_item_ids = null, 
+        Vendor|null $specificVendor = null, 
+        bool $mustFulfillAll = false) {
         /** ---------------------------------------------------
          * STEP 1: Build required variations (required qty per variant)
          * ----------------------------------------------------*/
@@ -45,7 +49,7 @@ class AssignOrderToVendorService
                 'product_name' => optional(optional($items->first()->variation)->product)->name,
             ])
             ->values();
-
+        // Log::info($ordered_items);
         $required_variations = $ordered_items->pluck('variant_id')->all();
 
 
@@ -67,7 +71,10 @@ class AssignOrderToVendorService
                 'orderItemProducts' => fn($q) =>
                 $q->whereIn('product_variation_id', $required_variations)
                     ->whereRelation('orderItem', 'assigned_vendor_id', '<>', null)
-                    ->whereRelation('order','status', '<>',OrderStatusEnum::CANCELLED),
+                    /* ->where(fn($qr) => 
+                        $qr->whereRelation('orderItem', 'status', '<>', OrderItemStatusEnum::CANCELLED)
+                            ->orWhereRelation('order', 'status', '<>', OrderStatusEnum::CANCELLED)
+                        ) */
             ]);
 
         if ($specificVendor) {
@@ -109,8 +116,10 @@ class AssignOrderToVendorService
                     continue;
                 }
 
-                $reserved = $reserved_by_variant[$variant_id] ?? 0;
-                $actual_units = $variant_stock->sum('units_in_stock') - $reserved;
+                // $reserved = $reserved_by_variant[$variant_id] ?? 0;
+                // $actual_units = $variant_stock->sum('units_in_stock') - $reserved;
+                $actual_units = $vendor->vendorProductPrices->where('product_variation_id', $variant_id)->sum(fn($item) => $item->stock_left) ?? 0;
+
 
                 if ($actual_units < $required_qty) {
                     $failed_items[] = [
@@ -139,8 +148,7 @@ class AssignOrderToVendorService
 
             foreach ($vendors as $vendor) {
 
-                $reserved_by_variant = $vendor->orderItemProducts
-                    ->groupBy('product_variation_id')->map->sum('quantity');
+                // $reserved_by_variant = $vendor->orderItemProducts->groupBy('product_variation_id')->map->sum('quantity');
 
                 $can_supply_any = false;
 
@@ -156,14 +164,15 @@ class AssignOrderToVendorService
                         continue;
                     }
 
-                    $reserved = $reserved_by_variant[$variant_id] ?? 0;
-                    $actual_units = $variant_stock->sum('units_in_stock') - $reserved;
+                    // $reserved = $reserved_by_variant[$variant_id] ?? 0;
+                    // $actual_units = $variant_stock->sum('units_in_stock') - $reserved;
                     /* if ($vendor->id == 2) {                        
                         Log::info([
                             $variant_stock->sum('units_in_stock'),
                             $reserved
                         ]);
                     } */
+                    $actual_units = $vendor->vendorProductPrices->where('product_variation_id', $variant_id)->sum(fn($item) => $item->stock_left) ?? 0;
 
                     if ($actual_units >= $required_qty) {
                         $can_supply_any = true;

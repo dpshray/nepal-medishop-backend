@@ -49,7 +49,7 @@ class OrderAssignListResource extends JsonResource
             "mobile" => $this->mob_no,
             "email" => $this->mail,
             "gift_wrap" => $this->gift_wrap,
-            'price' => $this->orderItems->where('assigned_vendor_id', Auth::user()->vendor->id)->sum('total'),
+            'price' => (float)round($this->orderItems->where('assigned_vendor_id', Auth::user()->vendor->id)->sum('total'),2),
             "order_items_count" => (int) $this->order_items_count
         ];
     }
