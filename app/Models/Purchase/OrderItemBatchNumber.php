@@ -2,6 +2,7 @@
 
 namespace App\Models\purchase;
 
+use App\Models\VendorProductPrice;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderItemBatchNumber extends Model
@@ -13,4 +14,8 @@ class OrderItemBatchNumber extends Model
         'product_variation_id',
         'quantity'
     ];
+
+    function vendorProductPrice() {
+        return $this->belongsTo(VendorProductPrice::class);
+    }
 }

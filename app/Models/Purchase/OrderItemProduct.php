@@ -3,6 +3,7 @@
 namespace App\Models\Purchase;
 
 use App\Models\ProductVariation;
+use App\Models\VendorProductPrice;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderItemProduct extends Model
@@ -22,5 +23,9 @@ class OrderItemProduct extends Model
     #assigned batch number of product
     function batchNumbers() {
         return $this->hasMany(OrderItemProductBatchNumber::class);
+    }
+
+    function vendorProductPrices() {
+        return $this->hasMany(VendorProductPrice::class,'product_variation_id', 'product_variation_id');
     }
 }
