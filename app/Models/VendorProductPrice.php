@@ -8,9 +8,12 @@ use App\Models\Purchase\Order;
 use App\Models\Purchase\OrderItemProduct;
 use App\Models\Purchase\OrderItemProductBatchNumber;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VendorProductPrice extends Model
 {
+    use SoftDeletes;
+    
     protected $fillable = [
         "product_vendor_id",
         "product_variation_id",
