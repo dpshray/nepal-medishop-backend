@@ -363,6 +363,7 @@ class OrderService
                         $q->with([
                             'vendorProductPrices' => fn($qr) => 
                                 $qr->whereRelation('ProductVendor','vendor_id',$vendor_id)
+                                    ->whereRelation('ProductVendor','is_approved',1)
                                     ->whereIn('id', array_keys($VPPs))
                         ])
                         ->whereIn('id', $requested_OIP_ids->all())
@@ -370,7 +371,6 @@ class OrderService
                 // load only assigned and oreder_items assigned to that vendor
                 ->whereIn('status', [OrderItemStatusEnum::ASSIGNED]) 
                 ->where('assigned_vendor_id', $vendor_id)
-                // ->whereHas('orderItemProducts', fn($q) => $q->whereIn('id', $requested_OIP_ids->all()))
         ]);
 
         $result = $incoming_order_items
@@ -431,7 +431,6 @@ class OrderService
                 $order, 
                 $incoming_order_items, 
                 $requested_OIP_ids, 
-                $all_order_item_product, 
                 $assigned_order_items_of_vendor,
                 $vendor_id,
                 $grouping_OIP_by_its_order_id
