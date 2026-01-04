@@ -478,13 +478,18 @@ class VendorProductController extends Controller
      */
     function vendorProductRemover(Product $product) {
         $product_id = $product->id;
-        $vendor_product = Auth::user()->vendor
+
+        $query = Auth::user()->vendor
             ->vendorProducts()
-            ->firstWhere('product_id', $product_id);
-        if (empty($vendor_product)) {
-            return $this->apiError('Product could not be found/already been deleted.');
+            ->where('product_id', $product_id);
+        $hasBatchNumber = (clone $query)->has('vendorPrices.orderItemProductBatchNumber')->exists();
+
+        if ($hasBatchNumber) {
+            return $this->apiError('Cannot delete. Product(Batch no.) is already used in orders.');
         }
-        $vendor_product->delete();
+
+        $query->delete();
+
         return $this->apiSuccess('Vendor product has been removed.');
     }
 }
