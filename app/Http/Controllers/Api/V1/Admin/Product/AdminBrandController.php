@@ -86,11 +86,11 @@ class AdminBrandController extends Controller
     {
         $per_page = $request->query('per_page', Brand::count());
         $search = $request->query('search');
-        $status = $request->query('status',1) == 1 ? 1 : 0;
+        $status = $request->query('status', 1) == 1 ? 1 : 0;
         $pagination = Brand::with(['media'])
             ->where('status', $status)
             ->when($search, fn($qry) => $qry->whereLike('name', $search))
-            ->orderBy('id','DESC')
+            ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminBrandResource::collection($items))->data;
         $msg = $status == 1 ? 'Active' : 'Inactive';
@@ -136,8 +136,9 @@ class AdminBrandController extends Controller
      *     )
      * )
      */
-    public function show($slug){
-        $brand = Brand::with('media')->firstWhere('slug',$slug);
+    public function show($slug)
+    {
+        $brand = Brand::with('media')->firstWhere('slug', $slug);
         return $this->apiSuccess('Showing brand', new AdminBrandResource($brand));
     }
 
@@ -194,10 +195,12 @@ class AdminBrandController extends Controller
      */
     public function store(BrandStoreRequest $request)
     {
-        DB::transaction(function () use($request){
-            Brand::create($request->validated())
-                ->addMedia($request->image)
-                ->toMediaCollection(Brand::BRAND_IMAGE);
+        DB::transaction(function () use ($request) {
+            $brand = Brand::create($request->validated());
+            if ($request->hasFile('image')) {
+                $brand->addMedia($request->image)
+                    ->toMediaCollection(Brand::BRAND_IMAGE);
+            }
         });
 
         return $this->apiSuccess('Brand added successfully.');
@@ -294,7 +297,7 @@ class AdminBrandController extends Controller
      *         )
      *     )
      * )
-    */
+     */
     public function destroy(Brand $brand)
     {
         if ($brand->products()->exists()) {
@@ -331,7 +334,8 @@ class AdminBrandController extends Controller
      *     )
      * )
      */
-    function statusToggler(Brand $brand){
+    function statusToggler(Brand $brand)
+    {
         $current_status = (int)$brand->status;
         $message = 'Brand status changed to ACTIVE';
         if ($current_status == 1) {

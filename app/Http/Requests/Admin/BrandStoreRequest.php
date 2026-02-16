@@ -31,12 +31,12 @@ class BrandStoreRequest extends FormRequest
                 'is_popular' => 'sometimes|boolean',
                 'image' => 'sometimes|nullable|image|exclude'
             ];
-        } else{ #create
+        } else { #create
             $rule = [
                 'name' => 'required|max:255|unique:brands,name',
                 'is_featured' => 'sometimes|boolean',
                 'is_popular' => 'sometimes|boolean',
-                'image' => 'required|image|exclude'
+                'image' => 'sometimes|nullable|image|exclude'
             ];
         }
         return $rule;
