@@ -45,7 +45,7 @@ class ProductStoreRequest extends FormRequest
             'variations.*.discount_percent' => 'sometimes|nullable|numeric',
             'variations.*.variant_batch_no' => 'required|string|max:255',
             'variations.*.variant_manufacturer' => 'required|string|max:255',
-            'variations.*.variant_expiry_date' => 'required|date|date_format:Y-m-d',
+            'variations.*.variant_expiry_date' => 'nullable|sometimes|date|date_format:Y-m-d',
             'prescription_required' => 'sometimes',
             'discount_percent' => 'sometimes|nullable|numeric|lte:100',
             'generic_product_name_id' => 'required|exists:generic_product_names,id'
@@ -60,7 +60,8 @@ class ProductStoreRequest extends FormRequest
         return $rules;
     }
 
-    function messages(){
+    function messages()
+    {
         return [
             'categories.*.distinct' => 'Categories has a duplicate values.',
             'tags.*.distinct' => 'Tags has a duplicate values.',
@@ -87,6 +88,5 @@ class ProductStoreRequest extends FormRequest
         $this->merge([
             'prescription_required' => filter_var($this->prescription_required, FILTER_VALIDATE_BOOLEAN) ? 1 : 0
         ]);
-        
     }
 }
