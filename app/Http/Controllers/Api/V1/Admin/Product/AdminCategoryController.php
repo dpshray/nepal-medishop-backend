@@ -85,10 +85,10 @@ class AdminCategoryController extends Controller
     {
         $per_page = $request->query('per_page', Category::count());
         $search = $request->query('search');
-        $status = $request->query('status',1) == 1 ? 1 : 0;
+        $status = $request->query('status', 1) == 1 ? 1 : 0;
         $pagination = Category::with('media')
             ->where('status', $status)
-            ->when($search, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
+            ->when($search, fn($qry) => $qry->whereLike('name', '%' . $search . '%'))
             ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminCategoryResource::collection($items))->data;
@@ -180,10 +180,12 @@ class AdminCategoryController extends Controller
      */
     public function store(CategoryStoreRequest $request)
     {
-        DB::transaction(function () use($request){
-            Category::create($request->validated())
-                ->addMedia($request->image)
-                ->toMediaCollection(Category::CATEGORY_IMAGE);
+        DB::transaction(function () use ($request) {
+            $category = Category::create($request->validated());
+            if ($request->hasFile('image')) {
+                $category->addMedia($request->image)
+                    ->toMediaCollection(Category::CATEGORY_IMAGE);
+            }
         });
         return $this->apiSuccess('Category added successfully.');
     }
@@ -371,7 +373,8 @@ class AdminCategoryController extends Controller
      *     )
      * )
      */
-    function categoryMenuListFetcher(Request $request) {
+    function categoryMenuListFetcher(Request $request)
+    {
         $per_page = $request->query('per_page', Category::count());
         $search = $request->query('search');
         $pagination = Category::whereNotNull('menu_order')
@@ -444,5 +447,4 @@ class AdminCategoryController extends Controller
 
         return $this->apiSuccess('Menu has been ordered successfully.');
     }
-
 }
