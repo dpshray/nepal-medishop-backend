@@ -77,23 +77,33 @@ class ClientCartController extends Controller
         $cart = [];
         if ($request->has(["slug", "variant_id", "quantity"])) { #Product
             $product_w_variant = Product::with([
-                'brand', 
-                'variations' => fn($qry) => $qry->where('id', $request->variant_id), 
+                'brand',
+                'variations' => fn($qry) => $qry->where('id', $request->variant_id),
                 'media',
                 'variations'
-                ])
-                ->whereRelation('variations','id',$request->variant_id)
+            ])
+                ->whereRelation('variations', 'id', $request->variant_id)
                 ->has('variations')
                 ->has('brand')
                 ->where('slug', $request->slug)
                 ->firstOr(function () {
                     throw new NotFoundHttpException('The selected item is no longer available for purchase.');
-                    
                 });
             $product_variation = $product_w_variant->variations->first();
             $product_actual_price = $product_variation->platform_price;
             $product_discount = $product_w_variant->discount_percent;
             $price = empty($product_discount) ? $product_actual_price : ($product_actual_price - ($product_actual_price * $product_discount) / 100);
+
+            //if cart item alrdy exists in cart then update only the quantity
+            $cartExists = Cart::where('user_id', Auth::id())->where('variant_id', $request->variant_id)
+                ->where('item_id', $product_w_variant->id)->first();
+            if ($cartExists) {
+                $cartExists->update([
+                    'quantity' => $cartExists->quantity + $request->quantity,
+                    'subtotal' => $cartExists->price * ($cartExists->quantity + $request->quantity),
+                ]);
+                return $this->apiSuccess('Item has been updated to cart');
+            }
             $cart = $request->safe()->merge([
                 'user_id' => Auth::id(),
                 'item_type' => Product::class,
