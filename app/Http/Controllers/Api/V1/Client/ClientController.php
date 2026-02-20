@@ -30,7 +30,9 @@ use Illuminate\Http\Request;
  *     url="http://192.168.100.18:8000/api/v1",
  *     description="Localhost API Server 3"
  * )
+ * @OA\Server(
+ *     url="http://192.168.1.71:8000/api/v1",
+ *     description="Localhost API Server 4"
+ * )
  */
-class ClientController extends Controller
-{
-}
+class ClientController extends Controller {}
