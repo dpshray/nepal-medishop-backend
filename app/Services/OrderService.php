@@ -6,6 +6,7 @@ use App\Enums\OrderUserTypeEnum;
 use App\Enums\Purchase\OrderItemStatusEnum;
 use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\OrderTypeEnum;
+use App\Enums\Purchase\PaymentMethodEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Enums\SettingEnum;
 use App\Exceptions\OrderException;
@@ -47,9 +48,8 @@ class OrderService
 
                 $product = $products[$item['product_slug']];
                 $product_variant = collect($product['variations'])->firstWhere('id', $item['variant_id']);
-                if(empty($product_variant)){
+                if (empty($product_variant)) {
                     throw new OrderException('Variation does not belong to ordered product item.');
-                    
                 }
                 $product_variant_price = $product_variant->platform_price;
                 $stock = $product_variant->vendorProductPrice->units_in_stock;
@@ -102,12 +102,12 @@ class OrderService
         if ($request->has('packages')) {
             $product_slug = $request->collect('packages')->pluck('package_slug');
             $packages = Package::select('id', 'slug', 'name', 'price', 'discount_percent')
-                ->with(['media','packageProducts'])
+                ->with(['media', 'packageProducts'])
                 ->whereIn('slug', $product_slug)
                 ->get()
                 ->keyBy('slug');
 
-                    // dd($order_item_products);
+            // dd($order_item_products);
             $packages_ordered = $request->collect('packages')->map(function ($item) use ($packages) {
                 $package = $packages[$item['package_slug']];
                 $actual_package_price = $package['price'];
@@ -128,10 +128,11 @@ class OrderService
                     'image' => $packages[$item['package_slug']]->getFirstMediaUrl(Package::PACKAGE_FEATURED),
                 ];
             });
-            $order_item_products = $packages->mapWithKeys(fn($pkg,$k) => 
+            $order_item_products = $packages->mapWithKeys(
+                fn($pkg, $k) =>
                 [
                     $k =>
-                $pkg->packageProducts->map(fn($pkg_pdt) => [
+                    $pkg->packageProducts->map(fn($pkg_pdt) => [
                         'product_variation_id' => $pkg_pdt['product_variation_id'],
                         'quantity' => $pkg_pdt['quantity'] * $packages_ordered->firstWhere('item_slug', $k)['quantity']
                     ])
@@ -185,6 +186,13 @@ class OrderService
             }
         }
 
+        $payment_method = $request->payment_method;
+
+        if ($payment_method === PaymentMethodEnum::ESEWA->value) {
+            $payment_status = PaymentStatusEnum::INITIATED->value;
+        } else {
+            $payment_status = PaymentStatusEnum::UNPAID->value;
+        }
 
         $order_detail = [
             'previous_price' => $previous_price,
@@ -193,7 +201,7 @@ class OrderService
             'promo_discount' => $promo_discount,        // <-- Added
             'used_coupon_code_id' => $promocode?->id,
             'payment_method' => $request->payment_method,
-            'payment_status' => PaymentStatusEnum::UNPAID->value,
+            'payment_status' => $payment_status,
             'status' => OrderStatusEnum::PENDING->value,
             'gift_wrap' => $request->gift_wrap,
             'gift_wrap_remarks' => $request->gift_wrap ? $request->gift_wrap_remarks : null,
@@ -313,10 +321,32 @@ class OrderService
             'ordered_items' => $order_items,
         ];
 
+        // If payment method is eSewa, include payment initiation data
+        if ($order->payment_method === PaymentMethodEnum::ESEWA->value) {
+            $esewaService = app(\App\Services\Payment\EsewaService::class);
+            $paymentService = app(\App\Services\PaymentService::class);
+
+            $paymentData = $esewaService->initiate($order);
+
+            // Create payment record
+            $paymentService->createPayment(
+                $order,
+                'eSewa',
+                $paymentData['transaction_uuid']
+            );
+
+            $response['esewa_payment'] = [
+                'payment_url' => $paymentData['payment_url'],
+                'transaction_uuid' => $paymentData['transaction_uuid'],
+                'payload' => $paymentData['payload'],
+            ];
+        }
+
         return $response;
     }
 
-    function getListOfAssignedOrder(Request $request) {
+    function getListOfAssignedOrder(Request $request)
+    {
         $per_page = $request->query('per_page', 10);
         $search = $request->query('search');
         $vendor_id = Auth::user()->vendor->id;
@@ -335,7 +365,8 @@ class OrderService
         return $pagination;
     }
 
-    function showOrderDetail(Order $order, bool $only_my_assigned_detail = false) {
+    function showOrderDetail(Order $order, bool $only_my_assigned_detail = false)
+    {
         $order->load([
             'orderItems' => fn($qry) => $qry->with([
                 'productVariant' => fn($qry) => $qry->with([
@@ -360,13 +391,14 @@ class OrderService
         return $order;
     }
 
-    function assignBatchToOrderItemService(Order $order, $requested_data) {
+    function assignBatchToOrderItemService(Order $order, $requested_data)
+    {
         if ($order->status == OrderStatusEnum::DELIVERED || $order->status == OrderStatusEnum::SHIPPED) {
             throw new OrderException('This order has already been shipped/delivered.');
-        }elseif ($order->status == OrderStatusEnum::CANCELLED->value) {
+        } elseif ($order->status == OrderStatusEnum::CANCELLED->value) {
             throw new OrderException('This order has been cancelled.');
         }
-        
+
         $incoming_order_items = collect($requested_data)
             ->flatMap(function ($item) {
                 return collect($item['batch_numbers'])->map(function ($bn) use ($item) {
@@ -382,14 +414,14 @@ class OrderService
         $vendor_id = Auth::user()->vendor->id;
         $assigned_order_items_of_vendor = $order->load([
             'orderItems' => // grabbing all assigned order items
-                fn($qry) => $qry->select(['id','order_id', 'assigned_vendor_id'])->with(['orderItemProducts'])
-                    // load only assigned and oreder_items assigned to that vendor
-                    ->whereIn('status', [OrderItemStatusEnum::ASSIGNED]) 
-                    ->where('assigned_vendor_id', $vendor_id)
+            fn($qry) => $qry->select(['id', 'order_id', 'assigned_vendor_id'])->with(['orderItemProducts'])
+                // load only assigned and oreder_items assigned to that vendor
+                ->whereIn('status', [OrderItemStatusEnum::ASSIGNED])
+                ->where('assigned_vendor_id', $vendor_id)
         ]);
         # all order items(product items) that has been assigned to this vendor
         $all_order_item_product = $assigned_order_items_of_vendor->orderItems->flatMap(fn($OI) => $OI->orderItemProducts);
-        
+
         $requested_OIP_ids = $incoming_order_items->pluck('order_item_product_id');
 
         $not_authorized_to_batch_item_orders = $requested_OIP_ids->diff($all_order_item_product->pluck('id')->toArray())->count() != 0;
@@ -398,15 +430,15 @@ class OrderService
         }
 
         $grouping_OIP_by_its_order_id = $all_order_item_product->whereIn('id', $requested_OIP_ids->all())
-            ->groupBy('order_item_id'); 
+            ->groupBy('order_item_id');
         if ($grouping_OIP_by_its_order_id->count() != 1) {
             throw new OrderException('Only one order item can be batched at a time.');
         }
 
         $quantity_not_enough = !$incoming_order_items->groupBy('order_item_product_id')
-            ->every(function($IOI, $order_item_product_id) use($all_order_item_product){
+            ->every(function ($IOI, $order_item_product_id) use ($all_order_item_product) {
                 $OIP = $all_order_item_product->firstWhere('id', $order_item_product_id);
-                return $OIP && $OIP['quantity'] == $IOI->sum('quantity'); 
+                return $OIP && $OIP['quantity'] == $IOI->sum('quantity');
             });
         if ($quantity_not_enough) {
             throw new OrderException('Quantity is not equal.');
@@ -422,14 +454,14 @@ class OrderService
         }
 
         DB::transaction(function () use (
-                $order, 
-                $incoming_order_items, 
-                $requested_OIP_ids, 
-                $all_order_item_product, 
-                $assigned_order_items_of_vendor,
-                $vendor_id,
-                $grouping_OIP_by_its_order_id
-            ) {
+            $order,
+            $incoming_order_items,
+            $requested_OIP_ids,
+            $all_order_item_product,
+            $assigned_order_items_of_vendor,
+            $vendor_id,
+            $grouping_OIP_by_its_order_id
+        ) {
             $order_item_products_ids = $requested_OIP_ids->toArray();
             $order_item_products_ids = array_unique($order_item_products_ids);
             DB::table('order_item_product_batch_numbers')
@@ -456,7 +488,7 @@ class OrderService
                 ->exists();
             // dd($all_item_has_been_batched);
             // if ($all_order_item_has_been_batched) {
-                $order->update(['is_order_completely_assigned' => $all_order_item_has_been_batched]);
+            $order->update(['is_order_completely_assigned' => $all_order_item_has_been_batched]);
             //}
         });
     }

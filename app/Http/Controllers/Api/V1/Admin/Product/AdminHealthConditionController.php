@@ -72,12 +72,13 @@ class AdminHealthConditionController extends Controller
      *     ),
      * )
      */
-    function index(Request $request) {
+    function index(Request $request)
+    {
         $per_page = $request->query('per_page', HealthCondition::count());
         $search = $request->query('search');
         $pagination = HealthCondition::with('media')
-            ->when($search, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
-            ->orderBy('id','DESC')
+            ->when($search, fn($qry) => $qry->whereLike('name', '%' . $search . '%'))
+            ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminHealthConditionListResource::collection($item))->data;
         return $this->apiSuccess('list of available health condition list.', $data);
@@ -116,7 +117,8 @@ class AdminHealthConditionController extends Controller
      *     ),
      * )
      */
-    function show(HealthCondition $health_condition) {
+    function show(HealthCondition $health_condition)
+    {
         $health_condition->load('media');
         $health_condition = new AdminHealthConditionListResource($health_condition);
         return $this->apiSuccess('Health resource detail.', $health_condition);
@@ -159,13 +161,16 @@ class AdminHealthConditionController extends Controller
      *     ),
      * )
      */
-    function store(HealthConditionRequest $request) {
-        DB::transaction(fn() => 
-            HealthCondition::create($request->validated())
-                ->addMedia($request->image)
-                ->toMediaCollection(HealthCondition::HEALTH_CONDITION_IMAGE)
-        );
-        return $this->apiSuccess('Health condition added successfully.');  
+    function store(HealthConditionRequest $request)
+    {
+        DB::transaction(function () use ($request) {
+            $health_condition = HealthCondition::create($request->validated());
+            if ($request->hasFile('image')) {
+                $health_condition->addMedia($request->image)
+                    ->toMediaCollection(HealthCondition::HEALTH_CONDITION_IMAGE);
+            }
+        });
+        return $this->apiSuccess('Health condition added successfully.');
     }
 
     /**
@@ -214,7 +219,8 @@ class AdminHealthConditionController extends Controller
      *   )
      * )
      */
-    function update(HealthConditionRequest $request, HealthCondition $health_condition) {
+    function update(HealthConditionRequest $request, HealthCondition $health_condition)
+    {
         $health_condition->update($request->validated());
         if ($request->hasFile('image')) {
             $health_condition->addMedia($request->image)->toMediaCollection(HealthCondition::HEALTH_CONDITION_IMAGE);

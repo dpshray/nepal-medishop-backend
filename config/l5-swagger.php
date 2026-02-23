@@ -19,7 +19,7 @@ return [
                     base_path('app/Http/Controllers/Api/V1/Client'),
                 ],
             ],
-        ],      
+        ],
 
         'vendor' => [
             'api' => [
@@ -56,7 +56,7 @@ return [
                 ],
             ],
         ],
-        
+
         'bulk_upload' => [
             'api' => [
                 'title' => 'Bulk Upload API Doc',
@@ -74,6 +74,24 @@ return [
                 ],
             ],
         ],
+
+        // 'payment' => [
+        //     'api' => [
+        //         'title' => 'Payment API Doc',
+        //     ],
+        //     'routes' => [
+        //         'api'              => 'payment/doc', // Swagger UI
+        //         'docs'             => 'payment/docs',          // JSON endpoint
+        //         'oauth2_callback'  => 'payment/oauth2-callback', // OAuth2 redirect URL
+        //     ],
+        //     'paths' => [
+        //         'use_absolute_path' => true,
+        //         'docs_json' => 'payment-api-docs.json',
+        //         'annotations' => [
+        //             base_path('app/Http/Controllers/Api/V1/Payment'),
+        //         ],
+        //     ],
+        // ],
     ],
     'defaults' => [
         'routes' => [

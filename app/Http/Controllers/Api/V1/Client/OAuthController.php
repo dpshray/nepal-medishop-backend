@@ -60,7 +60,6 @@ class OAuthController extends Controller
             'fcm_token' => 'nullable'
         ], [
             'token.required' => 'google token id is required',
-            'fcm_token.nullable' => 'fcm token is nullable'
         ]);
         try {
             $googleUser = Socialite::driver('google')
