@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Product\ProductMediaStoreRequest;
 use App\Http\Requests\Admin\Product\ProductStoreRequest;
-use App\Http\Requests\Admin\Product\ProductupdateRequest;
+use App\Http\Requests\Admin\Product\ProductUpdateRequest;
 use App\Http\Resources\Admin\Product\AdminProductDetailResource;
 use App\Http\Resources\Admin\Product\AdminProductList;
 use App\Http\Resources\Admin\Product\AdminProductResource;
@@ -295,9 +295,10 @@ class AdminProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductupdateRequest $request, Product $product)
+    public function update(ProductUpdateRequest $request, Product $product)
     {
         // dd($request->validated());
+        // Log::info($request->validated());
         DB::transaction(function () use ($request, $product) {
             $data = $request->safe()->merge(['updated_by' => Auth::id()])->all();
             $product->update($data);
@@ -314,9 +315,21 @@ class AdminProductController extends Controller
                     if (empty($product_variation)) {
                         throw new NotFoundHttpException("Variant could not be found of this product");
                     }
-                    $product_variation->update($variation);
+                    // $product_variation->update($variation);
+                    $product_variation->update([
+                        'name'   => $variation['variant_name'],
+                        'size_value'  => $variation['variant_stock'],
+                        'size_unit'   => $variation['variant_unit'],
+                        'platform_price'  => $variation['variant_price'],
+                    ]);
                 } else {
-                    $product->variations()->create($variation);
+                    // $product->variations()->create($variation);
+                    $product->variations()->create([
+                        'name'   => $variation['variant_name'],
+                        'size_value'  => $variation['variant_stock'],
+                        'size_unit'   => $variation['variant_unit'],
+                        'platform_price'  => $variation['variant_price'],
+                    ]);
                 }
             }
             if ($request->hasFile('featured_image')) {
@@ -516,7 +529,7 @@ class AdminProductController extends Controller
             'vendorPrices',
             'vendorPrices.product',
             'vendorPrices.variation',
-            ])
+        ])
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => VendorProductAssociationListResource::collection($items))->data;
         return $this->apiSuccess('Vendor list associated with this product', $data);

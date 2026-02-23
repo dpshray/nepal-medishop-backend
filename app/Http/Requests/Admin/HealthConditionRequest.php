@@ -27,7 +27,7 @@ class HealthConditionRequest extends FormRequest
         if ($this->health_condition) { #edit request
             $health_condition_id = $this->health_condition->id;
             $rule = [
-                'name' => 'required|string|max:255|unique:health_conditions,name,'.$health_condition_id,
+                'name' => 'required|string|max:255|unique:health_conditions,name,' . $health_condition_id,
                 'description' => 'sometimes|nullable|string',
                 'image' => 'sometimes|nullable|image|exclude'
             ];
@@ -35,7 +35,7 @@ class HealthConditionRequest extends FormRequest
             $rule = [
                 'name' => 'required|string|max:255|unique:health_conditions,name',
                 'description' => 'sometimes|nullable|string',
-                'image' => 'required|image|exclude'
+                'image' => 'sometimes|nullable|image|exclude'
             ];
         }
         return $rule;
