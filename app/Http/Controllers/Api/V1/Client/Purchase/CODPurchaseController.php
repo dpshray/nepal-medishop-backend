@@ -40,6 +40,7 @@ class CODPurchaseController extends Controller
      *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper."),
      *
      *                 @OA\Property(property="code", type="string", example="22.Test"),
+     *                 @OA\Property(property="tbranch", type="string", example="TINKUNE"),
      *
      *                 @OA\Property(property="products[0][product_slug]", type="string", example="unde-a-maiores-et-omnis"),
      *                 @OA\Property(property="products[0][variant_id]", type="integer", example=2),

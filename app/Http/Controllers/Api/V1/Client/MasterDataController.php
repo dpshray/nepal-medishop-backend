@@ -64,11 +64,12 @@ class MasterDataController extends Controller
      *  )
      * )
      */
-    function fetchAllActiveBrand(Request $request){
+    function fetchAllActiveBrand(Request $request)
+    {
         $brand_name = $request->query('brand');
         $brands = Brand::with('media')
             ->active()
-            ->when($brand_name, fn($qry) => $qry->whereLike('name', '%'.$brand_name.'%'))
+            ->when($brand_name, fn($qry) => $qry->whereLike('name', '%' . $brand_name . '%'))
             ->get();
         $brands = ClientBrandResource::collection($brands);
         return $this->apiSuccess('List of active brands', $brands);
@@ -106,8 +107,9 @@ class MasterDataController extends Controller
      *         )
      *     )
      * )
-    */
-    function fetchAllActiveCategory(){
+     */
+    function fetchAllActiveCategory()
+    {
         $categories = Category::with('media')->orderByRaw('menu_order IS NULL, menu_order ASC')->active()->get();
         $categories = ClientCategoryResource::collection($categories);
         return $this->apiSuccess('List of active categories', $categories);
@@ -147,10 +149,11 @@ class MasterDataController extends Controller
      *     ),
      * )
      */
-    function fetchAllHealthCondition(Request $request) {
+    function fetchAllHealthCondition(Request $request)
+    {
         $query_health_condition = $request->query('health_condition');
         $health_conditions = HealthCondition::with('media')
-            ->when($query_health_condition, fn($qry) => $qry->whereLike('name', '%'. $query_health_condition.'%'))
+            ->when($query_health_condition, fn($qry) => $qry->whereLike('name', '%' . $query_health_condition . '%'))
             ->get();
         $health_conditions = ClientHealthConditionListResource::collection($health_conditions);
         return $this->apiSuccess('List of health conditions.', $health_conditions);
@@ -260,7 +263,8 @@ class MasterDataController extends Controller
      *     ),
      * )
      */
-    function fetchProducts(Request $request){
+    function fetchProducts(Request $request)
+    {
         $per_page = $request->query('per_page', 10);
         $category_slug = $request->query('category_slug');
         $brand_slug = $request->query('brand_slug');
@@ -274,19 +278,26 @@ class MasterDataController extends Controller
             'cheapestVariation',
             'likes' => fn($qry) => $qry->where('user_id', Auth::id()),
             'variations'
-            ])
+        ])
             ->active()
             ->has('variations')
-            ->whereRelation('brand','status',true)
-            ->when($search, fn($qry,$search) => $qry->whereLike('name', "%$search%"))
+            ->whereRelation('brand', 'status', true)
+            ->when($search, function ($qry, $search) {
+                $qry->where(function ($q) use ($search) {
+                    $q->whereLike('name', "%$search%")
+                        ->orWhereRelation('brand', 'name', 'LIKE', "%$search%")
+                        ->orWhereRelation('categories', 'name', 'LIKE', "%$search%")
+                        ->orWhereRelation('healthConditions', 'name', 'LIKE', "%$search%");
+                });
+            })
             ->when($category_slug, fn($qry) => $qry->whereRelation('categories', 'slug', $category_slug)->latest('id'))
-            ->when($brand_slug, fn($qry) => $qry->whereRelation('brand','slug', $brand_slug))
-            ->when($health_condition_slug, fn($qry) => $qry->whereRelation('healthConditions','slug', $health_condition_slug))
-            ->when($list_type, function($qry,$value){
+            ->when($brand_slug, fn($qry) => $qry->whereRelation('brand', 'slug', $brand_slug))
+            ->when($health_condition_slug, fn($qry) => $qry->whereRelation('healthConditions', 'slug', $health_condition_slug))
+            ->when($list_type, function ($qry, $value) {
                 if ($value == 'random') {
                     $qry->inRandomOrder();
                 }
-            },fn($qry) => $qry->latest());
+            }, fn($qry) => $qry->latest());
 
         $pagination = $query->paginate($per_page);
         $data = $this->setDataKey(['page' => 'page_no'])->makePaginationResponse($pagination, fn($item) => ProductCardResource::collection($item))->data;
@@ -359,14 +370,15 @@ class MasterDataController extends Controller
      *     )
      * )
      */
-    function fetchProductDetail(Product $product){
+    function fetchProductDetail(Product $product)
+    {
         if ($product->brand?->status != 1) {
             return $this->apiError('This product is not available because the brand is inactive.', 404);
         }
         $product->loadMissing([
-            'genericProductName', 
+            'genericProductName',
             'healthConditions',
-            'media', 
+            'media',
             'categories',
             'tags',
             'variations',
@@ -431,9 +443,10 @@ class MasterDataController extends Controller
      *     )
      * )
      */
-    public function fetchPackages(Request $request){
+    public function fetchPackages(Request $request)
+    {
         $per_page = $request->query('per_page', 10);
-        $pagination = Package::with(['media', 'likes' => fn($qry) => $qry->where('user_id', Auth::id())])->active()->orderBy('id','DESC')->paginate($per_page);
+        $pagination = Package::with(['media', 'likes' => fn($qry) => $qry->where('user_id', Auth::id())])->active()->orderBy('id', 'DESC')->paginate($per_page);
         $data = $this->setDataKey(['page' => 'page_no'])->makePaginationResponse($pagination, fn($item) => PackageSingleResource::collection($item))->data;
         return $this->apiSuccess('Package lists', $data);
     }
@@ -505,13 +518,15 @@ class MasterDataController extends Controller
      *     )
      * )
      */
-    function fetchPackageDetail(Package $package){
+    function fetchPackageDetail(Package $package)
+    {
         $package->loadMissing([
             'media',
             'packageProducts.variant.product.media',
             'packageProducts.variant.product.categories',
             'packageProducts.variant.product.brand',
-            'likes' => fn($qry) => $qry->where('user_id', Auth::id())]);
+            'likes' => fn($qry) => $qry->where('user_id', Auth::id())
+        ]);
         $data = new PackageDetailResource($package);
         return $this->apiSuccess("Package details retrieved successfully.", $data);
     }
@@ -542,8 +557,9 @@ class MasterDataController extends Controller
      *     )
      * )
      */
-    function fetchSettings() {
-        $settings = DB::table('settings')->select('key','value')->get()->map(function($item){
+    function fetchSettings()
+    {
+        $settings = DB::table('settings')->select('key', 'value')->get()->map(function ($item) {
             if ($item->key == SettingEnum::GIFT_WRAP_CHARGE->value) {
                 return [
                     'name' => $item->key,

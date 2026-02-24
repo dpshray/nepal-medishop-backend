@@ -22,8 +22,8 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('ncm_order_id')->nullable();
-            $table->string('tbranch')->default('TINKUNE');
             $table->string('fbranch')->default('TINKUNE');
+            $table->string('tbranch')->default('TINKUNE');
             $table->string('package')->nullable();
             $table->decimal('weight', 8, 2)->default(1.00);
             $table->decimal('cod_charge', 10, 2)->nullable();
@@ -33,6 +33,10 @@ return new class extends Migration
             $table->enum('delivery_type', ['Door2Door', 'Branch2Door', 'Branch2Branch', 'Door2Branch'])->default('Door2Door');
             $table->timestamps();
         });
+        Schema::table('orders', function (Blueprint $table) {
+            $table->string('tbranch')->nullable()->after('status');
+            $table->decimal('delivery_charge', 10, 2)->nullable()->after('tbranch');
+        });
     }
 
     /**
@@ -41,5 +45,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('ncm_orders');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn('tbranch');
+            $table->dropColumn('delivery_charge');
+        });
     }
 };

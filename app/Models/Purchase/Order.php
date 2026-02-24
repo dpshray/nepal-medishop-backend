@@ -43,7 +43,9 @@ class Order extends Model
         'created_at',
         'used_coupon_code_id',
         'previous_price',
-        'is_order_completely_assigned'
+        'is_order_completely_assigned',
+        'tbranch',
+        'delivery_charge'
     ];
 
     protected $casts = [
@@ -128,5 +130,9 @@ class Order extends Model
     public function promoCode()
     {
         return $this->belongsTo(CouponCode::class, 'used_coupon_code_id');
+    }
+    public function ncmOrder()
+    {
+        return $this->hasOne(NcmOrder::class);
     }
 }

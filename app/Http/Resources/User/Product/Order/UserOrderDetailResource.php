@@ -28,6 +28,7 @@ class UserOrderDetailResource extends JsonResource
                 'code' => $this->promoCode->code,
                 'discount' => $this->promoCode->discount_percent,
             ] : null,
+            'delivery_charge' => (float) $this->delivery_charge,
             'gift_wrap' => (bool) $this->gift_wrap,
             'gift_wrap_remarks' => $this->gift_wrap_remarks,
             'gift_wrap_charge' => (float) $this->gift_wrap_charge,

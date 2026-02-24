@@ -91,18 +91,19 @@ class AdminOrderController extends Controller
      *     )
      * )
      */
-    function index(Request $request) {
-        $per_page = $request->query('per_page',Order::count());
+    function index(Request $request)
+    {
+        $per_page = $request->query('per_page', Order::count());
         $search = $request->query('search');
 
         $pagination = Order::with(['user'])
             ->withCount('orderItems')
-            ->when($search, function($qry) use($request){
-                $qry->where(function($q) use($request){
-                    $q->whereLike('name', '%'.$request->search.'%')
-                    ->orWhereLike('email', '%'.$request->search.'%')
-                    ->orWhereLike('mobile', '%'.$request->search.'%')
-                    ->orWhereLike('address', '%'.$request->search.'%');
+            ->when($search, function ($qry) use ($request) {
+                $qry->where(function ($q) use ($request) {
+                    $q->whereLike('name', '%' . $request->search . '%')
+                        ->orWhereLike('email', '%' . $request->search . '%')
+                        ->orWhereLike('mobile', '%' . $request->search . '%')
+                        ->orWhereLike('address', '%' . $request->search . '%');
                 });
             })
             ->latest()
@@ -206,8 +207,10 @@ class AdminOrderController extends Controller
      *     )
      * )
      */
-    function show(Order $order) {
+    function show(Order $order)
+    {
         try {
+            $order->loadMissing('ncmOrder');
             $order = (new OrderService)->showOrderDetail($order);
             $order = new AdminOrderDetailResource($order);
         } catch (OrderException $e) {
@@ -216,18 +219,17 @@ class AdminOrderController extends Controller
         return $this->apiSuccess('Order Detail.', $order);
     }
 
-    function update(Request $request, Order $order) {
+    function update(Request $request, Order $order)
+    {
         // return $order;
         // return $request->all();
         $request->validate([
-            'payment_status' => ['sometimes','nullable', Rule::in(PaymentStatusEnum::paymentUpdateValues())],
-            'order_status' => ['sometimes','nullable', Rule::in(array_map(fn($item) => strtolower($item->value), OrderStatusEnum::cases()))],
+            'payment_status' => ['sometimes', 'nullable', Rule::in(PaymentStatusEnum::paymentUpdateValues())],
+            'order_status' => ['sometimes', 'nullable', Rule::in(array_map(fn($item) => strtolower($item->value), OrderStatusEnum::cases()))],
         ]);
         if ($request->payment_status) {
-            
         }
         if ($request->order_status) {
-            
         }
     }
 
@@ -257,7 +259,8 @@ class AdminOrderController extends Controller
      *     )
      * )
      */
-    function destroy(Request $request, Order $order) {
+    function destroy(Request $request, Order $order)
+    {
         $order->delete();
         return $this->apiSuccess('Order has been deleted.');
     }
@@ -288,7 +291,8 @@ class AdminOrderController extends Controller
      *     )
      * )
      */
-    function cancelUserOrder(Order $order) {
+    function cancelUserOrder(Order $order)
+    {
         $order->update(['status' => OrderStatusEnum::CANCELLED]);
         return $this->apiSuccess('Order has been cancelled.');
     }
@@ -418,7 +422,8 @@ class AdminOrderController extends Controller
      *     )
      * )
      */
-    function assignBatchesToOrderItemsByAdmin(Request $request, Order $order) {
+    function assignBatchesToOrderItemsByAdmin(Request $request, Order $order)
+    {
         $requested_data = $request->validate([
             '*.OIP_ID' => 'required|integer|exists:order_item_products,id',
             '*.batch_numbers' => 'required|array|min:1',
@@ -539,9 +544,10 @@ class AdminOrderController extends Controller
      *     )
      * )
      */
-    function getMyAssignedOrderDetail(Order $order) {
+    function getMyAssignedOrderDetail(Order $order)
+    {
         try {
-            $order = (new OrderService)->showOrderDetail($order,true);
+            $order = (new OrderService)->showOrderDetail($order, true);
             $order = new AdminMyAssignedOrderDetailResource($order);
         } catch (OrderException $e) {
             return $this->apiError($e->getMessage());

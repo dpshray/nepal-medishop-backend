@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\Purchase\NCM\AdminNCMWebHookController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -15,3 +16,5 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/bulk_upload.php';
     require __DIR__ . '/payment.php';
 });
+Route::post('/ncm-webhook', [AdminNCMWebHookController::class, 'WebHook'])
+    ->name('ncm.webhook');

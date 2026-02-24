@@ -2124,49 +2124,28 @@
                     "401": {
                         "description": "Unauthenticated"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
-        "/ncm/calculate-rate": {
+        "/ncm/calculate-delivery-charge": {
             "post": {
                 "tags": [
                     "NCM"
                 ],
                 "summary": "Calculate NCM shipping rate",
-                "operationId": "4e7214a2d1ee90ed827499588d0625db",
+                "operationId": "8316cf35c9e13f567bebff42f18555ae",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "from_branch",
-                                    "to_branch",
-                                    "delivery_type"
+                                    "to_branch"
                                 ],
                                 "properties": {
-                                    "from_branch": {
-                                        "type": "string",
-                                        "example": "KTM"
-                                    },
                                     "to_branch": {
                                         "type": "string",
                                         "example": "PKR"
-                                    },
-                                    "delivery_type": {
-                                        "type": "string",
-                                        "enum": [
-                                            "Door2Door",
-                                            "Branch2Door",
-                                            "Branch2Branch",
-                                            "Door2Branch"
-                                        ],
-                                        "example": "Door2Door"
                                     }
                                 },
                                 "type": "object"
@@ -2181,12 +2160,7 @@
                     "422": {
                         "description": "Validation error"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/login/google": {
@@ -2860,6 +2834,10 @@
                                     "code": {
                                         "type": "string",
                                         "example": "22.Test"
+                                    },
+                                    "tbranch": {
+                                        "type": "string",
+                                        "example": "TINKUNE"
                                     },
                                     "products[0][product_slug]": {
                                         "type": "string",

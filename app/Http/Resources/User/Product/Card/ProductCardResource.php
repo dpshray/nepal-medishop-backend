@@ -19,8 +19,11 @@ class ProductCardResource extends JsonResource
     {
         // return parent::toArray($request);
         $item = $this->cheapestVariation;
-        ['price' => $price, 'previous_price' => $previous_price, 'discount_percent' => $discount_percent] = $item->original_price;
-
+        [
+            'price' => $price,
+            'previous_price' => $previous_price,
+            'discount_percent' => $discount_percent
+        ] = $item->original_price;
         return [
             'name' => $this->name,
             'slug' => $this->slug,

@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Admin\PromoCode\AdminPromoCodeControlller;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminKitbagOrderController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
+use App\Http\Controllers\Api\V1\Admin\Purchase\NCM\AdminNCMOrderController;
 use App\Http\Controllers\Api\V1\Admin\User\AdminUserController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\OrderAssign\AdminOrderAssignController;
 use App\Http\Controllers\Api\V1\Purchase\AdminCODController;
@@ -33,10 +34,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')
     ->middleware(['auth:sanctum', AdminMiddleware::class])
-    ->group(function(){
+    ->group(function () {
         Route::apiResource('vendor', AdminVendorController::class)->parameters(['vendor' => 'user'])->scoped(['user' => 'uuid']);
         Route::get('fetch-vendor-products/{user:uuid}', [AdminVendorController::class, 'getVendorProduct']);
-        Route::controller(AdminVendorController::class)->group(function(){
+        Route::controller(AdminVendorController::class)->group(function () {
             Route::get('vendor-verified-toggler/{user:uuid}', 'toggleVendorVerifiedStatus');
         });
         Route::apiResource('brand', AdminBrandController::class);
@@ -55,12 +56,12 @@ Route::prefix('admin')
         Route::get('product/{product:uuid}/vendors', [AdminProductController::class, 'productVendors']);
         Route::get('product-units', [AdminProductController::class, 'productUnits']);
         /*----------  Package  ----------*/
-        Route::apiResource('package',AdminPackageController::class)->scoped(['package' => 'slug']);
-        Route::post('package/{slug}/add-product',[AdminPackageController::class,'add_product_to_package']);
-        Route::post('package/{slug}/update-product',[AdminPackageController::class,'update_package_product']);
-        Route::delete('package/{slug}/products',[AdminPackageController::class,'deleteProductFromPackage']);
+        Route::apiResource('package', AdminPackageController::class)->scoped(['package' => 'slug']);
+        Route::post('package/{slug}/add-product', [AdminPackageController::class, 'add_product_to_package']);
+        Route::post('package/{slug}/update-product', [AdminPackageController::class, 'update_package_product']);
+        Route::delete('package/{slug}/products', [AdminPackageController::class, 'deleteProductFromPackage']);
         /*----------  Vendor  ----------*/
-        Route::get('vendorproductlist',[AdminVendorProductController::class,'vendorProductList']);
+        Route::get('vendorproductlist', [AdminVendorProductController::class, 'vendorProductList']);
         Route::patch('vendor-product-prices/{id}/approve', [AdminVendorProductController::class, 'approveVendorProduct']);
         Route::delete('vendor-product-prices/{id}', [AdminVendorProductController::class, 'deleteVendorProduct']);
         Route::get('vendor-product-prices-detail/{id}', [AdminVendorProductController::class, 'detail']);
@@ -79,23 +80,24 @@ Route::prefix('admin')
         Route::apiResource('service-category', AdminServiceCategoryController::class)->scoped(['service_category' => 'slug']);
         Route::apiResource('service-tag', AdminServiceTagController::class)->scoped(['service_tag' => 'slug']);
         Route::apiResource('service', AdminServiceController::class)->scoped(['service' => 'slug']);
-        Route::apiResource('service.vendor', AdminVendorServiceController::class)->except(['destroy','store'])->scoped(['service' => 'slug', 'vendor' => 'uuid']);
+        Route::apiResource('service.vendor', AdminVendorServiceController::class)->except(['destroy', 'store'])->scoped(['service' => 'slug', 'vendor' => 'uuid']);
         Route::get('fetch-all-service-vendor', [AdminVendorServiceController::class, 'allServiceVendor']);
         /*----------  Service Booking and Assign  ----------*/
-        Route::apiResource('service-booking', AdminServiceBookingController::class)->only(['index','show'])->scoped(['service_booking' => 'uuid']);
+        Route::apiResource('service-booking', AdminServiceBookingController::class)->only(['index', 'show'])->scoped(['service_booking' => 'uuid']);
         Route::get('assign-booking/{service_booking:uuid}/vendor/{uuid}', [AdminServiceBookingController::class, 'assignServiceBookingToVendor']);
         /*----------  User Side  ----------*/
-        Route::apiResource('users',AdminUserController::class)->except(['update','store','destroy'])->scoped(['user' => 'uuid']);
+        Route::apiResource('users', AdminUserController::class)->except(['update', 'store', 'destroy'])->scoped(['user' => 'uuid']);
         Route::apiResource('banner', AdminBannerController::class);
         Route::apiResource('banner', AdminBannerController::class)->scoped(['banner' => 'uuid']);
         Route::get('toggle-banner-status/{banner:uuid}', [AdminBannerController::class, 'visibilityToggler']);
-        Route::apiResource('kitbag', AdminKitbagOrderController::class)->only(['index','show','destroy'])->scoped(['kitbag' => 'uuid']);
-        Route::apiResource('clientfeedback',AdminFeedbackController::class)->only(['index']);
-        Route::apiResource('coupon',AdminPromoCodeControlller::class)->except(['show'])->scoped(['coupon'=>'uuid']);
+        Route::apiResource('kitbag', AdminKitbagOrderController::class)->only(['index', 'show', 'destroy'])->scoped(['kitbag' => 'uuid']);
+        Route::apiResource('clientfeedback', AdminFeedbackController::class)->only(['index']);
+        Route::apiResource('coupon', AdminPromoCodeControlller::class)->except(['show'])->scoped(['coupon' => 'uuid']);
         // Route::apiResource('coupon-point', AdminCouponPointController::class);
         Route::apiResource('generic-product-name', AdminGenericProductNameController::class)->scoped(['generic_product_name' => 'slug']);
-        Route::apiResource('coupon',AdminPromoCodeControlller::class)->scoped(['coupon'=>'uuid']);
-        Route::apiResource('prescription',AdminPrescriptionController::class)->only(['index','destroy']);
+        Route::apiResource('coupon', AdminPromoCodeControlller::class)->scoped(['coupon' => 'uuid']);
+        Route::apiResource('prescription', AdminPrescriptionController::class)->only(['index', 'destroy']);
         /*----------  Nofification  ----------*/
         Route::post('notify/client', [AdminPushNotificationController::class, 'pushNotifiyClient']);
-});
+        Route::post('ncm/assign-to-ncm/{uuid}', [AdminNCMOrderController::class, 'assign_to_ncm']);
+    });

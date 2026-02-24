@@ -32,10 +32,27 @@ class OrderAssignDetailResource extends JsonResource
             "price" => (float) $this->price,
             "payment_method" => $this->payment_method,
             "payment_status" => $this->payment_status,
+            "delivery_charge" => (float) $this->delivery_charge,
             "status" => $this->status,
+            "ncm_order" => $this->ncmOrder ? [
+                'id' => $this->ncmOrder->id,
+                'uuid' => $this->ncmOrder->uuid,
+                'order_id' => $this->ncmOrder->order_id,
+                "ncm_order_id" => $this->ncmOrder->ncm_order_id,
+                "fbranch" => $this->ncmOrder->fbranch,
+                "tbranch" => $this->ncmOrder->tbranch,
+                "package" => $this->ncmOrder->package,
+                "weight" => $this->ncmOrder->weight,
+                "cod_charge" => $this->ncmOrder->cod_charge,
+                "delivery_charge" => $this->ncmOrder->delivery_charge,
+                "instruction" => $this->ncmOrder->instruction,
+                "delivery_status" => $this->ncmOrder->delivery_status,
+                "delivery_type" => $this->ncmOrder->delivery_type,
+                "created_at" => $this->ncmOrder->created_at,
+            ] : null,
             'order_item_status' => '',
             "created_at" => $this->created_at->format('Y/m/d'),
-            'ordered_items' => $this->orderItems->map(function ($order_item) use(&$order_item_status){
+            'ordered_items' => $this->orderItems->map(function ($order_item) use (&$order_item_status) {
                 $order_item_status = $order_item->status;
                 $data = [
                     "order_item_id" => $order_item->id,
@@ -80,7 +97,7 @@ class OrderAssignDetailResource extends JsonResource
                             'type' => 'package',
                             'prescription_required' => false,
                             'prescription_image' => null,
-                            'item_products' => $order_item->orderItemProducts->map(function($item){
+                            'item_products' => $order_item->orderItemProducts->map(function ($item) {
                                 return [
                                     'OIP_ID' => $item->id,
                                     'variant_id' => $item->product_variation_id,

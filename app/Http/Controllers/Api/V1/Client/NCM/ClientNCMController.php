@@ -24,7 +24,6 @@ class ClientNCMController extends Controller
      *     path="/ncm/get-ncmbranch",
      *     summary="Get NCM branches list",
      *     tags={"NCM"},
-     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Branch list retrieved successfully"
@@ -54,22 +53,14 @@ class ClientNCMController extends Controller
      */
     /**
      * @OA\Post(
-     *     path="/ncm/calculate-rate",
+     *     path="/ncm/calculate-delivery-charge",
      *     summary="Calculate NCM shipping rate",
      *     tags={"NCM"},
-     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"from_branch","to_branch","delivery_type"},
-     *             @OA\Property(property="from_branch", type="string", example="KTM"),
+     *             required={"to_branch"},
      *             @OA\Property(property="to_branch", type="string", example="PKR"),
-     *             @OA\Property(
-     *                 property="delivery_type",
-     *                 type="string",
-     *                 enum={"Door2Door","Branch2Door","Branch2Branch","Door2Branch"},
-     *                 example="Door2Door"
-     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -93,7 +84,7 @@ class ClientNCMController extends Controller
         $result = $this->ncmService->getShippingRate(
             'TINKUNE',
             $request->to_branch,
-            'pickup/collect'
+            'Pickup/Collect'
         );
 
         return $this->apiSuccess('Shippment Rate', $result);

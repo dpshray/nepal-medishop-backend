@@ -18,6 +18,7 @@ use App\Models\Purchase\OrderItem;
 use App\Models\Purchase\OrderItemProduct;
 use App\Models\Setting;
 use App\Models\VendorProductPrice;
+use App\Services\NCM\NcmService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,18 @@ use Illuminate\Validation\ValidationException;
 
 class OrderService
 {
+
+    public function calculateDeliveryCharge($to_branch)
+    {
+        $ncmService = new NcmService();
+        $result = $ncmService->getShippingRate(
+            'TINKUNE',
+            $to_branch,
+            'Pickup/Collect'
+        );
+        $delivery_charge = $result['data']['charge'] ?? 0;
+        return $delivery_charge;
+    }
     function saveOrder(Request $request, OrderTypeEnum $order_type)
     {
         $order_item_products = [];
@@ -193,7 +206,8 @@ class OrderService
         } else {
             $payment_status = PaymentStatusEnum::UNPAID->value;
         }
-
+        $delivery_charge = $this->calculateDeliveryCharge($request->tbranch);
+        $price += $delivery_charge;
         $order_detail = [
             'previous_price' => $previous_price,
             'price' => $price,
@@ -209,6 +223,8 @@ class OrderService
             'order_type' => $order_type,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'tbranch' => $request->tbranch,
+            'delivery_charge' => $delivery_charge,
             'created_at' => now()
         ];
 
@@ -222,7 +238,7 @@ class OrderService
 
             if ($user) {
                 $order = array_merge(
-                    $request->only(['address', 'description']),
+                    $request->only(['name', 'email', 'mobile', 'address', 'description']),
                     $order_detail,
                     [
                         'user_type' => OrderUserTypeEnum::USER,
