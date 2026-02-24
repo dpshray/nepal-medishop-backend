@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Admin;
+namespace App\Http\Controllers\Api\V1\Payment;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
  * )
  *
  *  @OA\Server(
- *     url="http://192.168.1.68:8000/api/v1",
+ *     url="http://192.168.100.23:8008/api/v1",
  *     description="Localhost API Server 1"
  * )
  *
@@ -31,4 +31,7 @@ use Illuminate\Http\Request;
  *     description="Localhost API Server 3"
  * )
  */
-class AdminController extends Controller {}
+class PaymentController extends Controller
+{
+    //
+}

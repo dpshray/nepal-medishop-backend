@@ -11,7 +11,7 @@
             "description": "Live API Server"
         },
         {
-            "url": "http://192.168.100.23:8008/api/v1",
+            "url": "http://192.168.1.68:8000/api/v1",
             "description": "Localhost API Server 1"
         },
         {
@@ -8927,6 +8927,100 @@
                 ]
             }
         },
+        "/admin/ncm/assign-to-ncm/{uuid}": {
+            "post": {
+                "tags": [
+                    "Admin NCM Orders"
+                ],
+                "summary": "Assign order to NCM courier",
+                "description": "Assign Order to NCM",
+                "operationId": "31825ce71964808eae4c047deebacac8",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "description": "Order UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "fbranch",
+                                    "tbranch",
+                                    "delivery_type"
+                                ],
+                                "properties": {
+                                    "fbranch": {
+                                        "type": "string",
+                                        "example": "Kathmandu"
+                                    },
+                                    "tbranch": {
+                                        "type": "string",
+                                        "example": "Pokhara"
+                                    },
+                                    "delivery_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Door2Door",
+                                            "Branch2Door",
+                                            "Branch2Branch",
+                                            "Door2Branch"
+                                        ],
+                                        "example": "Door2Door"
+                                    },
+                                    "weight": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1.5,
+                                        "nullable": true
+                                    },
+                                    "package": {
+                                        "type": "string",
+                                        "example": "Box",
+                                        "nullable": true
+                                    },
+                                    "instruction": {
+                                        "type": "string",
+                                        "example": "Handle with care",
+                                        "nullable": true
+                                    },
+                                    "phone2": {
+                                        "type": "string",
+                                        "example": "9800000001",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Order successfully assigned to NCM"
+                    },
+                    "400": {
+                        "description": "Validation error or already assigned"
+                    },
+                    "500": {
+                        "description": "Failed to assign order to NCM"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/users": {
             "get": {
                 "tags": [
@@ -10045,6 +10139,10 @@
         {
             "name": "Order",
             "description": "Order"
+        },
+        {
+            "name": "Admin NCM Orders",
+            "description": "Admin NCM Orders"
         },
         {
             "name": "User",

@@ -40,6 +40,7 @@ class CODPurchaseController extends Controller
      *                 @OA\Property(property="gift_wrap_remarks", type="string", example="gift wrap must be in silver paper."),
      *
      *                 @OA\Property(property="code", type="string", example="22.Test"),
+     *                 @OA\Property(property="tbranch", type="string", example="TINKUNE"),
      *
      *                 @OA\Property(property="products[0][product_slug]", type="string", example="unde-a-maiores-et-omnis"),
      *                 @OA\Property(property="products[0][variant_id]", type="integer", example=2),
@@ -69,7 +70,7 @@ class CODPurchaseController extends Controller
      *                 @OA\Property(property="previous_price", type="number", example=18820),
      *                 @OA\Property(property="amount", type="number", example=18820),
      *                 @OA\Property(property="order_number", type="string", example="9b9Xn9"),
-     *                 @OA\Property(property="payment_method", type="string", example="Cash on Delivery"),
+     *                 @OA\Property(property="payment_method", type="string", example="eSewa"),
      *                 @OA\Property(property="date", type="string", example="2025/11/22"),
      *                 @OA\Property(property="delivery_address", type="string", example="Lazimpat, Kathmandu"),
      *                 @OA\Property(property="latitude", type="string", example="2.52144"),
@@ -79,7 +80,18 @@ class CODPurchaseController extends Controller
      *                 @OA\Property(property="gift_wrap_charge", type="number", example=300),
      *                 @OA\Property(property="promo_code", type="string", nullable=true, example=null),
      *                 @OA\Property(property="promo_discount", type="number", example=0),
-     *     
+     *                 @OA\Property(
+     *                     property="esewa_payment",
+     *                     type="object",
+     *                     description="eSewa payment details (only present when payment_method is eSewa)",
+     *                     @OA\Property(property="payment_url", type="string", example="https://rc-epay.esewa.com.np/api/epay/main/v2/form"),
+     *                     @OA\Property(property="transaction_uuid", type="string", example="550e8400-e29b-41d4-a716-446655440000"),
+     *                     @OA\Property(
+     *                         property="payload",
+     *                         type="object",
+     *                         description="Form data to submit to eSewa"
+     *                     )
+     *                 ),
      *                 @OA\Property(
      *                     property="ordered_items",
      *                     type="array",
@@ -192,7 +204,8 @@ class CODPurchaseController extends Controller
      *     )
      * )
      */
-    function kitbagOrder(KitbagRequest $request) {
+    function kitbagOrder(KitbagRequest $request)
+    {
         if (!$request->hasAny(['products'])) {
             return $this->apiError("At least one product or package must be included in the order.", 422);
         }

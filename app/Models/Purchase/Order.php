@@ -9,6 +9,7 @@ use App\Enums\Purchase\OrderStatusEnum;
 use App\Enums\Purchase\OrderTypeEnum;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Models\LoyalityPoint;
+use App\Models\Payment\Payment;
 use App\Models\Point\CouponCode;
 use App\Models\Traits\UuidModelTrait;
 use App\Models\User;
@@ -42,7 +43,9 @@ class Order extends Model
         'created_at',
         'used_coupon_code_id',
         'previous_price',
-        'is_order_completely_assigned'
+        'is_order_completely_assigned',
+        'tbranch',
+        'delivery_charge'
     ];
 
     protected $casts = [
@@ -96,15 +99,18 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    function getCustomerNameAttribute() {
+    function getCustomerNameAttribute()
+    {
         return empty($this->name) ? $this->user->name : $this->name;
     }
 
-    function getMobNoAttribute() {
+    function getMobNoAttribute()
+    {
         return empty($this->mobile) ? $this->user->mobile_number : $this->mobile;
     }
-    
-    function getMailAttribute() {
+
+    function getMailAttribute()
+    {
         return empty($this->email) ? $this->user->email : $this->email;
     }
 
@@ -112,7 +118,8 @@ class Order extends Model
         return $this->belongsTo(Vendor::class, 'assigned_vendor_id');
     } */
 
-    function orderItemProducts() {
+    function orderItemProducts()
+    {
         return $this->hasMany(OrderItemProduct::class);
     }
 
@@ -122,6 +129,10 @@ class Order extends Model
     }
     public function promoCode()
     {
-        return $this->belongsTo(CouponCode::class,'used_coupon_code_id');
+        return $this->belongsTo(CouponCode::class, 'used_coupon_code_id');
+    }
+    public function ncmOrder()
+    {
+        return $this->hasOne(NcmOrder::class);
     }
 }

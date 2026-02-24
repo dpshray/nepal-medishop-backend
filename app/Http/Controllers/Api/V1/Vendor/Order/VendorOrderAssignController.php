@@ -188,7 +188,8 @@ class VendorOrderAssignController extends Controller
     function show(Order $order)
     {
         try {
-            $order = (new OrderService)->showOrderDetail($order,true);
+            $order->loadMissing('ncmOrder');
+            $order = (new OrderService)->showOrderDetail($order, true);
             $order = new OrderAssignDetailResource($order);
         } catch (OrderException $e) {
             return $this->apiError($e->getMessage());
@@ -240,10 +241,10 @@ class VendorOrderAssignController extends Controller
             'status' => strtoupper($request->input('status')) // example modification
         ]);
         $data = $request->validate([
-            'status' => ['required',new Enum(OrderItemStatusEnum::class)]
+            'status' => ['required', new Enum(OrderItemStatusEnum::class)]
         ]);
         try {
-            DB::transaction(function() use($order, $data){
+            DB::transaction(function () use ($order, $data) {
                 $status = strtoupper($data['status']);
                 $status = OrderItemStatusEnum::from($status);
                 $data = ['status' => $status];
@@ -269,10 +270,10 @@ class VendorOrderAssignController extends Controller
                             $temp = [...['payment_status' => PaymentStatusEnum::PAID], ...$temp];
                         }
                         $order->update($temp);
-                    }else{
+                    } else {
                         $order->update(['status' => OrderStatusEnum::PARTIALLY_DELIVERED]);
                     }
-                }else if ($status == OrderItemStatusEnum::PROCESSING) {
+                } else if ($status == OrderItemStatusEnum::PROCESSING) {
                     $order->orderItems()
                         ->where('assigned_vendor_id', Auth::user()->vendor->id)
                         ->update(['status' => OrderItemStatusEnum::PROCESSING]);
@@ -281,7 +282,7 @@ class VendorOrderAssignController extends Controller
         } catch (OrderException $e) {
             return $this->apiError($e->getMessage());
         }
-        return $this->apiSuccess('Order has been changed to: '.strtolower($request->status));
+        return $this->apiSuccess('Order has been changed to: ' . strtolower($request->status));
     }
 
     /**
@@ -316,14 +317,15 @@ class VendorOrderAssignController extends Controller
      *     )
      * )
      */
-    function fetchVariantBatchNumbers(Request $request, ProductVariation $variant) {
+    function fetchVariantBatchNumbers(Request $request, ProductVariation $variant)
+    {
         $per_page = $request->query('per_page');
         $pagination = $variant->vendorProductPrices()
-            ->whereRelation('ProductVendor','vendor_id', Auth::user()->vendor->id)
+            ->whereRelation('ProductVendor', 'vendor_id', Auth::user()->vendor->id)
             ->when($per_page, fn($q) => $q->paginate($per_page), fn($q) => $q->get());
         if ($per_page) {
             $data = $this->makePaginationResponse($pagination, fn($item) => OrderAssignListResource::collection($item))->data;
-        }else{
+        } else {
             $data = VendorVariantBatchNumberListResource::collection($pagination);
         }
         return $this->apiSuccess('List of available variants batch.', $data);
@@ -394,21 +396,21 @@ class VendorOrderAssignController extends Controller
      *     )
      * )
      */
-    function assignBatchesToOrderItems(Order $order, Request $request) {
+    function assignBatchesToOrderItems(Order $order, Request $request)
+    {
         $requested_data = $request->validate([
             '*.OIP_ID' => 'required|integer|exists:order_item_products,id',
             '*.batch_numbers' => 'required|array|min:1',
             '*.batch_numbers.*.batch_number_id' => 'required|integer|exists:vendor_product_prices,id',
             '*.batch_numbers.*.quantity' => 'required|integer|min:1',
-        ],[
+        ], [
             '*.batch_numbers.required' => 'Batch number and its quantity is required.'
         ]);
         try {
-            (new OrderService)->assignBatchToOrderItemService($order, $requested_data);   
+            (new OrderService)->assignBatchToOrderItemService($order, $requested_data);
         } catch (OrderException $e) {
             return $this->apiError($e->getMessage());
         }
         return $this->apiSuccess('Batch number allocated successfully for order item.');
-        
     }
 }

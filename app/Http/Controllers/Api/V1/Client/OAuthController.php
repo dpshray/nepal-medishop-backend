@@ -52,15 +52,14 @@ class OAuthController extends Controller
      *         )
      *     )
      * )
-    */
+     */
     public function __invoke(Request $request)
     {
         $request->validate([
             'token' => 'required',
-            'fcm_token' => 'required'
+            'fcm_token' => 'nullable'
         ], [
             'token.required' => 'google token id is required',
-            'fcm_token.required' => 'fcm token is required'
         ]);
         try {
             $googleUser = Socialite::driver('google')
@@ -69,15 +68,15 @@ class OAuthController extends Controller
             $email = $googleUser->getEmail();
             $user = User::updateOrCreate([
                 'email' => $email
-            ],[
+            ], [
                 'name' => $googleUser->getName(),
                 'google_id' => $googleUser->getId(),
                 'email_verified_at' => now(),
-                'fcm_token' => $request->fcm_token,
+                'fcm_token' => $request->fcm_token ?? null,
                 'status' => true,
                 'user_type' => UserTypeEnum::USER->value
             ]);
-            
+
             $STS = new SanctumTokenService();
             ['user' => $user, 'token' => $token] = $STS->make($user);
 
@@ -88,7 +87,7 @@ class OAuthController extends Controller
         } catch (LoginException $e) {
             Log::error($e);
             return $this->apiError("Unable to process your request at the moment.", 401);
-        } catch(\Exception $e){
+        } catch (\Exception $e) {
             Log::error($e);
             return $this->apiError("Unable to process your request at the moment.", 401);
         }

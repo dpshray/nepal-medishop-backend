@@ -34,13 +34,14 @@ class AdminProductDetailResource extends JsonResource
             'total_units_in_stock' => ($this->productVendorPrices) ? $this->productVendorPrices->sum('units_in_stock') : 0,
             'categories' => $this->whenLoaded('categories', fn() => $this->categories->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
             'tags' => $this->whenLoaded('tags', fn() => $this->tags->map(fn($item) => ['id' => $item->id, 'name' => $item->name])),
-            'variations' => $this->productVendors->where('vendor_id', Auth::id())->flatMap(fn($item) => 
+            'variations' => $this->productVendors->where('vendor_id', Auth::id())->flatMap(
+                fn($item) =>
                 $item->vendorPrices->map(fn($itm) => [
                     'variant_id' => $itm->product_variation_id,
-                    'variant_name' => $itm->variation->name,
-                    'variant_size_value' => (int)$itm->variation->size_value,
-                    'variant_size_unit' => $itm->variation->size_unit,
-                    'variant_admin_price' => (float)$itm->variation->platform_price,
+                    'variant_name' => $itm->variation?->name,
+                    'variant_size_value' => (int)$itm->variation?->size_value,
+                    'variant_size_unit' => $itm->variation?->size_unit,
+                    'variant_admin_price' => (float)$itm->variation?->platform_price,
                     'variant_units_in_stock' => (float)$itm->units_in_stock,
                     "batch_number" => (int)$itm->batch_number,
                     "manufacture" => $itm->manufacture,
