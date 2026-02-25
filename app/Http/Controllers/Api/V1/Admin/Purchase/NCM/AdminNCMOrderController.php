@@ -116,7 +116,7 @@ class AdminNCMOrderController extends Controller
             DB::beginTransaction();
 
             $order = Order::where('uuid', $uuid)->first();
-            Log::info('NCM Order: ' . json_encode($order));
+            // Log::info('NCM Order: ' . json_encode($order));
             // Check if already assigned
             $existingNcmOrder = NcmOrder::where('order_id', $order->id)->first();
             if ($existingNcmOrder && $existingNcmOrder->ncm_order_id) {
@@ -127,7 +127,7 @@ class AdminNCMOrderController extends Controller
                 $request->tbranch,
                 'Pickup/Collect'
             );
-            Log::info('NCM Shipping Rate: ' . json_encode($result));
+            // Log::info('NCM Shipping Rate: ' . json_encode($result));
             $order->price = $order->price - $order->delivery_charge;
             $order->price = $order->price + $result['data']['charge'];
             $order->delivery_charge = $result['data']['charge'];
@@ -148,7 +148,7 @@ class AdminNCMOrderController extends Controller
             ];
             $result = $this->ncmService->createOrder($ncmData);
             // return $result;
-            Log::info('NCM Order Result: ' . json_encode($result));
+            // Log::info('NCM Order Result: ' . json_encode($result));
             if (!$result['success']) {
                 DB::rollBack();
                 return $this->apiError('Failed to create order in NCM');

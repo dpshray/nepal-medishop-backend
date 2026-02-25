@@ -135,4 +135,8 @@ class Order extends Model
     {
         return $this->hasOne(NcmOrder::class);
     }
+    public function payments()
+    {
+        return $this->morphOne(Payment::class, 'payable');
+    }
 }

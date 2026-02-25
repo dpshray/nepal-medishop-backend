@@ -12,7 +12,8 @@ class Payment extends Model
 
     protected $fillable = [
         'uuid',
-        'order_id',
+        'payable_type',
+        'payable_id',
         'payment_gateway',
         'payment_status',
         'transaction_id',
@@ -30,8 +31,8 @@ class Payment extends Model
         'failed_at' => 'datetime',
     ];
 
-    public function order()
+    public function payable()
     {
-        return $this->belongsTo(Order::class);
+        return $this->morphTo();
     }
 }

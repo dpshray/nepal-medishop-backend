@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-use App\Models\Purchase\Order;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 interface PaymentGatewayInterface
@@ -13,7 +13,7 @@ interface PaymentGatewayInterface
      * @param Order $order
      * @return array Payment details including payment_url
      */
-    public function initiate(Order $order): array;
+    public function initiate(Model $payable): array;
 
     /**
      * Verify payment with the gateway
