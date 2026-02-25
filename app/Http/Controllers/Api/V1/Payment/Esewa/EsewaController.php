@@ -162,7 +162,7 @@ class EsewaController extends Controller
 
             // Prepare response data
             $responseData = [
-                'order_code' => $payment->order->order_code,
+                'order_code' => $payment->payable?->order_code,
                 'amount' => $payment->amount,
                 'transaction_id' => $payment->transaction_id,
                 'transaction_code' => $callbackResult['data']['transaction_code'] ?? null,
@@ -208,40 +208,56 @@ class EsewaController extends Controller
      */
     public function failure(Request $request)
     {
-        try {
-            // Decode eSewa data
-            $transactionUuid = null;
+        // Log everything eSewa sends so we can inspect it
+        Log::info('eSewa failure callback received', $request->all());
 
-            if ($request->has('data')) {
-                $decodedData = base64_decode($request->input('data'));
-                $data = json_decode($decodedData, true);
-                $transactionUuid = $data['transaction_uuid'] ?? null;
-            }
+        try {
+            $agent = new Agent();
+
+            // eSewa sends transaction_uuid as a plain query param on failure
+            // (no base64-encoded 'data' like on success)
+            $transactionUuid = $request->query('transaction_uuid');
 
             if (!$transactionUuid) {
-                return $this->apiError('Transaction UUID not found', 400);
+                $errorUrl = $agent->isMobile()
+                    ? env('MOBILE_APP_URL', env('FRONTEND_URL')) . '/payment-failed?message=' . urlencode('Transaction not identified')
+                    : env('FRONTEND_URL') . '/payment-failed?message=' . urlencode('Transaction not identified');
+
+                return redirect()->away($errorUrl);
             }
 
-            // Get payment record
+            // Find the payment record by transaction UUID
             $payment = $this->paymentService->getPaymentByTransactionId($transactionUuid);
 
             if (!$payment) {
-                return $this->apiError('Payment record not found', 404);
+                Log::warning('eSewa failure: payment record not found for uuid: ' . $transactionUuid);
+
+                $errorUrl = $agent->isMobile()
+                    ? env('MOBILE_APP_URL', env('FRONTEND_URL')) . '/payment-failed?message=' . urlencode('Payment record not found')
+                    : env('FRONTEND_URL') . '/payment-failed?message=' . urlencode('Payment record not found');
+
+                return redirect()->away($errorUrl);
             }
 
-            // Process failed payment
+            // Mark payment as failed
             DB::transaction(function () use ($payment, $request) {
                 $this->paymentService->processFailedPayment($payment, $request->all());
             });
 
-            return $this->apiSuccess('Payment failed', [
-                'order_code' => $payment->order->order_code,
-                'transaction_id' => $payment->transaction_id,
-                'message' => 'Payment was not completed',
-            ]);
+            $errorUrl = $agent->isMobile()
+                ? env('MOBILE_APP_URL', env('FRONTEND_URL')) . '/payment-failed?order_code=' . ($payment->payable?->order_code) . '&message=' . urlencode('Payment was not completed')
+                : env('FRONTEND_URL') . '/payment-failed?order_code=' . ($payment->payable?->order_code) . '&message=' . urlencode('Payment was not completed');
+
+            return redirect()->away($errorUrl);
         } catch (\Exception $e) {
             Log::error('eSewa failure callback error: ' . $e->getMessage());
-            return $this->apiError('Failed to process payment failure: ' . $e->getMessage(), 500);
+
+            $agent = new Agent();
+            $errorUrl = $agent->isMobile()
+                ? env('MOBILE_APP_URL', env('FRONTEND_URL')) . '/payment-failed?message=' . urlencode('Failed to process payment failure')
+                : env('FRONTEND_URL') . '/payment-failed?message=' . urlencode('Failed to process payment failure');
+
+            return redirect()->away($errorUrl);
         }
     }
 

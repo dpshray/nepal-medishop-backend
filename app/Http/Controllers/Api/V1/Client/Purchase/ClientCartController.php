@@ -93,13 +93,13 @@ class ClientCartController extends Controller
             $product_actual_price = $product_variation->platform_price;
             $product_discount = $product_w_variant->discount_percent;
             $price = empty($product_discount) ? $product_actual_price : ($product_actual_price - ($product_actual_price * $product_discount) / 100);
-            Log::info([
-                'product' => $product_w_variant,
-                'product_variation' => $product_variation,
-                'price' => $price,
-                'product_actual_price' => $product_actual_price,
-                'product_discount' => $product_discount,
-            ]);
+            // Log::info([
+            //     'product' => $product_w_variant,
+            //     'product_variation' => $product_variation,
+            //     'price' => $price,
+            //     'product_actual_price' => $product_actual_price,
+            //     'product_discount' => $product_discount,
+            // ]);
             $cart = $request->safe()->merge([
                 'user_id' => Auth::id(),
                 'item_type' => Product::class,

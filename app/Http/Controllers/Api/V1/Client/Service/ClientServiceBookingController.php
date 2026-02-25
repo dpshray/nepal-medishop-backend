@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Client\Service;
 
 use App\Enums\Purchase\DiscountEnum;
+use App\Enums\Purchase\PaymentMethodEnum;
 use App\Enums\Purchase\ServiceBookingStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\Product\Service\ClientServiceHistoryDetailResource;
@@ -131,8 +132,8 @@ class ClientServiceBookingController extends Controller
             'message' => 'sometimes|nullable',
             'coupon_code' => [
                 'sometimes',
-                'nullable', 
-                Rule::exists('coupon_codes','code')->where('is_active', true)
+                'nullable',
+                Rule::exists('coupon_codes', 'code')->where('is_active', true)
             ]
         ]);
         $total_discount_percent = $service->discount_percent;
@@ -144,7 +145,7 @@ class ClientServiceBookingController extends Controller
 
         // return [$price, $discount_percent];
         ['price' => $current_service_price, 'previous_price' => $previous_price] = $this->calculateDiscountPrice($service->price, $service->discount_percent);
-        $service_price_after_service_discount = $current_service_price; 
+        $service_price_after_service_discount = $current_service_price;
         if ($previous_price) {
             $service_discounts[] = [
                 'type' => DiscountEnum::SERVICE_DISCOUNT,
@@ -159,7 +160,7 @@ class ClientServiceBookingController extends Controller
             $coupon_code_id = $coupon_code->id;
             ['price' => $current_service_price, 'previous_price' => $prev_price] = $this->calculateDiscountPrice($current_service_price, $coupon_discount_percent);
             $coupon_code_name = $coupon_code->code;
-            $coupon_code_discount_amount = round(($prev_price - $current_service_price),2);
+            $coupon_code_discount_amount = round(($prev_price - $current_service_price), 2);
             $service_discounts[] = [
                 'type' => DiscountEnum::COUPON_DISCOUNT,
                 'discount_amount' => $coupon_code_discount_amount,
@@ -185,10 +186,32 @@ class ClientServiceBookingController extends Controller
             'used_coupon_code_id' => $coupon_code_id,
             'order_code' => $this->generateOrderCode()
         ];
-        DB::transaction(function () use($data,$service_discounts){
-            Auth::user()->serviceBookings()->create($data)->discounts()->createMany($service_discounts);
+        $serviceBooking = DB::transaction(function () use ($data, $service_discounts) {
+            $booking = Auth::user()->serviceBookings()->create($data);
+            $booking->discounts()->createMany($service_discounts);
+            return $booking;
         });
 
+        $response = [];
+        if ($form_data['payment_method'] == PaymentMethodEnum::ESEWA->value) {
+            $esewaService = app(\App\Services\Payment\EsewaService::class);
+            $paymentService = app(\App\Services\PaymentService::class);
+
+            $paymentData = $esewaService->initiate($serviceBooking);
+
+            // Create payment record
+            $paymentService->createPayment(
+                $serviceBooking,
+                'eSewa',
+                $paymentData['transaction_uuid']
+            );
+
+            $response['esewa_payment'] = [
+                'payment_url' => $paymentData['payment_url'],
+                'transaction_uuid' => $paymentData['transaction_uuid'],
+                'payload' => $paymentData['payload'],
+            ];
+        }
         $data_for_response = [
             "previous_price" => (float)$service_price_after_service_discount, #this is the amount after service discount(if any)
             "amount" => (float)$current_service_price,
@@ -205,7 +228,8 @@ class ClientServiceBookingController extends Controller
             "promo_discount" => (float)$coupon_code_discount_amount,
             "service_name" => $service->name
         ];
-        return $this->apiSuccess('Service booked successfully.', $data_for_response);
+        $response = array_merge($data_for_response, $response);
+        return $this->apiSuccess('Service booked successfully.', $response);
     }
 
     /**
@@ -274,20 +298,21 @@ class ClientServiceBookingController extends Controller
      *         )
      *     )
      * )
-    */
-    function index(Request $request) {
+     */
+    function index(Request $request)
+    {
         $per_page = $request->query('per_page');
         $per_page = $per_page ? $per_page : Auth::user()->serviceBookings->count();
         $search = $request->query('search');
         $pagination = Auth::user()->serviceBookings()
             ->with(['service'])
-            ->when($search, function($qry) use($search){
-                $qry->whereRelation('service','name','like','%'.$search.'%')
-                    ->orWhereLike('order_code','%'.$search.'%')
-                    ->orWhereLike('name','%' . $search . '%')
-                    ->orWhereLike('address','%' . $search . '%');
+            ->when($search, function ($qry) use ($search) {
+                $qry->whereRelation('service', 'name', 'like', '%' . $search . '%')
+                    ->orWhereLike('order_code', '%' . $search . '%')
+                    ->orWhereLike('name', '%' . $search . '%')
+                    ->orWhereLike('address', '%' . $search . '%');
             })
-            ->orderBy('id','DESC')
+            ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => ClientServiceHistoryListResource::collection($item))->data;
         return $this->apiSuccess('Client all service booking history list', $data);
@@ -330,7 +355,7 @@ class ClientServiceBookingController extends Controller
      *                      )
      *                  ),
      *
-             *                  @OA\Property(
+     *                  @OA\Property(
      *                      property="service_tags",
      *                      type="array",
      *                      @OA\Items(
@@ -361,14 +386,15 @@ class ClientServiceBookingController extends Controller
      *      )
      * )
      */
-    function show(ServiceBooking $service_booking) {
+    function show(ServiceBooking $service_booking)
+    {
         // Log::info([Auth::id()]);
         if ($service_booking->orderedBy->isNot(Auth::user())) {
             throw new UnauthorizedException();
         }
         $service_booking->load([
             'media',
-            'service' => fn($q) => $q->with(['categories','tags']),
+            'service' => fn($q) => $q->with(['categories', 'tags']),
             'orderedBy',
             'discounts'
         ]);

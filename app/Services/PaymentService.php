@@ -5,23 +5,26 @@ namespace App\Services;
 use App\Enums\Purchase\PaymentStatusEnum;
 use App\Models\Payment\Payment;
 use App\Models\Purchase\Order;
+use App\Models\Product\Service\ServiceBooking;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class PaymentService
 {
     /**
-     * Create a payment record for an order
+     * Create a payment record for any payable model (Order, ServiceBooking, etc.)
      */
-    public function createPayment(Order $order, string $gateway, string $transactionId): Payment
+    public function createPayment(Model $payable, string $gateway, string $transactionId): Payment
     {
         return Payment::create([
-            'order_id' => $order->id,
-            'payment_gateway' => $gateway,
-            'payment_status' => PaymentStatusEnum::INITIATED->value,
-            'transaction_id' => $transactionId,
-            'reference_id' => 'REF-' . $order->order_code,
-            'amount' => $order->price,
-            'currency' => 'NPR',
+            'payable_type'     => $payable->getMorphClass(),
+            'payable_id'       => $payable->getKey(),
+            'payment_gateway'  => $gateway,
+            'payment_status'   => PaymentStatusEnum::INITIATED->value,
+            'transaction_id'   => $transactionId,
+            'reference_id'     => 'REF-' . ($payable->order_code ?? $payable->getKey()),
+            'amount'           => $payable->price,
+            'currency'         => 'NPR',
         ]);
     }
 
@@ -52,40 +55,46 @@ class PaymentService
     }
 
     /**
-     * Process successful payment
+     * Process successful payment — updates the Payment and its related payable model
      */
     public function processSuccessfulPayment(Payment $payment, array $gatewayData): void
     {
-        // Update payment status
         $this->updatePaymentStatus($payment, PaymentStatusEnum::PAID->value, $gatewayData);
 
-        // Update order payment status
-        $payment->order->update([
+        // Update payment_status on the payable (Order or ServiceBooking)
+        $payment->payable?->update([
             'payment_status' => PaymentStatusEnum::PAID->value,
         ]);
     }
 
     /**
-     * Process failed payment
+     * Process failed payment — updates the Payment and its related payable model
      */
     public function processFailedPayment(Payment $payment, array $gatewayData): void
     {
-        // Update payment status
         $this->updatePaymentStatus($payment, PaymentStatusEnum::FAILED->value, $gatewayData);
 
-        // Update order payment status
-        $payment->order->update([
+        // Update payment_status on the payable (Order or ServiceBooking)
+        $payment->payable?->update([
             'payment_status' => PaymentStatusEnum::FAILED->value,
         ]);
     }
 
     /**
-     * Get payment by order code
+     * Find a payment by order_code — searches both Order and ServiceBooking payables
      */
     public function getPaymentByOrderCode(string $orderCode): ?Payment
     {
-        return Payment::whereHas('order', function ($query) use ($orderCode) {
-            $query->where('order_code', $orderCode);
+        return Payment::where(function ($q) use ($orderCode) {
+            $q->where('payable_type', (new Order)->getMorphClass())
+                ->whereHasMorph('payable', [Order::class], function ($q) use ($orderCode) {
+                    $q->where('order_code', $orderCode);
+                });
+        })->orWhere(function ($q) use ($orderCode) {
+            $q->where('payable_type', (new ServiceBooking)->getMorphClass())
+                ->whereHasMorph('payable', [ServiceBooking::class], function ($q) use ($orderCode) {
+                    $q->where('order_code', $orderCode);
+                });
         })->latest()->first();
     }
 

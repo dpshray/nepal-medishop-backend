@@ -325,6 +325,7 @@ class OrderService
             'payment_method' => $order->payment_method,
             'date' => $order->created_at->format('Y/m/d'),
             'delivery_address' => $order->address,
+            'delivery_charge' => (float) $delivery_charge,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'gift_wrap' => $request->gift_wrap,

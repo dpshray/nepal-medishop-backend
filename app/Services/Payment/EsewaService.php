@@ -3,7 +3,7 @@
 namespace App\Services\Payment;
 
 use App\Contracts\PaymentGatewayInterface;
-use App\Models\Purchase\Order;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -27,14 +27,14 @@ class EsewaService implements PaymentGatewayInterface
     /**
      * Initiate payment with eSewa
      */
-    public function initiate(Order $order): array
+    public function initiate(Model $payable): array
     {
         $transaction_uuid = 'TXN' . rand(10000, 99999);
 
         $payload = [
-            'amount' => $order->price,
+            'amount' => $payable->price,
             'tax_amount' => 0,
-            'total_amount' => $order->price,
+            'total_amount' => $payable->price,
             'transaction_uuid' => $transaction_uuid,
             'product_code' => $this->merchant_code,
             'product_service_charge' => 0,
