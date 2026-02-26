@@ -43,7 +43,7 @@ Route::prefix('admin')
         Route::get('notification', [AdminPushNotificationController::class, 'index']);
 
         //Grievance routes
-        Route::get('grievance', AdminGrievanceController::class);
+        Route::get('grievance', [AdminGrievanceController::class, 'index']);
         Route::put('grievance/{grievance:uuid}', [AdminGrievanceController::class, 'updateGrievanceStatus']);
         Route::get('grievance/{grievance:uuid}', [AdminGrievanceController::class, 'show']);
         Route::post('ncm/assign-to-ncm/{uuid}', [AdminNCMOrderController::class, 'assign_to_ncm']);
