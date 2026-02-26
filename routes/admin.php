@@ -5,12 +5,14 @@ use App\Enums\RouteParamEnum;
 use App\Http\Controllers\Api\V1\Admin\AdminPushNotificationController;
 use App\Http\Controllers\Api\V1\Admin\AdminSharedController;
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
+use App\Http\Controllers\Api\V1\Admin\ClientReview\AdminGrievanceController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminGenericProductNameController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminHealthConditionController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminProductController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminTagController;
+use App\Http\Controllers\Api\V1\Admin\Purchase\NCM\AdminNCMOrderController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -37,4 +39,12 @@ Route::prefix('admin')
         Route::post('product-media/{product:uuid}', [AdminProductController::class, 'storeMedia']);
         Route::get('product/{product:uuid}/vendors', [AdminProductController::class, 'productVendors']);
         Route::get('product-units', [AdminProductController::class, 'productUnits']);
-});
+        Route::post('notify/client', [AdminPushNotificationController::class, 'pushNotifyClient']);
+        Route::get('notification', [AdminPushNotificationController::class, 'index']);
+
+        //Grievance routes
+        Route::get('grievance', AdminGrievanceController::class);
+        Route::put('grievance/{grievance:uuid}', [AdminGrievanceController::class, 'updateGrievanceStatus']);
+        Route::get('grievance/{grievance:uuid}', [AdminGrievanceController::class, 'show']);
+        Route::post('ncm/assign-to-ncm/{uuid}', [AdminNCMOrderController::class, 'assign_to_ncm']);
+    });
