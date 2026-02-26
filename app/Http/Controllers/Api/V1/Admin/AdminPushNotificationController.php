@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\UserTypeEnum;
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Services\PushNotificationService;
+use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use Illuminate\Http\ResponseTrait;
 use Illuminate\Support\Facades\DB;
 
 class AdminPushNotificationController extends Controller
@@ -65,6 +66,49 @@ class AdminPushNotificationController extends Controller
             'successes' => $success,
             'failures' => $failure
         ] = $PNS->notify($fcm_tokens);
-        return $this->apiSucess("Notification sent with $success success and $failure");
+        return $this->apiSuccess("Notification sent with $success success and $failure");
+    }
+
+    /**
+     * @OA\Get(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/notification",
+     *     summary="Get list of all notifications",
+     *     description="Retrieve paginated list of all notifications sent to users",
+     *     operationId="ListNotifications",
+     *     tags={"Notification"},
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Number of notifications per page",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of notifications",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array", 
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="title", type="string"),
+     *                     @OA\Property(property="body", type="string"),
+     *                     @OA\Property(property="data", type="object"),
+     *                     @OA\Property(property="notified_at", type="string", format="date-time"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             ),
+     *             @OA\Property(property="message", type="string", example="List of all notifications")
+     *         )
+     *     )
+     * )
+     */
+    public function index(Request $request) {
+        $per_page = $request->query('per_page', 10);
+        $notifications = Notification::orderByDesc('created_at')->paginate($per_page);
+        
+        return $this->apiSuccess('List of all notifications', $notifications);
     }
 }

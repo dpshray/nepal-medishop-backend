@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\InfantVaccine;
-use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
-use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Messaging\Notification as FirebaseNotification;
 use Kreait\Firebase\Messaging\RegistrationToken;
 
 class PushNotificationService
@@ -17,10 +16,7 @@ class PushNotificationService
 
     function notify(array $fcm_token)
     {
-        $factory = (new Factory())->withServiceAccount(
-            base_path('nepal-medishop-firebase-adminsdk-fbsvc-cee90ff9d5.json')
-        );
-
+        $factory = app('firebase.messaging');
         $messaging = $factory->createMessaging();
 
         info("MEDISHOP Notification(Cron Job) running at " . now());
@@ -34,7 +30,7 @@ class PushNotificationService
                 $title = $this->title;
                 $body = $this->body;
 
-                $notification = Notification::create($title, $body);
+                $notification = FirebaseNotification::create($title, $body);
 
                 $message = CloudMessage::new()
                     ->withNotification($notification)
@@ -43,17 +39,16 @@ class PushNotificationService
                     ]);
 
                 $response = $messaging->sendMulticast($message, [
-                    RegistrationToken::fromValue($row->fcm_token)
+                    RegistrationToken::fromValue($row)
                 ]);
 
                 if ($response->successes()->count() > 0) {
                     if ($this->send_and_store) {                        
-                        DB::table('notifications')->insert([
+                        Notification::create([
+                            'title' => $title,
+                            'body' => $body,
                             'notified_at' => now(),
-                            'data' => json_encode([
-                                'title' => $title,
-                                'body' => $body,
-                            ]),
+                            'data' => json_encode(['type' => 'screen']),
                         ]);
                     }
                     $successCount++;
@@ -61,13 +56,13 @@ class PushNotificationService
                     $failureCount++;
                     foreach ($response->failures() as $failure) {
                         $errors[] = $failure->error()->getMessage();
-                        Log::error("FCM error for token {$row->fcm_token}: " . $failure->error()->getMessage());
+                        Log::error("FCM error for token {$row}: " . $failure->error()->getMessage());
                     }
                 }
             } catch (\Throwable $e) {
                 $failureCount++;
                 $errors[] = $e->getMessage();
-                Log::error("Failed to send FCM to {$row->fcm_token}: " . $e->getMessage());
+                Log::error("Failed to send FCM to {$row}: " . $e->getMessage());
             }
         }
         $output = [

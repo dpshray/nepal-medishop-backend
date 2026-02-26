@@ -25,7 +25,7 @@ class UserGrievanceDetailResource extends JsonResource
             "subject" => $this->subject,
             "detail" => $this->detail,
             "created_at" => $this->created_at,
-            'images' => $this->whenLoaded('media', fn() => $this->getMedia(Grievance::GRIEVANCE_IMAGE)->map(fn($item) => $item->getUrl())),
+            'images' => $this->getMedia(Grievance::GRIEVANCE_IMAGE)->map->getUrl(),
         ];
     }
 }

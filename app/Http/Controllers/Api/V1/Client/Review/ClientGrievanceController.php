@@ -189,18 +189,18 @@ class ClientGrievanceController extends Controller
             'phone' => 'required',
             'subject' => 'required|max:255',
             'detail' => 'required',
-            // 'images' => 'sometimes|nullable|array|exclude'
+            'images' => 'sometimes|nullable|array|exclude'
         ]);
         // Log::info($request->images);
-        DB::transaction(function () use($form_data, $request){
+        DB::transaction(function () use ($form_data, $request) {
             $form_data['user_id'] = Auth::id();
             $form_data['status'] = GrievanceEnum::PENDING;
             $grievance = Grievance::create($form_data);
-            /* if ($request->hasFile('images')) {
+            if ($request->hasFile('images')) {
                 foreach ($request->images as $image) {
                     $grievance->addMedia($image)->toMediaCollection(Grievance::GRIEVANCE_IMAGE);
                 }
-            } */
+            }
         });
         return $this->apiSuccess("Your grievance has been submitted successfully.");
     }
@@ -295,7 +295,8 @@ class ClientGrievanceController extends Controller
      *     )
      * )
      */
-    function show(Grievance $grievance) {
+    function show(Grievance $grievance)
+    {
         $grievance->load('media');
         $grievance = new UserGrievanceDetailResource($grievance);
         return $this->apiSuccess('Grievance detail', $grievance);
