@@ -27,6 +27,7 @@ class AdminProductDetailResource extends JsonResource
                 'generic_product_name' => $this->genericProductName->name,
                 'generic_product_id' => $this->genericProductName->id
             ],
+            'discount_percent' => $this->discount_percent,
             'description' => $this->description,
             'added_date' => $this->created_at,
             'prescription_required' => (bool) $this->prescription_required,
@@ -43,7 +44,7 @@ class AdminProductDetailResource extends JsonResource
                     'variant_size_unit' => $itm->variation?->size_unit,
                     'variant_admin_price' => (float)$itm->variation?->platform_price,
                     'variant_units_in_stock' => (float)$itm->units_in_stock,
-                    "batch_number" => (int)$itm->batch_number,
+                    "batch_number" => $itm->batch_number,
                     "manufacture" => $itm->manufacture,
                     "expiry_date" => $itm->expiry_date,
                 ])
