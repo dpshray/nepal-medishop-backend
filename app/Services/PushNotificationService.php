@@ -7,75 +7,85 @@ use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification as FirebaseNotification;
-use Kreait\Firebase\Messaging\RegistrationToken;
 
 class PushNotificationService
 {
     private $send_and_store = false;
+
     public function __construct(public string $title, public string $body) {}
 
-    function notify(array $fcm_token)
+    public function notify(array $fcm_token)
     {
-        $factory = app('firebase.messaging');
-        $messaging = $factory->createMessaging();
+        try {
+            // Initialize Firebase with your service account from root directory
+            $factory = (new Factory)->withServiceAccount(
+                base_path('nepal-medishop-firebase-adminsdk-fbsvc-7deb99b9c4.json')
+            );
 
-        info("MEDISHOP Notification(Cron Job) running at " . now());
+            $messaging = $factory->createMessaging();
 
-        $successCount = 0;
-        $failureCount = 0;
-        $errors = [];
+            info("MEDISHOP Notification(Cron Job) running at " . now());
 
-        foreach ($fcm_token as $row) {
-            try {
-                $title = $this->title;
-                $body = $this->body;
+            $successCount = 0;
+            $failureCount = 0;
+            $errors = [];
 
-                $notification = FirebaseNotification::create($title, $body);
+            foreach ($fcm_token as $token) {
+                try {
+                    $notification = FirebaseNotification::create($this->title, $this->body);
 
-                $message = CloudMessage::new()
-                    ->withNotification($notification)
-                    ->withData([
-                        'type' => 'screen',
-                    ]);
+                    $message = CloudMessage::withTarget('token', $token)
+                        ->withNotification($notification)
+                        ->withData([
+                            'type' => 'screen',
+                        ]);
 
-                $response = $messaging->sendMulticast($message, [
-                    RegistrationToken::fromValue($row)
-                ]);
+                    $messaging->send($message);
 
-                if ($response->successes()->count() > 0) {
-                    if ($this->send_and_store) {                        
+                    $successCount++;
+
+                    if ($this->send_and_store) {
                         Notification::create([
-                            'title' => $title,
-                            'body' => $body,
+                            'title' => $this->title,
+                            'body' => $this->body,
                             'notified_at' => now(),
                             'data' => json_encode(['type' => 'screen']),
                         ]);
                     }
-                    $successCount++;
-                } else {
+                } catch (\Kreait\Firebase\Exception\MessagingException $e) {
                     $failureCount++;
-                    foreach ($response->failures() as $failure) {
-                        $errors[] = $failure->error()->getMessage();
-                        Log::error("FCM error for token {$row}: " . $failure->error()->getMessage());
-                    }
+                    $errors[] = "Token {$token}: " . $e->getMessage();
+                    Log::error("FCM error for token {$token}: " . $e->getMessage());
+                } catch (\Throwable $e) {
+                    $failureCount++;
+                    $errors[] = "Token {$token}: " . $e->getMessage();
+                    Log::error("Failed to send FCM to {$token}: " . $e->getMessage());
                 }
-            } catch (\Throwable $e) {
-                $failureCount++;
-                $errors[] = $e->getMessage();
-                Log::error("Failed to send FCM to {$row}: " . $e->getMessage());
             }
+
+            $output = [
+                'successes' => $successCount,
+                'failures' => $failureCount,
+                'errors' => $errors,
+                'date' => now()->format('Y-m-d H:i:s')
+            ];
+
+            Log::info('Notification summary', $output);
+            return $output;
+        } catch (\Throwable $e) {
+            Log::error("Firebase initialization failed: " . $e->getMessage());
+            return [
+                'successes' => 0,
+                'failures' => count($fcm_token),
+                'errors' => [$e->getMessage()],
+                'date' => now()->format('Y-m-d H:i:s')
+            ];
         }
-        $output = [
-            'successes' => $successCount,
-            'failures' => $failureCount,
-            'errors' => $errors,
-            'date' => now()->format('Y-m-d H:i:s')
-        ];
-        Log::info('Notification summary', $output);
-        return $output;
     }
 
-    function store() {
+    public function store()
+    {
         $this->send_and_store = true;
+        return $this;
     }
 }
