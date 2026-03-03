@@ -21,6 +21,10 @@
         {
             "url": "http://192.168.100.18:8000/api/v1",
             "description": "Localhost API Server 3"
+        },
+        {
+            "url": "http://192.168.101.7:8000/api/v1",
+            "description": "Localhost API Server 4"
         }
     ],
     "paths": {
@@ -2024,13 +2028,9 @@
                                                     "format": "float",
                                                     "example": 100
                                                 },
-                                                "variant_manufacturer": {
-                                                    "type": "string",
-                                                    "example": "some menufacture detail goes here"
-                                                },
                                                 "variant_batch_no": {
-                                                    "type": "string",
-                                                    "example": "12ED311"
+                                                    "type": "integer",
+                                                    "example": 123456789
                                                 },
                                                 "variant_expiry_date": {
                                                     "type": "sate",
@@ -2155,10 +2155,6 @@
                                                             "batch_number": {
                                                                 "type": "integer",
                                                                 "example": 633036334
-                                                            },
-                                                            "manufacture": {
-                                                                "type": "string",
-                                                                "example": "5368 Elna Viaduct Apt. 594\\nSouth Leilanifurt, LA 59129"
                                                             },
                                                             "expiry_date": {
                                                                 "type": "string",

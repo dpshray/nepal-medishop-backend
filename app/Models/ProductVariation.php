@@ -25,7 +25,6 @@ class ProductVariation extends Model
         'platform_price',
         'platform_discount_price',
         'batch_number',
-        'manufacture',
         'expiry_date'
     ];
 

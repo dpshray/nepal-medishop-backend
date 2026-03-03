@@ -15,7 +15,6 @@ class VendorProductPrice extends Model
         "price",
         "units_in_stock",
         "batch_number",
-        "manufacture",
         "expiry_date"
     ];
 
@@ -50,8 +49,9 @@ class VendorProductPrice extends Model
         return $this->hasMany(OrderItemProductBatchNumber::class);
     }
 
-    function orders() {
-        return $this->belongsToMany(Order::class,'order_item_products','product_variation_id','order_id');
+    function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_item_products', 'product_variation_id', 'order_id');
     }
 
     function getStockLeftAttribute()

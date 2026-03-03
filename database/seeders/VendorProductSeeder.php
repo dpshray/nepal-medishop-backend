@@ -18,8 +18,8 @@ class VendorProductSeeder extends Seeder
     public function run(): void
     {
         $product = Product::with('variations:id,product_id')->select('id')->get();
-        DB::transaction(function () use ($product){
-            User::has('vendor')->get()->map(function($user) use($product){
+        DB::transaction(function () use ($product) {
+            User::has('vendor')->get()->map(function ($user) use ($product) {
                 // $random_product = $product->random(1,3);
                 $randomCount = rand(1, min(5, $product->count()));
                 $random_product = $product;
@@ -39,13 +39,11 @@ class VendorProductSeeder extends Seeder
                             'price' => $price,
                             'units_in_stock' => rand(50, 200),
                             'batch_number' => fake()->unixTime(),
-                            'manufacture' => fake()->address(),
                             'expiry_date' => fake()->dateTimeBetween('-1 years', '5 years')
                         ];
-                    } 
+                    }
                     $vendor_product->vendorPrices()->createMany($temp);
                 }
-                
             });
         });
 

@@ -46,9 +46,9 @@ class BulkUploadController extends Controller
                             'prescription_required' => filter_var($row[7], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
                             'added_by' => Auth::id()
                         ];
-    
+
                         $product = Product::create($productData);
-    
+
                         $categories = json_decode($row[8], true) ?: [];
                         $tags = json_decode($row[9], true) ?: [];
                         $featuredImageFile = trim($row[10]);
@@ -61,23 +61,23 @@ class BulkUploadController extends Controller
                         if ($featuredImageFile) {
                             $product->addMedia($baseUrl . '/' . $featuredImageFile)->preservingOriginal()->toMediaCollection(Product::PRODUCT_FEATURE);
                         }
-    
+
                         foreach ($galleryFiles as $file) {
                             $product->addMedia($baseUrl . '/' . trim($file))->preservingOriginal()->toMediaCollection(Product::PRODUCT_GALLERY);
                         }
-    
+
                         if (!empty($categories)) {
                             $product->categories()->attach($categories);
                         }
-    
+
                         if (!empty($tags)) {
                             $product->tags()->attach($tags);
                         }
-    
+
                         if (!empty($healthConditions)) {
                             $product->healthConditions()->attach($healthConditions);
                         }
-    
+
                         if (!empty($variations)) {
                             foreach ($variations as $variation) {
                                 // dd($variation);
@@ -88,12 +88,11 @@ class BulkUploadController extends Controller
                                     "platform_price" => $variation['platform_price'],
                                 ];
                                 $product_variation = $product->variations()
-                                ->create($variation_data);
+                                    ->create($variation_data);
                                 // dd($variation);
                                 $vendor_price = [
                                     "units_in_stock" => $variation['units_in_stock'],
                                     "batch_number" => $variation['batch_number'],
-                                    "manufacture" => $variation['manufacture'],
                                     "expiry_date" => $variation['expiry_date'],
                                     'product_variation_id' => $product_variation->id,
                                     "price" => $variation['platform_price']
@@ -104,8 +103,8 @@ class BulkUploadController extends Controller
                                     'is_approved' => true,
                                     'vendor_id' => Auth::user()->vendor->id
                                 ])
-                                ->vendorPrices()
-                                ->create($vendor_price);
+                                    ->vendorPrices()
+                                    ->create($vendor_price);
                             }
                         }
                     }
@@ -116,6 +115,6 @@ class BulkUploadController extends Controller
             $total_bulk_upload_errors_count++;
         }
 
-        return $this->apiSuccess('Bulk upload completed with '.$total_bulk_upload_errors_count.' errors');
+        return $this->apiSuccess('Bulk upload completed with ' . $total_bulk_upload_errors_count . ' errors');
     }
 }

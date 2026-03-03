@@ -27,7 +27,8 @@ class BulkUploadMainController extends Controller
         $this->base_url = public_path('medishop_img');
     }
 
-    private function getExcelRowInArray(UploadedFile $file, bool $in_chunk = true) {
+    private function getExcelRowInArray(UploadedFile $file, bool $in_chunk = true)
+    {
         $spreadsheet = IOFactory::load($file->getPathname());
         $rows = $spreadsheet->getActiveSheet()->toArray();
         Log::info($rows[0]);
@@ -71,7 +72,8 @@ class BulkUploadMainController extends Controller
      *     )
      * )
      */
-    function productBulkUpload(Request $request) {
+    function productBulkUpload(Request $request)
+    {
 
         $data = $request->validate([
             'file' => 'required|file|mimes:xls,xlsx,csv'
@@ -105,7 +107,7 @@ class BulkUploadMainController extends Controller
                         $healthConditions = json_decode($row[11], true) ?: [];
                         $variations = json_decode($row[12], true) ?: [];
                         // dd(json_decode($row[11]));
-                        $baseUrl = $this->base_url.'/product';
+                        $baseUrl = $this->base_url . '/product';
                         if ($featuredImageFile) {
                             $product->addMedia($baseUrl . '/' . $featuredImageFile)->preservingOriginal()->toMediaCollection(Product::PRODUCT_FEATURE);
                         }
@@ -144,13 +146,11 @@ class BulkUploadMainController extends Controller
                                 $vendor_price = [
                                     "units_in_stock" => $variation['units_in_stock'],
                                     "batch_number" => $variation['batch_number'],
-                                    "manufacture" => $variation['manufacture'],
                                     "expiry_date" => $variation['expiry_date'],
                                     'product_variation_id' => $product_variation->id,
                                     "price" => $variation['platform_price']
                                 ];
                                 $product_vendor->vendorPrices()->create($vendor_price);
-
                             }
                             // Log::info($vendor_price);
                         }
@@ -200,15 +200,16 @@ class BulkUploadMainController extends Controller
      *         )
      *     ),
      * )
-    */
-    function tagBulkUpload(Request $request) {
+     */
+    function tagBulkUpload(Request $request)
+    {
         $data = $request->validate([
             'file' => 'required|file|mimes:xls,xlsx,csv'
         ]);
         $tag_data = $this->getExcelRowInArray($data['file'], false);
         try {
             // Log::info($tag_data);
-            DB::transaction(function() use($tag_data){
+            DB::transaction(function () use ($tag_data) {
                 $tag_data = array_map(fn($item) => ['status' => true, 'name' => $item[0]], $tag_data);
                 foreach ($tag_data as $tag) {
                     Tag::create($tag);
@@ -275,7 +276,7 @@ class BulkUploadMainController extends Controller
                             'name' => $row[0],
                             'discount_percent' => $row[1]
                         ];
-                        $baseUrl = $this->base_url. '/category';
+                        $baseUrl = $this->base_url . '/category';
                         Category::create($categoryData)
                             ->addMedia($baseUrl . '/' . $row[2])
                             ->preservingOriginal()
@@ -327,14 +328,15 @@ class BulkUploadMainController extends Controller
      *     ),
      * )
      */
-    function genericProductNameBulkUpload(Request $request) {
+    function genericProductNameBulkUpload(Request $request)
+    {
 
         $data = $request->validate([
             'file' => 'required|file|mimes:xls,xlsx,csv'
         ]);
         $generic_product_name = $this->getExcelRowInArray($data['file'], false);
         try {
-            DB::transaction(function () use($generic_product_name){                
+            DB::transaction(function () use ($generic_product_name) {
                 $generic_product_names = array_map(fn($item) => ['status' => true, 'name' => $item[0]], $generic_product_name);
                 foreach ($generic_product_names as $generic_product_name) {
                     GenericProductName::create($generic_product_name);
@@ -382,7 +384,8 @@ class BulkUploadMainController extends Controller
      *     )
      * )
      */
-    function brandBulkUpload(Request $request) {
+    function brandBulkUpload(Request $request)
+    {
         $data = $request->validate([
             'file' => 'required|file|mimes:xls,xlsx,csv'
         ]);
@@ -398,7 +401,7 @@ class BulkUploadMainController extends Controller
                             'is_featured' => filter_var($row[1], FILTER_VALIDATE_BOOLEAN),
                             'is_popular' => filter_var($row[2], FILTER_VALIDATE_BOOLEAN)
                         ];
-                        $baseUrl = $this->base_url. '/brand';
+                        $baseUrl = $this->base_url . '/brand';
                         Brand::create($brandData)
                             ->addMedia($baseUrl . '/' . $row[3])
                             ->preservingOriginal()
@@ -450,7 +453,8 @@ class BulkUploadMainController extends Controller
      *     )
      * )
      */
-    function healthConditionBulkUpload(Request $request) {
+    function healthConditionBulkUpload(Request $request)
+    {
         $data = $request->validate([
             'file' => 'required|file|mimes:xls,xlsx,csv'
         ]);
@@ -466,7 +470,7 @@ class BulkUploadMainController extends Controller
                             'status' => filter_var($row[1], FILTER_VALIDATE_BOOLEAN),
                             'description' => $row[2]
                         ];
-                        $baseUrl = $this->base_url.'/health_condition';
+                        $baseUrl = $this->base_url . '/health_condition';
                         HealthCondition::create($health_condition_image)
                             ->addMedia($baseUrl . '/' . $row[3])
                             ->preservingOriginal()
