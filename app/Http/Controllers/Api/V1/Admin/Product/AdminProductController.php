@@ -139,7 +139,7 @@ class AdminProductController extends Controller
                 $msg = 'unpublished';
             }
         }
-        $pagination = Product::with(['brand', 'cheapestVariation', 'productVendorPrices', 'variations', 'genericProductName', 'healthConditions'])
+        $pagination = Product::with(['brand', 'cheapestVariation', 'media', 'productVendorPrices', 'variations', 'genericProductName', 'healthConditions'])
             ->when($status != null, fn($qry) => $qry->where('status', $status))
             ->when($search != null, fn($qry) => $qry->whereLike('name', '%' . $search . '%'))
             ->latest('id')
