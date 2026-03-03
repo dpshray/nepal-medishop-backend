@@ -36,7 +36,6 @@ class VendorProductAssociationListResource extends JsonResource
                     'price' => $price->price,
                     'units_in_stock' => $price->units_in_stock,
                     'batch_number' => $price->batch_number,
-                    'manufacture' => $price->manufacture,
                     'expiry_date' => $price->expiry_date,
                 ];
             }),

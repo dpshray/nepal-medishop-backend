@@ -21,6 +21,10 @@
         {
             "url": "http://192.168.100.18:8000/api/v1",
             "description": "Localhost API Server 3"
+        },
+        {
+            "url": "http://192.168.101.7:8000/api/v1",
+            "description": "Localhost API Server 4"
         }
     ],
     "paths": {
@@ -78,6 +82,87 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Notification send with 1 success and 0 failure"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/notification": {
+            "get": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get list of all notifications",
+                "description": "Retrieve paginated list of all notifications sent to users",
+                "operationId": "ListNotifications",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of notifications per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of notifications",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "body": {
+                                                        "type": "string"
+                                                    },
+                                                    "data": {
+                                                        "type": "object"
+                                                    },
+                                                    "notified_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of all notifications"
                                         }
                                     },
                                     "type": "object"
@@ -4503,6 +4588,104 @@
                                                 }
                                             },
                                             "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Store a newly created product",
+                "description": "Store a newly created product.",
+                "operationId": "ProductStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "categories",
+                                    "tags",
+                                    "variations"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Product Name"
+                                    },
+                                    "categories": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    },
+                                    "variations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Variation Name"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 100
+                                                },
+                                                "stock": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product created successfully"
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
                                         }
                                     },
                                     "type": "object"

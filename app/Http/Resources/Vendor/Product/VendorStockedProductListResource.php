@@ -17,8 +17,8 @@ class VendorStockedProductListResource extends JsonResource
         // return parent::toArray($request);
         return [
             'accepted' => empty($this->is_approved) ? null : (bool)($this->is_approved),
-            'product_uuid' => $this->whenLoaded('product', fn() => $this->product->uuid) ,
-            "product_name" => $this->whenLoaded('product', fn() => $this->product->name) ,
+            'product_uuid' => $this->whenLoaded('product', fn() => $this->product->uuid),
+            "product_name" => $this->whenLoaded('product', fn() => $this->product->name),
             'brand' => $this->product->brand->name,
             'variations' => $this->whenLoaded('vendorPrices', function () {
                 return $this->vendorPrices->map(fn($item) => [

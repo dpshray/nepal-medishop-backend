@@ -29,7 +29,6 @@ class VendorProductStockStoreRequest extends FormRequest
             'variations.*.price' => 'required|numeric',
             'variations.*.variant_batch_no' => 'required|string|max:255',
             'variations.*.variant_expiry_date' => 'required|string|max:255',
-            'variations.*.variant_manufacturer' => 'required|string|max:255',
         ];
     }
 }

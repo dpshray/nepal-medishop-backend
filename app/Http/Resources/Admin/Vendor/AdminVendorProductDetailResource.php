@@ -22,7 +22,7 @@ class AdminVendorProductDetailResource extends JsonResource
             'product_detail' => $product->description,
             'prescription_required' => (bool)$product->prescription_required,
             "brand_name" => $product->brand->name,
-            'variations' => $this->vendorPrices->map(function($item){
+            'variations' => $this->vendorPrices->map(function ($item) {
                 return [
                     'variant_name' => $item->variation->name,
                     "size_value" => $item->variation->size_value,
@@ -30,12 +30,11 @@ class AdminVendorProductDetailResource extends JsonResource
                     "units_in_stock" => (int) $item->stock_left,
                     "vendor_price" => (float) $item->price,
                     "batch_number" => (int)$item->batch_number,
-                    "manufacture" => $item->manufacture,
                     "expiry_date" => $item->expiry_date,
 
                 ];
             })
-            
+
         ];
     }
 }

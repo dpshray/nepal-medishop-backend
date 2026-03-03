@@ -139,7 +139,7 @@ class AdminProductController extends Controller
                 $msg = 'unpublished';
             }
         }
-        $pagination = Product::with(['brand', 'cheapestVariation', 'productVendorPrices', 'variations', 'genericProductName', 'healthConditions'])
+        $pagination = Product::with(['brand', 'cheapestVariation', 'media', 'productVendorPrices', 'variations', 'genericProductName', 'healthConditions'])
             ->when($status != null, fn($qry) => $qry->where('status', $status))
             ->when($search != null, fn($qry) => $qry->whereLike('name', '%' . $search . '%'))
             ->latest('id')
@@ -150,6 +150,35 @@ class AdminProductController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     */
+    /**
+     * @OA\Post(
+     *     security={{"sanctum": {}}},
+     *     path="/admin/product",
+     *     summary="Store a newly created product",
+     *     description="Store a newly created product.",
+     *     operationId="ProductStore",
+     *     tags={"Product"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "categories", "tags", "variations"},
+     *             @OA\Property(property="name", type="string", example="Product Name"),
+     *             @OA\Property(property="categories", type="array", @OA\Items(type="integer"), example={1, 2}),
+     *             @OA\Property(property="tags", type="array", @OA\Items(type="integer"), example={1, 2}),
+     *             @OA\Property(property="variations", type="array", @OA\Items(type="object", @OA\Property(property="name", type="string", example="Variation Name"), @OA\Property(property="price", type="number", format="float", example=100), @OA\Property(property="stock", type="integer", example=10)))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Product created successfully"),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
      */
     public function store(ProductStoreRequest $request)
     {
@@ -171,7 +200,6 @@ class AdminProductController extends Controller
                     'units_in_stock' => $item["variant_stock"],
                     'expiry_date' => $item["variant_expiry_date"],
                     'batch_number' => $item["variant_batch_no"],
-                    'manufacture' => $item["variant_manufacturer"],
                     'price' => $item['variant_price']
                 ]);
             });

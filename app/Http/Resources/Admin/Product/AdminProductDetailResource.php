@@ -44,7 +44,6 @@ class AdminProductDetailResource extends JsonResource
                     'variant_admin_price' => (float)$itm->variation?->platform_price,
                     'variant_units_in_stock' => (float)$itm->units_in_stock,
                     "batch_number" => (int)$itm->batch_number,
-                    "manufacture" => $itm->manufacture,
                     "expiry_date" => $itm->expiry_date,
                 ])
             )->values(),
