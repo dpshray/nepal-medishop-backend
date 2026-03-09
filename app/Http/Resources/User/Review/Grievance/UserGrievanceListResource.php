@@ -28,6 +28,7 @@ class UserGrievanceListResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
+            "detail" => $this->detail,
             'images' => $this->getMedia(Grievance::GRIEVANCE_IMAGE)->map->getUrl(),
         ];
     }
