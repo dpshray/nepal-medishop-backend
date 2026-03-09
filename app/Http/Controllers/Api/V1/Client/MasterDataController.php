@@ -64,7 +64,7 @@ class MasterDataController extends Controller
      *  )
      * )
      */
-    function fetchAllActiveBrand(Request $request)
+    function fetchAllBrand(Request $request)
     {
         $brand_name = $request->query('brand');
         $brands = Brand::with('media')
@@ -72,6 +72,60 @@ class MasterDataController extends Controller
             ->when($brand_name, fn($qry) => $qry->whereLike('name', '%' . $brand_name . '%'))
             ->get();
         $brands = ClientBrandResource::collection($brands);
+        return $this->apiSuccess('List of active brands', $brands);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/get-active-brand-list",
+     *     summary="Get all active brands",
+     *     description="Get all active brands.",
+     *     operationId="ClientActiveBrandList",
+     *     tags={"Product"},
+     *     @OA\Parameter(
+     *         name="brand",
+     *         in="query",
+     *         required=false,
+     *         description="name of a brand to search.('empty' to fetch all data)",
+     *         @OA\Schema(type="string", example="pfizer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of active brands",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="List of active brands"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="slug", type="string", example="pfizer"),
+     *                     @OA\Property(property="name", type="string", example="Pfizer"),
+     *                     @OA\Property(property="image", type="string", example="http://127.0.0.1:8000/assets/img/default-brand-category.png"),
+     *                     @OA\Property(property="is_featured", type="integer", example=1),
+     *                     @OA\Property(property="is_popular", type="integer", example=0)
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function fetchAllActiveBrand(Request $request)
+    {
+        $brand_name = $request->query('brand');
+        $brands = Brand::with('media')
+            ->active()
+            ->when($brand_name, fn($qry) => $qry->whereLike('name', '%' . $brand_name . '%'))
+            ->get();
+        $active_brands = collect();
+        foreach ($brands as $brand) {
+            if ($brand->products->count() > 0) {
+                $active_brands->push($brand);
+            }
+        }
+        $brands = ClientBrandResource::collection($active_brands);
         return $this->apiSuccess('List of active brands', $brands);
     }
 
@@ -108,10 +162,56 @@ class MasterDataController extends Controller
      *     )
      * )
      */
-    function fetchAllActiveCategory()
+    function fetchAllCategory()
     {
         $categories = Category::with('media')->orderByRaw('menu_order IS NULL, menu_order ASC')->active()->get();
         $categories = ClientCategoryResource::collection($categories);
+        return $this->apiSuccess('List of active categories', $categories);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/get-active-category-list",
+     *     summary="Get all active categories",
+     *     description="Get all active categories.",
+     *     operationId="ClientActiveCategoryList",
+     *     tags={"Product"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of active categories",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="List of active categories"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="slug", type="string", example="pfizer"),
+     *                     @OA\Property(property="name", type="string", example="Pfizer"),
+     *                     @OA\Property(
+     *                         property="image",
+     *                         type="string",
+     *                         format="url",
+     *                         example="http://127.0.0.1:8000/assets/img/default-brand-category.png"
+     *                     )
+     *                 )
+     *             ),
+     *             @OA\Property(property="success", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    function fetchAllActiveCategory(Request $request)
+    {
+        $categories = Category::with('media')->orderByRaw('menu_order IS NULL, menu_order ASC')->active()->get();
+        $active_categories = collect();
+        foreach ($categories as $category) {
+            if ($category->products->count() > 0) {
+                $active_categories->push($category);
+            }
+        }
+        $categories = ClientCategoryResource::collection($active_categories);
         return $this->apiSuccess('List of active categories', $categories);
     }
 

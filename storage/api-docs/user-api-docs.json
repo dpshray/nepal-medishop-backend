@@ -23,7 +23,7 @@
             "description": "Localhost API Server 3"
         },
         {
-            "url": "http://192.168.101.7:8000/api/v1",
+            "url": "http://192.168.1.71:8000/api/v1",
             "description": "Localhost API Server 4"
         }
     ],
@@ -1304,6 +1304,78 @@
                 }
             }
         },
+        "/get-active-brand-list": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all active brands",
+                "description": "Get all active brands.",
+                "operationId": "ClientActiveBrandList",
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "name of a brand to search.('empty' to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pfizer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of active brands",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of active brands"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "pfizer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Pfizer"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                    },
+                                                    "is_featured": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "is_popular": {
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/get-category-list": {
             "get": {
                 "tags": [
@@ -1312,6 +1384,59 @@
                 "summary": "Get all active categories",
                 "description": "Get all active categories.",
                 "operationId": "ClientCategoryList",
+                "responses": {
+                    "200": {
+                        "description": "List of active categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "List of active categories"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "pfizer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Pfizer"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "format": "url",
+                                                        "example": "http://127.0.0.1:8000/assets/img/default-brand-category.png"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get-active-category-list": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get all active categories",
+                "description": "Get all active categories.",
+                "operationId": "ClientActiveCategoryList",
                 "responses": {
                     "200": {
                         "description": "List of active categories",

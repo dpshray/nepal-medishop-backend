@@ -23,7 +23,7 @@
             "description": "Localhost API Server 3"
         },
         {
-            "url": "http://192.168.101.7:8000/api/v1",
+            "url": "http://192.168.1.71:8000/api/v1",
             "description": "Localhost API Server 4"
         }
     ],
@@ -2029,8 +2029,8 @@
                                                     "example": 100
                                                 },
                                                 "variant_batch_no": {
-                                                    "type": "integer",
-                                                    "example": 123456789
+                                                    "type": "string",
+                                                    "example": "12ED311"
                                                 },
                                                 "variant_expiry_date": {
                                                     "type": "sate",

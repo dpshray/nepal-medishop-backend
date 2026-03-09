@@ -31,7 +31,7 @@ use Illuminate\Http\Request;
  *     description="Localhost API Server 3"
  * )
  * @OA\Server(
- *     url="http://192.168.101.7:8000/api/v1",
+ *     url="http://192.168.1.71:8000/api/v1",
  *     description="Localhost API Server 4"
  * )
  */
