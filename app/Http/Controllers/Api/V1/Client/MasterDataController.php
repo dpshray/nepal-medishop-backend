@@ -89,6 +89,13 @@ class MasterDataController extends Controller
      *         description="name of a brand to search.('empty' to fetch all data)",
      *         @OA\Schema(type="string", example="pfizer")
      *     ),
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="query",
+     *         required=false,
+     *         description="slug of a category to search.('empty' to fetch all data)",
+     *         @OA\Schema(type="string", example="pfizer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="List of active brands",
@@ -115,17 +122,19 @@ class MasterDataController extends Controller
     function fetchAllActiveBrand(Request $request)
     {
         $brand_name = $request->query('brand');
+        $category_slug = $request->query('category');
         $brands = Brand::with('media')
             ->active()
             ->when($brand_name, fn($qry) => $qry->whereLike('name', '%' . $brand_name . '%'))
+            ->whereHas('products', function ($qry) use ($category_slug) {
+                $qry->active();
+                if ($category_slug) {
+                    $qry->whereHas('categories', fn($q) => $q->where('slug', $category_slug));
+                }
+            })
             ->get();
-        $active_brands = collect();
-        foreach ($brands as $brand) {
-            if ($brand->products->count() > 0) {
-                $active_brands->push($brand);
-            }
-        }
-        $brands = ClientBrandResource::collection($active_brands);
+
+        $brands = ClientBrandResource::collection($brands);
         return $this->apiSuccess('List of active brands', $brands);
     }
 

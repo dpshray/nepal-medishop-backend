@@ -1322,6 +1322,16 @@
                             "type": "string",
                             "example": "pfizer"
                         }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "slug of a category to search.('empty' to fetch all data)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "pfizer"
+                        }
                     }
                 ],
                 "responses": {
