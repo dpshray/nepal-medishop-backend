@@ -383,7 +383,6 @@ class AdminProductController extends Controller
                                 'units_in_stock' => $variation['variant_stock'],
                                 'expiry_date' => $variation['variant_expiry_date'],
                                 'batch_number' => $variation['variant_batch_no'],
-                                'manufacture' => $variation['variant_manufacturer'],
                             ]
                         );
                 } else {
