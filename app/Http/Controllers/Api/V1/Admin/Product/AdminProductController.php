@@ -325,41 +325,89 @@ class AdminProductController extends Controller
      */
     public function update(ProductUpdateRequest $request, Product $product)
     {
-        // dd($request->validated());
-        // Log::info($request->validated());
         DB::transaction(function () use ($request, $product) {
             $data = $request->safe()->merge(['updated_by' => Auth::id()])->all();
             $product->update($data);
             $product->categories()->sync($request->categories);
             $product->tags()->sync($request->tags);
             $product->healthConditions()->sync($request->health_condition);
-            $variation_to_avoid = $request->collect('variations')->pluck('variation_id')->filter(fn($item) => $item)->all();
+
+            // Get the product vendor for this product and current user
+            $pv = $product->productVendors()->where('vendor_id', Auth::id())->first();
+
+            // If no product vendor exists, create one
+            if (!$pv) {
+                $pv = $product->productVendors()->create([
+                    'is_approved' => true,
+                    'vendor_id' => Auth::id()
+                ]);
+            }
+
+            // Collect variant IDs to keep
+            $variation_to_avoid = $request->collect('variations')
+                ->pluck('variant_id')
+                ->filter(fn($item) => $item)
+                ->all();
+
+            // Delete variations that are not in the request
             $product->variations()
                 ->when(!empty($variation_to_avoid), fn($qry) => $qry->whereNotIn('id', $variation_to_avoid))
                 ->delete();
+
             foreach ($request->variations as $variation) {
-                if (array_key_exists('variation_id', $variation) && !empty($variation['variation_id'])) {
-                    $product_variation = $product->variations()->firstWhere('id', $variation['variation_id']);
+                if (array_key_exists('variant_id', $variation) && !empty($variation['variant_id'])) {
+                    // Update existing variation
+                    $product_variation = $product->variations()->find($variation['variant_id']);
+
                     if (empty($product_variation)) {
                         throw new NotFoundHttpException("Variant could not be found of this product");
                     }
-                    // $product_variation->update($variation);
+
+                    // Update the variation
                     $product_variation->update([
                         'name'   => $variation['variant_name'],
                         'size_value'  => $variation['variant_stock'],
                         'size_unit'   => $variation['variant_unit'],
                         'platform_price'  => $variation['variant_price'],
                     ]);
+
+                    // Update or create vendor product prices
+                    $product_variation->vendorProductPrices()
+                        ->updateOrCreate(
+                            [
+                                'product_vendor_id' => $pv->id,
+                                'product_variation_id' => $product_variation->id,
+                            ],
+                            [
+                                'price' => $variation['variant_price'],
+                                'units_in_stock' => $variation['variant_stock'],
+                                'expiry_date' => $variation['variant_expiry_date'],
+                                'batch_number' => $variation['variant_batch_no'],
+                                'manufacture' => $variation['variant_manufacturer'],
+                            ]
+                        );
                 } else {
-                    // $product->variations()->create($variation);
-                    $product->variations()->create([
+                    // Create new variation
+                    $newVariation = $product->variations()->create([
                         'name'   => $variation['variant_name'],
                         'size_value'  => $variation['variant_stock'],
                         'size_unit'   => $variation['variant_unit'],
                         'platform_price'  => $variation['variant_price'],
                     ]);
+
+                    // Create vendor product prices with proper foreign keys
+                    $newVariation->vendorProductPrices()->create([
+                        'product_vendor_id' => $pv->id,
+                        'product_variation_id' => $newVariation->id,
+                        'units_in_stock' => $variation['variant_stock'],
+                        'expiry_date' => $variation['variant_expiry_date'],
+                        'batch_number' => $variation['variant_batch_no'],
+                        'manufacture' => $variation['variant_manufacturer'],
+                        'price' => $variation['variant_price']
+                    ]);
                 }
             }
+
             if ($request->hasFile('featured_image')) {
                 $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
             }

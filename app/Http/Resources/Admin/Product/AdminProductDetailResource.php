@@ -27,6 +27,7 @@ class AdminProductDetailResource extends JsonResource
                 'generic_product_name' => $this->genericProductName->name,
                 'generic_product_id' => $this->genericProductName->id
             ],
+            'discount_percent' => $this->discount_percent,
             'description' => $this->description,
             'added_date' => $this->created_at,
             'prescription_required' => (bool) $this->prescription_required,
