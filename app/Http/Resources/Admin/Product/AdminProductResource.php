@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Product;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,10 @@ class AdminProductResource extends JsonResource
             'name' => $this->name,
             'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
             'generic' => $this->whenLoaded('genericProductName', fn() => $this->genericProductName->name),
+            'featured_image' => $this->whenLoaded('media', fn() => [
+                'id' => $this->getFirstMedia(Product::PRODUCT_FEATURE)->id,
+                'url' => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)
+            ]),
             'health_conditions' => $this->whenLoaded('healthConditions', function () {
                 return $this->healthConditions->map(fn($item) => [
                     'name' => $item->name,

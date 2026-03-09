@@ -20,10 +20,15 @@ class UserGrievanceListResource extends JsonResource
             "uuid" => $this->uuid,
             "status" => $this->status,
             "subject" => $this->subject,
-            "submitted_at" => $this->created_at->format('Y-m-d'),
+            "submitted_at" => $this->created_at->format('Y-m-d H:i:s'),
+            "status_updated_at" => $this->updated_at->format('Y-m-d H:i:s'),
+            "time_to_resolve" => $this->status === \App\Enums\GrievanceEnum::RESOLVED
+                ? $this->created_at->diffForHumans($this->updated_at, true)
+                : null,
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
+            "detail" => $this->detail,
             'images' => $this->getMedia(Grievance::GRIEVANCE_IMAGE)->map->getUrl(),
         ];
     }

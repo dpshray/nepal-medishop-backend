@@ -24,7 +24,11 @@ class UserGrievanceDetailResource extends JsonResource
             "phone" => $this->phone,
             "subject" => $this->subject,
             "detail" => $this->detail,
-            "created_at" => $this->created_at,
+            "submitted_at" => $this->created_at->format('Y-m-d H:i:s'),
+            "status_updated_at" => $this->updated_at->format('Y-m-d H:i:s'),
+            "time_to_resolve" => $this->status === \App\Enums\GrievanceEnum::RESOLVED
+                ? $this->created_at->diffForHumans($this->updated_at, true)
+                : null,
             'images' => $this->getMedia(Grievance::GRIEVANCE_IMAGE)->map->getUrl(),
         ];
     }

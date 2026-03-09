@@ -19,7 +19,7 @@ class AdminGrievanceController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->query('per_page');
-        $search = $request->query('search');   
+        $search = $request->query('search');
         $pagination = Grievance::when($search, function ($query, $search) {
             $query->where('subject', 'like', "%{$search}%");
         })->orderByDesc('created_at')->paginate($per_page ?? 10);
@@ -34,9 +34,9 @@ class AdminGrievanceController extends Controller
     public function updateGrievanceStatus(Request $request, Grievance $grievance)
     {
         $status = GrievanceEnum::tryFrom($request->input('status'));
-       
+
         $request->validate([
-            'status' => 'required|in:PENDING,UNDER_PROCESS,RESOLVED' ,
+            'status' => 'required|in:PENDING,UNDER_PROCESS,RESOLVED',
             'remarks' => 'nullable|string',
         ]);
 

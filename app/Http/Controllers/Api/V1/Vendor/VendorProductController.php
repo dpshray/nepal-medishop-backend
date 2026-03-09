@@ -95,7 +95,7 @@ class VendorProductController extends Controller
         $per_page = $request->query('per_page', Product::count());
         $search = $request->query('search');
         $pagination = Product::with(['brand', 'variations'])
-            ->when($search, fn($qry) => $qry->whereLike('name', '%'.$search.'%'))
+            ->when($search, fn($qry) => $qry->whereLike('name', '%' . $search . '%'))
             ->active()
             ->latest()
             ->paginate($per_page);
@@ -151,7 +151,8 @@ class VendorProductController extends Controller
      *     )
      * )
      */
-    function productVariants(Product $product) {
+    function productVariants(Product $product)
+    {
         $variants = $product->variations;
         $data = VendorProductVariantResource::collection($variants);
         return $this->apiSuccess('Product variants.', $data);
@@ -228,16 +229,17 @@ class VendorProductController extends Controller
      *     )
      * )
      */
-    function vendorProductList(Request $request) {
+    function vendorProductList(Request $request)
+    {
         $per_page = $request->query('per_page', Auth::user()->vendor->vendorProducts->count());
         $search = $request->query('search');
         $pagination = Auth::user()->vendor
             ->vendorProducts()
             ->with(['product.brand', 'vendorPrices.variation'])
             ->has('product') #if product is deleted
-            ->when($search, fn($qry) => $qry->wherehas('product', fn($qry) => $qry->whereLike('name', '%'.$search.'%')))
+            ->when($search, fn($qry) => $qry->wherehas('product', fn($qry) => $qry->whereLike('name', '%' . $search . '%')))
             ->latest('updated_at')
-            ->orderBy('id','DESC')
+            ->orderBy('id', 'DESC')
             ->paginate($per_page);
         // Log::info($pagination);
         $data = $this->makePaginationResponse($pagination, fn($item) => VendorStockedProductListResource::collection($item))->data;
@@ -293,11 +295,6 @@ class VendorProductController extends Controller
      *                         example=100
      *                     ),
      *                     @OA\Property(
-     *                         property="variant_manufacturer",
-     *                         type="string",
-     *                         example="some menufacture detail goes here"
-     *                     ),                     
-     *                     @OA\Property(
      *                         property="variant_batch_no",
      *                         type="string",
      *                         example="12ED311"
@@ -332,17 +329,16 @@ class VendorProductController extends Controller
         if ($variation_not_exists) {
             return $this->apiError('Variation does not belong to this product');
         }
-        DB::transaction(function () use($form_data, $product){
+        DB::transaction(function () use ($form_data, $product) {
             $product_vendor_prices = array_map(function ($variation) {
-                    return [
-                        'product_variation_id' => $variation['product_variation_id'],
-                        'units_in_stock' => $variation['units_in_stock'],
-                        'price' => $variation['price'],
-                        'manufacture' => $variation['variant_manufacturer'],
-                        'batch_number' => $variation['variant_batch_no'],
-                        'expiry_date' => $variation['variant_expiry_date'],
-                    ];
-                }, $form_data['variations']);
+                return [
+                    'product_variation_id' => $variation['product_variation_id'],
+                    'units_in_stock' => $variation['units_in_stock'],
+                    'price' => $variation['price'],
+                    'batch_number' => $variation['variant_batch_no'],
+                    'expiry_date' => $variation['variant_expiry_date'],
+                ];
+            }, $form_data['variations']);
 
             Auth::user()->vendor
                 ->vendorProducts()->create([
@@ -424,7 +420,6 @@ class VendorProductController extends Controller
      *                         @OA\Property(property="units_in_stock", type="integer", example=130),
      *                         @OA\Property(property="vendor_price", type="number", example=2451),
      *                         @OA\Property(property="batch_number", type="integer", example=633036334),
-     *                         @OA\Property(property="manufacture", type="string", example="5368 Elna Viaduct Apt. 594\nSouth Leilanifurt, LA 59129"),
      *                         @OA\Property(property="expiry_date", type="string", format="date", example="2027-11-24")
      *                     )
      *                 )
@@ -434,7 +429,8 @@ class VendorProductController extends Controller
      *     )
      * )
      */
-    function vendorProductDetail(Product $product) {
+    function vendorProductDetail(Product $product)
+    {
         if (empty($product)) {
             return $this->apiError('Product could not be found/already been deleted.');
         }
@@ -447,7 +443,7 @@ class VendorProductController extends Controller
             $this->apiError('product is not associated to vendor.');
         }
         $data = new AdminVendorProductDetailResource($data);
-        return $this->apiSuccess('Vendor product list detail.', $data); 
+        return $this->apiSuccess('Vendor product list detail.', $data);
     }
 
     /**
@@ -476,7 +472,8 @@ class VendorProductController extends Controller
      *     )
      * )
      */
-    function vendorProductRemover(Product $product) {
+    function vendorProductRemover(Product $product)
+    {
         $product_id = $product->id;
         $vendor_product = Auth::user()->vendor
             ->vendorProducts()
