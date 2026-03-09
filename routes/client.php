@@ -25,8 +25,12 @@ use App\Http\Controllers\Api\V1\Client\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(MasterDataController::class)->group(function () {
-    Route::get('get-brand-list', 'fetchAllActiveBrand');
-    Route::get('get-category-list', 'fetchAllActiveCategory');
+    Route::get('get-brand-list', 'fetchAllBrand');
+    Route::get('get-active-brand-list', 'fetchAllActiveBrand');
+
+    Route::get('get-category-list', 'fetchAllCategory');
+    Route::get('get-active-category-list', 'fetchAllActiveCategory');
+
     Route::get('get-health-condition-list', 'fetchAllHealthCondition');
     Route::get('products', 'fetchProducts');
     Route::get('product/{product:slug}', 'fetchProductDetail');
