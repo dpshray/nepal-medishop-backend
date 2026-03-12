@@ -108,4 +108,6 @@ Route::prefix('admin')
         Route::delete('grievance/{grievance:uuid}', [AdminGrievanceController::class, 'destroy']);
 
         Route::post('ncm/assign-to-ncm/{uuid}', [AdminNCMOrderController::class, 'assign_to_ncm']);
+
+        Route::delete('product/{product_uuid}/media/{media_id}', [AdminProductController::class, 'deleteProductMedia']);
     });

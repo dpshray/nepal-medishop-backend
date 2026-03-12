@@ -171,7 +171,7 @@ class ClientCartController extends Controller
 
     private function getUserCartItems()
     {
-        $cart_items = Auth::user()->cart()->get()->groupBy('item_type');
+        $cart_items = Auth::user()->cart()->with(['variant'])->get()->groupBy('item_type');
         $product_items = $cart_items->get(Product::class)?->groupBy('item_id');
         $merged1 = [];
         if ($product_items) {
@@ -228,7 +228,9 @@ class ClientCartController extends Controller
                     "item_name" => $item['item_name'],
                     "item_slug" => $item['item_slug'],
                     "brand_name" => $item['brand_name'],
-                    "variant_name" => $item['variant_name'],
+                    "variant_name" => $item['variant']['strength'] ?? null,
+                    "form_type" => $item['variant']['form_type'] ?? null,
+                    "package_type" => $item['variant']['package_type'] ?? null,
                     "isPrescriptionRequired" => (bool) $item->item->prescription_required,
                     "image" => $item['image'],
                     "variant_id" => empty($item['variant_id']) ? null : (int) $item['variant_id'],

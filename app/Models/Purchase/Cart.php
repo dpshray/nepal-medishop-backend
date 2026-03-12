@@ -4,6 +4,7 @@ namespace App\Models\Purchase;
 
 use App\Models\Package;
 use App\Models\Product;
+use App\Models\ProductVariation;
 use App\Models\Traits\UuidModelTrait;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -31,12 +32,27 @@ class Cart extends Model
         'created_at'
     ];
 
-    function user() {
+    function user()
+    {
         return $this->belongsTo(User::class);
     }
 
     public function item()
     {
         return $this->morphTo();
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
+    function variant()
+    {
+        return $this->belongsTo(ProductVariation::class);
     }
 }

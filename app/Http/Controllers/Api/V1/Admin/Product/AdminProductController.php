@@ -191,10 +191,14 @@ class AdminProductController extends Controller
 
             collect($request->variations)->each(function ($item) use ($product, $pv) {
                 $product->variations()->create([
-                    'name' => $item['variant_name'],
+                    'name' => $item['variant_name'] ?? null,
                     'platform_price' => $item['variant_price'],
                     'size_value' => $item['variant_stock'],
                     'size_unit' => $item['variant_unit'],
+                    'form_type' => $item['variant_form_type'],
+                    'package_type' => $item['variant_package_type'],
+                    'package_size' => $item['variant_package_size'],
+                    'strength' => $item['variant_strength'],
                 ])->vendorProductPrices()->create([
                     'product_vendor_id' => $pv->id,
                     'units_in_stock' => $item["variant_stock"],
@@ -365,10 +369,14 @@ class AdminProductController extends Controller
 
                     // Update the variation
                     $product_variation->update([
-                        'name'   => $variation['variant_name'],
+                        'name'   => $variation['variant_name'] ?? null,
                         'size_value'  => $variation['variant_stock'],
                         'size_unit'   => $variation['variant_unit'],
                         'platform_price'  => $variation['variant_price'],
+                        'form_type' => $variation['variant_form_type'],
+                        'package_type' => $variation['variant_package_type'],
+                        'package_size' => $variation['variant_package_size'],
+                        'strength' => $variation['variant_strength'],
                     ]);
 
                     // Update or create vendor product prices
@@ -388,10 +396,14 @@ class AdminProductController extends Controller
                 } else {
                     // Create new variation
                     $newVariation = $product->variations()->create([
-                        'name'   => $variation['variant_name'],
+                        'name'   => $variation['variant_name'] ?? null,
                         'size_value'  => $variation['variant_stock'],
                         'size_unit'   => $variation['variant_unit'],
                         'platform_price'  => $variation['variant_price'],
+                        'form_type' => $variation['variant_form_type'],
+                        'package_type' => $variation['variant_package_type'],
+                        'package_size' => $variation['variant_package_size'],
+                        'strength' => $variation['variant_strength'],
                     ]);
 
                     // Create vendor product prices with proper foreign keys
@@ -401,7 +413,6 @@ class AdminProductController extends Controller
                         'units_in_stock' => $variation['variant_stock'],
                         'expiry_date' => $variation['variant_expiry_date'],
                         'batch_number' => $variation['variant_batch_no'],
-                        'manufacture' => $variation['variant_manufacturer'],
                         'price' => $variation['variant_price']
                     ]);
                 }
@@ -608,5 +619,11 @@ class AdminProductController extends Controller
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => VendorProductAssociationListResource::collection($items))->data;
         return $this->apiSuccess('Vendor list associated with this product', $data);
+    }
+    function deleteProductMedia($product_uuid, $media_id)
+    {
+        $product = Product::where('uuid', $product_uuid)->first();
+        $product->media()->where('id', $media_id)->delete();
+        return $this->apiSuccess('Product media deleted successfully.');
     }
 }
