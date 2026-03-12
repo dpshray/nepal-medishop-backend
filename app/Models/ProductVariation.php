@@ -25,7 +25,11 @@ class ProductVariation extends Model
         'platform_price',
         'platform_discount_price',
         'batch_number',
-        'expiry_date'
+        'expiry_date',
+        'form_type',
+        'package_type',
+        'package_size',
+        'strength',
     ];
 
     function product()

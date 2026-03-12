@@ -168,7 +168,8 @@ class ClientOrderController extends Controller
                 'product.reviews' => fn($qry) => $qry->with('user')->where('user_id', Auth::id()),
                 'package.reviews' => fn($qry) => $qry->with('user')->where('user_id', Auth::id()),
             ],
-            'promoCode'
+            'promoCode',
+            'orderItems.productVariant'
         ]);
         $order = new UserOrderDetailResource($order);
         return $this->apiSuccess('Order Detail.', $order);

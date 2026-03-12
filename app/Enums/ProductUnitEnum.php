@@ -10,7 +10,7 @@ enum ProductUnitEnum: string
     case ML = 'ml';
     case L = 'l';
     case IU = 'IU';
-    case TABLET = 'tablet';
+    case TABLETS = 'tablets';
     case CAPSULE = 'capsule';
     case SACHET = 'sachet';
     case STRIP = 'strip';

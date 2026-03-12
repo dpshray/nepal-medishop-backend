@@ -36,10 +36,14 @@ class AdminProductResource extends JsonResource
             'variations' => $this->whenLoaded('variations', function () {
                 return $this->variations->map(fn($item) => [
                     'id'         => $item->id,
-                    'name'       => $item->name,
+                    // 'name'       => $item->name,
                     'size_value' => (float) $item->size_value,
                     'size_unit'  => $item->size_unit,
                     'platform_price' => (float) $item->platform_price,
+                    'form_type' => $item?->form_type,
+                    'package_type' => $item?->package_type,
+                    'package_size' => $item?->package_size,
+                    'strength' => $item?->strength,
                 ]);
             })
 
