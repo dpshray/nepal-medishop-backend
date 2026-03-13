@@ -301,7 +301,9 @@ class OrderService
                 if ($item->item_type == Product::class) {
                     return [
                         'item_name' => $item->product->name,
-                        'variant_name' => $item->product->variations->firstWhere('id', $item->item_variant_id)->name,
+                        'variant_name' => $item->product->variations->firstWhere('id', $item->item_variant_id)?->strength,
+                        'form_type' => $item->product->variations->firstWhere('id', $item->item_variant_id)?->form_type,
+                        'package_type' => $item->product->variations->firstWhere('id', $item->item_variant_id)?->package_type . ' ' . $item->product->variations->firstWhere('id', $item->item_variant_id)?->package_size . ' ' . $item->product->variations->firstWhere('id', $item->item_variant_id)?->size_unit,
                         'quantity' => (int) $item->quantity,
                         'price' => (float) $item->price,
                         'total' => (float) $item->total,
