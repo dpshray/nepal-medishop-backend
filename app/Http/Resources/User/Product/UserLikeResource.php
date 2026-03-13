@@ -35,13 +35,16 @@ class UserLikeResource extends JsonResource
             'liked' => $this->whenLoaded('likes', fn() => $product->likes->count() ? true : false),
             'isPrescriptionRequired' => (bool)$product->prescription_required,
             'variations' => $product->variations->map(
-                function ($item) use($product) {
+                function ($item) use ($product) {
                     ['price' => $v_price, 'previous_price' => $v_previous_price] = $item->original_price;
                     return [
                         'variation_id' => $item->id,
                         'name' => $item->name,
-                        'size_value' => (float)$item->size_value,
-                        'size_unit' => $item->size_unit,
+                        'size_value' => (float)$item?->size_value,
+                        'size_unit' => $item?->size_unit,
+                        'form_type' => $item?->form_type,
+                        'package_type' => $item?->package_type . ' ' . $item?->package_size . ' ' . $item?->size_unit,
+                        'strength' => $item?->strength,
                         'price' => $v_price,
                         'previous_price' => $v_previous_price,
                         'stock' => $item->vendorProductPrices->sum('units_in_stock'),
