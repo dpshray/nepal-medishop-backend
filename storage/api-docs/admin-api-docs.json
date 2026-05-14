@@ -4606,24 +4606,50 @@
                 "tags": [
                     "Product"
                 ],
-                "summary": "Store a newly created product",
-                "description": "Store a newly created product.",
+                "summary": "Create Product",
+                "description": "Create a new product with variations, categories, tags, health conditions and images",
                 "operationId": "ProductStore",
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
+                                    "brand_id",
                                     "name",
                                     "categories",
                                     "tags",
-                                    "variations"
+                                    "health_condition",
+                                    "variations",
+                                    "generic_product_name_id",
+                                    "featured_image",
+                                    "gallery_images"
                                 ],
                                 "properties": {
+                                    "brand_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
                                     "name": {
                                         "type": "string",
-                                        "example": "Product Name"
+                                        "example": "Paracetamol"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Pain relief medicine"
+                                    },
+                                    "generic_product_name_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "prescription_required": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "discount_percent": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10
                                     },
                                     "categories": {
                                         "type": "array",
@@ -4645,22 +4671,77 @@
                                             2
                                         ]
                                     },
+                                    "health_condition": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            3
+                                        ]
+                                    },
+                                    "featured_image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "gallery_images[]": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
                                     "variations": {
                                         "type": "array",
                                         "items": {
                                             "properties": {
-                                                "name": {
+                                                "variant_name": {
                                                     "type": "string",
-                                                    "example": "Variation Name"
+                                                    "example": "500mg"
                                                 },
-                                                "price": {
-                                                    "type": "number",
-                                                    "format": "float",
+                                                "variant_stock": {
+                                                    "type": "integer",
                                                     "example": 100
                                                 },
-                                                "stock": {
-                                                    "type": "integer",
-                                                    "example": 10
+                                                "variant_unit": {
+                                                    "type": "string",
+                                                    "example": "tablet"
+                                                },
+                                                "variant_price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 120
+                                                },
+                                                "discount_percent": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 5
+                                                },
+                                                "variant_batch_no": {
+                                                    "type": "string",
+                                                    "example": "BATCH-1001"
+                                                },
+                                                "variant_expiry_date": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2027-12-31"
+                                                },
+                                                "variant_form_type": {
+                                                    "type": "string",
+                                                    "example": "Tablet"
+                                                },
+                                                "variant_package_type": {
+                                                    "type": "string",
+                                                    "example": "Box"
+                                                },
+                                                "variant_package_size": {
+                                                    "type": "string",
+                                                    "example": "10 Tablets"
+                                                },
+                                                "variant_strength": {
+                                                    "type": "string",
+                                                    "example": "500mg"
                                                 }
                                             },
                                             "type": "object"
@@ -4679,19 +4760,22 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
                                         "message": {
                                             "type": "string",
                                             "example": "Product created successfully"
-                                        },
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "description": "Validation Error"
                     }
                 },
                 "security": [

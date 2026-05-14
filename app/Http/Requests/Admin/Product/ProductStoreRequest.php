@@ -30,7 +30,7 @@ class ProductStoreRequest extends FormRequest
         $rules = [
             'brand_id' => 'required|exists:brands,id',
             'name' => 'required|unique:products,name,' . $product_id,
-            'description' => 'sometimes',
+            'description' => 'sometimes|string|max:10000',
             'categories' => 'required|array',
             'categories.*' => 'distinct|exists:categories,id',
             'tags' => 'required|array',
@@ -56,9 +56,9 @@ class ProductStoreRequest extends FormRequest
         ];
         if ($product_id == null) {
             $rules = array_merge($rules, [
-                'featured_image' => 'required|image|exclude',
-                'gallery_images' => 'required|array|exclude',
-                'gallery_images.*' => 'image'
+                'featured_image' => 'required|image|mimes:jpeg,jpg,png,webp|max:5000|exclude',
+                'gallery_images'   => 'required|array|max:10|exclude',
+                'gallery_images.*' => 'image|mimes:jpeg,jpg,png,webp|max:5000',
             ]);
         }
         return $rules;
@@ -85,12 +85,32 @@ class ProductStoreRequest extends FormRequest
     function prepareForValidation()
     {
         $converted = array_map(function ($item) {
-            return is_array($item) ? $item : json_decode($item, true);
-        }, $this->variations);
+            $item = is_array($item) ? $item : json_decode($item, true);
+
+            foreach (
+                [
+                    'variant_name',
+                    'variant_form_type',
+                    'variant_package_type',
+                    'variant_package_size',
+                    'variant_strength',
+                    'variant_batch_no'
+                ] as $field
+            ) {
+                if (isset($item[$field])) {
+                    $item[$field] = strip_tags(trim($item[$field]));
+                }
+            }
+            return $item;
+        }, $this->variations ?? []);
+
         $this->merge(['variations' => $converted]);
 
         $this->merge([
-            'prescription_required' => filter_var($this->prescription_required, FILTER_VALIDATE_BOOLEAN) ? 1 : 0
+            'prescription_required' => filter_var(
+                $this->prescription_required,
+                FILTER_VALIDATE_BOOLEAN
+            ) ? 1 : 0
         ]);
     }
 }

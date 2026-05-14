@@ -153,30 +153,210 @@ class AdminProductController extends Controller
      */
     /**
      * @OA\Post(
-     *     security={{"sanctum": {}}},
      *     path="/admin/product",
-     *     summary="Store a newly created product",
-     *     description="Store a newly created product.",
+     *     summary="Create Product",
+     *     description="Create a new product with variations, categories, tags, health conditions and images",
      *     operationId="ProductStore",
      *     tags={"Product"},
+     *     security={{"sanctum":{}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name", "categories", "tags", "variations"},
-     *             @OA\Property(property="name", type="string", example="Product Name"),
-     *             @OA\Property(property="categories", type="array", @OA\Items(type="integer"), example={1, 2}),
-     *             @OA\Property(property="tags", type="array", @OA\Items(type="integer"), example={1, 2}),
-     *             @OA\Property(property="variations", type="array", @OA\Items(type="object", @OA\Property(property="name", type="string", example="Variation Name"), @OA\Property(property="price", type="number", format="float", example=100), @OA\Property(property="stock", type="integer", example=10)))
+     *
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *
+     *             @OA\Schema(
+     *                 required={
+     *                     "brand_id",
+     *                     "name",
+     *                     "categories",
+     *                     "tags",
+     *                     "health_condition",
+     *                     "variations",
+     *                     "generic_product_name_id",
+     *                     "featured_image",
+     *                     "gallery_images"
+     *                 },
+     *
+     *                 @OA\Property(
+     *                     property="brand_id",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                     example="Paracetamol"
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="description",
+     *                     type="string",
+     *                     example="Pain relief medicine"
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="generic_product_name_id",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="prescription_required",
+     *                     type="boolean",
+     *                     example=true
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="discount_percent",
+     *                     type="number",
+     *                     format="float",
+     *                     example=10
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="categories",
+     *                     type="array",
+     *                     @OA\Items(type="integer"),
+     *                     example={1,2}
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="tags",
+     *                     type="array",
+     *                     @OA\Items(type="integer"),
+     *                     example={1,2}
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="health_condition",
+     *                     type="array",
+     *                     @OA\Items(type="integer"),
+     *                     example={1,3}
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="featured_image",
+     *                     type="string",
+     *                     format="binary"
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="gallery_images[]",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string",
+     *                         format="binary"
+     *                     )
+     *                 ),
+     *
+     *                 @OA\Property(
+     *                     property="variations",
+     *                     type="array",
+     *
+     *                     @OA\Items(
+     *                         type="object",
+     *
+     *                         @OA\Property(
+     *                             property="variant_name",
+     *                             type="string",
+     *                             example="500mg"
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_stock",
+     *                             type="integer",
+     *                             example=100
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_unit",
+     *                             type="string",
+     *                             example="tablet"
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_price",
+     *                             type="number",
+     *                             format="float",
+     *                             example=120
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="discount_percent",
+     *                             type="number",
+     *                             format="float",
+     *                             example=5
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_batch_no",
+     *                             type="string",
+     *                             example="BATCH-1001"
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_expiry_date",
+     *                             type="string",
+     *                             format="date",
+     *                             example="2027-12-31"
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_form_type",
+     *                             type="string",
+     *                             example="Tablet"
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_package_type",
+     *                             type="string",
+     *                             example="Box"
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_package_size",
+     *                             type="string",
+     *                             example="10 Tablets"
+     *                         ),
+     *
+     *                         @OA\Property(
+     *                             property="variant_strength",
+     *                             type="string",
+     *                             example="500mg"
+     *                         )
+     *                     )
+     *                 )
+     *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Product created successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="Product created successfully"),
-     *             @OA\Property(property="success", type="boolean", example=true)
+     *
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="boolean",
+     *                 example=true
+     *             ),
+     *
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Product created successfully"
+     *             )
      *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Error"
      *     )
      * )
      */
@@ -622,8 +802,14 @@ class AdminProductController extends Controller
     }
     function deleteProductMedia($product_uuid, $media_id)
     {
-        $product = Product::where('uuid', $product_uuid)->first();
-        $product->media()->where('id', $media_id)->delete();
+        $product = Product::where('uuid', $product_uuid)->firstOrFail();
+
+        $deleted = $product->media()->where('id', $media_id)->delete();
+
+        if (!$deleted) {
+            return $this->apiError('Media not found for this product.', 404);
+        }
+
         return $this->apiSuccess('Product media deleted successfully.');
     }
 }
