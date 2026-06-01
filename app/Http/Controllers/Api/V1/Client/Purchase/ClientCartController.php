@@ -115,7 +115,7 @@ class ClientCartController extends Controller
                 'previous_price' => empty($product_discount) ? null : $product_actual_price,
                 'subtotal' => $price * $request->quantity,
                 'created_at' => now(),
-                'image' => $product_variation->getFirstMedia(ProductVariation::VARIATION_IMAGE)->getUrl()
+                'image' => $product_variation->getFirstMedia(ProductVariation::VARIATION_IMAGE)->getUrl() ?? $product_w_variant->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl(),
             ])->all();
         } elseif ($request->has(["slug", "quantity"])) { #Package
             $package = Package::where('slug', $request->slug)->firstOrFail();
@@ -162,7 +162,7 @@ class ClientCartController extends Controller
                 'previous_price' => empty($product_discount) ? null : $product_actual_price,
                 'subtotal' => $price * $quantity,
                 'created_at' => now(),
-                'image' => $product_variation->getFirstMedia(ProductVariation::VARIATION_IMAGE)->getUrl()
+                'image' => $product_variation->getFirstMedia(ProductVariation::VARIATION_IMAGE)->getUrl() ?? $product_w_variant->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()
             ])->all();
         }
         Cart::create($cart);
