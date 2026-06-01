@@ -17,7 +17,8 @@ class KitbagCardResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
-        $price = $this->variation->platform_price - ($this->variation->platform_price * ($this->product->discount_percent / 100));
+        $price = $this->variation->platform_price -
+            ($this->variation->platform_price * (($this->product->discount_percent ?? 0) / 100));
         return [
             "item_uuid" => $this->uuid,
             "item_name" => $this->product->name,
