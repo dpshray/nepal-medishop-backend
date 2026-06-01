@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User\Product\Card;
 
 use App\Models\Product;
+use App\Models\ProductVariation;
 use App\Traits\HelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -50,6 +51,7 @@ class ProductCardResource extends JsonResource
                     'price' => $price,
                     'previous_price' => $previous_price,
                     'stock' => $item->vendorProductPrices->sum('units_in_stock'),
+                    'image' => $item->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
                 ];
             }))
         ];

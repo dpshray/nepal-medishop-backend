@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\Product;
 
 use App\Models\Product;
+use App\Models\ProductVariation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -44,6 +45,7 @@ class AdminProductResource extends JsonResource
                     'package_type' => $item?->package_type,
                     'package_size' => $item?->package_size,
                     'strength' => $item?->strength,
+                    'image' => $item?->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
                 ]);
             })
 

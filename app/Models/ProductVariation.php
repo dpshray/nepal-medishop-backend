@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class ProductVariation extends Model
+class ProductVariation extends Model implements HasMedia
 {
-    use SoftDeletes;
+    use SoftDeletes, InteractsWithMedia;
     protected $dates = ['deleted_at'];
     public $timestamps = false;
+    const VARIATION_IMAGE = 'VARIATION_IMAGE';
 
     protected function casts(): array
     {
@@ -19,6 +22,7 @@ class ProductVariation extends Model
     }
 
     protected $fillable = [
+        'product_id',
         'name',
         'size_value',
         'size_unit',
@@ -64,5 +68,9 @@ class ProductVariation extends Model
     function vendorProductPrice()
     {
         return $this->hasOne(VendorProductPrice::class, 'product_variation_id');
+    }
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(self::VARIATION_IMAGE)->useFallbackUrl(asset('assets/img/default-brand-category.png'))->singleFile();
     }
 }

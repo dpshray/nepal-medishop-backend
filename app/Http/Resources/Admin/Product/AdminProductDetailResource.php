@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Admin\Product;
 
 use App\Models\Product;
+use App\Models\ProductVariation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
@@ -50,6 +51,7 @@ class AdminProductDetailResource extends JsonResource
                     'variant_strength' => $itm->variation?->strength,
                     "batch_number" => $itm->batch_number,
                     "expiry_date" => $itm->expiry_date,
+                    'variant_image' => $itm->variation?->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
                 ])
             )->values(),
             'health_conditions' => $this->healthConditions->map(fn($item) => ['name' => $item->name, 'id' => $item->id]),
@@ -57,10 +59,10 @@ class AdminProductDetailResource extends JsonResource
                 'id' => $this->getFirstMedia(Product::PRODUCT_FEATURE)->id,
                 'url' => $this->getFirstMediaUrl(Product::PRODUCT_FEATURE)
             ]),
-            'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Product::PRODUCT_GALLERY)->map(fn($item) => [
-                'id' => $item->id,
-                'url' => $item->getUrl()
-            ])),
+            // 'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Product::PRODUCT_GALLERY)->map(fn($item) => [
+            //     'id' => $item->id,
+            //     'url' => $item->getUrl()
+            // ])),
 
         ];
     }
