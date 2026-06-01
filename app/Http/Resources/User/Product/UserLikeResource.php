@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User\Product;
 
 use App\Models\Product;
+use App\Models\ProductVariation;
 use App\Traits\HelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -47,6 +48,7 @@ class UserLikeResource extends JsonResource
                         'strength' => $item?->strength,
                         'price' => $v_price,
                         'previous_price' => $v_previous_price,
+                        'image' => $item->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
                         'stock' => $item->vendorProductPrices->sum('units_in_stock'),
                     ];
                 }

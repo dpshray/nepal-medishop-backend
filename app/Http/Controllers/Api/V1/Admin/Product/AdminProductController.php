@@ -11,6 +11,8 @@ use App\Http\Resources\Admin\Product\AdminProductList;
 use App\Http\Resources\Admin\Product\AdminProductResource;
 use App\Http\Resources\Vendor\Product\VendorProductAssociationListResource;
 use App\Models\Product;
+use App\Models\ProductVariation;
+use App\Models\VendorProductPrice;
 use App\Traits\PaginationTrait;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -160,178 +162,183 @@ class AdminProductController extends Controller
      *     tags={"Product"},
      *     security={{"sanctum":{}}},
      *
-     *     @OA\RequestBody(
-     *         required=true,
+     *    @OA\RequestBody(
+     *     required=true,
      *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *   @OA\MediaType(
+     *      mediaType="multipart/form-data",
      *
-     *             @OA\Schema(
-     *                 required={
-     *                     "brand_id",
-     *                     "name",
-     *                     "categories",
-     *                     "tags",
-     *                     "health_condition",
-     *                     "variations",
-     *                     "generic_product_name_id",
-     *                     "featured_image",
-     *                     "gallery_images"
-     *                 },
+     *       @OA\Schema(
+     *          type="object",
      *
-     *                 @OA\Property(
-     *                     property="brand_id",
-     *                     type="integer",
-     *                     example=1
-     *                 ),
+     *           required={
+     *              "brand_id",
+     *             "name",
+     *            "categories",
+     *           "tags",
+     *          "health_condition",
+     *         "variations",
+     *        "generic_product_name_id",
+     *       "featured_image"
+     *  },
      *
-     *                 @OA\Property(
-     *                     property="name",
-     *                     type="string",
-     *                     example="Paracetamol"
-     *                 ),
+     *           @OA\Property(
+     *              property="brand_id",
+     *             type="integer",
+     *            example=1
+     *       ),
      *
-     *                 @OA\Property(
-     *                     property="description",
-     *                     type="string",
-     *                     example="Pain relief medicine"
-     *                 ),
+     *           @OA\Property(
+     *              property="name",
+     *             type="string",
+     *            example="Paracetamol"
+     *       ),
      *
-     *                 @OA\Property(
-     *                     property="generic_product_name_id",
-     *                     type="integer",
-     *                     example=1
-     *                 ),
+     *           @OA\Property(
+     *              property="description",
+     *             type="string",
+     *            example="Pain relief medicine"
+     *       ),
      *
-     *                 @OA\Property(
-     *                     property="prescription_required",
-     *                     type="boolean",
-     *                     example=true
-     *                 ),
+     *           @OA\Property(
+     *              property="generic_product_name_id",
+     *             type="integer",
+     *            example=1
+     *       ),
      *
-     *                 @OA\Property(
-     *                     property="discount_percent",
-     *                     type="number",
-     *                     format="float",
-     *                     example=10
-     *                 ),
+     *           @OA\Property(
+     *              property="prescription_required",
+     *             type="boolean",
+     *            example=true
+     *       ),
      *
-     *                 @OA\Property(
-     *                     property="categories",
-     *                     type="array",
-     *                     @OA\Items(type="integer"),
-     *                     example={1,2}
-     *                 ),
-     *
-     *                 @OA\Property(
-     *                     property="tags",
-     *                     type="array",
-     *                     @OA\Items(type="integer"),
-     *                     example={1,2}
-     *                 ),
-     *
-     *                 @OA\Property(
-     *                     property="health_condition",
-     *                     type="array",
-     *                     @OA\Items(type="integer"),
-     *                     example={1,3}
-     *                 ),
-     *
-     *                 @OA\Property(
-     *                     property="featured_image",
-     *                     type="string",
-     *                     format="binary"
-     *                 ),
-     *
-     *                 @OA\Property(
-     *                     property="gallery_images[]",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="string",
-     *                         format="binary"
-     *                     )
-     *                 ),
-     *
-     *                 @OA\Property(
-     *                     property="variations",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(
-     *                             property="variant_name",
-     *                             type="string",
-     *                             example="500mg"
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_stock",
-     *                             type="integer",
-     *                             example=100
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_unit",
-     *                             type="string",
-     *                             example="tablet"
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_price",
-     *                             type="number",
-     *                             format="float",
-     *                             example=120
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="discount_percent",
-     *                             type="number",
-     *                             format="float",
-     *                             example=5
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_batch_no",
-     *                             type="string",
-     *                             example="BATCH-1001"
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_expiry_date",
-     *                             type="string",
-     *                             format="date",
-     *                             example="2027-12-31"
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_form_type",
-     *                             type="string",
-     *                             example="Tablet"
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_package_type",
-     *                             type="string",
-     *                             example="Box"
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_package_size",
-     *                             type="string",
-     *                             example="10 Tablets"
-     *                         ),
-     *
-     *                         @OA\Property(
-     *                             property="variant_strength",
-     *                             type="string",
-     *                             example="500mg"
-     *                         )
-     *                     )
-     *                 )
-     *             )
-     *         )
+     *           @OA\Property(
+     *              property="discount_percent",
+     *             type="number",
+     *            format="float",
+     *           example=10,
+     *          maximum=100
      *     ),
+     *
+     *           @OA\Property(
+     *              property="categories",
+     *             type="array",
+     *            @OA\Items(type="integer"),
+     *           example={1,2}
+     *      ),
+     *
+     *           @OA\Property(
+     *              property="tags",
+     *             type="array",
+     *            @OA\Items(type="integer"),
+     *           example={1,2}
+     *      ),
+     *
+     *           @OA\Property(
+     *              property="health_condition",
+     *             type="array",
+     *            @OA\Items(type="integer"),
+     *           example={1,3}
+     *      ),
+     *
+     *           @OA\Property(
+     *              property="featured_image",
+     *             type="string",
+     *            format="binary"
+     *       ),
+
+     *      @OA\Property(
+     *         property="variations",
+     *        type="array",
+     *
+     *               @OA\Items(
+     *                  type="object",
+     *
+     *                   required={
+     *                      "variant_stock",
+     *                     "variant_unit",
+     *                    "variant_price",
+     *                   "variant_batch_no",
+     *                  "variant_expiry_date",
+     *                 "variant_form_type",
+     *                "variant_package_type",
+     *               "variant_package_size",
+     *              "variant_strength"
+     *         },
+     *
+     *                   @OA\Property(
+     *                      property="variant_name",
+     *                     type="string",
+     *                    example="500mg"
+     *               ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_stock",
+     *                     type="number",
+     *                    example=100
+     *               ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_unit",
+     *                     type="string",
+     *                    example="tablet"
+     *               ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_price",
+     *                     type="number",
+     *                    format="float",
+     *                   example=120
+     *              ),
+     *
+     *                   @OA\Property(
+     *                      property="discount_percent",
+     *                     type="number",
+     *                    format="float",
+     *                   example=5
+     *              ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_batch_no",
+     *                     type="string",
+     *                    example="BATCH-1001"
+     *               ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_expiry_date",
+     *                     type="string",
+     *                    format="date",
+     *                   example="2027-12-31"
+     *              ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_form_type",
+     *                     type="string",
+     *                    example="Tablet"
+     *               ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_package_type",
+     *                     type="string",
+     *                    example="Box"
+     *               ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_package_size",
+     *                     type="string",
+     *                    example="10 Tablets"
+     *               ),
+     *
+     *                   @OA\Property(
+     *                      property="variant_strength",
+     *                     type="string",
+     *                    example="500mg"
+     *               )
+     *          )
+     *     )
+     *)
+     * )
+     *),
      *
      *     @OA\Response(
      *         response=200,
@@ -370,7 +377,8 @@ class AdminProductController extends Controller
             $product->tags()->attach($request->tags);
 
             collect($request->variations)->each(function ($item) use ($product, $pv) {
-                $product->variations()->create([
+                $product_variation = ProductVariation::create([
+                    'product_id' => $product->id,
                     'name' => $item['variant_name'] ?? null,
                     'platform_price' => $item['variant_price'],
                     'size_value' => $item['variant_stock'],
@@ -379,20 +387,25 @@ class AdminProductController extends Controller
                     'package_type' => $item['variant_package_type'],
                     'package_size' => $item['variant_package_size'],
                     'strength' => $item['variant_strength'],
-                ])->vendorProductPrices()->create([
+                ]);
+                $vendorProductPrices = VendorProductPrice::create([
                     'product_vendor_id' => $pv->id,
+                    'product_variation_id' => $product_variation->id,
                     'units_in_stock' => $item["variant_stock"],
                     'expiry_date' => $item["variant_expiry_date"],
                     'batch_number' => $item["variant_batch_no"],
                     'price' => $item['variant_price']
                 ]);
+                if (isset($item['image'])) {
+                    $product_variation->addMedia($item['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
+                }
             });
 
             $product->healthConditions()->attach($request->health_condition);
             $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
-            foreach ($request->file('gallery_images') as $GI) {
-                $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
-            }
+            // foreach ($request->file('gallery_images') as $GI) {
+            //     $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
+            // }
         });
         return $this->apiSuccess('Product added successfully.');
     }
@@ -559,6 +572,9 @@ class AdminProductController extends Controller
                         'strength' => $variation['variant_strength'],
                     ]);
 
+                    if (isset($variation['image'])) {
+                        $product_variation->addMedia($variation['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
+                    }
                     // Update or create vendor product prices
                     $product_variation->vendorProductPrices()
                         ->updateOrCreate(
@@ -585,7 +601,9 @@ class AdminProductController extends Controller
                         'package_size' => $variation['variant_package_size'],
                         'strength' => $variation['variant_strength'],
                     ]);
-
+                    if (isset($variation['image'])) {
+                        $newVariation->addMedia($variation['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
+                    }
                     // Create vendor product prices with proper foreign keys
                     $newVariation->vendorProductPrices()->create([
                         'product_vendor_id' => $pv->id,
@@ -601,11 +619,11 @@ class AdminProductController extends Controller
             if ($request->hasFile('featured_image')) {
                 $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
             }
-            if ($request->hasFile('gallery_images')) {
-                foreach ($request->file('gallery_images') as $GI) {
-                    $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
-                }
-            }
+            // if ($request->hasFile('gallery_images')) {
+            //     foreach ($request->file('gallery_images') as $GI) {
+            //         $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
+            //     }
+            // }
         });
         return $this->apiSuccess('Product updated successfully.');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User\Product;
 
 use App\Models\Product;
+use App\Models\ProductVariation;
 use App\Traits\HelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -54,10 +55,11 @@ class ProductDetailResource extends JsonResource
                     'package_type' => $item?->package_type,
                     'package_size' => $item?->package_size,
                     'strength' => $item?->strength,
+                    'image' => $item->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
                 ];
             })),
             'featured_image' => $this->whenLoaded('media', fn() => $this->getFirstMedia(Product::PRODUCT_FEATURE)->getUrl()),
-            'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Product::PRODUCT_GALLERY)->map(fn($item) => $item->getUrl())),
+            // 'gallery_images' => $this->whenLoaded('media', fn() => $this->getMedia(Product::PRODUCT_GALLERY)->map(fn($item) => $item->getUrl())),
             'liked' => $this->whenLoaded('likes', fn() => $this->likes->count() ? true : false)
         ];
     }

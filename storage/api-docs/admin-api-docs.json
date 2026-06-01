@@ -11,7 +11,7 @@
             "description": "Live API Server"
         },
         {
-            "url": "http://192.168.1.68:8002/api/v1",
+            "url": "http://192.168.1.69:8002/api/v1",
             "description": "Localhost API Server 1"
         },
         {
@@ -4622,8 +4622,7 @@
                                     "health_condition",
                                     "variations",
                                     "generic_product_name_id",
-                                    "featured_image",
-                                    "gallery_images"
+                                    "featured_image"
                                 ],
                                 "properties": {
                                     "brand_id": {
@@ -4649,6 +4648,7 @@
                                     "discount_percent": {
                                         "type": "number",
                                         "format": "float",
+                                        "maximum": 100,
                                         "example": 10
                                     },
                                     "categories": {
@@ -4685,23 +4685,27 @@
                                         "type": "string",
                                         "format": "binary"
                                     },
-                                    "gallery_images[]": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
-                                    },
                                     "variations": {
                                         "type": "array",
                                         "items": {
+                                            "required": [
+                                                "variant_stock",
+                                                "variant_unit",
+                                                "variant_price",
+                                                "variant_batch_no",
+                                                "variant_expiry_date",
+                                                "variant_form_type",
+                                                "variant_package_type",
+                                                "variant_package_size",
+                                                "variant_strength"
+                                            ],
                                             "properties": {
                                                 "variant_name": {
                                                     "type": "string",
                                                     "example": "500mg"
                                                 },
                                                 "variant_stock": {
-                                                    "type": "integer",
+                                                    "type": "number",
                                                     "example": 100
                                                 },
                                                 "variant_unit": {

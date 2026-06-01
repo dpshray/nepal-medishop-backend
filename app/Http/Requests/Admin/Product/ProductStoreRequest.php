@@ -50,6 +50,7 @@ class ProductStoreRequest extends FormRequest
             'variations.*.variant_package_type' => 'required|string',
             'variations.*.variant_package_size' => 'required|string',
             'variations.*.variant_strength' => 'required|string',
+            'variations.*.image'   => 'required|image|mimes:jpeg,jpg,png,webp|max:5000|exclude',
             'prescription_required' => 'sometimes',
             'discount_percent' => 'sometimes|nullable|numeric|lte:100',
             'generic_product_name_id' => 'required|exists:generic_product_names,id'
@@ -57,8 +58,8 @@ class ProductStoreRequest extends FormRequest
         if ($product_id == null) {
             $rules = array_merge($rules, [
                 'featured_image' => 'required|image|mimes:jpeg,jpg,png,webp|max:5000|exclude',
-                'gallery_images'   => 'required|array|max:10|exclude',
-                'gallery_images.*' => 'image|mimes:jpeg,jpg,png,webp|max:5000',
+                // 'gallery_images'   => 'required|array|max:10|exclude',
+                // 'gallery_images.*' => 'image|mimes:jpeg,jpg,png,webp|max:5000',
             ]);
         }
         return $rules;

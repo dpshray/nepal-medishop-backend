@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User\Product\Card;
 
 use App\Models\Product;
+use App\Models\ProductVariation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,9 +28,9 @@ class KitbagCardResource extends JsonResource
             "form_type" => $this->variation->form_type,
             "package_type" => $this->variation->package_type . ' ' . $this->variation->package_size . ' ' . $this->variation->size_unit,
             'isPrescriptionRequired' => (bool) $this->product->prescription_required,
-            "image" => $this->product->getFirstMediaUrl(Product::PRODUCT_FEATURE),
+            "image" => $this->variation->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
             "quantity" => (int) $this->quantity,
-            "price" => (float)$price,
+            "price" => number_format($price, 2),
             "previous_price" => $this->product->discount_percent !== null ? (float) $this->variation->platform_price : null,
             "subtotal" => (float) ($this->quantity * $price),
         ];
