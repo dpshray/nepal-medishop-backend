@@ -70,7 +70,7 @@ class ClientKitbagController extends Controller
             return $this->apiSuccess('List of kitbag items', compact('items', 'total_items', 'total_amount'));
         }
         $kitbag = $kitbag->kitbagItems()
-            ->with(['product.media', 'product.brand', 'variation'])
+            ->with(['product', 'product.brand', 'variation'])
             ->get();
         $items = KitbagCardResource::collection($kitbag)->toArray(request());
 
@@ -135,10 +135,10 @@ class ClientKitbagController extends Controller
             'product_variation_id' => 'required|exists:product_variations,id',
             'quantity' => 'required|integer'
         ]);
-        DB::transaction(function () use($request, $data) {
+        DB::transaction(function () use ($request, $data) {
             $user_kitbag = Kitbag::firstOrCreate([
                 'user_id' => Auth::id()
-            ],[
+            ], [
                 'created_at' => now()
             ]);
             $product = Product::with('variations')
@@ -155,7 +155,7 @@ class ClientKitbagController extends Controller
                 ->first();
             if ($kitbag_product) {
                 $kitbag_product->increment('quantity', $request->quantity);
-            }else{
+            } else {
                 $data = [...$data, ...['product_id' => $product->id]];
                 $user_kitbag->KitbagItems()->create($data);
             }
@@ -206,7 +206,7 @@ class ClientKitbagController extends Controller
         $data = $request->validate([
             'item_uuids' => 'required|array',
             'item_uuids.*' => 'required|exists:kitbag_items,uuid'
-        ],[
+        ], [
             'item_uuids.*.exists' => 'One or more selected items do not exist.'
         ]);
         Auth::user()->kitbag

@@ -1757,6 +1757,544 @@
                 ]
             }
         },
+        "/admin/main-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get Main Dashboard",
+                "description": "Main Dashboard statistics",
+                "operationId": "2b6196cb7a6f81560ba29817ea1d9ce9",
+                "responses": {
+                    "200": {
+                        "description": "Main Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Main dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_orders": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_packages": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "total_products": {
+                                                    "type": "integer",
+                                                    "example": 1000
+                                                },
+                                                "total_brands": {
+                                                    "type": "integer",
+                                                    "example": 200
+                                                },
+                                                "total_categories": {
+                                                    "type": "integer",
+                                                    "example": 150
+                                                },
+                                                "total_tags": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_users": {
+                                                    "type": "integer",
+                                                    "example": 10000
+                                                },
+                                                "total_vendors": {
+                                                    "type": "integer",
+                                                    "example": 500
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/user-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get User Dashboard",
+                "description": "User Dashboard statistics",
+                "operationId": "716f26c93a639b75d43e1bcba49a798a",
+                "responses": {
+                    "200": {
+                        "description": "User Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_user": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "active_users": {
+                                                    "type": "integer",
+                                                    "example": 80
+                                                },
+                                                "inactive_users": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "new_users_month": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/vendor-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get Vendor Dashboard",
+                "description": "Vendor Dashboard statistics",
+                "operationId": "435feed762a39485f318d47b34345d85",
+                "responses": {
+                    "200": {
+                        "description": "Vendor Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vendor dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_vendor": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "active_vendors": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                },
+                                                "inactive_vendors": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "new_vendors_month": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/brand-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get Brand Dashboard",
+                "description": "Brand Dashboard statistics",
+                "operationId": "6a0f7570fbdf6b0f6a3514039c6fa647",
+                "responses": {
+                    "200": {
+                        "description": "Brand Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Brand dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_brands": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "active_brands": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                },
+                                                "inactive_brands": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_featured": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_popular": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/product-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get Product Dashboard",
+                "description": "Product Dashboard statistics",
+                "operationId": "1e362d921a2c375c5aa992a974285c7a",
+                "responses": {
+                    "200": {
+                        "description": "Product Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_products": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "active_products": {
+                                                    "type": "integer",
+                                                    "example": 80
+                                                },
+                                                "inactive_products": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "new_products_month": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/package-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get Package Dashboard",
+                "description": "Package Dashboard statistics",
+                "operationId": "fe72fd92c0a75dbe03ab004da9e11311",
+                "responses": {
+                    "200": {
+                        "description": "Package Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Package dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_packages": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "active_packages": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                },
+                                                "inactive_packages": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/order-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get Order Dashboard",
+                "description": "Order Dashboard statistics",
+                "operationId": "c7ef559c2d6d74633322aa927666efb1",
+                "responses": {
+                    "200": {
+                        "description": "Order Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_orders": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_pending_orders": {
+                                                    "type": "integer",
+                                                    "example": 80
+                                                },
+                                                "total_delivered_orders": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_cancelled_orders": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/product-request-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get Product Request Dashboard",
+                "description": "Product Request Dashboard statistics",
+                "operationId": "f465437f5a58c2adbe648bd7a74db693",
+                "responses": {
+                    "200": {
+                        "description": "Product Request Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product Request dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_product_request": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_pending_product_request": {
+                                                    "type": "integer",
+                                                    "example": 80
+                                                },
+                                                "total_approved_product_request": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_rejected_product_request": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/service-booking-dashboard": {
+            "get": {
+                "tags": [
+                    "Admin Dashboard"
+                ],
+                "summary": "Get Service Booking Dashboard",
+                "description": "Service Booking Dashboard statistics",
+                "operationId": "44d44c495c33c1e6fdce51ec4e01f7de",
+                "responses": {
+                    "200": {
+                        "description": "Service Booking Dashboard",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service Booking dashboard data fetched successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_service_booking": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_pending_service_booking": {
+                                                    "type": "integer",
+                                                    "example": 80
+                                                },
+                                                "total_approved_service_booking": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_rejected_service_booking": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/package": {
             "get": {
                 "tags": [
@@ -10346,6 +10884,10 @@
         {
             "name": "Prescriptions",
             "description": "Prescriptions"
+        },
+        {
+            "name": "Admin Dashboard",
+            "description": "Admin Dashboard"
         },
         {
             "name": "Package",

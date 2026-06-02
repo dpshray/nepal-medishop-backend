@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Admin\Banner\AdminBannerController;
 use App\Http\Controllers\Api\V1\Admin\ClientFeedback\AdminFeedbackController;
 use App\Http\Controllers\Api\V1\Admin\ClientPrescription\AdminPrescriptionController;
 use App\Http\Controllers\Api\V1\Admin\ClientReview\AdminGrievanceController;
+use App\Http\Controllers\Api\V1\Admin\DashBoard\AdminDashBoardController;
 use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
@@ -110,4 +111,16 @@ Route::prefix('admin')
         Route::post('ncm/assign-to-ncm/{uuid}', [AdminNCMOrderController::class, 'assign_to_ncm']);
 
         Route::delete('product/{product_uuid}/media/{media_id}', [AdminProductController::class, 'deleteProductMedia']);
+        /*----------  Admin Dashboard  ----------*/
+        Route::controller(AdminDashBoardController::class)->group(function () {
+            Route::get('main-dashboard', 'main');
+            Route::get('user-dashboard', 'user');
+            Route::get('vendor-dashboard', 'vendor');
+            Route::get('brand-dashboard', 'brand');
+            Route::get('product-dashboard', 'product');
+            Route::get('package-dashboard', 'package');
+            Route::get('order-dashboard', 'order');
+            Route::get('product-request-dashboard', 'product_request');
+            Route::get('service-booking-dashboard', 'service_booking_dashboard');
+        });
     });

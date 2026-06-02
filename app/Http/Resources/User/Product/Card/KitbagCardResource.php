@@ -21,18 +21,18 @@ class KitbagCardResource extends JsonResource
             ($this->variation->platform_price * (($this->product->discount_percent ?? 0) / 100));
         return [
             "item_uuid" => $this->uuid,
-            "item_name" => $this->product->name,
-            "item_slug" => $this->product->slug,
-            "brand_name" => $this->product->brand->name,
-            "variant_name" => $this->variation->strength,
-            "variant_id" => $this->variation->id,
-            "form_type" => $this->variation->form_type,
-            "package_type" => $this->variation->package_type . ' ' . $this->variation->package_size . ' ' . $this->variation->size_unit,
-            'isPrescriptionRequired' => (bool) $this->product->prescription_required,
-            "image" => $this->variation->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
+            "item_name" => $this->product?->name,
+            "item_slug" => $this->product?->slug,
+            "brand_name" => $this->product?->brand?->name,
+            "variant_name" => $this->variation?->strength,
+            "variant_id" => $this->variation?->id,
+            "form_type" => $this->variation?->form_type,
+            "package_type" => $this->variation?->package_type . ' ' . $this->variation?->package_size . ' ' . $this->variation?->size_unit,
+            'isPrescriptionRequired' => (bool) $this->product?->prescription_required,
+            "image" => $this->variation?->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
             "quantity" => (int) $this->quantity,
             "price" => number_format($price, 2),
-            "previous_price" => $this->product->discount_percent !== null ? (float) $this->variation->platform_price : null,
+            "previous_price" => $this->product?->discount_percent !== null ? (float) $this->variation?->platform_price : null,
             "subtotal" => (float) ($this->quantity * $price),
         ];
     }
