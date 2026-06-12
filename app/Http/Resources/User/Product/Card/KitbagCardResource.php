@@ -29,7 +29,7 @@ class KitbagCardResource extends JsonResource
             "form_type" => $this->variation?->form_type,
             "package_type" => $this->variation?->package_type . ' ' . $this->variation?->package_size . ' ' . $this->variation?->size_unit,
             'isPrescriptionRequired' => (bool) $this->product?->prescription_required,
-            "image" => $this->variation?->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
+            "image" => $this->product?->getFirstMediaUrl(Product::PRODUCT_FEATURE),
             "quantity" => (int) $this->quantity,
             "price" => number_format($price, 2),
             "previous_price" => $this->product?->discount_percent !== null ? (float) $this->variation?->platform_price : null,

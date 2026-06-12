@@ -45,7 +45,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         'mobile_number',
         'added_by',
         'fcm_token',
-        'google_id'
+        'google_id',
+        'commission_percentage'
     ];
 
     /**
@@ -68,6 +69,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'commission_percentage' => 'decimal:2'
         ];
     }
 
@@ -86,7 +88,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         return $this->hasMany(ProductVendor::class, 'vendor_id');
     }
 
-    function grievances() {
+    function grievances()
+    {
         return $this->hasMany(Grievance::class);
     }
 
@@ -98,8 +101,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     function isVendor()
     {
         return $this->user_type == UserTypeEnum::VENDOR->value
-        ||
-        !empty($this->vendor); #for admin is a vendor
+            ||
+            !empty($this->vendor); #for admin is a vendor
     }
 
     function likes()
@@ -122,7 +125,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         return $this->hasOne(Order::class)->latest();
     }
 
-    function serviceBookings() {
+    function serviceBookings()
+    {
         return $this->hasMany(ServiceBooking::class);
     }
 
@@ -144,12 +148,14 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         return $this->hasMany(Wishlist::class, 'user_id');
     }
 
-    function kitbag() {
+    function kitbag()
+    {
         return $this->hasOne(Kitbag::class);
     }
 
-    function loyalityPoints() {
-        return $this->hasMany(LoyalityPoint::class)->where('status', LoyalityPointStatusEnum::APPROVED)->orderBy('id','DESC');
+    function loyalityPoints()
+    {
+        return $this->hasMany(LoyalityPoint::class)->where('status', LoyalityPointStatusEnum::APPROVED)->orderBy('id', 'DESC');
     }
 
     public function latestApprovedLoyalityPoints()
@@ -157,7 +163,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         return $this->hasOne(LoyalityPoint::class)->where('status', LoyalityPointStatusEnum::APPROVED)->orderBy('id', 'DESC');
     }
 
-    function getIsActiveAttribute() {
+    function getIsActiveAttribute()
+    {
         return (bool)$this->status;
     }
 }

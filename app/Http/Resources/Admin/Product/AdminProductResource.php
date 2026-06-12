@@ -45,7 +45,7 @@ class AdminProductResource extends JsonResource
                     'package_type' => $item?->package_type,
                     'package_size' => $item?->package_size,
                     'strength' => $item?->strength,
-                    'image' => $item?->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
+                    // 'image' => $item?->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
                 ]);
             })
 

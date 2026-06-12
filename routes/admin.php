@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Admin\Banner\AdminBannerController;
 use App\Http\Controllers\Api\V1\Admin\ClientFeedback\AdminFeedbackController;
 use App\Http\Controllers\Api\V1\Admin\ClientPrescription\AdminPrescriptionController;
 use App\Http\Controllers\Api\V1\Admin\ClientReview\AdminGrievanceController;
+use App\Http\Controllers\Api\V1\Admin\CommissionPayout\AdminCommissionPayoutController;
 use App\Http\Controllers\Api\V1\Admin\DashBoard\AdminDashBoardController;
 use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
@@ -26,6 +27,9 @@ use App\Http\Controllers\Api\V1\Admin\PromoCode\AdminPromoCodeControlller;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminKitbagOrderController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\NCM\AdminNCMOrderController;
+use App\Http\Controllers\Api\V1\Admin\Report\AdminProductReportController;
+use App\Http\Controllers\Api\V1\Admin\Report\AdminSalesOverviewController;
+use App\Http\Controllers\Api\V1\Admin\Report\AdminVendorReportController;
 use App\Http\Controllers\Api\V1\Admin\User\AdminUserController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\AdminVendorProductController;
 use App\Http\Controllers\Api\V1\Admin\Vendor\OrderAssign\AdminOrderAssignController;
@@ -122,5 +126,20 @@ Route::prefix('admin')
             Route::get('order-dashboard', 'order');
             Route::get('product-request-dashboard', 'product_request');
             Route::get('service-booking-dashboard', 'service_booking_dashboard');
+        });
+        //admin report routes
+        Route::controller(AdminSalesOverviewController::class)->group(function () {
+            Route::get('reports/sales-overview', 'index');
+        });
+        Route::controller(AdminProductReportController::class)->group(function () {
+            Route::get('/productperformance', 'index');
+        });
+        Route::get('/vendorperformance', [AdminVendorReportController::class, 'index']);
+
+        //commission payout routes
+        Route::controller(AdminCommissionPayoutController::class)->group(function () {
+            Route::get('commission-payout', 'index');
+            Route::get('commission-payout/{vendor}/orders', 'vendorOrderBreakdown');
+            Route::post('commission-payout/{payout}/status', 'updatePayoutStatus');
         });
     });

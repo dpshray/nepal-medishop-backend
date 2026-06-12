@@ -13,14 +13,16 @@ use Illuminate\Support\Facades\Config;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-class VendorService {
+class VendorService
+{
 
-    public function store(Request $request){
-        $user = $request->safe()->only(["name", "email", "mobile_number"]);
+    public function store(Request $request)
+    {
+        $user = $request->safe()->only(["name", "email", "mobile_number", "commission_percentage"]);
         $user['user_type'] = UserTypeEnum::VENDOR->value;
         $password = str()->random(10);
         $user['password'] = $password;
-        $vendor = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate"]);
+        $vendor = $request->safe()->except(["name", "email", "mobile_number", "commission_percentage", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate"]);
         if (Auth::check() && Auth::user()->isAdmin() && $request->account_status  == 1) {
             $vendor['verified_at'] = now();
             $user['status'] = true;
@@ -28,7 +30,7 @@ class VendorService {
         $vendor = User::create($user)
             ->vendor()
             ->create($vendor);
-        
+
         $vendor->addMedia($request->file('vendor_citizenship_card'))->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
         $vendor->addMedia($request->file('vendor_business_license'))->toMediaCollection(VendorContants::VENDOR_CITIZENSHIP_CARD);
         $vendor->addMedia($request->file('vendor_tax_certificate'))->toMediaCollection(VendorContants::VENDOR_TAX_CERTIFICATE);
