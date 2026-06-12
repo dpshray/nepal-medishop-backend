@@ -19,6 +19,7 @@ class AdminVendorUserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'mobile_number' => $this->mobile_number,
+            'commission_percentage' => $this->commission_percentage,
             'vendor_details' => $this->whenLoaded('vendor', fn() => [
                 'email_verified' => $this->email_verified_at ? true : false,
                 'account_status' => (bool)$this->status,
@@ -37,10 +38,8 @@ class AdminVendorUserResource extends JsonResource
                     'citizenship_card' => $this->vendor->getMedia(Vendor::CITIZENSHIP_CARD)->map(fn($item) => $item->getFullUrl()),
                     'tax_certificate' => $this->vendor->getMedia(Vendor::TAX_CERTIFICATE)->map(fn($item) => $item->getFullUrl()),
                     'business_license' => $this->vendor->getMedia(Vendor::BUSINESS_LICENSE)->map(fn($item) => $item->getFullUrl())
-                ]
+                ],
             ])
         ];
     }
 }
-
-

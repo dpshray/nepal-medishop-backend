@@ -51,7 +51,7 @@ class ProductCardResource extends JsonResource
                     'price' => $price,
                     'previous_price' => $previous_price,
                     'stock' => $item->vendorProductPrices->sum('units_in_stock'),
-                    'image' => $item->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
+                    // 'image' => $item->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
                 ];
             }))
         ];

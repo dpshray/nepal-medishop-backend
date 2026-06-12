@@ -11,7 +11,7 @@
             "description": "Live API Server"
         },
         {
-            "url": "http://192.168.1.69:8002/api/v1",
+            "url": "/api/v1",
             "description": "Localhost API Server 1"
         },
         {

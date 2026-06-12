@@ -25,14 +25,13 @@ class VendorStoreRequest extends FormRequest
     public function rules(): array
     {
         $user_id = null;
-        if($this->user){
+        if ($this->user) {
             $user_id = $this->user->id;
         }
         $rules = [
             'name' => 'required',
             'mobile_number' => 'required',
             'store_name' => 'required|max:255',
-            'store_description' => 'required',
             'store_description' => 'required',
             'location' => 'required',
             'country' => 'required',
@@ -43,7 +42,8 @@ class VendorStoreRequest extends FormRequest
             'bank_name' => 'required',
             'bank_account_holder_name' => 'required',
             'bank_account_number' => 'required',
-            'account_status' => 'sometimes|nullable|boolean'
+            'account_status' => 'sometimes|nullable|boolean',
+            'commission_percentage' => 'sometimes|nullable|numeric'
         ];
         if ($user_id == null) {
             $rules = array_merge($rules, [

@@ -48,7 +48,7 @@ class UserLikeResource extends JsonResource
                         'strength' => $item?->strength,
                         'price' => $v_price,
                         'previous_price' => $v_previous_price,
-                        'image' => $item->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
+                        // 'image' => $item->getFirstMediaUrl(ProductVariation::VARIATION_IMAGE),
                         'stock' => $item->vendorProductPrices->sum('units_in_stock'),
                     ];
                 }

@@ -396,16 +396,16 @@ class AdminProductController extends Controller
                     'batch_number' => $item["variant_batch_no"],
                     'price' => $item['variant_price']
                 ]);
-                if (isset($item['image'])) {
-                    $product_variation->addMedia($item['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
-                }
+                // if (isset($item['image'])) {
+                //     $product_variation->addMedia($item['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
+                // }
             });
 
             $product->healthConditions()->attach($request->health_condition);
             $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
-            // foreach ($request->file('gallery_images') as $GI) {
-            //     $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
-            // }
+            foreach ($request->file('gallery_images') as $GI) {
+                $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
+            }
         });
         return $this->apiSuccess('Product added successfully.');
     }
@@ -572,9 +572,9 @@ class AdminProductController extends Controller
                         'strength' => $variation['variant_strength'],
                     ]);
 
-                    if (isset($variation['image'])) {
-                        $product_variation->addMedia($variation['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
-                    }
+                    // if (isset($variation['image'])) {
+                    //     $product_variation->addMedia($variation['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
+                    // }
                     // Update or create vendor product prices
                     $product_variation->vendorProductPrices()
                         ->updateOrCreate(
@@ -601,9 +601,9 @@ class AdminProductController extends Controller
                         'package_size' => $variation['variant_package_size'],
                         'strength' => $variation['variant_strength'],
                     ]);
-                    if (isset($variation['image'])) {
-                        $newVariation->addMedia($variation['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
-                    }
+                    // if (isset($variation['image'])) {
+                    //     $newVariation->addMedia($variation['image'])->toMediaCollection(ProductVariation::VARIATION_IMAGE);
+                    // }
                     // Create vendor product prices with proper foreign keys
                     $newVariation->vendorProductPrices()->create([
                         'product_vendor_id' => $pv->id,
@@ -619,11 +619,11 @@ class AdminProductController extends Controller
             if ($request->hasFile('featured_image')) {
                 $product->addMedia($request->file('featured_image'))->toMediaCollection(Product::PRODUCT_FEATURE);
             }
-            // if ($request->hasFile('gallery_images')) {
-            //     foreach ($request->file('gallery_images') as $GI) {
-            //         $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
-            //     }
-            // }
+            if ($request->hasFile('gallery_images')) {
+                foreach ($request->file('gallery_images') as $GI) {
+                    $product->addMedia($GI)->toMediaCollection(Product::PRODUCT_GALLERY);
+                }
+            }
         });
         return $this->apiSuccess('Product updated successfully.');
     }
