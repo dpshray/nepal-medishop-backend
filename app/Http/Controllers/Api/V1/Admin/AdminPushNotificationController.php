@@ -42,7 +42,8 @@ class AdminPushNotificationController extends Controller
      *     )
      * )
      */
-    function pushNotifiyClient(Request $request) {
+    function pushNotifiyClient(Request $request)
+    {
         $form_data = $request->validate([
             'title' => 'required|max:255',
             'body' => 'required',
@@ -50,7 +51,7 @@ class AdminPushNotificationController extends Controller
         ]);
 
         $send_and_store = (array_key_exists('send_and_store', $form_data) && filter_var($form_data['send_and_store'], FILTER_VALIDATE_BOOLEAN) == true) ? true : false;
-        $PNS =new PushNotificationService($form_data['title'], $form_data['body']);
+        $PNS = new PushNotificationService($form_data['title'], $form_data['body']);
         if ($send_and_store) {
             $PNS->store();
         }
@@ -105,10 +106,12 @@ class AdminPushNotificationController extends Controller
      *     )
      * )
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
+        $search = $request->query('search', null);
         $per_page = $request->query('per_page', 10);
-        $notifications = Notification::orderByDesc('created_at')->paginate($per_page);
-        
+        $notifications = Notification::when($search, fn($qry) => $qry->where('title', 'LIKE', '%' . $search . '%')->orWhere('body', 'LIKE', '%' . $search . '%'))->orderByDesc('created_at')->paginate($per_page);
+
         return $this->apiSuccess('List of all notifications', $notifications);
     }
 }

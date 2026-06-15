@@ -1892,7 +1892,7 @@
                     "Commission Payout"
                 ],
                 "summary": "Vendor Commission Drill Down",
-                "operationId": "2e3c26c9bf8f5420aaac9bc37266d44a",
+                "operationId": "e9a8aec68dcfec4ef89163eebe52c13f",
                 "parameters": [
                     {
                         "name": "vendorId",

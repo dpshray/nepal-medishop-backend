@@ -194,13 +194,13 @@ class AdminCommissionPayoutController extends Controller
      *     )
      * )
      */
-    public function vendorDrillDown(AdminCommissionPayoutRequest $request, int $vendorId)
+    public function vendorCommissionPayoutRequest(AdminCommissionPayoutRequest $request, int $vendorId)
     {
         $range   = $request->resolvedDateRange();
         $perPage = max(1, (int) $request->input('per_page', 25));
-        $filters = $request->only(['page']);
+        $filters = $request->only(['payout_status', 'page']);
 
-        $data = $this->service->getVendorOrderBreakdown(
+        $history = $this->service->getVendorPayoutHistory(
             $vendorId,
             $range['from'],
             $range['to'],
@@ -208,7 +208,7 @@ class AdminCommissionPayoutController extends Controller
             $perPage
         );
 
-        return $this->apiSuccess('Vendor Drill Down', $data);
+        return $this->apiSuccess("Vendor Commission Payout Request", $history);
     }
 
     // PATCH /admin/reports/commission-payout/{payout}

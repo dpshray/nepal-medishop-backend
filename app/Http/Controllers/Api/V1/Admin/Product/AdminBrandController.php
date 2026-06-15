@@ -89,7 +89,7 @@ class AdminBrandController extends Controller
         $status = $request->query('status', 1) == 1 ? 1 : 0;
         $pagination = Brand::with(['media'])
             ->where('status', $status)
-            ->when($search, fn($qry) => $qry->whereLike('name', $search))
+            ->when($search, fn($qry) => $qry->where('name', 'LIKE', '%' . $search . '%'))
             ->orderBy('id', 'DESC')
             ->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($items) => AdminBrandResource::collection($items))->data;
