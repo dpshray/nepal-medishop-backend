@@ -35,7 +35,7 @@ class CommissionPayoutService
                 'latest_payout',
                 'latest_payout.vendor_id',
                 '=',
-                'vendors.id'
+                'users.id'
             )
 
             // order_items in the date range for this vendor
@@ -139,14 +139,14 @@ class CommissionPayoutService
         array  $filters = [],
         int    $perPage = 25
     ): array {
-        $vendor = Vendor::with('user')->findOrFail($vendorId);
+        $vendor = Vendor::with('user')->where('user_id', $vendorId)->firstOrFail();
 
         $query = OrderItem::query()
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             // join vendor's user to get commission_percentage at time of order
             // NOTE: this is the CURRENT rate — once you snapshot rate per order
             // in a commission_logs table, join that instead
-            ->join('vendors', 'vendors.id', '=', 'order_items.assigned_vendor_id')
+            ->join('vendors', 'vendors.user_id', '=', 'order_items.assigned_vendor_id')
             ->join('users', 'users.id', '=', 'vendors.user_id')
 
             ->where('order_items.assigned_vendor_id', $vendorId)
@@ -237,10 +237,8 @@ class CommissionPayoutService
         int    $perPage = 25
     ): array {
         $query = VendorPayout::where('vendor_id', $vendorId)
-            ->whereBetween('period_from', [
-                $from->toDateString(),
-                $to->toDateString(),
-            ]);
+            ->where('period_from', '<=', $to->toDateString())
+            ->where('period_to', '>=', $from->toDateString());
 
         if (!empty($filters['payout_status'])) {
             $query->where('status', $filters['payout_status']);

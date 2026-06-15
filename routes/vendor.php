@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\Api\V1\Admin\AdminVendorController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\NCM\AdminNCMOrderController;
+use App\Http\Controllers\Api\V1\Vendor\CommissionPayout\VendorCommissionPayoutController;
 use App\Http\Controllers\Api\V1\Vendor\Dashboard\VendorDashboardController;
 use App\Http\Controllers\Api\V1\Vendor\Notification\OrderAssignNotificationController;
 use App\Http\Controllers\Api\V1\Vendor\Order\VendorOrderAssignController;
+use App\Http\Controllers\Api\V1\Vendor\Report\VendorSaleReportController;
 use App\Http\Controllers\Api\V1\Vendor\Service\VendorServiceBookingController;
 use App\Http\Controllers\Api\V1\Vendor\Service\VendorServiceController;
 use App\Http\Controllers\Api\V1\Vendor\VendorAuthController;
@@ -37,4 +39,9 @@ Route::prefix('vendor')
         Route::get('notifications', [OrderAssignNotificationController::class, 'getNotification']);
         Route::post('notifications/{id}/seen', [OrderAssignNotificationController::class, 'seennotification']);
         Route::post('ncm/assign-to-ncm/{uuid}', [AdminNCMOrderController::class, 'assign_to_ncm']);
+        Route::controller(VendorCommissionPayoutController::class)->group(function () {
+            Route::get('commission-payout', 'index');
+            Route::post('commission-payout/request', 'requestPayout');
+        });
+        Route::get('sale-report', [VendorSaleReportController::class, 'index']);
     });
