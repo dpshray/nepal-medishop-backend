@@ -17,6 +17,7 @@ class ProductVariation extends Model implements HasMedia
     protected function casts(): array
     {
         return [
+            'platform_price' => 'decimal:2',
             'expiry_date' => 'date'
         ];
     }

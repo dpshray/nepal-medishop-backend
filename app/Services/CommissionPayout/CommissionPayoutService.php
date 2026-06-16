@@ -2,6 +2,8 @@
 
 namespace App\Services\CommissionPayout;
 
+use App\Enums\Purchase\OrderItemStatusEnum;
+use App\Enums\Purchase\OrderStatusEnum;
 use App\Models\Payout\VendorPayout;
 use App\Models\Purchase\OrderItem;
 use App\Models\Vendor;
@@ -43,7 +45,7 @@ class CommissionPayoutService
             ->leftJoin('orders', function ($join) use ($from, $to) {
                 $join->on('orders.id', '=', 'oi.order_id')
                     ->whereBetween('orders.created_at', [$from, $to])
-                    ->whereNotIn('orders.status', ['cancelled']);
+                    ->whereNotIn('orders.status', [OrderStatusEnum::CANCELLED->value]);
             })
 
             ->select([
@@ -151,8 +153,8 @@ class CommissionPayoutService
 
             ->where('order_items.assigned_vendor_id', $vendorId)
             ->whereBetween('orders.created_at', [$from, $to])
-            ->whereNotIn('orders.status', ['cancelled'])
-            ->whereNotIn('order_items.status', ['cancelled'])
+            ->whereNotIn('orders.status', [OrderStatusEnum::CANCELLED->value])
+            ->whereNotIn('order_items.status', [OrderItemStatusEnum::CANCELLED->value])
 
             ->select([
                 'orders.id                    AS order_id',
@@ -190,8 +192,8 @@ class CommissionPayoutService
             ->join('users', 'users.id', '=', 'vendors.user_id')
             ->where('order_items.assigned_vendor_id', $vendorId)
             ->whereBetween('orders.created_at', [$from, $to])
-            ->whereNotIn('orders.status', ['cancelled'])
-            ->whereNotIn('order_items.status', ['cancelled'])
+            ->whereNotIn('orders.status', [OrderStatusEnum::CANCELLED->value])
+            ->whereNotIn('order_items.status', [OrderItemStatusEnum::CANCELLED->value])
             ->selectRaw('
                 COALESCE(SUM(order_items.total), 0)                                        AS gross_sales,
                 COALESCE(SUM(order_items.total * users.commission_percentage / 100), 0)    AS total_commission,
@@ -276,7 +278,7 @@ class CommissionPayoutService
     {
         // Block if there's already a pending/processing payout overlapping this period
         $existing = VendorPayout::where('vendor_id', $vendorId)
-            ->whereIn('status', ['pending', 'processing'])
+            ->whereIn('status', ['PENDING', 'PROCESSING'])
             ->where('period_from', '<=', $to->toDateString())
             ->where('period_to',   '>=', $from->toDateString())
             ->first();
@@ -296,8 +298,8 @@ class CommissionPayoutService
             ->join('users', 'users.id', '=', 'vendors.user_id')
             ->where('order_items.assigned_vendor_id', $vendorId)
             ->whereBetween('orders.created_at', [$from, $to])
-            ->whereNotIn('orders.status', ['cancelled'])
-            ->whereNotIn('order_items.status', ['cancelled'])
+            ->whereNotIn('orders.status', [OrderStatusEnum::CANCELLED->value])
+            ->whereNotIn('order_items.status', [OrderItemStatusEnum::CANCELLED->value])
             ->selectRaw('
                 COALESCE(SUM(order_items.total), 0)                                            AS gross_sales,
                 COALESCE(SUM(order_items.total * users.commission_percentage / 100), 0)        AS commission_amount,
@@ -323,7 +325,7 @@ class CommissionPayoutService
             'refund_adjustments'  => 0, // update when refunds table exists
             'net_payable'         => round((float) $totals->net_payable, 2),
             'commission_rate'     => (float) $totals->commission_rate,
-            'status'              => 'pending',
+            'status'              => 'PENDING',
             'requested_at'        => now(),
         ]);
 
@@ -345,7 +347,7 @@ class CommissionPayoutService
         ?string      $remarks = null,
         ?int         $processedBy = null
     ): array {
-        $allowed = ['processing', 'paid', 'rejected'];
+        $allowed = ['PROCESSING', 'PAID', 'REJECTED'];
 
         if (!in_array($status, $allowed)) {
             return ['success' => false, 'message' => 'Invalid status.'];
@@ -355,7 +357,7 @@ class CommissionPayoutService
             'status'          => $status,
             'remarks'         => $remarks,
             'processed_by'    => $processedBy,
-            'settlement_date' => $status === 'paid' ? now() : $payout->settlement_date,
+            'settlement_date' => $status === 'PAID' ? now() : $payout->settlement_date,
         ]);
 
         return [
@@ -380,7 +382,7 @@ class CommissionPayoutService
             'commission_amount'   => round((float) $row->commission_amount, 2),
             'refund_adjustments'  => round((float) $row->refund_adjustments, 2),
             'net_payable'         => round((float) $row->net_payable, 2),
-            'payout_status'       => $row->payout_status ?? 'pending',
+            'payout_status'       => $row->payout_status ?? 'PENDING',
             'settlement_date'     => $row->settlement_date,
         ];
     }

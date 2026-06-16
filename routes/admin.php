@@ -140,6 +140,6 @@ Route::prefix('admin')
         Route::controller(AdminCommissionPayoutController::class)->group(function () {
             Route::get('commission-payout', 'index');
             Route::get('commission-payout/{vendor}/orders', 'vendorCommissionPayoutRequest');
-            Route::post('commission-payout/{payout}/status', 'updatePayoutStatus');
+            Route::post('commission-payout/{payout}/status', 'updateStatus');
         });
     });

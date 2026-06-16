@@ -259,7 +259,7 @@ class AdminCommissionPayoutController extends Controller
     public function updateStatus(Request $request, VendorPayout $payout)
     {
         $request->validate([
-            'status'  => ['required', 'in:processing,paid,rejected'],
+            'status'  => ['required', 'in:PROCESSING,PAID,REJECTED'],
             'remarks' => ['nullable', 'string', 'max:500'],
         ]);
 

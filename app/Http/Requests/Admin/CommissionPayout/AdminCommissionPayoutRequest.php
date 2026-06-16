@@ -36,7 +36,7 @@ class AdminCommissionPayoutRequest extends FormRequest
                 'custom',
             ])],
             'vendor_id'     => ['nullable', 'integer', 'exists:users,id'],
-            'payout_status' => ['nullable', Rule::in(['pending', 'processing', 'paid', 'rejected'])],
+            'payout_status' => ['nullable', Rule::in(['PENDING', 'PROCESSING', 'PAID', 'REJECTED'])],
 
             'page'          => ['nullable', 'integer', 'min:1'],
             'per_page'      => ['nullable', 'integer', Rule::in([10, 25, 50, 100])],
