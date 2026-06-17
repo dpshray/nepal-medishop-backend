@@ -3511,6 +3511,375 @@
                 ]
             }
         },
+        "/admin/product-variant-types": {
+            "get": {
+                "tags": [
+                    "Product Variant Type"
+                ],
+                "summary": "Form Type List",
+                "operationId": "382dd269184e5f220c2674f0cba8124c",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Form Type List"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Product Variant Type"
+                ],
+                "summary": "Create Form Type",
+                "operationId": "029820645e507aabb8e776a728823a5b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "package_types"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Tablet"
+                                    },
+                                    "package_types": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "name",
+                                                "unit_types"
+                                            ],
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Box"
+                                                },
+                                                "unit_types": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "required": [
+                                                            "name"
+                                                        ],
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "10 Tablets"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Form Type Created Successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/product-variant-types/{formType}": {
+            "get": {
+                "tags": [
+                    "Product Variant Type"
+                ],
+                "summary": "Form Type Detail",
+                "operationId": "e4e0908933179004ff5d6dd3a0a09c44",
+                "parameters": [
+                    {
+                        "name": "formType",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "form-type-uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Form Type Detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "uuid": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "package_types": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "uuid": {
+                                                                "type": "string"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "unit_types": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer"
+                                                                        },
+                                                                        "uuid": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "created_at": {
+                                                    "type": "string"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Product Variant Type"
+                ],
+                "summary": "Update Form Type",
+                "operationId": "eeaca2c94bc3487aec6ac74bdafc5cd2",
+                "parameters": [
+                    {
+                        "name": "formType",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "form-type-uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Capsule"
+                                    },
+                                    "package_types": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "uuid": {
+                                                    "type": "string",
+                                                    "example": "package-type-uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Bottle"
+                                                },
+                                                "unit_types": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "uuid": {
+                                                                "type": "string",
+                                                                "example": "unit-type-uuid"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "30 Capsules"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Form Type Updated Successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Product Variant Type"
+                ],
+                "summary": "Delete Form Type",
+                "operationId": "ddf27f960a7a4f18fb6bd036c4d87d91",
+                "parameters": [
+                    {
+                        "name": "formType",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "form-type-uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Form Type Deleted Successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/package-types/{uuid}": {
+            "delete": {
+                "tags": [
+                    "Product Variant Type"
+                ],
+                "summary": "Delete Package Type",
+                "operationId": "954217e00dfa455bc5eedd6607657db7",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "package-type-uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Package Type Deleted Successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/admin/unit-types/{uuid}": {
+            "delete": {
+                "tags": [
+                    "Product Variant Type"
+                ],
+                "summary": "Delete Unit Type",
+                "operationId": "a642c261ab25dfc6715eca0fcf56a3f7",
+                "parameters": [
+                    {
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "unit-type-uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Unit Type Deleted Successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/admin/brand": {
             "get": {
                 "tags": [
@@ -11722,6 +12091,10 @@
         {
             "name": "Package",
             "description": "Package"
+        },
+        {
+            "name": "Product Variant Type",
+            "description": "Product Variant Type"
         },
         {
             "name": "Brand",
