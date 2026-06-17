@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceCategoryContro
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminServiceTagController;
 use App\Http\Controllers\Api\V1\Admin\Product\Service\AdminVendorServiceController;
+use App\Http\Controllers\Api\V1\Admin\ProductVariantType\AdminProductVariantTypeController;
 use App\Http\Controllers\Api\V1\Admin\PromoCode\AdminPromoCodeControlller;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminKitbagOrderController;
 use App\Http\Controllers\Api\V1\Admin\Purchase\AdminOrderController;
@@ -141,5 +142,11 @@ Route::prefix('admin')
             Route::get('commission-payout', 'index');
             Route::get('commission-payout/{vendor}/orders', 'vendorCommissionPayoutRequest');
             Route::post('commission-payout/{payout}/status', 'updateStatus');
+        });
+        //form type
+        Route::apiResource('product-variant-types', AdminProductVariantTypeController::class)->scoped(['product-variant-type' => 'uuid']);
+        Route::controller(AdminProductVariantTypeController::class)->group(function () {
+            Route::delete('package-types/{uuid}', 'deletepackagetype');
+            Route::delete('unit-types/{uuid}', 'deleteunit');
         });
     });
