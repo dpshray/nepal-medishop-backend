@@ -341,8 +341,8 @@ class AdminVendorController extends Controller
     public function update(VendorStoreRequest $request, User $user)
     {
         DB::transaction(function () use ($request, $user) {
-            $user_data = $request->safe()->only(["name", "email", "mobile_number", "commission_percentage"]);
-            $vendor_data = $request->safe()->except(["name", "email", "mobile_number", "commission_percentage", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate", "account_status"]);
+            $user_data = $request->safe()->only(["name", "email", "password", "mobile_number", "commission_percentage"]);
+            $vendor_data = $request->safe()->except(["name", "email", "password", "mobile_number", "commission_percentage", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate", "account_status"]);
             $vendor_data['verified_at'] = $request->account_status == 1 ? now() : null;
             $user_data['status'] = $request->account_status == 1 ? true : false;
             // return $vendor_data;

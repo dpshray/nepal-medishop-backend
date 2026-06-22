@@ -46,7 +46,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
         'added_by',
         'fcm_token',
         'google_id',
-        'commission_percentage'
+        'commission_percentage',
+        'email_verified_at'
     ];
 
     /**
