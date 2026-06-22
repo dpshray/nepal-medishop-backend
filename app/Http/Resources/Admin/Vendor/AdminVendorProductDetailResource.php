@@ -24,7 +24,10 @@ class AdminVendorProductDetailResource extends JsonResource
             "brand_name" => $product->brand->name,
             'variations' => $this->vendorPrices->map(function ($item) {
                 return [
-                    'variant_name' => $item->variation->name,
+                    'variant_name' => $item->variation->strength,
+                    "form_type" => $item->variation->form_type,
+                    "package_type" => $item->variation->package_type,
+                    "package_size" => $item->variation->package_size,
                     "size_value" => $item->variation->size_value,
                     "size_unit" => $item->variation->size_unit,
                     "units_in_stock" => (int) $item->stock_left,
