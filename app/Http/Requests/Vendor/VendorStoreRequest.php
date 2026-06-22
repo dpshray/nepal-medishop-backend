@@ -30,29 +30,30 @@ class VendorStoreRequest extends FormRequest
         }
         $rules = [
             'name' => 'required',
+            'password' => 'sometimes|nullable|min:6',
             'mobile_number' => 'required',
             'store_name' => 'required|max:255',
-            'store_description' => 'required',
-            'location' => 'required',
-            'country' => 'required',
-            'state' => 'required',
-            'district' => 'required',
-            'municipality' => 'required',
-            'postal_code' => 'required',
-            'bank_name' => 'required',
-            'bank_account_holder_name' => 'required',
-            'bank_account_number' => 'required',
+            'store_description' => 'sometimes|nullable',
+            'location' => 'sometimes|nullable',
+            'country' => 'sometimes|nullable',
+            'state' => 'sometimes|nullable',
+            'district' => 'sometimes|nullable',
+            'municipality' => 'sometimes|nullable',
+            'postal_code' => 'sometimes|nullable',
+            'bank_name' => 'sometimes|nullable',
+            'bank_account_holder_name' => 'sometimes|nullable',
+            'bank_account_number' => 'sometimes|nullable',
             'account_status' => 'sometimes|nullable|boolean',
             'commission_percentage' => 'sometimes|nullable|numeric'
         ];
         if ($user_id == null) {
             $rules = array_merge($rules, [
                 'email' => 'required|email|unique:users,email',
-                'vendor_citizenship_card' => ['required'],
+                'vendor_citizenship_card' => ['sometimes|nullable'],
                 'vendor_citizenship_card.*' => ['image'],
-                'vendor_business_license' => ['required'],
+                'vendor_business_license' => ['sometimes|nullable'],
                 'vendor_business_license.*' => ['image'],
-                'vendor_tax_certificate' => ['required'],
+                'vendor_tax_certificate' => ['sometimes|nullable'],
                 'vendor_tax_certificate.*' => ['image'],
             ]);
         }
