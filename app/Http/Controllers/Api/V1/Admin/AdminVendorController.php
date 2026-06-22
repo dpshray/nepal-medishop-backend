@@ -115,7 +115,7 @@ class AdminVendorController extends Controller
                 if ((string)$verified_vendor === '1') {
                     $q->whereHas('vendor', fn($q2) => $q2->where('status', true));
                 } else { // assume 0
-                    $q->whereHas('vendor', fn($q2) => $q2->where('status',false));
+                    $q->whereHas('vendor', fn($q2) => $q2->where('status', false));
                 }
             })
             ->latest()
@@ -195,7 +195,7 @@ class AdminVendorController extends Controller
      */
     public function store(VendorStoreRequest $request)
     {
-        DB::transaction(function () use($request){
+        DB::transaction(function () use ($request) {
             app(VendorService::class)->store($request);
         });
         return $this->apiSuccess('Vendor added');
@@ -341,13 +341,13 @@ class AdminVendorController extends Controller
     public function update(VendorStoreRequest $request, User $user)
     {
         DB::transaction(function () use ($request, $user) {
-            $user_data = $request->safe()->only(["name", "email", "mobile_number"]);
-            $vendor_data = $request->safe()->except(["name", "email", "mobile_number", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate","account_status"]);
+            $user_data = $request->safe()->only(["name", "email", "mobile_number", "commission_percentage"]);
+            $vendor_data = $request->safe()->except(["name", "email", "mobile_number", "commission_percentage", "vendor_citizenship_card", "vendor_business_license", "vendor_tax_certificate", "account_status"]);
             $vendor_data['verified_at'] = $request->account_status == 1 ? now() : null;
             $user_data['status'] = $request->account_status == 1 ? true : false;
             // return $vendor_data;
             // Log::info($vendor_data);
-            tap($user, fn() =>$user->update($user_data))->vendor()->update($vendor_data);
+            tap($user, fn() => $user->update($user_data))->vendor()->update($vendor_data);
             if ($request->hasFile('vendor_citizenship_card')) {
                 $user->vendor->addMedia($request->file('vendor_citizenship_card'))->toMediaCollection(VendorContants::VENDOR_BUSINESS_LICENSE);
             }
@@ -389,7 +389,7 @@ class AdminVendorController extends Controller
      *         )
      *     )
      * )
-    */
+     */
     public function destroy(User $user)
     {
         $user->vendor()->delete();
@@ -423,14 +423,15 @@ class AdminVendorController extends Controller
      *     ),
      * )
      */
-    function toggleVendorVerifiedStatus(User $user){
+    function toggleVendorVerifiedStatus(User $user)
+    {
         $vendor = $user->vendor;
         $current_verification_status = $vendor->verified_at != null;
         $message = 'Vendor verification status changed to ACTIVE';
         if ((int)$current_verification_status == 1) {
             $message = 'Vendor verification status changed to INACTIVE';
         }
-        DB::transaction(function () use($vendor, $current_verification_status){
+        DB::transaction(function () use ($vendor, $current_verification_status) {
             $vendor->user->update([
                 'status' => !(bool)$current_verification_status
             ]);
@@ -502,8 +503,9 @@ class AdminVendorController extends Controller
      *         )
      *     )
      * )
-    */
-    function getVendorProduct(Request $request, User $user) {
+     */
+    function getVendorProduct(Request $request, User $user)
+    {
         $per_page = $request->query('per_page');
         $pagination = $user->vendor->vendorProducts()->with(['product', 'vendorPrices.variation'])->paginate($per_page);
         $data = $this->makePaginationResponse($pagination, fn($item) => AdminVendorProductListResource::collection($item))->data;
