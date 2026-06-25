@@ -231,7 +231,7 @@ class ClientCartController extends Controller
                     "brand_name" => $item['brand_name'],
                     "variant_name" => $item['variant']['strength'] ?? null,
                     "form_type" => $item['variant']['form_type'] ?? null,
-                    "package_type" => $item['variant']['package_type'] . ' ' . $item['variant']['package_size'] . ' ' . $item['variant']['size_unit'] ?? null,
+                    // "package_type" => $item['variant']['package_type'],
                     "isPrescriptionRequired" => (bool) $item->item?->prescription_required,
                     "image" => $item['image'],
                     "variant_id" => empty($item['variant_id']) ? null : (int) $item['variant_id'],

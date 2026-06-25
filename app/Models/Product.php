@@ -20,7 +20,7 @@ class Product extends Model implements HasMedia
 
     const PRODUCT_FEATURE = 'PRODUCT_FEATURE';
     const PRODUCT_GALLERY = 'PRODUCT_GALLERY';
-    
+
     protected $fillable = [
         'added_by',
         'updated_by',
@@ -33,14 +33,15 @@ class Product extends Model implements HasMedia
         'rating',
         'prescription_required',
         'discount_percent',
-        'generic_product_name_id'
+        'generic_product_name_id',
+        'show_disclaimer'
     ];
-    
+
     public function categories()
     {
         return $this->belongsToMany(Category::class);
     }
-    
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
@@ -51,11 +52,13 @@ class Product extends Model implements HasMedia
         return $this->hasMany(ProductVariation::class);
     }
 
-    function brand(){
+    function brand()
+    {
         return $this->belongsTo(Brand::class);
     }
 
-    function healthConditions() {
+    function healthConditions()
+    {
         return $this->belongsToMany(HealthCondition::class);
     }
 
@@ -64,11 +67,13 @@ class Product extends Model implements HasMedia
         return $this->hasOne(ProductVariation::class)->orderBy('platform_price');
     }
 
-    function productVendors(){
+    function productVendors()
+    {
         return $this->hasMany(ProductVendor::class)->active();
     }
 
-    function productVendorPrices(){
+    function productVendorPrices()
+    {
         return $this->hasManyThrough(VendorProductPrice::class, ProductVendor::class);
     }
 
@@ -87,15 +92,18 @@ class Product extends Model implements HasMedia
         return $this->morphMany(Review::class, 'reviewable')->where('reviewable_type', __CLASS__);
     }
 
-    function scopeActive($query){
+    function scopeActive($query)
+    {
         return $query->where('status', 1);
     }
 
-    function orderItem() {
-        return $this->hasMany(OrderItem::class,'item_id')->where('item_type', Product::class);
+    function orderItem()
+    {
+        return $this->hasMany(OrderItem::class, 'item_id')->where('item_type', Product::class);
     }
 
-    function genericProductName() {
+    function genericProductName()
+    {
         return $this->belongsTo(GenericProductName::class);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User\Product;
 
+use App\Models\Disclaimer;
 use App\Models\Product;
 use App\Models\ProductVariation;
 use App\Traits\HelperTrait;
@@ -25,6 +26,8 @@ class ProductDetailResource extends JsonResource
         return [
             'name' => $this->name,
             'slug' => $this->slug,
+            'show_disclaimer' => (bool) $this->show_disclaimer,
+            'disclaimer_text' => (bool) $this->show_disclaimer ? Disclaimer::first()->disclaimer : null,
             'brand' => $this->whenLoaded('brand', fn() => $this->brand->name),
             'description' => $this->description,
             'added_date' => $this->created_at->format('Y-m-d'),
