@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Product;
 
+use App\Models\Disclaimer;
 use App\Models\Product;
 use App\Models\ProductVariation;
 use Illuminate\Http\Request;
@@ -63,7 +64,8 @@ class AdminProductDetailResource extends JsonResource
                 'id' => $item->id,
                 'url' => $item->getUrl()
             ])),
-
+            'show_disclaimer' => (bool) $this->show_disclaimer,
+            'disclaimer_text' => (bool) $this->show_disclaimer ? Disclaimer::first()->disclaimer : null,
         ];
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Admin\ClientPrescription\AdminPrescriptionContro
 use App\Http\Controllers\Api\V1\Admin\ClientReview\AdminGrievanceController;
 use App\Http\Controllers\Api\V1\Admin\CommissionPayout\AdminCommissionPayoutController;
 use App\Http\Controllers\Api\V1\Admin\DashBoard\AdminDashBoardController;
+use App\Http\Controllers\Api\V1\Admin\Disclaimer\AdminDisclaimerController;
 use App\Http\Controllers\Api\V1\Admin\Package\AdminPackageController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminBrandController;
 use App\Http\Controllers\Api\V1\Admin\Product\AdminCategoryController;
@@ -60,6 +61,7 @@ Route::prefix('admin')
         Route::post('product-media/{product:uuid}', [AdminProductController::class, 'storeMedia']);
         Route::get('product/{product:uuid}/vendors', [AdminProductController::class, 'productVendors']);
         Route::get('product-units', [AdminProductController::class, 'productUnits']);
+        Route::delete('/delete-variation/{variation}', [AdminProductController::class, 'deleteVariation']);
         /*----------  Package  ----------*/
         Route::apiResource('package', AdminPackageController::class)->scoped(['package' => 'slug']);
         Route::post('package/{slug}/add-product', [AdminPackageController::class, 'add_product_to_package']);
@@ -149,4 +151,5 @@ Route::prefix('admin')
             Route::delete('package-types/{uuid}', 'deletepackagetype');
             Route::delete('unit-types/{uuid}', 'deleteunit');
         });
+        Route::apiResource('disclaimer', AdminDisclaimerController::class)->only(['index', 'store']);
     });

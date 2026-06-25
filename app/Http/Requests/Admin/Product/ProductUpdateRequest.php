@@ -28,6 +28,7 @@ class ProductUpdateRequest extends FormRequest
             $product_id = $this->product->id;
         }
         $rules = [
+            'show_disclaimer' => 'sometimes',
             'brand_id' => 'required|exists:brands,id',
             'name' => 'required|unique:products,name,' . $product_id,
             'description' => 'sometimes|string|max:10000',
@@ -108,6 +109,12 @@ class ProductUpdateRequest extends FormRequest
         $this->merge([
             'prescription_required' => filter_var(
                 $this->prescription_required,
+                FILTER_VALIDATE_BOOLEAN
+            ) ? 1 : 0
+        ]);
+        $this->merge([
+            'show_disclaimer' => filter_var(
+                $this->show_disclaimer,
                 FILTER_VALIDATE_BOOLEAN
             ) ? 1 : 0
         ]);
