@@ -44,4 +44,5 @@ Route::prefix('vendor')
             Route::post('commission-payout/request', 'requestPayout');
         });
         Route::get('sale-report', [VendorSaleReportController::class, 'index']);
+        Route::get('dashboard-chart', [VendorDashBoardController::class, 'viewchart']);
     });
