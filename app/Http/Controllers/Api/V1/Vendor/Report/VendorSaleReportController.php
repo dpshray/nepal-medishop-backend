@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Vendor\Report;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Vendor\Report\VendorSaleReportRequest;
+use App\Models\Vendor;
 use App\Services\Report\Vendor\VendorSalesService;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
@@ -114,8 +115,8 @@ class VendorSaleReportController extends Controller
     public function index(VendorSaleReportRequest $request)
     {
         // vendor_id always from session — never from the request
-        $vendorId = Auth::user()->id;
-
+        $authuser = Auth::user()->id;
+        $vendorId = Vendor::where('user_id', $authuser)->first()->id;
         $range   = $request->resolvedDateRange();
         $groupBy = $request->groupBy();
         $perPage = max(1, (int) $request->input('per_page', 25));
